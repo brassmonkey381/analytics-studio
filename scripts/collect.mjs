@@ -185,18 +185,36 @@ from cohort`;
 // last_sign_in_at alone measures re-authentication, not use: a persisted
 // session lets an engaged user go months without signing in again, which made
 // active users look churned.
+// One select per activity source. `from` lets a source span a join, for tables
+// that do not carry the owner id themselves (binder pages/slots reach it via
+// their binder); otherwise it is just public.<table>.
+function sourceSelect(s, windowed) {
+  const from = s.from ?? `public.${s.table}`;
+  const conds = [];
+  if (windowed) conds.push(`${s.tsCol} >= now() - interval '${WINDOW_DAYS} days'`);
+  if (s.filter) conds.push(s.filter);
+  const where = conds.length ? ` where ${conds.join(" and ")}` : "";
+  return `select ${s.userCol} as uid, ${s.tsCol} as ts from ${from}${where}`;
+}
+
+// THE activity definition for an app, used by DAU, last-seen and the per-day
+// hover alike. Kept in one place so those three can never drift apart.
+function activitySources(app) {
+  return app.activitySources ?? app.lastSeenSources ?? app.dauSources ?? [];
+}
+
+function activityUnion(app, windowed, indent = "  ") {
+  return activitySources(app)
+    .map((s) => indent + sourceSelect(s, windowed))
+    .join("\n" + indent + "union all\n");
+}
+
 function lastSeenCte(app) {
-  const sources = app.lastSeenSources ?? [];
+  const sources = activitySources(app);
   if (!sources.length) return `acts as (select null::uuid as uid, '-infinity'::timestamptz as ts where false)`;
-  const union = sources
-    .map((s) => {
-      const where = s.filter ? ` where ${s.filter}` : "";
-      return `  select ${s.userCol} as uid, ${s.tsCol} as ts from public.${s.table}${where}`;
-    })
-    .join("\n  union all\n");
   return `acts as (
   select uid, max(ts) as ts from (
-${union}
+${activityUnion(app, false)}
   ) x where uid is not null and ts is not null group by uid
 )`;
 }
@@ -232,17 +250,11 @@ order by 2 desc nulls last`;
 
 // Which accounts were active on each day of the window.
 function buildActiveByDaySql(app) {
-  const union = app.dauSources
-    .map((s) => {
-      const where = [`${s.tsCol} >= now() - interval '${WINDOW_DAYS} days'`, s.filter].filter(Boolean).join(" and ");
-      return `select ${s.userCol} as uid, (${s.tsCol})::date as d from public.${s.table} where ${where}`;
-    })
-    .join("\nunion all\n");
   return `with ${exclusionCte(app.id)},
 activity as (
-${union}
+${activityUnion(app, true)}
 )
-select distinct a.d::text as day, coalesce(u.email, '(no email)') as email
+select distinct a.ts::date::text as day, coalesce(u.email, '(no email)') as email
 from activity a join auth.users u on u.id = a.uid
 where not coalesce(u.is_anonymous, false)
   and a.uid not in (select id from excluded_users)
@@ -267,7 +279,12 @@ function buildTotalsSql(app) {
 function sqlFromFile(name, appId) {
   return readFileSync(join(ROOT, "config", "sql", name), "utf8")
     .replaceAll("{{WINDOW}}", String(WINDOW_DAYS))
-    .replaceAll("{{EXCLUDED_CTE}}", exclusionCte(appId));
+    .replaceAll("{{EXCLUDED_CTE}}", exclusionCte(appId))
+    .replaceAll("{{ACTIVITY_UNION}}", activityUnion(CONFIG.apps.find((a) => a.id === appId), true))
+    .replaceAll(
+      "{{ACTIVITY_USERS}}",
+      `select distinct uid from (\n${activityUnion(CONFIG.apps.find((a) => a.id === appId), false)}\n) au where uid is not null`,
+    );
 }
 
 async function collectViaSql(app) {
@@ -349,7 +366,9 @@ async function collectViaRest(app, key) {
   for (const d of windowDates()) days[d] = { dau: 0, new_users: 0 };
 
   const activeByDay = new Map();
-  for (const s of app.dauSources) {
+  // REST cannot express joins, so join-based sources are skipped here; the
+  // Management API path (the default) covers them.
+  for (const s of (app.dauSources ?? activitySources(app)).filter((s) => !s.from)) {
     const filters = [`${s.tsCol}=gte.${start}T00:00:00Z`, s.restFilter].filter(Boolean).join("&");
     const rows = await restFetchAll(app, key, s.table, `${s.userCol},${s.tsCol}`, filters);
     for (const r of rows) {

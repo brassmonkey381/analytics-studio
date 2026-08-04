@@ -8,18 +8,7 @@ days as (
   select generate_series((current_date - ({{WINDOW}} - 1))::date, current_date, interval '1 day')::date as d
 ),
 activity as (
-  select owner_id as uid, updated_at as ts from public.binders where updated_at >= now() - interval '{{WINDOW}} days'
-  union all select b.owner_id, p.updated_at from public.binder_pages p join public.binders b on b.id = p.binder_id
-    where p.updated_at >= now() - interval '{{WINDOW}} days'
-  union all select b.owner_id, s.updated_at from public.binder_slots s
-    join public.binder_pages p on p.id = s.page_id join public.binders b on b.id = p.binder_id
-    where s.updated_at >= now() - interval '{{WINDOW}} days'
-  union all select owner_id, created_at from public.saved_slices where created_at >= now() - interval '{{WINDOW}} days'
-  union all select user_id, created_at from public.binder_likes where created_at >= now() - interval '{{WINDOW}} days'
-  union all select voter_id, created_at from public.profile_upvotes where created_at >= now() - interval '{{WINDOW}} days'
-  union all select user_id, created_at from public.print_events where created_at >= now() - interval '{{WINDOW}} days'
-  union all select copied_by, created_at from public.binder_reshares where created_at >= now() - interval '{{WINDOW}} days'
-  union all select owner_id, created_at from public.contest_entries where created_at >= now() - interval '{{WINDOW}} days'
+{{ACTIVITY_UNION}}
 ),
 cls as (
   select a.uid, a.ts::date as d, coalesce(u.is_anonymous, false) as guest

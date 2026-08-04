@@ -8,11 +8,7 @@ days as (
   select generate_series((current_date - ({{WINDOW}} - 1))::date, current_date, interval '1 day')::date as d
 ),
 activity as (
-  select user_id as uid, created_at as ts from public.scan_events where created_at >= now() - interval '{{WINDOW}} days'
-  union all select user_id, updated_at from public.saved_cards where updated_at >= now() - interval '{{WINDOW}} days'
-  union all select user_id, updated_at from public.collections where updated_at >= now() - interval '{{WINDOW}} days'
-  union all select user_id, updated_at from public.portfolio_entries where updated_at >= now() - interval '{{WINDOW}} days'
-  union all select owner_id, updated_at from public.user_cards where source = 'scan' and updated_at >= now() - interval '{{WINDOW}} days'
+{{ACTIVITY_UNION}}
 ),
 cls as (
   select a.uid, a.ts::date as d, coalesce(u.is_anonymous, false) as guest

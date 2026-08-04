@@ -1,15 +1,11 @@
 -- Users who ever touched Michi-Maker features: real accounts vs anonymous
 -- guest sessions, with excluded (ours/QA/automated) counted separately so the
 -- exclusion is visible rather than silent.
+-- The user set comes from activitySources in config/apps.json, the same list
+-- that drives DAU and last-seen, so the three can never disagree.
 with {{EXCLUDED_CTE}},
 u as (
-  select owner_id as uid from public.binders
-  union select owner_id from public.saved_slices
-  union select user_id from public.binder_likes
-  union select voter_id from public.profile_upvotes
-  union select user_id from public.print_events
-  union select copied_by from public.binder_reshares
-  union select owner_id from public.contest_entries
+  {{ACTIVITY_USERS}}
 ),
 c as (
   select u.uid, coalesce(a.is_anonymous, false) as guest,
