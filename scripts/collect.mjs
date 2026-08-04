@@ -162,32 +162,72 @@ order by days.d`;
 // churned_N are complements over the same cohort, so each window's pair always
 // sums to `total`.
 function buildRetentionSql(app) {
-  const from = app.newUsers.schema === "auth" ? "auth.users" : `public.${app.newUsers.table}`;
   return `with ${exclusionCte(app.id)},
+${lastSeenCte(app)},
+${cohortSql(app)},
 cohort as (
-  select u.last_sign_in_at
-  from ${from} n join auth.users u on u.id = n.id
+  select greatest(coalesce(u.last_sign_in_at, '-infinity'::timestamptz),
+                  coalesce(a.ts, '-infinity'::timestamptz)) as last_seen
+  from cohort_ids c
+  join auth.users u on u.id = c.id
+  left join acts a on a.uid = c.id
   where not coalesce(u.is_anonymous, false)
-    and n.id not in (select id from excluded_users)
+    and c.id not in (select id from excluded_users)
 )
 select count(*)::int as total,
-  count(*) filter (where last_sign_in_at >= now() - interval '7 days')::int as active_7,
-  count(*) filter (where last_sign_in_at >= now() - interval '14 days')::int as active_14,
-  count(*) filter (where last_sign_in_at >= now() - interval '30 days')::int as active_30
+  count(*) filter (where last_seen >= now() - interval '7 days')::int as active_7,
+  count(*) filter (where last_seen >= now() - interval '14 days')::int as active_14,
+  count(*) filter (where last_seen >= now() - interval '30 days')::int as active_30
 from cohort`;
 }
 
-// Account roster for report hover: who each number is actually made of.
-// created_at drives the new-user day, last_sign_in_at the retention bucket.
-function buildRosterSql(app) {
+// "Last seen" = the newest of a sign-in or ANY tracked in-app action.
+// last_sign_in_at alone measures re-authentication, not use: a persisted
+// session lets an engaged user go months without signing in again, which made
+// active users look churned.
+function lastSeenCte(app) {
+  const sources = app.lastSeenSources ?? [];
+  if (!sources.length) return `acts as (select null::uuid as uid, '-infinity'::timestamptz as ts where false)`;
+  const union = sources
+    .map((s) => {
+      const where = s.filter ? ` where ${s.filter}` : "";
+      return `  select ${s.userCol} as uid, ${s.tsCol} as ts from public.${s.table}${where}`;
+    })
+    .join("\n  union all\n");
+  return `acts as (
+  select uid, max(ts) as ts from (
+${union}
+  ) x where uid is not null and ts is not null group by uid
+)`;
+}
+
+// The cohort is either everyone with a profile, or — on the shared
+// TCGScan/Michi project, where one auth pool serves two apps — only the users
+// who actually touched this app's tables.
+function cohortSql(app) {
+  if (app.cohortFromActivity) {
+    return `cohort_ids as (select distinct uid as id from acts)`;
+  }
   const from = app.newUsers.schema === "auth" ? "auth.users" : `public.${app.newUsers.table}`;
-  return `with ${exclusionCte(app.id)}
+  return `cohort_ids as (select n.id from ${from} n)`;
+}
+
+// Account roster for report hover: who each number is actually made of.
+function buildRosterSql(app) {
+  return `with ${exclusionCte(app.id)},
+${lastSeenCte(app)},
+${cohortSql(app)}
 select coalesce(u.email, '(no email)') as email,
-       u.last_sign_in_at, n.${app.newUsers.tsCol} as created_at
-from ${from} n join auth.users u on u.id = n.id
+       nullif(greatest(coalesce(u.last_sign_in_at, '-infinity'::timestamptz),
+                       coalesce(a.ts, '-infinity'::timestamptz)),
+              '-infinity'::timestamptz) as last_seen,
+       u.last_sign_in_at, a.ts as last_activity, u.created_at
+from cohort_ids c
+join auth.users u on u.id = c.id
+left join acts a on a.uid = c.id
 where not coalesce(u.is_anonymous, false)
-  and n.id not in (select id from excluded_users)
-order by u.last_sign_in_at desc nulls last`;
+  and c.id not in (select id from excluded_users)
+order by 2 desc nulls last`;
 }
 
 // Which accounts were active on each day of the window.

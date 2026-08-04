@@ -293,7 +293,12 @@ const accountData = JSON.stringify(
     Object.entries(accounts).map(([id, v]) => [
       id,
       {
-        roster: (v.roster ?? []).map((r) => ({ e: r.email, l: r.last_sign_in_at })),
+        roster: (v.roster ?? []).map((r) => ({
+          e: r.email,
+          l: r.last_seen,
+          s: r.last_sign_in_at,
+          a: r.last_activity,
+        })),
         byDay: v.activeByDay ?? {},
       },
     ]),
@@ -410,6 +415,7 @@ td.muted { color: var(--muted); }
 .empty { color: var(--muted); font-size: 12px; padding: 14px 4px 18px; }
 .tt-email { color: var(--ink-2); font-size: 11px; padding: 1px 0; word-break: break-all; }
 .tt-more { color: var(--muted); font-size: 11px; padding: 2px 0 0; font-style: italic; }
+.tt-when { color: var(--muted); }
 .tt-emails { padding: 2px 0 4px 20px; }
 .ret-fig { position: relative; }
 .ret-fig .tooltip { top: 30px; left: 12px; right: 12px; max-height: 260px; overflow-y: auto; }
@@ -425,7 +431,7 @@ ${tiles()}
 </div>
 
 <h2>Total distinct users — active vs churned</h2>
-<p class="axisnote">Active = signed in within the window; churned is its exact complement, so each pair sums to that app's total. Shared scale across apps, so bar length is headcount. Numbers read active / churned.</p>
+<p class="axisnote">Active = signed in <em>or</em> took any tracked in-app action within the window &mdash; a persisted session means sign-in alone understates activity. Churned is the exact complement, so each pair sums to that app's total. Shared scale across apps, so bar length is headcount. Numbers read active / churned; hover a bar to see which accounts.</p>
 <div class="legend"><span class="legend-item"><span class="swatch ret-active"></span>Active</span><span class="legend-item"><span class="swatch ret-churned"></span>Churned</span></div>
 ${retentionChart()}
 
@@ -449,14 +455,20 @@ const MAX_EMAILS = ${MAX_HOVER_EMAILS};
 const PADL = ${PAD.l}, PADR = ${PAD.r}, VW = ${W};
 
 // Emails are user-supplied strings: build these nodes with textContent only.
-function emailList(parent, emails) {
+function emailList(parent, emails, meta) {
   const shown = emails.slice(0, MAX_EMAILS);
-  for (const em of shown) {
+  shown.forEach((em, i) => {
     const row = document.createElement("div");
     row.className = "tt-email";
     row.textContent = em;
+    if (meta && meta[i]) {
+      const when = document.createElement("span");
+      when.className = "tt-when";
+      when.textContent = " " + meta[i];
+      row.appendChild(when);
+    }
     parent.appendChild(row);
-  }
+  });
   if (emails.length > shown.length) {
     const more = document.createElement("div");
     more.className = "tt-more";
@@ -490,7 +502,15 @@ for (const fig of document.querySelectorAll(".ret-fig")) {
       head.className = "tt-date";
       head.textContent = (kind === "active" ? "Active" : "Churned") + " \\u2013 " + win + "d \\u2013 " + picked.length;
       tip.appendChild(head);
-      emailList(tip, picked.map((r) => r.e));
+      // Show last-seen date, and flag when it came from activity rather than a
+      // sign-in, since that is the whole point of the measure.
+      const meta = picked.map((r) => {
+        if (!r.l) return "never seen";
+        const d = String(r.l).slice(0, 10);
+        const viaActivity = r.a && (!r.s || r.a > r.s);
+        return d + (viaActivity ? " (activity)" : " (sign-in)");
+      });
+      emailList(tip, picked.map((r) => r.e), meta);
       tip.style.display = "";
     };
     hit.addEventListener("pointerenter", show);

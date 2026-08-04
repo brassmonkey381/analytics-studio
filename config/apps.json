@@ -15,7 +15,18 @@
           "restFilter": "reason=ilike.Login%20bonus*"
         }
       ],
-      "newUsers": { "table": "profiles", "tsCol": "created_at" },
+      "lastSeenSources": [
+        { "table": "points_ledger", "userCol": "profile_id", "tsCol": "created_at" },
+        { "table": "entity_visits", "userCol": "profile_id", "tsCol": "last_visited_at" },
+        { "table": "dog_place_checkins", "userCol": "profile_id", "tsCol": "created_at" },
+        { "table": "dog_place_checkin_plans", "userCol": "profile_id", "tsCol": "created_at" },
+        { "table": "care_logs", "userCol": "profile_id", "tsCol": "updated_at" },
+        { "table": "walks", "userCol": "profile_id", "tsCol": "started_at" },
+        { "table": "user_badges", "userCol": "profile_id", "tsCol": "earned_at" },
+        { "table": "user_showcase_inventory", "userCol": "profile_id", "tsCol": "acquired_at" },
+        { "table": "user_favorites", "userCol": "profile_id", "tsCol": "created_at" },
+        { "table": "dogs", "userCol": "owner_id", "tsCol": "updated_at" }
+      ],      "newUsers": { "table": "profiles", "tsCol": "created_at" },
       "reportNote": "DAU = daily login-bonus claims (one per user per day of app open)."
     },
     {
@@ -30,7 +41,18 @@
           "tsCol": "awarded_date"
         }
       ],
-      "newUsers": { "table": "profiles", "tsCol": "created_at" },
+      "lastSeenSources": [
+        { "table": "user_streak_rewards", "userCol": "user_id", "tsCol": "awarded_at" },
+        { "table": "player_shop_purchases", "userCol": "user_id", "tsCol": "purchased_at" },
+        { "table": "pickle_pot_contributions", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "wagers", "userCol": "user_id", "tsCol": "placed_at" },
+        { "table": "player_badges", "userCol": "user_id", "tsCol": "earned_at" },
+        { "table": "event_slot_votes", "userCol": "user_id", "tsCol": "voted_at" },
+        { "table": "player_location_ratings", "userCol": "user_id", "tsCol": "updated_at" },
+        { "table": "player_paddles", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "league_members", "userCol": "user_id", "tsCol": "joined_at" },
+        { "table": "season_snapshots", "userCol": "user_id", "tsCol": "created_at" }
+      ],      "newUsers": { "table": "profiles", "tsCol": "created_at" },
       "reportNote": "DAU = daily login-streak claims (one per user per day of app open). Note: 472 profiles were bulk-created within 3 seconds on 2026-07-29 (roster import, not organic signups) — they dominate the 30-day new-user total."
     },
     {
@@ -42,8 +64,17 @@
       "coverageSqlFile": "shared-app-coverage.sql",
       "totalsLabel": "signed-in accounts with activity",
       "totalsSqlFile": "michi-maker.totals.sql",
-      "retentionSqlFile": "michi-maker.retention.sql",
-      "rosterSqlFile": "michi-maker.roster.sql",
+      "lastSeenSources": [
+        { "table": "binders", "userCol": "owner_id", "tsCol": "updated_at" },
+        { "table": "saved_slices", "userCol": "owner_id", "tsCol": "created_at" },
+        { "table": "binder_likes", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "profile_upvotes", "userCol": "voter_id", "tsCol": "created_at" },
+        { "table": "print_events", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "binder_reshares", "userCol": "copied_by", "tsCol": "created_at" },
+        { "table": "contest_entries", "userCol": "owner_id", "tsCol": "created_at" },
+        { "table": "binder_pdf_snapshots", "userCol": "user_id", "tsCol": "updated_at" }
+      ],
+      "cohortFromActivity": true,
       "dauSources": [
         { "table": "binders", "userCol": "owner_id", "tsCol": "updated_at" },
         { "table": "saved_slices", "userCol": "owner_id", "tsCol": "created_at" },
@@ -65,8 +96,15 @@
       "coverageSqlFile": "shared-app-coverage.sql",
       "totalsLabel": "signed-in accounts with activity",
       "totalsSqlFile": "tcgscan.totals.sql",
-      "retentionSqlFile": "tcgscan.retention.sql",
-      "rosterSqlFile": "tcgscan.roster.sql",
+      "lastSeenSources": [
+        { "table": "scan_events", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "saved_cards", "userCol": "user_id", "tsCol": "updated_at" },
+        { "table": "collections", "userCol": "user_id", "tsCol": "updated_at" },
+        { "table": "portfolio_entries", "userCol": "user_id", "tsCol": "updated_at" },
+        { "table": "scan_feedback", "userCol": "owner_id", "tsCol": "created_at" },
+        { "table": "user_cards", "userCol": "owner_id", "tsCol": "updated_at", "filter": "source = 'scan'" }
+      ],
+      "cohortFromActivity": true,
       "dauSources": [
         { "table": "scan_events", "userCol": "user_id", "tsCol": "created_at" },
         { "table": "saved_cards", "userCol": "user_id", "tsCol": "updated_at" },
