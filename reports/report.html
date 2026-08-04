@@ -1,0 +1,385 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App analytics — last 30 days</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --baseline: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --up: #006300; --down: #d03b3b;
+  --s0: #2a78d6; --s1: #eb6834; --s2: #1baf7a; --s3: #eda100;
+  --ret-a: #2a78d6; --ret-c: #cde2fb;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --baseline: #383835; --border: rgba(255,255,255,0.10);
+    --up: #0ca30c; --down: #e66767;
+    --s0: #3987e5; --s1: #d95926; --s2: #199e70; --s3: #c98500;
+    --ret-a: #3987e5; --ret-c: #184f95;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19;
+  --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --baseline: #383835; --border: rgba(255,255,255,0.10);
+  --up: #0ca30c; --down: #e66767;
+  --s0: #3987e5; --s1: #d95926; --s2: #199e70; --s3: #c98500;
+  --ret-a: #3987e5; --ret-c: #184f95;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 28px 20px 60px; }
+h1 { font-size: 22px; margin: 0 0 2px; }
+.meta { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+h2 { font-size: 16px; margin: 34px 0 4px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.tile-head { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+.label { color: var(--ink-2); font-size: 14px; }
+.value { font-size: 30px; font-weight: 600; }
+.sub { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+.value.nodata { color: var(--muted); }
+.row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--ink-2);
+  padding: 3px 0; border-top: 1px solid var(--grid); flex-wrap: wrap; }
+.row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.delta { font-size: 12px; width: 100%; text-align: right; }
+.delta.up { color: var(--up); } .delta.down { color: var(--down); }
+.note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+.err { color: var(--down); font-size: 12px; margin-top: 8px; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 6px 0 8px; color: var(--ink-2); font-size: 13px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.key { display: inline-block; width: 14px; height: 3px; border-radius: 2px; }
+.key.s0 { background: var(--s0); } .key.s1 { background: var(--s1); }
+.key.s2 { background: var(--s2); } .key.s3 { background: var(--s3); }
+.chart { position: relative; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 6px 4px; }
+.chart svg { display: block; width: 100%; height: auto; }
+.grid { stroke: var(--grid); stroke-width: 1; }
+.baseline { stroke: var(--baseline); stroke-width: 1; }
+.tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.endlabel { fill: var(--ink-2); font-size: 12px; }
+.line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.line.s0 { stroke: var(--s0); } .line.s1 { stroke: var(--s1); }
+.line.s2 { stroke: var(--s2); } .line.s3 { stroke: var(--s3); }
+.dot { stroke: var(--surface); stroke-width: 2; }
+.dot.s0 { fill: var(--s0); } .dot.s1 { fill: var(--s1); }
+.dot.s2 { fill: var(--s2); } .dot.s3 { fill: var(--s3); }
+.xhair { stroke: var(--baseline); stroke-width: 1; }
+.tooltip { position: absolute; pointer-events: none; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12); min-width: 150px; z-index: 2; }
+.tooltip .tt-date { color: var(--muted); margin-bottom: 4px; }
+.tooltip .tt-row { display: flex; align-items: center; gap: 6px; padding: 1px 0; color: var(--ink-2); }
+.tooltip .tt-row strong { color: var(--ink); margin-left: auto; font-variant-numeric: tabular-nums; }
+.axisnote { color: var(--muted); font-size: 12px; margin: 2px 0 10px; }
+.sm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.sm { margin: 0; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 8px 2px; }
+.sm figcaption { display: flex; align-items: center; gap: 6px; color: var(--ink-2);
+  font-size: 13px; padding: 0 4px 4px; }
+.sm figcaption strong { color: var(--ink); margin-left: auto; font-variant-numeric: tabular-nums; }
+.sm svg { display: block; width: 100%; height: auto; }
+details { margin-top: 30px; }
+summary { cursor: pointer; color: var(--ink-2); }
+table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 13px;
+  background: var(--surface); }
+th, td { border: 1px solid var(--grid); padding: 4px 8px; text-align: right;
+  font-variant-numeric: tabular-nums; }
+th { color: var(--ink-2); font-weight: 600; }
+td:first-child, th:first-child { text-align: left; }
+.tablewrap { overflow-x: auto; }
+td.muted { color: var(--muted); }
+.row.excl span, .row.excl strong { color: var(--muted); font-weight: 500; }
+.ret-active { fill: var(--ret-a); }
+.ret-churned { fill: var(--ret-c); }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.swatch.ret-active { background: var(--ret-a); }
+.swatch.ret-churned { background: var(--ret-c); }
+.barval { fill: var(--ink); font-size: 11px; font-variant-numeric: tabular-nums; }
+.barval-muted { fill: var(--muted); }
+.empty { color: var(--muted); font-size: 12px; padding: 14px 4px 18px; }
+</style>
+<main>
+<h1>App analytics — last 30 days</h1>
+<div class="meta">Doggle · Pickleague · Michi-Maker · TCGScan &nbsp;·&nbsp; generated 2026-08-04 01:59 UTC<br>Excludes our own, seeded, QA/test and automated accounts (see config/exclusions.json). Guest = anonymous session, not an account.</div>
+
+<div class="tiles">
+<div class="tile">
+  <div class="tile-head"><span class="key s0"></span><span class="label">Doggle</span></div>
+  <div class="value">10</div>
+  <div class="sub">total users</div>
+  <div class="row"><span>DAU yesterday</span><strong>1</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>33</strong></div>
+  <div class="row"><span>New users, 30d</span><strong>3</strong></div>
+  <div class="row"><span>New users, 7d</span><strong>2</strong> <span class="delta up">+2 vs prior week</span></div>
+  <div class="note">DAU = daily login-bonus claims (one per user per day of app open).</div>
+  
+</div>
+<div class="tile">
+  <div class="tile-head"><span class="key s1"></span><span class="label">Pickleague</span></div>
+  <div class="value">5</div>
+  <div class="sub">total users</div>
+  <div class="row"><span>DAU yesterday</span><strong>1</strong></div><div class="row"><span>Guest sessions (anonymous)</span><strong>1</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>490</strong></div>
+  <div class="row"><span>New users, 30d</span><strong>0</strong></div>
+  <div class="row"><span>New users, 7d</span><strong>0</strong> <span class="delta up">+0 vs prior week</span></div>
+  <div class="note">DAU = daily login-streak claims (one per user per day of app open). Note: 472 profiles were bulk-created within 3 seconds on 2026-07-29 (roster import, not organic signups) — they dominate the 30-day new-user total.</div>
+  
+</div>
+<div class="tile">
+  <div class="tile-head"><span class="key s2"></span><span class="label">Michi-Maker</span></div>
+  <div class="value">3</div>
+  <div class="sub">signed-in accounts with activity</div>
+  <div class="row"><span>DAU yesterday</span><strong>1</strong><span class="delta">+1 guest sessions</span></div><div class="row"><span>Guest sessions (anonymous)</span><strong>9</strong></div><div class="row"><span>Registered on shared project</span><strong>4</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>26</strong></div>
+  <div class="row"><span>New users, 30d</span><strong>3</strong></div>
+  <div class="row"><span>New users, 7d</span><strong>1</strong> <span class="delta up">+1 vs prior week</span></div>
+  <div class="note">Shares one auth pool with TCGScan, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (binder edits, slices, likes, prints), so browsing leaves no trace.</div>
+  
+</div>
+<div class="tile">
+  <div class="tile-head"><span class="key s3"></span><span class="label">TCGScan</span></div>
+  <div class="value">0</div>
+  <div class="sub">signed-in accounts with activity</div>
+  <div class="row"><span>DAU yesterday</span><strong>0</strong><span class="delta">+2 guest sessions</span></div><div class="row"><span>Guest sessions (anonymous)</span><strong>84</strong></div><div class="row"><span>Registered on shared project</span><strong>4</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>104</strong></div>
+  <div class="row"><span>New users, 30d</span><strong>0</strong></div>
+  <div class="row"><span>New users, 7d</span><strong>0</strong> <span class="delta up">+0 vs prior week</span></div>
+  <div class="note">Shares one auth pool with Michi-Maker, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (scans, saves, collection edits), so browsing leaves no trace.</div>
+  
+</div>
+</div>
+
+<h2>Total distinct users — active vs churned</h2>
+<p class="axisnote">Active = signed in within the window; churned is its exact complement, so each pair sums to that app's total. Shared scale across apps, so bar length is headcount. Numbers read active / churned.</p>
+<div class="legend"><span class="legend-item"><span class="swatch ret-active"></span>Active</span><span class="legend-item"><span class="swatch ret-churned"></span>Churned</span></div>
+<div class="sm-grid"><figure class="sm">
+<figcaption><span class="key s0"></span>Doggle <strong>10</strong></figcaption>
+<svg viewBox="0 0 320 100" role="img" aria-label="Doggle active versus churned users by window">
+<g>
+<text x="28" y="17" class="tick" text-anchor="end">7d</text>
+<rect x="34" y="6" width="82.8" height="14" rx="4" class="ret-active"/><rect x="118.8" y="6" width="191.2" height="14" rx="4" class="ret-churned"/>
+<text x="316.0" y="17" class="barval">3<tspan class="barval-muted"> / 7</tspan></text>
+</g>
+<g>
+<text x="28" y="47" class="tick" text-anchor="end">14d</text>
+<rect x="34" y="36" width="110.4" height="14" rx="4" class="ret-active"/><rect x="146.4" y="36" width="163.6" height="14" rx="4" class="ret-churned"/>
+<text x="316.0" y="47" class="barval">4<tspan class="barval-muted"> / 6</tspan></text>
+</g>
+<g>
+<text x="28" y="77" class="tick" text-anchor="end">30d</text>
+<rect x="34" y="66" width="110.4" height="14" rx="4" class="ret-active"/><rect x="146.4" y="66" width="163.6" height="14" rx="4" class="ret-churned"/>
+<text x="316.0" y="77" class="barval">4<tspan class="barval-muted"> / 6</tspan></text>
+</g>
+</svg>
+</figure>
+<figure class="sm">
+<figcaption><span class="key s1"></span>Pickleague <strong>5</strong></figcaption>
+<svg viewBox="0 0 320 100" role="img" aria-label="Pickleague active versus churned users by window">
+<g>
+<text x="28" y="17" class="tick" text-anchor="end">7d</text>
+<rect x="34" y="6" width="27.6" height="14" rx="4" class="ret-active"/><rect x="63.6" y="6" width="108.4" height="14" rx="4" class="ret-churned"/>
+<text x="178.0" y="17" class="barval">1<tspan class="barval-muted"> / 4</tspan></text>
+</g>
+<g>
+<text x="28" y="47" class="tick" text-anchor="end">14d</text>
+<rect x="34" y="36" width="27.6" height="14" rx="4" class="ret-active"/><rect x="63.6" y="36" width="108.4" height="14" rx="4" class="ret-churned"/>
+<text x="178.0" y="47" class="barval">1<tspan class="barval-muted"> / 4</tspan></text>
+</g>
+<g>
+<text x="28" y="77" class="tick" text-anchor="end">30d</text>
+<rect x="34" y="66" width="27.6" height="14" rx="4" class="ret-active"/><rect x="63.6" y="66" width="108.4" height="14" rx="4" class="ret-churned"/>
+<text x="178.0" y="77" class="barval">1<tspan class="barval-muted"> / 4</tspan></text>
+</g>
+</svg>
+</figure>
+<figure class="sm">
+<figcaption><span class="key s2"></span>Michi-Maker <strong>3</strong></figcaption>
+<svg viewBox="0 0 320 100" role="img" aria-label="Michi-Maker active versus churned users by window">
+<g>
+<text x="28" y="17" class="tick" text-anchor="end">7d</text>
+<rect x="34" y="6" width="55.2" height="14" rx="4" class="ret-active"/><rect x="91.2" y="6" width="25.6" height="14" rx="4" class="ret-churned"/>
+<text x="122.8" y="17" class="barval">2<tspan class="barval-muted"> / 1</tspan></text>
+</g>
+<g>
+<text x="28" y="47" class="tick" text-anchor="end">14d</text>
+<rect x="34" y="36" width="82.8" height="14" rx="4" class="ret-active"/>
+<text x="122.8" y="47" class="barval">3<tspan class="barval-muted"> / 0</tspan></text>
+</g>
+<g>
+<text x="28" y="77" class="tick" text-anchor="end">30d</text>
+<rect x="34" y="66" width="82.8" height="14" rx="4" class="ret-active"/>
+<text x="122.8" y="77" class="barval">3<tspan class="barval-muted"> / 0</tspan></text>
+</g>
+</svg>
+</figure>
+<figure class="sm">
+<figcaption>TCGScan <strong>0</strong></figcaption>
+<div class="empty">No signed-in users yet</div>
+</figure></div>
+
+<h2>Daily active users — signed-in accounts</h2>
+<div class="legend"><span class="legend-item"><span class="key s0"></span>Doggle</span><span class="legend-item"><span class="key s1"></span>Pickleague</span><span class="legend-item"><span class="key s2"></span>Michi-Maker</span><span class="legend-item"><span class="key s3"></span>TCGScan</span></div>
+<div class="chart" data-chart="dau">
+<svg viewBox="0 0 860 300" role="img" aria-label="dau chart">
+<line x1="48" y1="266" x2="740" y2="266" class="baseline"/>
+<text x="40" y="270" class="tick" text-anchor="end">0</text>
+<line x1="48" y1="203.5" x2="740" y2="203.5" class="grid"/>
+<text x="40" y="207.5" class="tick" text-anchor="end">1</text>
+<line x1="48" y1="141" x2="740" y2="141" class="grid"/>
+<text x="40" y="145" class="tick" text-anchor="end">2</text>
+<line x1="48" y1="78.5" x2="740" y2="78.5" class="grid"/>
+<text x="40" y="82.5" class="tick" text-anchor="end">3</text>
+<line x1="48" y1="16" x2="740" y2="16" class="grid"/>
+<text x="40" y="20" class="tick" text-anchor="end">4</text>
+<text x="48" y="284" class="tick" text-anchor="middle">07-06</text>
+<text x="382.0689655172414" y="284" class="tick" text-anchor="middle">07-20</text>
+<text x="740" y="284" class="tick" text-anchor="middle">08-04</text>
+<path d="M48.0,203.5L71.9,141.0L95.7,203.5L119.6,141.0L143.4,141.0L167.3,203.5L191.2,203.5L215.0,78.5L238.9,266.0L262.8,141.0L286.6,203.5L310.5,266.0L334.3,16.0L358.2,78.5L382.1,203.5L405.9,141.0L429.8,78.5L453.7,141.0L477.5,141.0L501.4,141.0L525.2,203.5L549.1,203.5L573.0,266.0L596.8,141.0L620.7,141.0L644.6,266.0L668.4,78.5L692.3,141.0L716.1,203.5L740.0,266.0" class="line s0"/>
+<circle cx="740" cy="266" r="4" class="dot s0"/>
+<path d="M48.0,266.0L71.9,203.5L95.7,203.5L119.6,266.0L143.4,266.0L167.3,203.5L191.2,203.5L215.0,266.0L238.9,266.0L262.8,266.0L286.6,266.0L310.5,266.0L334.3,203.5L358.2,266.0L382.1,266.0L405.9,203.5L429.8,203.5L453.7,266.0L477.5,266.0L501.4,266.0L525.2,266.0L549.1,203.5L573.0,266.0L596.8,203.5L620.7,203.5L644.6,266.0L668.4,203.5L692.3,203.5L716.1,203.5L740.0,266.0" class="line s1"/>
+<circle cx="740" cy="266" r="4" class="dot s1"/>
+<path d="M48.0,266.0L71.9,266.0L95.7,266.0L119.6,266.0L143.4,203.5L167.3,203.5L191.2,266.0L215.0,266.0L238.9,203.5L262.8,266.0L286.6,203.5L310.5,203.5L334.3,141.0L358.2,266.0L382.1,203.5L405.9,203.5L429.8,141.0L453.7,266.0L477.5,266.0L501.4,266.0L525.2,203.5L549.1,266.0L573.0,266.0L596.8,266.0L620.7,266.0L644.6,266.0L668.4,266.0L692.3,203.5L716.1,203.5L740.0,266.0" class="line s2"/>
+<circle cx="740" cy="266" r="4" class="dot s2"/>
+<path d="M48.0,266.0L71.9,266.0L95.7,266.0L119.6,266.0L143.4,266.0L167.3,266.0L191.2,266.0L215.0,266.0L238.9,266.0L262.8,266.0L286.6,266.0L310.5,266.0L334.3,266.0L358.2,266.0L382.1,266.0L405.9,266.0L429.8,266.0L453.7,266.0L477.5,266.0L501.4,266.0L525.2,266.0L549.1,266.0L573.0,266.0L596.8,266.0L620.7,266.0L644.6,266.0L668.4,266.0L692.3,266.0L716.1,266.0L740.0,266.0" class="line s3"/>
+<circle cx="740" cy="266" r="4" class="dot s3"/>
+
+<line class="xhair" x1="0" x2="0" y1="16" y2="266" style="display:none"/>
+<rect class="hit" x="48" y="16" width="692" height="250" fill="transparent"/>
+</svg>
+<div class="tooltip" style="display:none"></div>
+</div>
+
+<h2>Cumulative new users (30-day window)</h2>
+<p class="axisnote">Each panel has its own scale — the apps differ in size by orders of magnitude. The value shown is the 30-day total.</p>
+<div class="sm-grid"><figure class="sm">
+<figcaption><span class="key s0"></span>Doggle <strong>3</strong></figcaption>
+<svg viewBox="0 0 300 132" role="img" aria-label="Doggle cumulative new users">
+<line x1="40" y1="110" x2="288" y2="110" class="baseline"/>
+<text x="34" y="114" class="tick" text-anchor="end">0</text>
+<line x1="40" y1="12" x2="288" y2="12" class="grid"/>
+<text x="34" y="16" class="tick" text-anchor="end">3</text>
+<text x="40" y="126" class="tick">07-06</text>
+<text x="288" y="126" class="tick" text-anchor="end">08-04</text>
+<path d="M40.0,110.0L48.6,110.0L57.1,110.0L65.7,110.0L74.2,110.0L82.8,110.0L91.3,110.0L99.9,110.0L108.4,110.0L117.0,110.0L125.5,110.0L134.1,110.0L142.6,77.3L151.2,77.3L159.7,77.3L168.3,77.3L176.8,77.3L185.4,77.3L193.9,77.3L202.5,77.3L211.0,77.3L219.6,77.3L228.1,77.3L236.7,77.3L245.2,77.3L253.8,77.3L262.3,44.7L270.9,12.0L279.4,12.0L288.0,12.0" class="line s0"/>
+<circle cx="288" cy="12" r="4" class="dot s0"/>
+</svg>
+</figure>
+<figure class="sm">
+<figcaption><span class="key s1"></span>Pickleague <strong>0</strong></figcaption>
+<svg viewBox="0 0 300 132" role="img" aria-label="Pickleague cumulative new users">
+<line x1="40" y1="110" x2="288" y2="110" class="baseline"/>
+<text x="34" y="114" class="tick" text-anchor="end">0</text>
+<line x1="40" y1="12" x2="288" y2="12" class="grid"/>
+<text x="34" y="16" class="tick" text-anchor="end">1</text>
+<text x="40" y="126" class="tick">07-06</text>
+<text x="288" y="126" class="tick" text-anchor="end">08-04</text>
+<path d="M40.0,110.0L48.6,110.0L57.1,110.0L65.7,110.0L74.2,110.0L82.8,110.0L91.3,110.0L99.9,110.0L108.4,110.0L117.0,110.0L125.5,110.0L134.1,110.0L142.6,110.0L151.2,110.0L159.7,110.0L168.3,110.0L176.8,110.0L185.4,110.0L193.9,110.0L202.5,110.0L211.0,110.0L219.6,110.0L228.1,110.0L236.7,110.0L245.2,110.0L253.8,110.0L262.3,110.0L270.9,110.0L279.4,110.0L288.0,110.0" class="line s1"/>
+<circle cx="288" cy="110" r="4" class="dot s1"/>
+</svg>
+</figure>
+<figure class="sm">
+<figcaption><span class="key s2"></span>Michi-Maker <strong>3</strong></figcaption>
+<svg viewBox="0 0 300 132" role="img" aria-label="Michi-Maker cumulative new users">
+<line x1="40" y1="110" x2="288" y2="110" class="baseline"/>
+<text x="34" y="114" class="tick" text-anchor="end">0</text>
+<line x1="40" y1="12" x2="288" y2="12" class="grid"/>
+<text x="34" y="16" class="tick" text-anchor="end">3</text>
+<text x="40" y="126" class="tick">07-06</text>
+<text x="288" y="126" class="tick" text-anchor="end">08-04</text>
+<path d="M40.0,110.0L48.6,110.0L57.1,110.0L65.7,77.3L74.2,77.3L82.8,77.3L91.3,77.3L99.9,77.3L108.4,77.3L117.0,77.3L125.5,77.3L134.1,77.3L142.6,44.7L151.2,44.7L159.7,44.7L168.3,44.7L176.8,44.7L185.4,44.7L193.9,44.7L202.5,44.7L211.0,44.7L219.6,44.7L228.1,44.7L236.7,44.7L245.2,44.7L253.8,44.7L262.3,44.7L270.9,44.7L279.4,12.0L288.0,12.0" class="line s2"/>
+<circle cx="288" cy="12" r="4" class="dot s2"/>
+</svg>
+</figure>
+<figure class="sm">
+<figcaption><span class="key s3"></span>TCGScan <strong>0</strong></figcaption>
+<svg viewBox="0 0 300 132" role="img" aria-label="TCGScan cumulative new users">
+<line x1="40" y1="110" x2="288" y2="110" class="baseline"/>
+<text x="34" y="114" class="tick" text-anchor="end">0</text>
+<line x1="40" y1="12" x2="288" y2="12" class="grid"/>
+<text x="34" y="16" class="tick" text-anchor="end">1</text>
+<text x="40" y="126" class="tick">07-06</text>
+<text x="288" y="126" class="tick" text-anchor="end">08-04</text>
+<path d="M40.0,110.0L48.6,110.0L57.1,110.0L65.7,110.0L74.2,110.0L82.8,110.0L91.3,110.0L99.9,110.0L108.4,110.0L117.0,110.0L125.5,110.0L134.1,110.0L142.6,110.0L151.2,110.0L159.7,110.0L168.3,110.0L176.8,110.0L185.4,110.0L193.9,110.0L202.5,110.0L211.0,110.0L219.6,110.0L228.1,110.0L236.7,110.0L245.2,110.0L253.8,110.0L262.3,110.0L270.9,110.0L279.4,110.0L288.0,110.0" class="line s3"/>
+<circle cx="288" cy="110" r="4" class="dot s3"/>
+</svg>
+</figure></div>
+
+<details>
+<summary>Data table (30 days × 4 apps)</summary>
+<div class="tablewrap"><table><thead><tr><th rowspan="2">Date</th><th colspan="3">Doggle</th><th colspan="3">Pickleague</th><th colspan="3">Michi-Maker</th><th colspan="3">TCGScan</th></tr><tr><th>DAU</th><th>Guest</th><th>New</th><th>DAU</th><th>Guest</th><th>New</th><th>DAU</th><th>Guest</th><th>New</th><th>DAU</th><th>Guest</th><th>New</th></tr></thead><tbody><tr><td>2026-08-04</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-08-03</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">1</td><td>1</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-08-02</td><td>2</td><td class="muted">0</td><td>1</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">3</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-08-01</td><td>3</td><td class="muted">0</td><td>1</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-07-31</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
+<tr><td>2026-07-30</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-29</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-28</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-27</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-07-26</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-25</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-07-24</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
+<tr><td>2026-07-23</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">5</td><td>0</td></tr>
+<tr><td>2026-07-22</td><td>3</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>2</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
+<tr><td>2026-07-21</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-20</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">4</td><td>0</td></tr>
+<tr><td>2026-07-19</td><td>3</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">17</td><td>0</td></tr>
+<tr><td>2026-07-18</td><td>4</td><td class="muted">0</td><td>1</td><td>1</td><td class="muted">0</td><td>0</td><td>2</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">4</td><td>0</td></tr>
+<tr><td>2026-07-17</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">7</td><td>0</td></tr>
+<tr><td>2026-07-16</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">21</td><td>0</td></tr>
+<tr><td>2026-07-15</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-14</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-13</td><td>3</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-12</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-11</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-10</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-09</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-08</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-07</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-06</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr></tbody></table></div>
+</details>
+</main>
+<script>
+const DATA = {"dates":["2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-11","2026-07-12","2026-07-13","2026-07-14","2026-07-15","2026-07-16","2026-07-17","2026-07-18","2026-07-19","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-25","2026-07-26","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-01","2026-08-02","2026-08-03","2026-08-04"],"apps":[{"name":"Doggle","slot":0,"dau":[1,2,1,2,2,1,1,3,0,2,1,0,4,3,1,2,3,2,2,2,1,1,0,2,2,0,3,2,1,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3]},{"name":"Pickleague","slot":1,"dau":[0,1,1,0,0,1,1,0,0,0,0,0,1,0,0,1,1,0,0,0,0,1,0,1,1,0,1,1,1,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"name":"Michi-Maker","slot":2,"dau":[0,0,0,0,1,1,0,0,1,0,1,1,2,0,1,1,2,0,0,0,1,0,0,0,0,0,0,1,1,0],"cumNew":[0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3]},{"name":"TCGScan","slot":3,"dau":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}]};
+const PADL = 48, PADR = 120, VW = 860;
+for (const el of document.querySelectorAll(".chart")) {
+  const kind = el.dataset.chart === "dau" ? "dau" : "cumNew";
+  const svg = el.querySelector("svg");
+  const hit = el.querySelector(".hit");
+  const xhair = el.querySelector(".xhair");
+  const tip = el.querySelector(".tooltip");
+  const show = (clientX) => {
+    const r = svg.getBoundingClientRect();
+    const vx = ((clientX - r.left) / r.width) * VW;
+    const frac = Math.min(1, Math.max(0, (vx - PADL) / (VW - PADL - PADR)));
+    const i = Math.round(frac * (DATA.dates.length - 1));
+    const snapX = PADL + (i / (DATA.dates.length - 1)) * (VW - PADL - PADR);
+    xhair.setAttribute("x1", snapX); xhair.setAttribute("x2", snapX);
+    xhair.style.display = "";
+    tip.replaceChildren();
+    const dt = document.createElement("div"); dt.className = "tt-date";
+    dt.textContent = DATA.dates[i]; tip.appendChild(dt);
+    for (const a of DATA.apps) {
+      const row = document.createElement("div"); row.className = "tt-row";
+      const key = document.createElement("span"); key.className = "key s" + a.slot;
+      const name = document.createElement("span"); name.textContent = a.name;
+      const val = document.createElement("strong");
+      val.textContent = a[kind][i].toLocaleString("en-US");
+      row.append(key, name, val); tip.appendChild(row);
+    }
+    tip.style.display = "";
+    const px = (snapX / VW) * r.width;
+    tip.style.left = Math.min(px + 14, r.width - 170) + "px";
+    tip.style.top = "24px";
+  };
+  hit.addEventListener("pointermove", (e) => show(e.clientX));
+  hit.addEventListener("pointerleave", () => { tip.style.display = "none"; xhair.style.display = "none"; });
+  hit.setAttribute("tabindex", "0");
+  hit.addEventListener("focus", () => show(svg.getBoundingClientRect().right - 1));
+  hit.addEventListener("blur", () => { tip.style.display = "none"; xhair.style.display = "none"; });
+}
+</script>
+</html>

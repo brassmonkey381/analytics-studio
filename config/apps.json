@@ -1,0 +1,85 @@
+{
+  "windowDays": 30,
+  "apps": [
+    {
+      "id": "doggle",
+      "name": "Doggle",
+      "projectRef": "repmpqbvexbqmocudvhz",
+      "serviceKeyEnv": "DOGGLE_SERVICE_KEY",
+      "dauSources": [
+        {
+          "table": "points_ledger",
+          "userCol": "profile_id",
+          "tsCol": "created_at",
+          "filter": "reason ilike 'Login bonus%'",
+          "restFilter": "reason=ilike.Login%20bonus*"
+        }
+      ],
+      "newUsers": { "table": "profiles", "tsCol": "created_at" },
+      "reportNote": "DAU = daily login-bonus claims (one per user per day of app open)."
+    },
+    {
+      "id": "pickleague",
+      "name": "Pickleague",
+      "projectRef": "qwsmhztzfgbtzieulkgu",
+      "serviceKeyEnv": "PICKLEAGUE_SERVICE_KEY",
+      "dauSources": [
+        {
+          "table": "user_streak_rewards",
+          "userCol": "user_id",
+          "tsCol": "awarded_date"
+        }
+      ],
+      "newUsers": { "table": "profiles", "tsCol": "created_at" },
+      "reportNote": "DAU = daily login-streak claims (one per user per day of app open). Note: 472 profiles were bulk-created within 3 seconds on 2026-07-29 (roster import, not organic signups) — they dominate the 30-day new-user total."
+    },
+    {
+      "id": "michi-maker",
+      "name": "Michi-Maker",
+      "projectRef": "piikwvntldytjejxmcla",
+      "serviceKeyEnv": "TCG_APP_SERVICE_KEY",
+      "metricsSqlFile": "michi-maker.metrics.sql",
+      "coverageSqlFile": "shared-app-coverage.sql",
+      "totalsLabel": "signed-in accounts with activity",
+      "totalsSqlFile": "michi-maker.totals.sql",
+      "retentionSqlFile": "michi-maker.retention.sql",
+      "dauSources": [
+        { "table": "binders", "userCol": "owner_id", "tsCol": "updated_at" },
+        { "table": "saved_slices", "userCol": "owner_id", "tsCol": "created_at" },
+        { "table": "binder_likes", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "profile_upvotes", "userCol": "voter_id", "tsCol": "created_at" },
+        { "table": "print_events", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "binder_reshares", "userCol": "copied_by", "tsCol": "created_at" },
+        { "table": "contest_entries", "userCol": "owner_id", "tsCol": "created_at" }
+      ],
+      "newUsers": null,
+      "reportNote": "Shares one auth pool with TCGScan, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (binder edits, slices, likes, prints), so browsing leaves no trace."
+    },
+    {
+      "id": "tcgscan",
+      "name": "TCGScan",
+      "projectRef": "piikwvntldytjejxmcla",
+      "serviceKeyEnv": "TCG_APP_SERVICE_KEY",
+      "metricsSqlFile": "tcgscan.metrics.sql",
+      "coverageSqlFile": "shared-app-coverage.sql",
+      "totalsLabel": "signed-in accounts with activity",
+      "totalsSqlFile": "tcgscan.totals.sql",
+      "retentionSqlFile": "tcgscan.retention.sql",
+      "dauSources": [
+        { "table": "scan_events", "userCol": "user_id", "tsCol": "created_at" },
+        { "table": "saved_cards", "userCol": "user_id", "tsCol": "updated_at" },
+        { "table": "collections", "userCol": "user_id", "tsCol": "updated_at" },
+        { "table": "portfolio_entries", "userCol": "user_id", "tsCol": "updated_at" },
+        {
+          "table": "user_cards",
+          "userCol": "owner_id",
+          "tsCol": "updated_at",
+          "filter": "source = 'scan'",
+          "restFilter": "source=eq.scan"
+        }
+      ],
+      "newUsers": { "table": "profiles", "tsCol": "created_at" },
+      "reportNote": "Shares one auth pool with Michi-Maker, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (scans, saves, collection edits), so browsing leaves no trace."
+    }
+  ]
+}

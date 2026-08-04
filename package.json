@@ -1,0 +1,12 @@
+{
+  "name": "analytics-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Daily analytics lane: DAU + new users for Doggle, Pickleague, Michi-Maker, TCGScan",
+  "scripts": {
+    "collect": "node scripts/collect.mjs",
+    "report": "node scripts/report.mjs",
+    "daily": "node scripts/collect.mjs && node scripts/report.mjs"
+  }
+}

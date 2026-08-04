@@ -1,0 +1,44 @@
+{
+  "_doc": "Accounts excluded from all metrics: our own accounts, seeded/placeholder rows, QA and test accounts, and automated browser/HTTP clients. Every excluded account is still COUNTED and surfaced in the report so exclusions are never silent. Patterns are SQL ILIKE (use % as wildcard). userAgentRegex is a POSIX regex matched case-insensitively against auth.sessions.user_agent — a user is excluded if ANY of their sessions matches.",
+
+  "global": {
+    "emailPatterns": [
+      "%@example.com",
+      "%@example.org",
+      "%.invalid",
+      "%@%.invalid",
+      "%@%.test",
+      "%test%@%",
+      "%+test@%",
+      "%qa@%",
+      "%playwright%@%",
+      "%e2e%@%",
+      "%automation%@%",
+      "%claude-test%@%"
+    ],
+    "userAgentRegex": "playwright|headless|puppeteer|selenium|webdriver|cypress|^node$|^node/|^curl|python-requests|go-http-client|postmanruntime|insomnia|^axios|^deno|^java/|^wget|scrapy|bot/|crawler|spider",
+    "userIds": [],
+
+    "_ipsDoc": "IP exclusions live in .env as EXCLUDED_IPS (comma-separated), NOT here — an IP address identifies a physical location and this file is committed. They exclude ANONYMOUS GUESTS ONLY: real signed-in accounts are never dropped by IP, because a dev box shares its address with everyone else on that network (a genuine external user has signed in from the dev IP, which is exactly why this rule is guest-scoped). Exclude real accounts by email instead."
+  },
+
+  "byApp": {
+    "doggle": {
+      "_note": "doggle.invalid = seeded synthetic accounts; doggle.club = our own staff/company accounts.",
+      "emailPatterns": ["%@doggle.invalid", "%@doggle.club"]
+    },
+    "pickleague": {
+      "_note": "unclaimed.pickleague.club = auto-generated placeholder rows for imported roster players who never signed up (the 2026-07-29 bulk import); pickleague.test = QA accounts.",
+      "emailPatterns": ["%@unclaimed.pickleague.club", "%@pickleague.test", "%@pickleague.club"]
+    },
+    "tcgscan": {
+      "_note": "official@michi-maker.com is our own company account; owner personal accounts listed explicitly.",
+      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"],
+      "emailExact": ["bstockman1@gmail.com", "bstockman1@hotmail.com"]
+    },
+    "michi-maker": {
+      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"],
+      "emailExact": ["bstockman1@gmail.com", "bstockman1@hotmail.com"]
+    }
+  }
+}
