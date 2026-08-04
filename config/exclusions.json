@@ -19,6 +19,13 @@
     "userAgentRegex": "playwright|headless|puppeteer|selenium|webdriver|cypress|^node$|^node/|^curl|python-requests|go-http-client|postmanruntime|insomnia|^axios|^deno|^java/|^wget|scrapy|bot/|crawler|spider",
     "userIds": [],
 
+    "_emailExactDoc": "Owner accounts, global because the same person signs into every app. brassmonkey381@msn.com matches Brian's GitHub handle and signs in from his dev machine (confirmed 2026-08-04).",
+    "emailExact": [
+      "bstockman1@gmail.com",
+      "bstockman1@hotmail.com",
+      "brassmonkey381@msn.com"
+    ],
+
     "_ipsDoc": "IP exclusions live in .env as EXCLUDED_IPS (comma-separated), NOT here — an IP address identifies a physical location and this file is committed. They exclude ANONYMOUS GUESTS ONLY: real signed-in accounts are never dropped by IP, because a dev box shares its address with everyone else on that network (a genuine external user has signed in from the dev IP, which is exactly why this rule is guest-scoped). Exclude real accounts by email instead."
   },
 
@@ -32,13 +39,11 @@
       "emailPatterns": ["%@unclaimed.pickleague.club", "%@pickleague.test", "%@pickleague.club"]
     },
     "tcgscan": {
-      "_note": "official@michi-maker.com is our own company account; owner personal accounts listed explicitly.",
-      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"],
-      "emailExact": ["bstockman1@gmail.com", "bstockman1@hotmail.com"]
+      "_note": "official@michi-maker.com is our own company account. Owner personal accounts are in global.emailExact, not repeated here.",
+      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"]
     },
     "michi-maker": {
-      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"],
-      "emailExact": ["bstockman1@gmail.com", "bstockman1@hotmail.com"]
+      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"]
     }
   }
 }

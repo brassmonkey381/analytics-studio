@@ -108,14 +108,14 @@ td.muted { color: var(--muted); }
 </style>
 <main>
 <h1>App analytics — last 30 days</h1>
-<div class="meta">Doggle · Pickleague · Michi-Maker · TCGScan &nbsp;·&nbsp; generated 2026-08-04 01:59 UTC<br>Excludes our own, seeded, QA/test and automated accounts (see config/exclusions.json). Guest = anonymous session, not an account.</div>
+<div class="meta">Doggle · Pickleague · Michi-Maker · TCGScan &nbsp;·&nbsp; generated 2026-08-04 03:03 UTC<br>Excludes our own, seeded, QA/test and automated accounts (see config/exclusions.json). Guest = anonymous session, not an account.</div>
 
 <div class="tiles">
 <div class="tile">
   <div class="tile-head"><span class="key s0"></span><span class="label">Doggle</span></div>
-  <div class="value">10</div>
+  <div class="value">8</div>
   <div class="sub">total users</div>
-  <div class="row"><span>DAU yesterday</span><strong>1</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>33</strong></div>
+  <div class="row"><span>DAU yesterday</span><strong>0</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>35</strong></div>
   <div class="row"><span>New users, 30d</span><strong>3</strong></div>
   <div class="row"><span>New users, 7d</span><strong>2</strong> <span class="delta up">+2 vs prior week</span></div>
   <div class="note">DAU = daily login-bonus claims (one per user per day of app open).</div>
@@ -123,9 +123,9 @@ td.muted { color: var(--muted); }
 </div>
 <div class="tile">
   <div class="tile-head"><span class="key s1"></span><span class="label">Pickleague</span></div>
-  <div class="value">5</div>
+  <div class="value">4</div>
   <div class="sub">total users</div>
-  <div class="row"><span>DAU yesterday</span><strong>1</strong></div><div class="row"><span>Guest sessions (anonymous)</span><strong>1</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>490</strong></div>
+  <div class="row"><span>DAU yesterday</span><strong>0</strong></div><div class="row"><span>Guest sessions (anonymous)</span><strong>1</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>491</strong></div>
   <div class="row"><span>New users, 30d</span><strong>0</strong></div>
   <div class="row"><span>New users, 7d</span><strong>0</strong> <span class="delta up">+0 vs prior week</span></div>
   <div class="note">DAU = daily login-streak claims (one per user per day of app open). Note: 472 profiles were bulk-created within 3 seconds on 2026-07-29 (roster import, not organic signups) — they dominate the 30-day new-user total.</div>
@@ -133,10 +133,10 @@ td.muted { color: var(--muted); }
 </div>
 <div class="tile">
   <div class="tile-head"><span class="key s2"></span><span class="label">Michi-Maker</span></div>
-  <div class="value">3</div>
+  <div class="value">2</div>
   <div class="sub">signed-in accounts with activity</div>
-  <div class="row"><span>DAU yesterday</span><strong>1</strong><span class="delta">+1 guest sessions</span></div><div class="row"><span>Guest sessions (anonymous)</span><strong>9</strong></div><div class="row"><span>Registered on shared project</span><strong>4</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>26</strong></div>
-  <div class="row"><span>New users, 30d</span><strong>3</strong></div>
+  <div class="row"><span>DAU yesterday</span><strong>1</strong><span class="delta">+1 guest sessions</span></div><div class="row"><span>Guest sessions (anonymous)</span><strong>9</strong></div><div class="row"><span>Registered on shared project</span><strong>3</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>27</strong></div>
+  <div class="row"><span>New users, 30d</span><strong>2</strong></div>
   <div class="row"><span>New users, 7d</span><strong>1</strong> <span class="delta up">+1 vs prior week</span></div>
   <div class="note">Shares one auth pool with TCGScan, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (binder edits, slices, likes, prints), so browsing leaves no trace.</div>
   
@@ -145,7 +145,7 @@ td.muted { color: var(--muted); }
   <div class="tile-head"><span class="key s3"></span><span class="label">TCGScan</span></div>
   <div class="value">0</div>
   <div class="sub">signed-in accounts with activity</div>
-  <div class="row"><span>DAU yesterday</span><strong>0</strong><span class="delta">+2 guest sessions</span></div><div class="row"><span>Guest sessions (anonymous)</span><strong>84</strong></div><div class="row"><span>Registered on shared project</span><strong>4</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>104</strong></div>
+  <div class="row"><span>DAU yesterday</span><strong>0</strong><span class="delta">+2 guest sessions</span></div><div class="row"><span>Guest sessions (anonymous)</span><strong>84</strong></div><div class="row"><span>Registered on shared project</span><strong>3</strong></div><div class="row excl"><span>Excluded (ours / QA / automated)</span><strong>104</strong></div>
   <div class="row"><span>New users, 30d</span><strong>0</strong></div>
   <div class="row"><span>New users, 7d</span><strong>0</strong> <span class="delta up">+0 vs prior week</span></div>
   <div class="note">Shares one auth pool with Michi-Maker, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (scans, saves, collection edits), so browsing leaves no trace.</div>
@@ -157,62 +157,62 @@ td.muted { color: var(--muted); }
 <p class="axisnote">Active = signed in within the window; churned is its exact complement, so each pair sums to that app's total. Shared scale across apps, so bar length is headcount. Numbers read active / churned.</p>
 <div class="legend"><span class="legend-item"><span class="swatch ret-active"></span>Active</span><span class="legend-item"><span class="swatch ret-churned"></span>Churned</span></div>
 <div class="sm-grid"><figure class="sm">
-<figcaption><span class="key s0"></span>Doggle <strong>10</strong></figcaption>
+<figcaption><span class="key s0"></span>Doggle <strong>8</strong></figcaption>
 <svg viewBox="0 0 320 100" role="img" aria-label="Doggle active versus churned users by window">
 <g>
 <text x="28" y="17" class="tick" text-anchor="end">7d</text>
-<rect x="34" y="6" width="82.8" height="14" rx="4" class="ret-active"/><rect x="118.8" y="6" width="191.2" height="14" rx="4" class="ret-churned"/>
-<text x="316.0" y="17" class="barval">3<tspan class="barval-muted"> / 7</tspan></text>
+<rect x="34" y="6" width="34.5" height="14" rx="4" class="ret-active"/><rect x="70.5" y="6" width="239.5" height="14" rx="4" class="ret-churned"/>
+<text x="316.0" y="17" class="barval">1<tspan class="barval-muted"> / 7</tspan></text>
 </g>
 <g>
 <text x="28" y="47" class="tick" text-anchor="end">14d</text>
-<rect x="34" y="36" width="110.4" height="14" rx="4" class="ret-active"/><rect x="146.4" y="36" width="163.6" height="14" rx="4" class="ret-churned"/>
-<text x="316.0" y="47" class="barval">4<tspan class="barval-muted"> / 6</tspan></text>
+<rect x="34" y="36" width="69.0" height="14" rx="4" class="ret-active"/><rect x="105.0" y="36" width="205.0" height="14" rx="4" class="ret-churned"/>
+<text x="316.0" y="47" class="barval">2<tspan class="barval-muted"> / 6</tspan></text>
 </g>
 <g>
 <text x="28" y="77" class="tick" text-anchor="end">30d</text>
-<rect x="34" y="66" width="110.4" height="14" rx="4" class="ret-active"/><rect x="146.4" y="66" width="163.6" height="14" rx="4" class="ret-churned"/>
-<text x="316.0" y="77" class="barval">4<tspan class="barval-muted"> / 6</tspan></text>
+<rect x="34" y="66" width="69.0" height="14" rx="4" class="ret-active"/><rect x="105.0" y="66" width="205.0" height="14" rx="4" class="ret-churned"/>
+<text x="316.0" y="77" class="barval">2<tspan class="barval-muted"> / 6</tspan></text>
 </g>
 </svg>
 </figure>
 <figure class="sm">
-<figcaption><span class="key s1"></span>Pickleague <strong>5</strong></figcaption>
+<figcaption><span class="key s1"></span>Pickleague <strong>4</strong></figcaption>
 <svg viewBox="0 0 320 100" role="img" aria-label="Pickleague active versus churned users by window">
 <g>
 <text x="28" y="17" class="tick" text-anchor="end">7d</text>
-<rect x="34" y="6" width="27.6" height="14" rx="4" class="ret-active"/><rect x="63.6" y="6" width="108.4" height="14" rx="4" class="ret-churned"/>
-<text x="178.0" y="17" class="barval">1<tspan class="barval-muted"> / 4</tspan></text>
+<rect x="34.0" y="6" width="138.0" height="14" rx="4" class="ret-churned"/>
+<text x="178.0" y="17" class="barval">0<tspan class="barval-muted"> / 4</tspan></text>
 </g>
 <g>
 <text x="28" y="47" class="tick" text-anchor="end">14d</text>
-<rect x="34" y="36" width="27.6" height="14" rx="4" class="ret-active"/><rect x="63.6" y="36" width="108.4" height="14" rx="4" class="ret-churned"/>
-<text x="178.0" y="47" class="barval">1<tspan class="barval-muted"> / 4</tspan></text>
+<rect x="34.0" y="36" width="138.0" height="14" rx="4" class="ret-churned"/>
+<text x="178.0" y="47" class="barval">0<tspan class="barval-muted"> / 4</tspan></text>
 </g>
 <g>
 <text x="28" y="77" class="tick" text-anchor="end">30d</text>
-<rect x="34" y="66" width="27.6" height="14" rx="4" class="ret-active"/><rect x="63.6" y="66" width="108.4" height="14" rx="4" class="ret-churned"/>
-<text x="178.0" y="77" class="barval">1<tspan class="barval-muted"> / 4</tspan></text>
+<rect x="34.0" y="66" width="138.0" height="14" rx="4" class="ret-churned"/>
+<text x="178.0" y="77" class="barval">0<tspan class="barval-muted"> / 4</tspan></text>
 </g>
 </svg>
 </figure>
 <figure class="sm">
-<figcaption><span class="key s2"></span>Michi-Maker <strong>3</strong></figcaption>
+<figcaption><span class="key s2"></span>Michi-Maker <strong>2</strong></figcaption>
 <svg viewBox="0 0 320 100" role="img" aria-label="Michi-Maker active versus churned users by window">
 <g>
 <text x="28" y="17" class="tick" text-anchor="end">7d</text>
-<rect x="34" y="6" width="55.2" height="14" rx="4" class="ret-active"/><rect x="91.2" y="6" width="25.6" height="14" rx="4" class="ret-churned"/>
-<text x="122.8" y="17" class="barval">2<tspan class="barval-muted"> / 1</tspan></text>
+<rect x="34" y="6" width="34.5" height="14" rx="4" class="ret-active"/><rect x="70.5" y="6" width="32.5" height="14" rx="4" class="ret-churned"/>
+<text x="109.0" y="17" class="barval">1<tspan class="barval-muted"> / 1</tspan></text>
 </g>
 <g>
 <text x="28" y="47" class="tick" text-anchor="end">14d</text>
-<rect x="34" y="36" width="82.8" height="14" rx="4" class="ret-active"/>
-<text x="122.8" y="47" class="barval">3<tspan class="barval-muted"> / 0</tspan></text>
+<rect x="34" y="36" width="69.0" height="14" rx="4" class="ret-active"/>
+<text x="109.0" y="47" class="barval">2<tspan class="barval-muted"> / 0</tspan></text>
 </g>
 <g>
 <text x="28" y="77" class="tick" text-anchor="end">30d</text>
-<rect x="34" y="66" width="82.8" height="14" rx="4" class="ret-active"/>
-<text x="122.8" y="77" class="barval">3<tspan class="barval-muted"> / 0</tspan></text>
+<rect x="34" y="66" width="69.0" height="14" rx="4" class="ret-active"/>
+<text x="109.0" y="77" class="barval">2<tspan class="barval-muted"> / 0</tspan></text>
 </g>
 </svg>
 </figure>
@@ -228,21 +228,21 @@ td.muted { color: var(--muted); }
 <line x1="48" y1="266" x2="740" y2="266" class="baseline"/>
 <text x="40" y="270" class="tick" text-anchor="end">0</text>
 <line x1="48" y1="203.5" x2="740" y2="203.5" class="grid"/>
-<text x="40" y="207.5" class="tick" text-anchor="end">1</text>
+<text x="40" y="207.5" class="tick" text-anchor="end">0.5</text>
 <line x1="48" y1="141" x2="740" y2="141" class="grid"/>
-<text x="40" y="145" class="tick" text-anchor="end">2</text>
+<text x="40" y="145" class="tick" text-anchor="end">1</text>
 <line x1="48" y1="78.5" x2="740" y2="78.5" class="grid"/>
-<text x="40" y="82.5" class="tick" text-anchor="end">3</text>
+<text x="40" y="82.5" class="tick" text-anchor="end">1.5</text>
 <line x1="48" y1="16" x2="740" y2="16" class="grid"/>
-<text x="40" y="20" class="tick" text-anchor="end">4</text>
+<text x="40" y="20" class="tick" text-anchor="end">2</text>
 <text x="48" y="284" class="tick" text-anchor="middle">07-06</text>
 <text x="382.0689655172414" y="284" class="tick" text-anchor="middle">07-20</text>
 <text x="740" y="284" class="tick" text-anchor="middle">08-04</text>
-<path d="M48.0,203.5L71.9,141.0L95.7,203.5L119.6,141.0L143.4,141.0L167.3,203.5L191.2,203.5L215.0,78.5L238.9,266.0L262.8,141.0L286.6,203.5L310.5,266.0L334.3,16.0L358.2,78.5L382.1,203.5L405.9,141.0L429.8,78.5L453.7,141.0L477.5,141.0L501.4,141.0L525.2,203.5L549.1,203.5L573.0,266.0L596.8,141.0L620.7,141.0L644.6,266.0L668.4,78.5L692.3,141.0L716.1,203.5L740.0,266.0" class="line s0"/>
+<path d="M48.0,266.0L71.9,141.0L95.7,266.0L119.6,141.0L143.4,141.0L167.3,266.0L191.2,266.0L215.0,16.0L238.9,266.0L262.8,141.0L286.6,266.0L310.5,266.0L334.3,16.0L358.2,141.0L382.1,266.0L405.9,141.0L429.8,141.0L453.7,141.0L477.5,141.0L501.4,141.0L525.2,266.0L549.1,266.0L573.0,266.0L596.8,266.0L620.7,141.0L644.6,266.0L668.4,16.0L692.3,141.0L716.1,266.0L740.0,266.0" class="line s0"/>
 <circle cx="740" cy="266" r="4" class="dot s0"/>
-<path d="M48.0,266.0L71.9,203.5L95.7,203.5L119.6,266.0L143.4,266.0L167.3,203.5L191.2,203.5L215.0,266.0L238.9,266.0L262.8,266.0L286.6,266.0L310.5,266.0L334.3,203.5L358.2,266.0L382.1,266.0L405.9,203.5L429.8,203.5L453.7,266.0L477.5,266.0L501.4,266.0L525.2,266.0L549.1,203.5L573.0,266.0L596.8,203.5L620.7,203.5L644.6,266.0L668.4,203.5L692.3,203.5L716.1,203.5L740.0,266.0" class="line s1"/>
+<path d="M48.0,266.0L71.9,266.0L95.7,266.0L119.6,266.0L143.4,266.0L167.3,266.0L191.2,266.0L215.0,266.0L238.9,266.0L262.8,266.0L286.6,266.0L310.5,266.0L334.3,266.0L358.2,266.0L382.1,266.0L405.9,266.0L429.8,266.0L453.7,266.0L477.5,266.0L501.4,266.0L525.2,266.0L549.1,266.0L573.0,266.0L596.8,266.0L620.7,266.0L644.6,266.0L668.4,266.0L692.3,266.0L716.1,266.0L740.0,266.0" class="line s1"/>
 <circle cx="740" cy="266" r="4" class="dot s1"/>
-<path d="M48.0,266.0L71.9,266.0L95.7,266.0L119.6,266.0L143.4,203.5L167.3,203.5L191.2,266.0L215.0,266.0L238.9,203.5L262.8,266.0L286.6,203.5L310.5,203.5L334.3,141.0L358.2,266.0L382.1,203.5L405.9,203.5L429.8,141.0L453.7,266.0L477.5,266.0L501.4,266.0L525.2,203.5L549.1,266.0L573.0,266.0L596.8,266.0L620.7,266.0L644.6,266.0L668.4,266.0L692.3,203.5L716.1,203.5L740.0,266.0" class="line s2"/>
+<path d="M48.0,266.0L71.9,266.0L95.7,266.0L119.6,266.0L143.4,266.0L167.3,266.0L191.2,266.0L215.0,266.0L238.9,266.0L262.8,266.0L286.6,266.0L310.5,266.0L334.3,141.0L358.2,266.0L382.1,141.0L405.9,266.0L429.8,141.0L453.7,266.0L477.5,266.0L501.4,266.0L525.2,266.0L549.1,266.0L573.0,266.0L596.8,266.0L620.7,266.0L644.6,266.0L668.4,266.0L692.3,266.0L716.1,141.0L740.0,266.0" class="line s2"/>
 <circle cx="740" cy="266" r="4" class="dot s2"/>
 <path d="M48.0,266.0L71.9,266.0L95.7,266.0L119.6,266.0L143.4,266.0L167.3,266.0L191.2,266.0L215.0,266.0L238.9,266.0L262.8,266.0L286.6,266.0L310.5,266.0L334.3,266.0L358.2,266.0L382.1,266.0L405.9,266.0L429.8,266.0L453.7,266.0L477.5,266.0L501.4,266.0L525.2,266.0L549.1,266.0L573.0,266.0L596.8,266.0L620.7,266.0L644.6,266.0L668.4,266.0L692.3,266.0L716.1,266.0L740.0,266.0" class="line s3"/>
 <circle cx="740" cy="266" r="4" class="dot s3"/>
@@ -282,15 +282,15 @@ td.muted { color: var(--muted); }
 </svg>
 </figure>
 <figure class="sm">
-<figcaption><span class="key s2"></span>Michi-Maker <strong>3</strong></figcaption>
+<figcaption><span class="key s2"></span>Michi-Maker <strong>2</strong></figcaption>
 <svg viewBox="0 0 300 132" role="img" aria-label="Michi-Maker cumulative new users">
 <line x1="40" y1="110" x2="288" y2="110" class="baseline"/>
 <text x="34" y="114" class="tick" text-anchor="end">0</text>
 <line x1="40" y1="12" x2="288" y2="12" class="grid"/>
-<text x="34" y="16" class="tick" text-anchor="end">3</text>
+<text x="34" y="16" class="tick" text-anchor="end">2</text>
 <text x="40" y="126" class="tick">07-06</text>
 <text x="288" y="126" class="tick" text-anchor="end">08-04</text>
-<path d="M40.0,110.0L48.6,110.0L57.1,110.0L65.7,77.3L74.2,77.3L82.8,77.3L91.3,77.3L99.9,77.3L108.4,77.3L117.0,77.3L125.5,77.3L134.1,77.3L142.6,44.7L151.2,44.7L159.7,44.7L168.3,44.7L176.8,44.7L185.4,44.7L193.9,44.7L202.5,44.7L211.0,44.7L219.6,44.7L228.1,44.7L236.7,44.7L245.2,44.7L253.8,44.7L262.3,44.7L270.9,44.7L279.4,12.0L288.0,12.0" class="line s2"/>
+<path d="M40.0,110.0L48.6,110.0L57.1,110.0L65.7,110.0L74.2,110.0L82.8,110.0L91.3,110.0L99.9,110.0L108.4,110.0L117.0,110.0L125.5,110.0L134.1,110.0L142.6,61.0L151.2,61.0L159.7,61.0L168.3,61.0L176.8,61.0L185.4,61.0L193.9,61.0L202.5,61.0L211.0,61.0L219.6,61.0L228.1,61.0L236.7,61.0L245.2,61.0L253.8,61.0L262.3,61.0L270.9,61.0L279.4,12.0L288.0,12.0" class="line s2"/>
 <circle cx="288" cy="12" r="4" class="dot s2"/>
 </svg>
 </figure>
@@ -311,39 +311,39 @@ td.muted { color: var(--muted); }
 <details>
 <summary>Data table (30 days × 4 apps)</summary>
 <div class="tablewrap"><table><thead><tr><th rowspan="2">Date</th><th colspan="3">Doggle</th><th colspan="3">Pickleague</th><th colspan="3">Michi-Maker</th><th colspan="3">TCGScan</th></tr><tr><th>DAU</th><th>Guest</th><th>New</th><th>DAU</th><th>Guest</th><th>New</th><th>DAU</th><th>Guest</th><th>New</th><th>DAU</th><th>Guest</th><th>New</th></tr></thead><tbody><tr><td>2026-08-04</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-08-03</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">1</td><td>1</td><td>0</td><td class="muted">2</td><td>0</td></tr>
-<tr><td>2026-08-02</td><td>2</td><td class="muted">0</td><td>1</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">3</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
-<tr><td>2026-08-01</td><td>3</td><td class="muted">0</td><td>1</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-08-03</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">1</td><td>1</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-08-02</td><td>1</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-08-01</td><td>2</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
 <tr><td>2026-07-31</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
-<tr><td>2026-07-30</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
-<tr><td>2026-07-29</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-30</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-29</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
 <tr><td>2026-07-28</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
-<tr><td>2026-07-27</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
-<tr><td>2026-07-26</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
-<tr><td>2026-07-25</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
-<tr><td>2026-07-24</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
-<tr><td>2026-07-23</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">5</td><td>0</td></tr>
-<tr><td>2026-07-22</td><td>3</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>2</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
-<tr><td>2026-07-21</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
-<tr><td>2026-07-20</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">4</td><td>0</td></tr>
-<tr><td>2026-07-19</td><td>3</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">17</td><td>0</td></tr>
-<tr><td>2026-07-18</td><td>4</td><td class="muted">0</td><td>1</td><td>1</td><td class="muted">0</td><td>0</td><td>2</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">4</td><td>0</td></tr>
-<tr><td>2026-07-17</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">7</td><td>0</td></tr>
-<tr><td>2026-07-16</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">21</td><td>0</td></tr>
-<tr><td>2026-07-15</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
-<tr><td>2026-07-14</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-13</td><td>3</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-12</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-11</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
-<tr><td>2026-07-10</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-09</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-08</td><td>1</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-07</td><td>2</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
-<tr><td>2026-07-06</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr></tbody></table></div>
+<tr><td>2026-07-27</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-07-26</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-25</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td></tr>
+<tr><td>2026-07-24</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">2</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
+<tr><td>2026-07-23</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">5</td><td>0</td></tr>
+<tr><td>2026-07-22</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">3</td><td>0</td></tr>
+<tr><td>2026-07-21</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-20</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">4</td><td>0</td></tr>
+<tr><td>2026-07-19</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">17</td><td>0</td></tr>
+<tr><td>2026-07-18</td><td>2</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">0</td><td>0</td><td>1</td><td class="muted">0</td><td>1</td><td>0</td><td class="muted">4</td><td>0</td></tr>
+<tr><td>2026-07-17</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td><td>0</td><td class="muted">7</td><td>0</td></tr>
+<tr><td>2026-07-16</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">21</td><td>0</td></tr>
+<tr><td>2026-07-15</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-14</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-13</td><td>2</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-12</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-11</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">1</td><td>0</td></tr>
+<tr><td>2026-07-10</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-09</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-08</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-07</td><td>1</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr>
+<tr><td>2026-07-06</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td><td>0</td><td class="muted">0</td><td>0</td></tr></tbody></table></div>
 </details>
 </main>
 <script>
-const DATA = {"dates":["2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-11","2026-07-12","2026-07-13","2026-07-14","2026-07-15","2026-07-16","2026-07-17","2026-07-18","2026-07-19","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-25","2026-07-26","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-01","2026-08-02","2026-08-03","2026-08-04"],"apps":[{"name":"Doggle","slot":0,"dau":[1,2,1,2,2,1,1,3,0,2,1,0,4,3,1,2,3,2,2,2,1,1,0,2,2,0,3,2,1,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3]},{"name":"Pickleague","slot":1,"dau":[0,1,1,0,0,1,1,0,0,0,0,0,1,0,0,1,1,0,0,0,0,1,0,1,1,0,1,1,1,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"name":"Michi-Maker","slot":2,"dau":[0,0,0,0,1,1,0,0,1,0,1,1,2,0,1,1,2,0,0,0,1,0,0,0,0,0,0,1,1,0],"cumNew":[0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3]},{"name":"TCGScan","slot":3,"dau":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}]};
+const DATA = {"dates":["2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-11","2026-07-12","2026-07-13","2026-07-14","2026-07-15","2026-07-16","2026-07-17","2026-07-18","2026-07-19","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-25","2026-07-26","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-01","2026-08-02","2026-08-03","2026-08-04"],"apps":[{"name":"Doggle","slot":0,"dau":[0,1,0,1,1,0,0,2,0,1,0,0,2,1,0,1,1,1,1,1,0,0,0,0,1,0,2,1,0,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3,3,3]},{"name":"Pickleague","slot":1,"dau":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"name":"Michi-Maker","slot":2,"dau":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2]},{"name":"TCGScan","slot":3,"dau":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"cumNew":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}]};
 const PADL = 48, PADR = 120, VW = 860;
 for (const el of document.querySelectorAll(".chart")) {
   const kind = el.dataset.chart === "dau" ? "dau" : "cumNew";

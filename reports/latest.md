@@ -1,21 +1,21 @@
 # App analytics — last 30 days
 
-Generated 2026-08-04 01:59 UTC
+Generated 2026-08-04 03:03 UTC
 
 | App | Total users | DAU (yesterday) | New users 7d | New users 30d |
 |---|---|---|---|---|
-| Doggle | 10 | 1 | 2 | 3 |
-| Pickleague | 5 | 1 | 0 | 0 |
-| Michi-Maker | 3 | 1 | 1 | 3 |
+| Doggle | 8 | 0 | 2 | 3 |
+| Pickleague | 4 | 0 | 0 | 0 |
+| Michi-Maker | 2 | 1 | 1 | 2 |
 | TCGScan | 0 | 0 | 0 | 0 |
 
 ## Total distinct users — active vs churned
 
 | App | Total | Active 7d | Churned 7d | Active 14d | Churned 14d | Active 30d | Churned 30d |
 |---|---|---|---|---|---|---|---|
-| Doggle | 10 | 3 | 7 | 4 | 6 | 4 | 6 |
-| Pickleague | 5 | 1 | 4 | 1 | 4 | 1 | 4 |
-| Michi-Maker | 3 | 2 | 1 | 3 | 0 | 3 | 0 |
+| Doggle | 8 | 1 | 7 | 2 | 6 | 2 | 6 |
+| Pickleague | 4 | 0 | 4 | 0 | 4 | 0 | 4 |
+| Michi-Maker | 2 | 1 | 1 | 2 | 0 | 2 | 0 |
 | TCGScan | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 - Doggle: DAU = daily login-bonus claims (one per user per day of app open).
