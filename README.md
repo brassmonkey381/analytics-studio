@@ -42,6 +42,15 @@ npm run report       # just rebuild reports from stored data
 .\setup-schedule.ps1 # register the daily 08:07 scheduled task (run once)
 ```
 
+`run-daily.ps1` also commits and pushes `data/metrics.json` after each run,
+so the history stays current unattended. Only that file is staged — the
+report, `accounts.json` and logs are gitignored because they embed emails.
+Before committing it scans the staged diff for email addresses, Supabase
+PATs, secret keys, JWTs and IPv4 literals, and **fails closed**: any match
+unstages, logs what matched, and commits nothing. That is a backstop, not
+the primary defence — `.gitignore` is. Set `$AutoCommit` or `$AutoPush` to
+`$false` at the top of the script to disable either half.
+
 Open `reports/report.html` for charts (light/dark aware, hover for per-day
 values, data table at the bottom); `reports/latest.md` is a text summary.
 
