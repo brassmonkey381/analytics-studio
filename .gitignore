@@ -1,3 +1,10 @@
 .env
 node_modules/
 logs/
+
+# Contains real users' email addresses. metrics.json stays counts-only and IS
+# committed as the historical record; these two carry PII and must not enter
+# git history, where removing them would mean rewriting it.
+data/accounts.json
+reports/report.html
+reports/latest.md

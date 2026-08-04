@@ -17,6 +17,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CONFIG = JSON.parse(readFileSync(join(ROOT, "config", "apps.json"), "utf8"));
 const EXCLUSIONS = JSON.parse(readFileSync(join(ROOT, "config", "exclusions.json"), "utf8"));
 const DATA_FILE = join(ROOT, "data", "metrics.json");
+// Emails live apart from metrics.json: that file is committed as the historical
+// record and must stay free of PII. This sidecar is gitignored.
+const ACCOUNTS_FILE = join(ROOT, "data", "accounts.json");
 
 loadEnv(join(ROOT, ".env"));
 
@@ -174,6 +177,38 @@ select count(*)::int as total,
 from cohort`;
 }
 
+// Account roster for report hover: who each number is actually made of.
+// created_at drives the new-user day, last_sign_in_at the retention bucket.
+function buildRosterSql(app) {
+  const from = app.newUsers.schema === "auth" ? "auth.users" : `public.${app.newUsers.table}`;
+  return `with ${exclusionCte(app.id)}
+select coalesce(u.email, '(no email)') as email,
+       u.last_sign_in_at, n.${app.newUsers.tsCol} as created_at
+from ${from} n join auth.users u on u.id = n.id
+where not coalesce(u.is_anonymous, false)
+  and n.id not in (select id from excluded_users)
+order by u.last_sign_in_at desc nulls last`;
+}
+
+// Which accounts were active on each day of the window.
+function buildActiveByDaySql(app) {
+  const union = app.dauSources
+    .map((s) => {
+      const where = [`${s.tsCol} >= now() - interval '${WINDOW_DAYS} days'`, s.filter].filter(Boolean).join(" and ");
+      return `select ${s.userCol} as uid, (${s.tsCol})::date as d from public.${s.table} where ${where}`;
+    })
+    .join("\nunion all\n");
+  return `with ${exclusionCte(app.id)},
+activity as (
+${union}
+)
+select distinct a.d::text as day, coalesce(u.email, '(no email)') as email
+from activity a join auth.users u on u.id = a.uid
+where not coalesce(u.is_anonymous, false)
+  and a.uid not in (select id from excluded_users)
+order by 1, 2`;
+}
+
 function buildTotalsSql(app) {
   const from = app.newUsers.schema === "auth" ? "auth.users" : `public.${app.newUsers.table}`;
   const where = app.newUsers.filter ? ` and ${app.newUsers.filter}` : "";
@@ -214,6 +249,12 @@ async function collectViaSql(app) {
     : buildRetentionSql(app);
   const retention = (await runSql(app.projectRef, retentionSql))[0] ?? null;
 
+  const rosterSql = app.rosterSqlFile ? sqlFromFile(app.rosterSqlFile, app.id) : buildRosterSql(app);
+  const roster = await runSql(app.projectRef, rosterSql);
+  const activeRows = await runSql(app.projectRef, buildActiveByDaySql(app));
+  const activeByDay = {};
+  for (const r of activeRows) (activeByDay[r.day] ??= []).push(r.email);
+
   let coverage = null;
   if (app.coverageSqlFile) {
     coverage = (await runSql(app.projectRef, sqlFromFile(app.coverageSqlFile, app.id)))[0] ?? null;
@@ -225,6 +266,7 @@ async function collectViaSql(app) {
     excludedUsers: totals[0]?.excluded_users ?? null,
     retention,
     coverage,
+    accounts: { roster, activeByDay },
     source: "sql",
   };
 }
@@ -303,6 +345,7 @@ async function collectViaRest(app, key) {
 const store = existsSync(DATA_FILE)
   ? JSON.parse(readFileSync(DATA_FILE, "utf8"))
   : { apps: {} };
+const accountsStore = { _doc: "Email addresses for report hover. Gitignored - keep PII out of the committed history.", apps: {} };
 
 let failures = 0;
 for (const app of CONFIG.apps) {
@@ -324,6 +367,7 @@ for (const app of CONFIG.apps) {
     entry.excludedUsers = result.excludedUsers ?? null;
     entry.retention = result.retention ?? null;
     entry.coverage = result.coverage ?? null;
+    if (result.accounts) accountsStore.apps[app.id] = result.accounts;
     entry.lastCollected = new Date().toISOString();
     entry.lastSource = result.source;
     Object.assign(entry.days, result.days);
@@ -345,6 +389,10 @@ for (const app of CONFIG.apps) {
 mkdirSync(dirname(DATA_FILE), { recursive: true });
 writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
 console.log(`\nWrote ${DATA_FILE}`);
+if (Object.keys(accountsStore.apps).length) {
+  writeFileSync(ACCOUNTS_FILE, JSON.stringify(accountsStore, null, 2));
+  console.log(`Wrote ${ACCOUNTS_FILE} (gitignored - contains emails)`);
+}
 // Exit non-zero only if EVERY app failed. A partial failure still has data
 // worth reporting, so the report step must not be short-circuited by it.
 if (failures) {

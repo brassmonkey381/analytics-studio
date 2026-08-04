@@ -1,12 +1,16 @@
 // Report generator: reads data/metrics.json, writes reports/report.html and
 // reports/latest.md covering the trailing 30-day window.
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const store = JSON.parse(readFileSync(join(ROOT, "data", "metrics.json"), "utf8"));
+// Optional, gitignored: emails for hover. Absent on a REST-only collection.
+const ACCOUNTS_PATH = join(ROOT, "data", "accounts.json");
+const accounts = existsSync(ACCOUNTS_PATH) ? JSON.parse(readFileSync(ACCOUNTS_PATH, "utf8")).apps : {};
+const MAX_HOVER_EMAILS = 20;
 const CONFIG = JSON.parse(readFileSync(join(ROOT, "config", "apps.json"), "utf8"));
 
 const WINDOW = CONFIG.windowDays ?? 30;
@@ -190,20 +194,24 @@ function retentionChart() {
         const aw = (active / maxTotal) * barW;
         const gap = active && churned ? 2 : 0;
         const cw = Math.max(0, full - aw - gap);
+        // Hit areas are the full row height so a 14px bar is easy to hover.
         const parts = [];
-        if (active) parts.push(`<rect x="${padL}" y="${y}" width="${aw.toFixed(1)}" height="14" rx="4" class="ret-active"/>`);
-        if (churned) parts.push(`<rect x="${(padL + aw + gap).toFixed(1)}" y="${y}" width="${cw.toFixed(1)}" height="14" rx="4" class="ret-churned"/>`);
+        if (active) parts.push(`<rect x="${padL}" y="${y}" width="${aw.toFixed(1)}" height="14" rx="4" class="ret-active"/>
+<rect x="${padL}" y="${y - 4}" width="${aw.toFixed(1)}" height="22" fill="transparent" class="ret-hit" tabindex="0" data-app="${esc(a.id)}" data-win="${n}" data-kind="active"/>`);
+        if (churned) parts.push(`<rect x="${(padL + aw + gap).toFixed(1)}" y="${y}" width="${cw.toFixed(1)}" height="14" rx="4" class="ret-churned"/>
+<rect x="${(padL + aw + gap).toFixed(1)}" y="${y - 4}" width="${cw.toFixed(1)}" height="22" fill="transparent" class="ret-hit" tabindex="0" data-app="${esc(a.id)}" data-win="${n}" data-kind="churned"/>`);
         return `<g>
 <text x="${padL - 6}" y="${y + 11}" class="tick" text-anchor="end">${n}d</text>
 ${parts.join("")}
 <text x="${(padL + full + 6).toFixed(1)}" y="${y + 11}" class="barval">${active}<tspan class="barval-muted"> / ${churned}</tspan></text>
 </g>`;
       }).join("\n");
-      return `<figure class="sm">
+      return `<figure class="sm ret-fig">
 <figcaption><span class="key s${a.slot}"></span>${esc(a.name)} <strong>${fmt(r.total)}</strong></figcaption>
 <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(a.name)} active versus churned users by window">
 ${rows}
 </svg>
+<div class="tooltip" style="display:none"></div>
 </figure>`;
     })
     .join("\n")}</div>`;
@@ -276,8 +284,21 @@ const legend = plotted
 
 const chartData = JSON.stringify({
   dates,
-  apps: plotted.map((a) => ({ name: a.name, slot: a.slot, dau: a.dau, cumNew: a.cumNew })),
+  apps: plotted.map((a) => ({ id: a.id, name: a.name, slot: a.slot, dau: a.dau, cumNew: a.cumNew })),
 });
+
+// Roster carries only what the hover needs; activeByDay is already per-day.
+const accountData = JSON.stringify(
+  Object.fromEntries(
+    Object.entries(accounts).map(([id, v]) => [
+      id,
+      {
+        roster: (v.roster ?? []).map((r) => ({ e: r.email, l: r.last_sign_in_at })),
+        byDay: v.activeByDay ?? {},
+      },
+    ]),
+  ),
+);
 
 const generated = new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC";
 
@@ -387,6 +408,13 @@ td.muted { color: var(--muted); }
 .barval { fill: var(--ink); font-size: 11px; font-variant-numeric: tabular-nums; }
 .barval-muted { fill: var(--muted); }
 .empty { color: var(--muted); font-size: 12px; padding: 14px 4px 18px; }
+.tt-email { color: var(--ink-2); font-size: 11px; padding: 1px 0; word-break: break-all; }
+.tt-more { color: var(--muted); font-size: 11px; padding: 2px 0 0; font-style: italic; }
+.tt-emails { padding: 2px 0 4px 20px; }
+.ret-fig { position: relative; }
+.ret-fig .tooltip { top: 30px; left: 12px; right: 12px; max-height: 260px; overflow-y: auto; }
+.ret-hit { cursor: pointer; outline: none; }
+.ret-hit:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
 </style>
 <main>
 <h1>App analytics — last ${WINDOW} days</h1>
@@ -416,7 +444,61 @@ ${smallMultiples("cumNew")}
 </main>
 <script>
 const DATA = ${chartData};
+const ACCOUNTS = ${accountData};
+const MAX_EMAILS = ${MAX_HOVER_EMAILS};
 const PADL = ${PAD.l}, PADR = ${PAD.r}, VW = ${W};
+
+// Emails are user-supplied strings: build these nodes with textContent only.
+function emailList(parent, emails) {
+  const shown = emails.slice(0, MAX_EMAILS);
+  for (const em of shown) {
+    const row = document.createElement("div");
+    row.className = "tt-email";
+    row.textContent = em;
+    parent.appendChild(row);
+  }
+  if (emails.length > shown.length) {
+    const more = document.createElement("div");
+    more.className = "tt-more";
+    more.textContent = "+" + (emails.length - shown.length) + " more (" + emails.length + " total)";
+    parent.appendChild(more);
+  }
+  if (!emails.length) {
+    const none = document.createElement("div");
+    none.className = "tt-more";
+    none.textContent = "no accounts";
+    parent.appendChild(none);
+  }
+}
+
+// Retention bars: hovering a segment lists the accounts inside it.
+for (const fig of document.querySelectorAll(".ret-fig")) {
+  const tip = fig.querySelector(".tooltip");
+  const hide = () => { tip.style.display = "none"; };
+  for (const hit of fig.querySelectorAll(".ret-hit")) {
+    const show = () => {
+      const acct = ACCOUNTS[hit.dataset.app];
+      if (!acct) return;
+      const win = Number(hit.dataset.win);
+      const kind = hit.dataset.kind;
+      const cutoff = Date.now() - win * 86400000;
+      const inWindow = (r) => r.l && new Date(r.l).getTime() >= cutoff;
+      const picked = acct.roster.filter((r) => (kind === "active" ? inWindow(r) : !inWindow(r)));
+      picked.sort((p, q) => (q.l || "").localeCompare(p.l || ""));
+      tip.replaceChildren();
+      const head = document.createElement("div");
+      head.className = "tt-date";
+      head.textContent = (kind === "active" ? "Active" : "Churned") + " \\u2013 " + win + "d \\u2013 " + picked.length;
+      tip.appendChild(head);
+      emailList(tip, picked.map((r) => r.e));
+      tip.style.display = "";
+    };
+    hit.addEventListener("pointerenter", show);
+    hit.addEventListener("focus", show);
+    hit.addEventListener("pointerleave", hide);
+    hit.addEventListener("blur", hide);
+  }
+}
 for (const el of document.querySelectorAll(".chart")) {
   const kind = el.dataset.chart === "dau" ? "dau" : "cumNew";
   const svg = el.querySelector("svg");
@@ -441,6 +523,16 @@ for (const el of document.querySelectorAll(".chart")) {
       const val = document.createElement("strong");
       val.textContent = a[kind][i].toLocaleString("en-US");
       row.append(key, name, val); tip.appendChild(row);
+      // On the DAU chart, name who was active that day.
+      if (kind === "dau") {
+        const who = ACCOUNTS[a.id]?.byDay?.[DATA.dates[i]] ?? [];
+        if (who.length) {
+          const box = document.createElement("div");
+          box.className = "tt-emails";
+          emailList(box, who);
+          tip.appendChild(box);
+        }
+      }
     }
     tip.style.display = "";
     const px = (snapX / VW) * r.width;
