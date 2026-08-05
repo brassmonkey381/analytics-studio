@@ -146,9 +146,40 @@ their shared project (`piikwvntldytjejxmcla`), instrumented by the sister repo
 
 `scripts/events.mjs` reads both through the Management API, applies the same
 exclusion policy as the metrics lane, and writes two files split by whether
-they can be committed: `data/events.json` (aggregates, no emails, no user ids)
-and `data/journeys.json` (per-session timelines keyed by account email,
+they can be committed: `data/events.json` (aggregates, no names, no user ids)
+and `data/journeys.json` (per-session timelines and per-number user rosters,
 gitignored). `reports/events.html` renders both.
+
+### Window toggle and hover rosters
+
+The HTML report carries a **24h / 7d / 14d / 30d** toggle. All four windows are
+computed server-side from a *single* fetch — four round trips would be four
+slightly different "now"s, and the 24h number would disagree with the 30d one
+about the last minute. The toggle only changes which precomputed block is
+visible, so the browser has nothing to recompute and nothing to get wrong.
+Journey cards are filtered client-side by their own start time against the
+same cutoff.
+
+Two things deliberately **do not** move with the toggle, and say so inline:
+
+- **Ground truth** (trials, entitlements) is read over all history. "Of the
+  people active in this window, how many hold a trial" is the useful question;
+  a trial started before instrumentation existed is still a trial.
+- **Instrumentation coverage** is all-time and all-traffic. Asking "did this
+  call site fire in the last 24 hours" would report every rarely-used path as
+  broken.
+
+**Hover any count** — a tile, a funnel bar, an event row, a page row — to see
+who is behind it, capped at 20 names with a `+N more`. Names resolve as
+`@username` → display name → `guest <id-stub>` → email. Guests are numbered by
+id stub rather than collapsed into one "(guest)", which would make four guests
+look like one person.
+
+Rosters live in `journeys.json` and never in the committed aggregates. In the
+page they ride in a `<script type="application/json">` blob with `<` escaped,
+are parsed rather than evaluated, and every name is written with
+`textContent` — a username is user-supplied text and must never reach
+`innerHTML`.
 
 ### Asking a new question
 

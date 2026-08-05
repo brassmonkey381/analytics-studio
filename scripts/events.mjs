@@ -55,9 +55,11 @@ select
   s.id, s.user_id, s.app, s.is_guest, s.platform, s.app_version,
   s.started_at, s.last_seen_at,
   u.email, coalesce(u.is_anonymous, false) as anon, u.created_at as user_created_at,
+  pr.username, pr.display_name,
   (s.user_id in (select id from excluded_users)) as excluded
 from public.analytics_sessions s
 left join auth.users u on u.id = s.user_id
+left join public.profiles pr on pr.id = s.user_id
 where s.started_at >= now() - interval '${WINDOW_DAYS} days'
 order by s.started_at
 limit ${ROW_CAP}`;
@@ -124,6 +126,33 @@ function pct(n, d) {
   return d > 0 ? Math.round((n / d) * 1000) / 10 : null;
 }
 
+// How a person is named in a hover roster. @username first — that is what the
+// apps show and what Brian asked to see; the rest are fallbacks so a row is
+// never anonymous-by-accident. Guests genuinely have no name, so they are
+// numbered by a short id stub rather than collapsed into one "(guest)" entry,
+// which would make four guests look like one person.
+function userLabel(u) {
+  if (u.username) return `@${u.username}`;
+  if (u.displayName) return u.displayName;
+  if (u.anon) return `guest ${u.id.slice(0, 8)}`;
+  return u.email ?? u.id.slice(0, 8);
+}
+
+// Rosters are stored capped: a 30-day window on a healthy app is thousands of
+// people, and nobody reads past the first screen of a tooltip. The true count
+// travels alongside so the report can say "+N more" honestly instead of
+// implying the cap is the total.
+const ROSTER_STORE_CAP = 60;
+
+// Deduped: callers pass raw id lists (one per session, one per event) as often
+// as they pass user sets, and a roster is always a list of people.
+function roster(ids, identity) {
+  const names = [...new Set(ids)]
+    .map((id) => userLabel(identity.get(id) ?? { id }))
+    .sort((a, b) => a.localeCompare(b));
+  return { total: names.length, names: names.slice(0, ROSTER_STORE_CAP) };
+}
+
 // ---------- main ----------
 
 const [sessionRows, eventRows] = await Promise.all([
@@ -142,15 +171,25 @@ if (sessionRows.length >= ROW_CAP || eventRows.length >= ROW_CAP) {
 }
 
 const collectedAt = new Date().toISOString();
-const out = { collectedAt, windowDays: WINDOW_DAYS, apps: {} };
-const journeys = { collectedAt, windowDays: WINDOW_DAYS, apps: {} };
+// Every window is cut from the SAME fetch. Four round trips would be four
+// slightly different "now"s, and the 24h number would disagree with the 30d
+// one about what happened in the last minute.
+const WINDOWS = CFG.windows ?? [1, 7, 14, 30];
+const NOW = Date.now();
+const out = { collectedAt, windowDays: WINDOW_DAYS, windows: WINDOWS, apps: {} };
+const journeys = { collectedAt, windowDays: WINDOW_DAYS, windows: WINDOWS, apps: {} };
 
-for (const app of CFG.apps) {
-  const key = app.key;
-  const allSessions = sessionRows.filter((s) => s.app === key);
-  const allEvents = eventRows.filter((e) => e.app === key);
+// One computation, run once per window. Returns the aggregates (safe to commit)
+// and a parallel rosters object (identity-bearing, gitignored) whose keys match
+// the aggregates one-for-one, so every number on the page has a "who" behind it.
+function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
+  const cutoff = NOW - days * 86400_000;
+  const inWin = (ts) => Date.parse(ts) >= cutoff;
+  const allSessions = allSessionsIn.filter((s) => inWin(s.started_at));
+  const allEvents = allEventsIn.filter((e) => inWin(e.ts));
   const sessions = allSessions.filter((s) => !s.excluded);
   const events = allEvents.filter((e) => !e.excluded);
+  const rosters = { funnels: {}, events: {}, routes: {}, tiles: {} };
 
   // --- events per session, and the ordered journey ---
   const bySession = new Map();
@@ -163,20 +202,18 @@ for (const app of CFG.apps) {
   }
 
   // --- per-user rollup ---
+  // Seeded from BOTH sessions and events in the window. On a short window a
+  // session can have started before the cutoff while its events land inside it;
+  // seeding from sessions alone would drop those people entirely.
   const byUser = new Map();
   const userOf = (id) => {
     if (!byUser.has(id)) {
-      byUser.set(id, { id, email: null, anon: false, names: new Set(), routes: new Set(), sessions: [], first: null, last: null, createdAt: null });
+      const ident = identity.get(id) ?? {};
+      byUser.set(id, { id, anon: !!ident.anon, names: new Set(), routes: new Set(), sessions: [] });
     }
     return byUser.get(id);
   };
-  for (const s of sessions) {
-    const u = userOf(s.user_id);
-    u.email = u.email ?? s.email;
-    u.anon = u.anon || s.anon;
-    u.createdAt = u.createdAt ?? s.user_created_at;
-    u.sessions.push(s.id);
-  }
+  for (const s of sessions) userOf(s.user_id).sessions.push(s.id);
   for (const e of events) {
     const u = userOf(e.user_id);
     u.names.add(e.name);
@@ -184,11 +221,13 @@ for (const app of CFG.apps) {
       const r = normalizeRoute(e.props?.route);
       if (r) u.routes.add(r);
     }
-    if (!u.first || e.ts < u.first) u.first = e.ts;
-    if (!u.last || e.ts > u.last) u.last = e.ts;
   }
 
   // --- ground truth, per user ---
+  // Read over ALL history on purpose, never windowed. The question a funnel is
+  // asking is "of the people active in this period, how many hold a trial",
+  // not "how many started one in the last 24 hours" — and a trial predating
+  // instrumentation is still a trial.
   const truthUsers = {};
   for (const [kind, rows] of Object.entries(truth)) {
     truthUsers[kind] = new Set(rows.filter((r) => r.app === key && !r.excluded).map((r) => r.user_id));
@@ -228,6 +267,7 @@ for (const app of CFG.apps) {
         ofTop: pct(next.size, denom),
         caveat: st.caveat ?? null,
       });
+      rosters.funnels[`${f.id}|${st.id}`] = roster(next, identity);
       carried = next;
     }
     funnels.push({ id: f.id, title: f.title, question: f.question, stages });
@@ -241,7 +281,10 @@ for (const app of CFG.apps) {
     b.users.add(e.user_id);
   }
   const eventsByName = Object.values(byName)
-    .map((b) => ({ ...b, users: b.users.size }))
+    .map((b) => {
+      rosters.events[b.name] = roster(b.users, identity);
+      return { ...b, users: b.users.size };
+    })
     .sort((a, b) => b.count - a.count);
 
   const byRoute = {};
@@ -252,10 +295,15 @@ for (const app of CFG.apps) {
     b.count++;
     b.users.add(e.user_id);
   }
-  const routes = Object.values(byRoute).map((b) => ({ ...b, users: b.users.size })).sort((a, b) => b.count - a.count);
+  const routes = Object.values(byRoute)
+    .map((b) => {
+      rosters.routes[b.route] = roster(b.users, identity);
+      return { ...b, users: b.users.size };
+    })
+    .sort((a, b) => b.count - a.count);
 
   const byDay = {};
-  for (let i = WINDOW_DAYS - 1; i >= 0; i--) {
+  for (let i = days - 1; i >= 0; i--) {
     byDay[isoDate(new Date(Date.now() - i * 86400_000))] = { sessions: 0, events: 0, users: new Set() };
   }
   for (const s of sessions) {
@@ -277,26 +325,17 @@ for (const app of CFG.apps) {
 
   const bounced = [...bySession.values()].filter((b) => b.events.filter((e) => e.name !== "session.start").length === 0).length;
 
-  // --- instrumentation coverage ---
-  // Deliberately computed over ALL traffic, excluded accounts included. Whether
-  // a track() call site can fire is a property of the code, not of who used it;
-  // measuring it on the filtered stream would report our own QA passes as
-  // "never fired" and read as broken instrumentation. `neverFiredReal` keeps the
-  // behavioural view separate.
-  // `planned` names are specced but not built yet. They are kept out of the
-  // "never fired" list, which is a bug signal — an event nobody has written
-  // cannot have a broken call site, and mixing the two hides the real ones.
-  const declaredAll = Object.entries(TAX).filter(([, v]) => (v.apps ?? []).includes(key));
-  const declared = declaredAll.filter(([, v]) => !v.planned).map(([n]) => n);
-  const planned = declaredAll.filter(([, v]) => v.planned).map(([n]) => n);
-  const seenAny = new Set(allEvents.map((e) => e.name));
-  const seenReal = new Set(events.map((e) => e.name));
-  const neverFired = declared.filter((n) => !seenAny.has(n));
-  const neverFiredReal = declared.filter((n) => seenAny.has(n) && !seenReal.has(n));
-  // A planned event that has started firing has shipped — say so, so the gap
-  // list and the data cannot disagree about what is done.
-  const plannedLanded = planned.filter((n) => seenAny.has(n));
-  const unrecognised = [...seenAny].filter((n) => !(n in TAX));
+  const realIds = [...byUser.values()].filter((u) => !u.anon).map((u) => u.id);
+  const guestIds = [...byUser.values()].filter((u) => u.anon).map((u) => u.id);
+  rosters.tiles.users = roster(byUser.keys(), identity);
+  rosters.tiles.realUsers = roster(realIds, identity);
+  rosters.tiles.guestUsers = roster(guestIds, identity);
+  rosters.tiles.sessions = roster(sessions.map((s) => s.user_id), identity);
+  rosters.tiles.events = roster(events.map((e) => e.user_id), identity);
+  rosters.tiles.bounced = roster(
+    [...bySession.values()].filter((b) => b.events.filter((e) => e.name !== "session.start").length === 0).map((b) => b.session.user_id),
+    identity,
+  );
 
   // Where the event stream and the ground truth disagree. The stream can only
   // know about things that happened after instrumentation shipped, so a truth
@@ -315,31 +354,88 @@ for (const app of CFG.apps) {
     };
   }
 
-  const realUsers = [...byUser.values()].filter((u) => !u.anon);
-  const guestUsers = [...byUser.values()].filter((u) => u.anon);
+  return {
+    result: {
+      windowDays: days,
+      totals: {
+        sessions: sessions.length,
+        events: events.length,
+        users: byUser.size,
+        realUsers: realIds.length,
+        guestUsers: guestIds.length,
+        excludedSessions: allSessions.length - sessions.length,
+        excludedEvents: allEvents.length - events.length,
+        orphanEvents,
+        bouncedSessions: bounced,
+        medianSessionSecs: median,
+        platforms,
+        firstEventAt: events.length ? events[0].ts : null,
+      },
+      daily,
+      eventsByName,
+      routes,
+      funnels,
+      truth: truthCheck,
+    },
+    rosters,
+  };
+}
+
+for (const app of CFG.apps) {
+  const key = app.key;
+  const appSessions = sessionRows.filter((s) => s.app === key);
+  const appEvents = eventRows.filter((e) => e.app === key);
+
+  // Identity is built from the FULL fetch, never per window: a person who
+  // appears in the 24h slice must still resolve to a name even if the session
+  // that carries their profile row started three weeks ago.
+  const identity = new Map();
+  for (const s of appSessions) {
+    if (!identity.has(s.user_id)) {
+      identity.set(s.user_id, {
+        id: s.user_id,
+        email: s.email,
+        username: s.username,
+        displayName: s.display_name,
+        anon: !!s.anon,
+      });
+    }
+  }
+
+  const windows = {};
+  const windowRosters = {};
+  for (const days of WINDOWS) {
+    const { result, rosters } = computeWindow(key, appSessions, appEvents, days, identity);
+    windows[days] = result;
+    windowRosters[days] = rosters;
+  }
+  const widest = windows[Math.max(...WINDOWS)];
+
+  // --- instrumentation coverage ---
+  // Window-independent on purpose. Whether a track() call site can fire is a
+  // property of the code, so asking it of the last 24 hours would report every
+  // rarely-used path as broken. Computed over ALL traffic, excluded accounts
+  // included, for the same reason: our own QA pass is what proves a call site
+  // works. `neverFiredReal` keeps the behavioural view separate.
+  // `planned` names are specced but not built yet. They are kept out of the
+  // "never fired" list, which is a bug signal — an event nobody has written
+  // cannot have a broken call site, and mixing the two hides the real ones.
+  const declaredAll = Object.entries(TAX).filter(([, v]) => (v.apps ?? []).includes(key));
+  const declared = declaredAll.filter(([, v]) => !v.planned).map(([n]) => n);
+  const planned = declaredAll.filter(([, v]) => v.planned).map(([n]) => n);
+  const seenAny = new Set(appEvents.map((e) => e.name));
+  const seenReal = new Set(appEvents.filter((e) => !e.excluded).map((e) => e.name));
+  const neverFired = declared.filter((n) => !seenAny.has(n));
+  const neverFiredReal = declared.filter((n) => seenAny.has(n) && !seenReal.has(n));
+  // A planned event that has started firing has shipped — say so, so the gap
+  // list and the data cannot disagree about what is done.
+  const plannedLanded = planned.filter((n) => seenAny.has(n));
+  const unrecognised = [...seenAny].filter((n) => !(n in TAX));
 
   out.apps[app.id] = {
     name: app.name,
     eventKey: key,
-    totals: {
-      sessions: sessions.length,
-      events: events.length,
-      users: byUser.size,
-      realUsers: realUsers.length,
-      guestUsers: guestUsers.length,
-      excludedSessions: allSessions.length - sessions.length,
-      excludedEvents: allEvents.length - events.length,
-      orphanEvents,
-      bouncedSessions: bounced,
-      medianSessionSecs: median,
-      platforms,
-      firstEventAt: events.length ? events[0].ts : null,
-    },
-    daily,
-    eventsByName,
-    routes,
-    funnels,
-    truth: truthCheck,
+    windows,
     coverage: {
       declared: declared.length,
       fired: declared.length - neverFired.length,
@@ -352,14 +448,23 @@ for (const app of CFG.apps) {
   };
 
   // Journeys: identity-bearing, gitignored. Newest session first — that is the
-  // order anyone actually reads them in.
+  // order anyone actually reads them in. Not windowed: the report filters these
+  // client-side by timestamp when the toggle moves, so one copy serves all four.
+  const sessions = appSessions.filter((s) => !s.excluded);
+  const events = appEvents.filter((e) => !e.excluded);
+  const bySession = new Map();
+  for (const s of sessions) bySession.set(s.id, { session: s, events: [] });
+  for (const e of events) bySession.get(e.session_id)?.events.push(e);
+
   journeys.apps[app.id] = {
     name: app.name,
+    rosters: windowRosters,
     sessions: [...bySession.values()]
       .sort((a, b) => (a.session.started_at < b.session.started_at ? 1 : -1))
       .map(({ session: s, events: evs }) => ({
         id: s.id,
-        user: s.email ?? (s.anon ? "(guest)" : s.user_id.slice(0, 8)),
+        user: userLabel(identity.get(s.user_id) ?? { id: s.user_id }),
+        email: s.email ?? null,
         userId: s.user_id.slice(0, 8),
         guest: s.anon || s.is_guest,
         platform: s.platform,
@@ -378,11 +483,13 @@ for (const app of CFG.apps) {
       })),
   };
 
-  const t = out.apps[app.id].totals;
+  const t = widest.totals;
+  const short = windows[Math.min(...WINDOWS)].totals;
   console.log(
     `${app.name.padEnd(12)} ${String(t.sessions).padStart(4)} sessions  ${String(t.events).padStart(5)} events  ` +
       `${t.realUsers} account${t.realUsers === 1 ? "" : "s"} + ${t.guestUsers} guest${t.guestUsers === 1 ? "" : "s"}  ` +
-      `(excluded: ${t.excludedSessions} sessions / ${t.excludedEvents} events)`,
+      `(${Math.min(...WINDOWS) * 24}h: ${short.sessions} sess / ${short.events} ev` +
+      ` · excluded: ${t.excludedSessions} sessions / ${t.excludedEvents} events)`,
   );
 }
 
@@ -394,10 +501,11 @@ if (existsSync(DATA_FILE)) {
 }
 store.collectedAt = out.collectedAt;
 store.windowDays = out.windowDays;
+store.windows = out.windows;
 store.apps = out.apps;
 store.history ??= {};
 for (const [id, a] of Object.entries(out.apps)) {
-  for (const d of a.daily) {
+  for (const d of a.windows[Math.max(...WINDOWS)].daily) {
     if (d.sessions || d.events) ((store.history[id] ??= {})[d.day] = { sessions: d.sessions, events: d.events, users: d.users });
   }
 }

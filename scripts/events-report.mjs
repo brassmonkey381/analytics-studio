@@ -1,10 +1,18 @@
 // Events report: reads data/events.json (aggregates) and, when present, the
-// gitignored data/journeys.json (identity-bearing per-session timelines), and
-// writes reports/events.html + reports/events.md.
+// gitignored data/journeys.json (identity-bearing per-session timelines and the
+// per-number user rosters), and writes reports/events.html + reports/events.md.
 //
 // Order is deliberate: the questions first, then the evidence, then the gaps.
 // The gaps panel is not an appendix — a funnel stage whose definition is known
 // to be wrong carries its caveat inline, next to the number it distorts.
+//
+// Two interactive affordances, both HTML-only:
+//   * a 24h / 7d / 14d / 30d window toggle. All four are precomputed and
+//     rendered; the toggle only changes which is visible, so there is no
+//     client-side recomputation to disagree with the server's.
+//   * hover any count to see WHO is behind it. Rosters live in journeys.json,
+//     never in the committed aggregates, and are written with textContent —
+//     a username is user-supplied text and must never reach innerHTML.
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -20,13 +28,15 @@ const store = JSON.parse(readFileSync(DATA, "utf8"));
 const CFG = readConfig("events.json");
 const GAPS = CFG.gaps ?? {};
 
-// Optional and gitignored: journeys carry account emails.
+// Optional and gitignored: journeys carry account identity.
 const JPATH = join(ROOT, "data", "journeys.json");
 const journeys = existsSync(JPATH) ? JSON.parse(readFileSync(JPATH, "utf8")).apps : {};
 
 const MAX_SESSIONS_SHOWN = 40;
 const MAX_EVENTS_PER_SESSION = 60;
-const WINDOW = store.windowDays ?? 30;
+const MAX_HOVER_NAMES = 20;
+const WINDOWS = store.windows ?? [1, 7, 14, 30];
+const DEFAULT_WINDOW = Math.max(...WINDOWS);
 const apps = Object.entries(store.apps ?? {});
 
 const esc = (s) =>
@@ -40,12 +50,9 @@ function secs(v) {
   if (v < 3600) return `${Math.round(v / 60)}m`;
   return `${(v / 3600).toFixed(1)}h`;
 }
-function clock(ts) {
-  return new Date(ts).toLocaleTimeString("en-GB", { hour12: false });
-}
-function day(ts) {
-  return new Date(ts).toISOString().slice(0, 10);
-}
+const clock = (ts) => new Date(ts).toLocaleTimeString("en-GB", { hour12: false });
+const day = (ts) => new Date(ts).toISOString().slice(0, 10);
+const winLabel = (d) => (d === 1 ? "24h" : `${d}d`);
 
 // Sort by how much attention a gap still needs: unfinished work first, then by
 // severity. A fixed or deferred gap stays listed — the record of why a number
@@ -58,20 +65,26 @@ const gapList = Object.entries(GAPS).sort(
     (SEV_ORDER[a[1].severity] ?? 9) - (SEV_ORDER[b[1].severity] ?? 9),
 );
 
+// A hover handle. `kind|key` addresses a roster inside journeys.json; the
+// client resolves it against the active window, so one attribute serves all
+// four. Rendered even when the roster is missing (aggregates-only run) — the
+// handler just finds nothing and shows no tooltip.
+const hov = (appId, kind, key) => ` data-r="${esc(appId)}|${esc(kind)}|${esc(key)}"`;
+
 // ---------- pieces ----------
 
-function tiles(a) {
-  const t = a.totals;
+function tiles(w, appId) {
+  const t = w.totals;
   const cells = [
-    ["Sessions", t.sessions, `${t.bouncedSessions} ended without a second event`],
-    ["Events", t.events, t.firstEventAt ? `since ${day(t.firstEventAt)}` : "none recorded"],
-    ["People", t.users, `${t.realUsers} account${t.realUsers === 1 ? "" : "s"}, ${t.guestUsers} guest${t.guestUsers === 1 ? "" : "s"}`],
-    ["Median session", secs(t.medianSessionSecs), "a floor — see session_end gap"],
+    ["Sessions", t.sessions, `${t.bouncedSessions} ended without a second event`, "sessions"],
+    ["Events", t.events, t.firstEventAt ? `since ${day(t.firstEventAt)}` : "none recorded", "events"],
+    ["People", t.users, `${t.realUsers} account${t.realUsers === 1 ? "" : "s"}, ${t.guestUsers} guest${t.guestUsers === 1 ? "" : "s"}`, "users"],
+    ["Median session", secs(t.medianSessionSecs), "a floor — see session_end gap", null],
   ];
   return `<div class="tiles">${cells
     .map(
-      ([k, v, sub]) =>
-        `<div class="tile"><div class="k">${esc(k)}</div><div class="value${v === 0 || v === "—" ? " nodata" : ""}">${esc(n(v))}</div><div class="sub">${esc(sub)}</div></div>`,
+      ([k, v, sub, rk]) =>
+        `<div class="tile${rk ? " hoverable" : ""}"${rk ? hov(appId, "tiles", rk) : ""}><div class="k">${esc(k)}</div><div class="value${v === 0 || v === "—" ? " nodata" : ""}">${esc(n(v))}</div><div class="sub">${esc(sub)}</div></div>`,
     )
     .join("")}</div>`;
 }
@@ -79,7 +92,7 @@ function tiles(a) {
 // Funnel bars are width-proportional to the top stage, so the drop-off is the
 // visual, not the numbers. A stage with a caveat gets a marker linking to the
 // gap that makes it untrustworthy.
-function funnel(f) {
+function funnel(f, appId) {
   const top = f.stages[0]?.users ?? 0;
   const rows = f.stages
     .map((s, i) => {
@@ -88,7 +101,7 @@ function funnel(f) {
       const mark = s.caveat
         ? ` <a class="caveat" href="#gap-${esc(s.caveat)}" title="${esc(GAPS[s.caveat]?.title ?? s.caveat)}">!</a>`
         : "";
-      return `<tr>
+      return `<tr class="hoverable"${hov(appId, "funnels", `${f.id}|${s.id}`)}>
   <td class="fl">${esc(s.label)}${mark}</td>
   <td class="fb"><span class="bar" style="width:${w.toFixed(1)}%"></span></td>
   <td class="fn">${s.users}</td>
@@ -103,8 +116,8 @@ function funnel(f) {
 </div>`;
 }
 
-function truthPanel(a) {
-  const t = a.truth ?? {};
+function truthPanel(w) {
+  const t = w.truth ?? {};
   const rows = Object.entries(t)
     .map(([kind, v]) => {
       const untracked =
@@ -120,25 +133,36 @@ function truthPanel(a) {
   return `<table class="tbl">
   <thead><tr><th>Ground truth</th><th class="num">Users</th><th class="num">Excluded</th><th>Event stream</th><th>Earliest</th></tr></thead>
   <tbody>${rows}</tbody></table>
-  <p class="note">Read straight from the product tables (trials, entitlements), not the event stream — so these cover all history, including before instrumentation shipped. A row counted here with no matching event is the gap between what happened and what was recorded.</p>`;
+  <p class="note">Read straight from the product tables (trials, entitlements), not the event stream — so these cover all history and do <strong>not</strong> move with the window above. A row counted here with no matching event is the gap between what happened and what was recorded.</p>`;
 }
 
-function eventTable(a) {
-  if (!a.eventsByName.length) return `<p class="empty">No events recorded from non-excluded users in this window.</p>`;
-  const rows = a.eventsByName
+function eventTable(w, appId) {
+  if (!w.eventsByName.length) return `<p class="empty">No events recorded from non-excluded users in this window.</p>`;
+  const rows = w.eventsByName
     .map(
       (e) =>
-        `<tr><td>${esc(e.label)}${e.known ? "" : ' <span class="warn">unrecognised</span>'}<div class="mono">${esc(e.name)}</div></td><td class="muted">${esc(e.stage ?? "—")}</td><td class="num">${e.count}</td><td class="num">${e.users}</td></tr>`,
+        `<tr class="hoverable"${hov(appId, "events", e.name)}><td>${esc(e.label)}${e.known ? "" : ' <span class="warn">unrecognised</span>'}<div class="mono">${esc(e.name)}</div></td><td class="muted">${esc(e.stage ?? "—")}</td><td class="num">${e.count}</td><td class="num">${e.users}</td></tr>`,
     )
     .join("");
   return `<table class="tbl"><thead><tr><th>Event</th><th>Stage</th><th class="num">Fired</th><th class="num">People</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function routeTable(w, appId) {
+  if (!w.routes.length) return "";
+  const rows = w.routes
+    .map(
+      (r) =>
+        `<tr class="hoverable"${hov(appId, "routes", r.route)}><td><code>${esc(r.route)}</code>${r.intent === "pricing" ? ' <span class="pill pricing">pricing</span>' : ""}${r.label ? ` <span class="muted">${esc(r.label)}</span>` : ""}</td><td class="num">${r.count}</td><td class="num">${r.users}</td></tr>`,
+    )
+    .join("");
+  return `<h4>Pages</h4><table class="tbl"><thead><tr><th>Route</th><th class="num">Views</th><th class="num">People</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function coveragePanel(a) {
   const c = a.coverage;
   const parts = [];
   parts.push(
-    `<p class="note"><strong>${c.fired} of ${c.declared}</strong> instrumented events for this app have fired at least once. Counted across <em>all</em> traffic including our own and QA: whether a <code>track()</code> call site works is a property of the code, so filtering it to real users would report a verified event as broken.</p>`,
+    `<p class="note"><strong>${c.fired} of ${c.declared}</strong> instrumented events for this app have fired at least once. Counted across <em>all</em> traffic including our own and QA, and across all time regardless of the window above: whether a <code>track()</code> call site works is a property of the code, so filtering it would report a verified event as broken.</p>`,
   );
   if (c.neverFired.length) {
     parts.push(
@@ -154,7 +178,7 @@ function coveragePanel(a) {
     const pending = c.planned.filter((x) => !(c.plannedLanded ?? []).includes(x));
     if (pending.length) {
       parts.push(
-        `<p class="note">Specced but not built: ${pending.map((x) => `<code>${esc(x)}</code>`).join(", ")}. Kept out of the counts above — an event nobody has written cannot have a broken call site. See <a href="#gaps">tracking gaps</a>.</p>`,
+        `<p class="note">Registered, not yet fired: ${pending.map((x) => `<code>${esc(x)}</code>`).join(", ")}. Kept out of the counts above — an event nobody has written cannot have a broken call site. See <a href="#gaps">tracking gaps</a>.</p>`,
       );
     }
     if (c.plannedLanded?.length) {
@@ -171,10 +195,13 @@ function coveragePanel(a) {
   return parts.join("\n");
 }
 
+// Journeys are rendered once and filtered client-side by the window toggle —
+// each card carries its start time as an epoch so the filter is a comparison,
+// not a date parse in a loop.
 function journeyPanel(appId) {
   const j = journeys[appId];
   if (!j) return `<p class="note">No <code>data/journeys.json</code> — run <code>npm run events</code> to generate it.</p>`;
-  if (!j.sessions.length) return `<p class="empty">No sessions from non-excluded users in this window.</p>`;
+  if (!j.sessions.length) return `<p class="empty">No sessions from non-excluded users.</p>`;
   const shown = j.sessions.slice(0, MAX_SESSIONS_SHOWN);
   const cards = shown
     .map((s) => {
@@ -196,7 +223,7 @@ function journeyPanel(appId) {
         s.events.length > evs.length
           ? `<li class="ev muted">+${s.events.length - evs.length} more event${s.events.length - evs.length === 1 ? "" : "s"}</li>`
           : "";
-      return `<details class="sess"${shown.length <= 6 ? " open" : ""}>
+      return `<details class="sess" data-start="${Date.parse(s.startedAt)}">
   <summary>
     <span class="who">${esc(s.user)}</span>
     ${s.guest ? '<span class="pill guest">guest</span>' : '<span class="pill acct">account</span>'}
@@ -213,39 +240,43 @@ function journeyPanel(appId) {
     j.sessions.length > shown.length
       ? `<p class="note">Showing the ${shown.length} most recent of ${j.sessions.length} sessions.</p>`
       : "";
-  return cards + trunc;
+  return `<div class="sessions">${cards}</div><p class="note js-nosess" hidden>No sessions started in this window.</p>${trunc}`;
 }
 
 function appSection(id, a) {
-  const t = a.totals;
-  const excl =
-    t.excludedSessions || t.excludedEvents
-      ? `<p class="note">Excluded from every number on this page: <strong>${t.excludedSessions}</strong> session${t.excludedSessions === 1 ? "" : "s"} and <strong>${t.excludedEvents}</strong> event${t.excludedEvents === 1 ? "" : "s"} from our own, QA and automated accounts (see <code>config/exclusions.json</code>). The stream is working; that traffic is just ours.</p>`
-      : "";
-  const orphan = t.orphanEvents
-    ? `<p class="note warn">${t.orphanEvents} event${t.orphanEvents === 1 ? "" : "s"} could not be attached to a session.</p>`
-    : "";
-  const plats = Object.entries(t.platforms ?? {})
+  const widest = a.windows[DEFAULT_WINDOW];
+  const plats = Object.entries(widest.totals.platforms ?? {})
     .map(([k, v]) => `${esc(k)} ${v}`)
     .join(" · ");
+
+  // One block per window; the toggle flips which is shown. Precomputing beats
+  // recomputing in the browser — the two could not then disagree.
+  const blocks = WINDOWS.map((d) => {
+    const w = a.windows[d];
+    const t = w.totals;
+    const excl =
+      t.excludedSessions || t.excludedEvents
+        ? `<p class="note">Excluded from every number in this view: <strong>${t.excludedSessions}</strong> session${t.excludedSessions === 1 ? "" : "s"} and <strong>${t.excludedEvents}</strong> event${t.excludedEvents === 1 ? "" : "s"} from our own, QA and automated accounts (see <code>config/exclusions.json</code>). The stream is working; that traffic is just ours.</p>`
+        : "";
+    const orphan = t.orphanEvents
+      ? `<p class="note warn">${t.orphanEvents} event${t.orphanEvents === 1 ? "" : "s"} could not be attached to a session.</p>`
+      : "";
+    return `<div class="wblock" data-w="${d}"${d === DEFAULT_WINDOW ? "" : " hidden"}>
+${tiles(w, id)}
+${excl}${orphan}
+<h3>Questions</h3>
+${w.funnels.length ? w.funnels.map((f) => `<h4>${esc(f.title)}</h4>${funnel(f, id)}`).join("\n") : '<p class="empty">No funnels configured.</p>'}
+${truthPanel(w)}
+<h3>What people did</h3>
+${eventTable(w, id)}
+${routeTable(w, id)}
+</div>`;
+  }).join("\n");
+
   return `<section>
 <h2>${esc(a.name)}</h2>
-${tiles(a)}
-${excl}${orphan}
-${plats ? `<p class="note">Platforms: ${plats}.</p>` : ""}
-
-<h3>Questions</h3>
-${a.funnels.length ? a.funnels.map((f) => `<h4>${esc(f.title)}</h4>${funnel(f)}`).join("\n") : '<p class="empty">No funnels configured.</p>'}
-${truthPanel(a)}
-
-<h3>What people did</h3>
-${eventTable(a)}
-${a.routes.length ? `<h4>Pages</h4><table class="tbl"><thead><tr><th>Route</th><th class="num">Views</th><th class="num">People</th></tr></thead><tbody>${a.routes
-    .map(
-      (r) =>
-        `<tr><td><code>${esc(r.route)}</code>${r.intent === "pricing" ? ' <span class="pill pricing">pricing</span>' : ""}${r.label ? ` <span class="muted">${esc(r.label)}</span>` : ""}</td><td class="num">${r.count}</td><td class="num">${r.users}</td></tr>`,
-    )
-    .join("")}</tbody></table>` : ""}
+${plats ? `<p class="note">Platforms over ${winLabel(DEFAULT_WINDOW)}: ${plats}.</p>` : ""}
+${blocks}
 
 <h3>Instrumentation coverage</h3>
 ${coveragePanel(a)}
@@ -270,7 +301,7 @@ function gapsSection() {
   const tally = Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(" · ");
   return `<section>
 <h2 id="gaps">Tracking gaps</h2>
-<p class="note">What the product does but the stream does not record. Ordered by how much they distort a decision — ${esc(tally)}.
+<p class="note">What the product does but the stream does not record. Ordered by how much attention each still needs — ${esc(tally)}.
 <strong>specced</strong> means written up in <code>../tcgscan/ANALYTICS-TRACKING-GAPS.md</code> and waiting on the app repos;
 <strong>landed</strong> means the code is in but no event has been observed yet, so it is not proven;
 <strong>deferred</strong> means a decision was made not to do it, with the reason stated.
@@ -279,11 +310,17 @@ ${cards}
 </section>`;
 }
 
+// Rosters ride along as JSON in a non-executing script tag. `<` is escaped so a
+// username can never close the tag, and the client parses rather than evals.
+const rosterBlob = JSON.stringify(
+  Object.fromEntries(Object.entries(journeys).map(([id, j]) => [id, j.rosters ?? {}])),
+).replace(/</g, "\\u003c");
+
 // ---------- page ----------
 
 const html = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Event analytics — last ${WINDOW} days</title>
+<title>Event analytics — Michi-Maker &amp; TCGScan</title>
 <style>
 :root {
   color-scheme: light;
@@ -319,7 +356,16 @@ h1 { font-size: 22px; margin: 0 0 2px; }
 h2 { font-size: 18px; margin: 40px 0 6px; border-top: 1px solid var(--border); padding-top: 20px; }
 h3 { font-size: 15px; margin: 26px 0 6px; }
 h4 { font-size: 13px; margin: 18px 0 4px; color: var(--ink-2); font-weight: 600; }
-.meta { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+.meta { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+
+.winbar { position: sticky; top: 0; z-index: 5; display: flex; gap: 6px; align-items: center;
+  background: var(--page); padding: 10px 0 12px; margin-bottom: 6px;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.winbar .lbl { font-size: 12px; color: var(--muted); margin-right: 2px; }
+.winbtn { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 20px; cursor: pointer;
+  background: var(--surface); color: var(--ink-2); border: 1px solid var(--border); }
+.winbtn[aria-pressed="true"] { background: var(--bar); color: #fff; border-color: var(--bar); font-weight: 600; }
+
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 10px; }
 .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
 .tile .k { font-size: 12px; color: var(--ink-2); }
@@ -330,6 +376,9 @@ h4 { font-size: 13px; margin: 18px 0 4px; color: var(--ink-2); font-weight: 600;
 .empty { color: var(--muted); font-size: 13px; font-style: italic; margin: 10px 0; }
 .warn { color: var(--warn); }
 code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--muted); }
+
+.hoverable { cursor: help; }
+tr.hoverable:hover, .tile.hoverable:hover { background: color-mix(in srgb, var(--bar) 7%, transparent); }
 
 .funnel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin: 8px 0 4px; }
 .funnel .q { color: var(--ink-2); font-size: 13px; margin-bottom: 8px; }
@@ -390,45 +439,157 @@ a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; 
 .gap .status.st-fixed { color: var(--ms); border-color: var(--ms); }
 .gap p { margin: 5px 0; color: var(--ink-2); }
 .gap .fix { color: var(--ink); }
+
+#tip { position: fixed; z-index: 20; pointer-events: none; max-width: 300px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.16); padding: 8px 10px; font-size: 12.5px; display: none; }
+#tip .tip-h { color: var(--muted); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.04em; margin-bottom: 5px; }
+#tip .tip-n { font-variant-numeric: tabular-nums; padding: 1px 0; }
+#tip .tip-more { color: var(--muted); margin-top: 4px; font-style: italic; }
 </style>
 <main>
 <h1>Event analytics — Michi-Maker &amp; TCGScan</h1>
-<p class="meta">Trailing ${WINDOW} days · collected ${esc(store.collectedAt ?? "—")} · source <code>public.analytics_sessions</code> + <code>public.analytics_events</code> on <code>${esc(CFG.projectRef)}</code>.
+<p class="meta">Collected ${esc(store.collectedAt ?? "—")} · source <code>public.analytics_sessions</code> + <code>public.analytics_events</code> on <code>${esc(CFG.projectRef)}</code>.
 Our own, QA and automated accounts are excluded throughout; the excluded volume is stated per app so nothing is dropped silently.
-<a href="#gaps">Known tracking gaps &rarr;</a></p>
+Hover any count to see who is behind it. <a href="#gaps">Known tracking gaps &rarr;</a></p>
+
+<div class="winbar"><span class="lbl">Window</span>${WINDOWS.map(
+  (d) => `<button class="winbtn" data-win="${d}" aria-pressed="${d === DEFAULT_WINDOW}">${winLabel(d)}</button>`,
+).join("")}</div>
+
 ${apps.map(([id, a]) => appSection(id, a)).join("\n")}
 ${gapsSection()}
-</main>`;
+</main>
+<div id="tip" role="tooltip"></div>
+<script type="application/json" id="rosters">${rosterBlob}</script>
+<script>
+(function () {
+  var MAX = ${MAX_HOVER_NAMES};
+  var rosters = {};
+  try { rosters = JSON.parse(document.getElementById('rosters').textContent || '{}'); } catch (e) {}
+  var win = String(${DEFAULT_WINDOW});
+  var tip = document.getElementById('tip');
+
+  // Window toggle. Blocks are precomputed and merely shown/hidden; journey
+  // cards are filtered by their own start time against the same cutoff.
+  function setWindow(d) {
+    win = String(d);
+    document.querySelectorAll('.winbtn').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.win === win));
+    });
+    document.querySelectorAll('.wblock').forEach(function (el) {
+      el.hidden = el.dataset.w !== win;
+    });
+    var cutoff = Date.now() - Number(win) * 86400000;
+    document.querySelectorAll('.sessions').forEach(function (wrap) {
+      var shown = 0;
+      wrap.querySelectorAll('.sess').forEach(function (s) {
+        var vis = Number(s.dataset.start) >= cutoff;
+        s.hidden = !vis;
+        if (vis) shown++;
+      });
+      var none = wrap.parentNode.querySelector('.js-nosess');
+      if (none) none.hidden = shown > 0;
+    });
+    hide();
+  }
+  document.querySelectorAll('.winbtn').forEach(function (b) {
+    b.addEventListener('click', function () { setWindow(b.dataset.win); });
+  });
+
+  // Hover roster. Names are user-supplied text and are written with
+  // textContent only — never innerHTML, at any point in this function.
+  function show(el, ev) {
+    var parts = (el.dataset.r || '').split('|');
+    var app = parts[0], kind = parts[1], key = parts.slice(2).join('|');
+    var byWin = (rosters[app] || {})[win] || {};
+    var r = (byWin[kind] || {})[key];
+    if (!r || !r.total) return hide();
+    tip.textContent = '';
+    var h = document.createElement('div');
+    h.className = 'tip-h';
+    h.textContent = r.total + (r.total === 1 ? ' person' : ' people');
+    tip.appendChild(h);
+    var names = r.names.slice(0, MAX);
+    names.forEach(function (nm) {
+      var row = document.createElement('div');
+      row.className = 'tip-n';
+      row.textContent = nm;
+      tip.appendChild(row);
+    });
+    if (r.total > names.length) {
+      var m = document.createElement('div');
+      m.className = 'tip-more';
+      m.textContent = '+' + (r.total - names.length) + ' more';
+      tip.appendChild(m);
+    }
+    tip.style.display = 'block';
+    move(ev);
+  }
+  function move(ev) {
+    if (tip.style.display !== 'block') return;
+    var pad = 14, r = tip.getBoundingClientRect();
+    var x = ev.clientX + pad, y = ev.clientY + pad;
+    if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - pad;
+    if (y + r.height > innerHeight - 8) y = Math.max(8, ev.clientY - r.height - pad);
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+  function hide() { tip.style.display = 'none'; }
+
+  document.addEventListener('mouseover', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-r]') : null;
+    if (el) show(el, e); else hide();
+  });
+  document.addEventListener('mousemove', function (e) {
+    if (e.target.closest && e.target.closest('[data-r]')) move(e); else hide();
+  });
+  document.addEventListener('scroll', hide, true);
+
+  setWindow(win);
+})();
+</script>`;
 
 // ---------- markdown ----------
 
+const mdWin = DEFAULT_WINDOW;
 const md = [
-  `# Event analytics — last ${WINDOW} days`,
+  `# Event analytics — last ${mdWin} days`,
   ``,
   `Collected ${store.collectedAt ?? "—"}. Own/QA/automated accounts excluded.`,
+  `The HTML report carries a ${WINDOWS.map(winLabel).join(" / ")} toggle and hover rosters; this file is the ${winLabel(mdWin)} view.`,
   ``,
   ...apps.flatMap(([, a]) => {
-    const t = a.totals;
+    const w = a.windows[mdWin];
+    const t = w.totals;
     const lines = [
       `## ${a.name}`,
       ``,
       `${t.sessions} sessions · ${t.events} events · ${t.realUsers} account${t.realUsers === 1 ? "" : "s"} + ${t.guestUsers} guest${t.guestUsers === 1 ? "" : "s"} · median session ${secs(t.medianSessionSecs)}`,
       `Excluded: ${t.excludedSessions} sessions, ${t.excludedEvents} events (our own, QA and automated accounts).`,
       ``,
+      `| Window | Sessions | Events | People |`,
+      `| --- | ---: | ---: | ---: |`,
+      ...WINDOWS.map((d) => {
+        const x = a.windows[d].totals;
+        return `| ${winLabel(d)} | ${x.sessions} | ${x.events} | ${x.users} |`;
+      }),
+      ``,
     ];
-    for (const f of a.funnels) {
+    for (const f of w.funnels) {
       lines.push(`### ${f.title}`, ``, `_${f.question}_`, ``);
       for (const s of f.stages) {
         lines.push(`- **${s.users}** ${s.label}${s.ofTop != null ? ` (${s.ofTop}% of top)` : ""}${s.caveat ? ` — see gap \`${s.caveat}\`` : ""}`);
       }
       lines.push(``);
     }
-    if (a.eventsByName.length) {
+    if (w.eventsByName.length) {
       lines.push(`| Event | Fired | People |`, `| --- | ---: | ---: |`);
-      for (const e of a.eventsByName) lines.push(`| ${e.label} (\`${e.name}\`) | ${e.count} | ${e.users} |`);
+      for (const e of w.eventsByName) lines.push(`| ${e.label} (\`${e.name}\`) | ${e.count} | ${e.users} |`);
       lines.push(``);
     }
-    lines.push(`Instrumentation: ${a.coverage.fired}/${a.coverage.declared} events verified firing (all traffic).`, ``);
+    lines.push(`Instrumentation: ${a.coverage.fired}/${a.coverage.declared} events verified firing (all traffic, all time).`, ``);
     if (a.coverage.neverFired.length) {
       lines.push(`Never fired by anyone (unverified): ${a.coverage.neverFired.map((x) => `\`${x}\``).join(", ")}`, ``);
     }
@@ -463,4 +624,4 @@ const MD_OUT = join(ROOT, "reports", "events.md");
 mkdirSync(dirname(HTML_OUT), { recursive: true });
 writeFileSync(HTML_OUT, html);
 writeFileSync(MD_OUT, md);
-console.log(`Wrote reports/events.html and reports/events.md (${apps.length} apps, window ${WINDOW}d)`);
+console.log(`Wrote reports/events.html and reports/events.md (${apps.length} apps, windows ${WINDOWS.map(winLabel).join("/")})`);

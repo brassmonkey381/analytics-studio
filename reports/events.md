@@ -1,18 +1,26 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-05T23:22:22.360Z. Own/QA/automated accounts excluded.
+Collected 2026-08-05T23:32:11.051Z. Own/QA/automated accounts excluded.
+The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-4 sessions · 13 events · 0 accounts + 3 guests · median session 2s
-Excluded: 61 sessions, 127 events (our own, QA and automated accounts).
+5 sessions · 17 events · 1 account + 3 guests · median session 2s
+Excluded: 68 sessions, 139 events (our own, QA and automated accounts).
+
+| Window | Sessions | Events | People |
+| --- | ---: | ---: | ---: |
+| 24h | 5 | 17 | 4 |
+| 7d | 5 | 17 | 4 |
+| 14d | 5 | 17 | 4 |
+| 30d | 5 | 17 | 4 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **3** Opened the app (100% of top)
-- **2** Did anything past the open (66.7% of top)
+- **4** Opened the app (100% of top)
+- **3** Did anything past the open (75% of top)
 - **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -20,8 +28,8 @@ _How many users know the PRO trial exists, and how many start one?_
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **3** Opened the app (100% of top)
-- **2** Viewed a page (66.7% of top)
+- **4** Opened the app (100% of top)
+- **3** Viewed a page (75% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -35,11 +43,11 @@ _Do anonymous guests ever convert into real accounts?_
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 8 | 2 |
-| Session started (`session.start`) | 4 | 3 |
+| Viewed a page (`page.view`) | 11 | 3 |
+| Session started (`session.start`) | 5 | 4 |
 | Created a binder (`binder.add`) | 1 | 1 |
 
-Instrumentation: 9/13 events verified firing (all traffic).
+Instrumentation: 9/13 events verified firing (all traffic, all time).
 
 Never fired by anyone (unverified): `account.created`, `csv.import`, `card.search`, `trial.start`
 
@@ -51,6 +59,13 @@ Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start
 
 0 sessions · 0 events · 0 accounts + 0 guests · median session —
 Excluded: 4 sessions, 13 events (our own, QA and automated accounts).
+
+| Window | Sessions | Events | People |
+| --- | ---: | ---: | ---: |
+| 24h | 0 | 0 | 0 |
+| 7d | 0 | 0 | 0 |
+| 14d | 0 | 0 | 0 |
+| 30d | 0 | 0 | 0 |
 
 ### PRO trial: awareness to activation
 
@@ -78,7 +93,7 @@ _Do anonymous guests ever convert into real accounts?_
 - **0** Did anything at all
 - **0** Created an account — see gap `guest_upgrade`
 
-Instrumentation: 4/14 events verified firing (all traffic).
+Instrumentation: 4/14 events verified firing (all traffic, all time).
 
 Never fired by anyone (unverified): `account.created`, `card.search`, `card.open`, `scan.capture`, `collection.create`, `collection.rename`, `collection.delete`, `collection.card_add`, `collection.card_remove`, `trial.start`
 
