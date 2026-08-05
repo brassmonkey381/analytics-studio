@@ -47,8 +47,16 @@ function day(ts) {
   return new Date(ts).toISOString().slice(0, 10);
 }
 
+// Sort by how much attention a gap still needs: unfinished work first, then by
+// severity. A fixed or deferred gap stays listed — the record of why a number
+// once read the way it did is worth more than a tidy list — but it sinks.
 const SEV_ORDER = { blocking: 0, high: 1, medium: 2, low: 3 };
-const gapList = Object.entries(GAPS).sort((a, b) => (SEV_ORDER[a[1].severity] ?? 9) - (SEV_ORDER[b[1].severity] ?? 9));
+const STATUS_ORDER = { open: 0, specced: 1, landed: 2, deferred: 3, fixed: 4 };
+const gapList = Object.entries(GAPS).sort(
+  (a, b) =>
+    (STATUS_ORDER[a[1].status ?? "open"] ?? 9) - (STATUS_ORDER[b[1].status ?? "open"] ?? 9) ||
+    (SEV_ORDER[a[1].severity] ?? 9) - (SEV_ORDER[b[1].severity] ?? 9),
+);
 
 // ---------- pieces ----------
 
@@ -264,7 +272,9 @@ function gapsSection() {
 <h2 id="gaps">Tracking gaps</h2>
 <p class="note">What the product does but the stream does not record. Ordered by how much they distort a decision — ${esc(tally)}.
 <strong>specced</strong> means written up in <code>../tcgscan/ANALYTICS-TRACKING-GAPS.md</code> and waiting on the app repos;
-<strong>deferred</strong> means a decision was made not to do it, with the reason stated. Every fix lands in the app repos, never here.</p>
+<strong>landed</strong> means the code is in but no event has been observed yet, so it is not proven;
+<strong>deferred</strong> means a decision was made not to do it, with the reason stated.
+A landed gap becomes <strong>fixed</strong> when its event actually appears — the coverage panel above detects that, so it is not a judgement call. Every fix lands in the app repos, never here.</p>
 ${cards}
 </section>`;
 }
@@ -376,6 +386,7 @@ a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; 
 .gap .status { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em;
   border: 1px solid var(--border); border-radius: 20px; padding: 1px 6px; color: var(--muted); }
 .gap .status.st-specced { color: var(--bar); border-color: var(--bar); }
+.gap .status.st-landed { color: var(--warn); border-color: var(--warn); }
 .gap .status.st-fixed { color: var(--ms); border-color: var(--ms); }
 .gap p { margin: 5px 0; color: var(--ink-2); }
 .gap .fix { color: var(--ink); }
@@ -423,6 +434,13 @@ const md = [
     }
     if (a.coverage.neverFiredReal?.length) {
       lines.push(`Works, but not yet from a real user: ${a.coverage.neverFiredReal.map((x) => `\`${x}\``).join(", ")}`, ``);
+    }
+    const pendingMd = (a.coverage.planned ?? []).filter((x) => !(a.coverage.plannedLanded ?? []).includes(x));
+    if (pendingMd.length) {
+      lines.push(`Registered, not yet fired: ${pendingMd.map((x) => `\`${x}\``).join(", ")}`, ``);
+    }
+    if (a.coverage.plannedLanded?.length) {
+      lines.push(`**Landed since the spec:** ${a.coverage.plannedLanded.map((x) => `\`${x}\``).join(", ")} — mark the matching gap \`fixed\`.`, ``);
     }
     return lines;
   }),

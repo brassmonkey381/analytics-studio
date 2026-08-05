@@ -39,11 +39,12 @@
     "trial.start":           { "label": "Started a PRO trial",      "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true },
 
     "pro.offer_shown":       { "label": "Saw the PRO offer",        "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true, "planned": true },
-    "pro.offer_declined":    { "label": "Dismissed the PRO offer",  "stage": "monetization", "apps": ["michi", "tcgscan"], "planned": true },
+    "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook — tracked as gaps.tcgscan_search_blind, not as a missing call site.",
+    "pro.offer_declined":    { "label": "Dismissed the PRO offer",  "stage": "monetization", "apps": ["michi"], "planned": true },
     "trial.start_failed":    { "label": "PRO trial failed to start","stage": "monetization", "apps": ["michi", "tcgscan"], "planned": true, "failure": true },
     "csv.import_failed":     { "label": "CSV import failed",        "stage": "activation",   "apps": ["michi"], "planned": true, "failure": true },
     "scan.failed":           { "label": "Scan failed",              "stage": "activation",   "apps": ["tcgscan"], "planned": true, "failure": true },
-    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi", "tcgscan"], "planned": true, "failure": true }
+    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi"], "planned": true, "failure": true }
   },
 
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness — the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
@@ -110,11 +111,19 @@
     ]
   },
 
-  "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation in the app repos), deferred (a decision was made not to do it, with the reason), fixed (shipped and verified firing). Fixes land in the app repos, never here.",
+  "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation), landed (code is in the app repos but no event has been observed yet, so it is not proven), deferred (a decision was made not to do it, with the reason), fixed (observed firing). landed -> fixed is not a judgement call: the coverage panel detects a planned name appearing in the data and says so. Fixes land in the app repos, never here.",
   "gaps": {
+    "tcgscan_search_blind": {
+      "severity": "medium",
+      "status": "open",
+      "title": "TCGScan cannot see its own search queries",
+      "detail": "Free-typed search on tcgscan runs inside the shared tcgscan-browse package, which exposes no onEvent callback, so the app cannot observe a query or its result count. What it emits are proxies from outside the kit: card.search { kind: 'similar' } when find-similar is pressed, and card.open when a detail opens (documented at tcgscan-app/src/app/(tabs)/browse/index.tsx:169). michi has no such boundary and does emit search.no_results. Discovered 2026-08-06 while verifying the gap fixes; it is why search.no_results is registered for michi only rather than pending forever on tcgscan.",
+      "direction": "tcgscan search volume and zero-result rate are both unmeasurable; card.search understates real searching",
+      "fix": "add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against."
+    },
     "trial_awareness": {
       "severity": "blocking",
-      "status": "specced",
+      "status": "landed",
       "title": "No impression event for the PRO trial offer",
       "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.",
       "direction": "understates awareness — currently makes it unmeasurable",
@@ -122,7 +131,7 @@
     },
     "guest_upgrade": {
       "severity": "medium",
-      "status": "specced",
+      "status": "landed",
       "title": "A guest session is rewritten to look like it never was one",
       "detail": "The conversion event itself DOES exist: both apps emit account.created with props.via = 'guest_upgrade' (michi store/auth.tsx:309,348; tcgscan store/auth.tsx:198,266,283). What is lost is the session. resetSessionUser() patches analytics_sessions.is_guest in place when a guest signs up mid-session, so the row retroactively claims it was always an account. Sessions cannot be split into 'started as guest' and 'started signed in', and the session-level conversion rate is unrecoverable.",
       "direction": "guest-started sessions are undercounted; the conversion count itself is correct",
@@ -130,7 +139,7 @@
     },
     "session_end": {
       "severity": "medium",
-      "status": "specced",
+      "status": "landed",
       "title": "Session length is a floor, not a duration",
       "detail": "last_seen_at is bumped opportunistically and throttled to 60s, and only when an event fires. There is no unload/background hook, so a session that ends after a long read records the timestamp of its last tracked action instead. Every duration is an underestimate, and single-event sessions read as zero seconds.",
       "direction": "understates session length",
@@ -138,7 +147,7 @@
     },
     "no_error_events": {
       "severity": "medium",
-      "status": "specced",
+      "status": "landed",
       "title": "Nothing records failure",
       "detail": "No event marks a failed scan, a rejected CSV, a search with no results, or a checkout that errored. Every funnel measures only the happy path, so a stage that drops off cannot be distinguished between 'lost interest' and 'it broke'.",
       "direction": "hides the reason for every drop-off",
@@ -146,7 +155,7 @@
     },
     "props_thin": {
       "severity": "low",
-      "status": "specced",
+      "status": "landed",
       "title": "A handful of events carry no props",
       "detail": "Assessed against the code, not the recorded rows — the sample in the database is small enough to be misleading. Most call sites are already well instrumented: card.search carries kind, scan.capture carries mode and cards, csv.import carries cards, card.add carries source and count, account.created carries via, binder.add carries isDemo. The bare ones are demo.print, demo.tricolor_search, demo.csv_import, card.open, trial.start and the four collection.* events, so 'which demo precedes a signup' and 'which surface sold the trial' cannot be segmented.",
       "direction": "limits segmentation on those events only; biases no count",

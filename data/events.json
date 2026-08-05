@@ -8,7 +8,7 @@
       }
     }
   },
-  "collectedAt": "2026-08-05T22:44:38.684Z",
+  "collectedAt": "2026-08-05T23:22:22.360Z",
   "windowDays": 30,
   "apps": {
     "michi-maker": {
@@ -20,8 +20,8 @@
         "users": 3,
         "realUsers": 0,
         "guestUsers": 3,
-        "excludedSessions": 47,
-        "excludedEvents": 113,
+        "excludedSessions": 61,
+        "excludedEvents": 127,
         "orphanEvents": 0,
         "bouncedSessions": 2,
         "medianSessionSecs": 1.65,
@@ -402,10 +402,9 @@
       },
       "coverage": {
         "declared": 13,
-        "fired": 8,
+        "fired": 9,
         "neverFired": [
           "account.created",
-          "demo.print",
           "csv.import",
           "card.search",
           "trial.start"
@@ -415,6 +414,7 @@
           "demo.tricolor_search",
           "demo.csv_import",
           "demo.curation",
+          "demo.print",
           "card.add"
         ],
         "planned": [
@@ -777,10 +777,8 @@
         ],
         "planned": [
           "pro.offer_shown",
-          "pro.offer_declined",
           "trial.start_failed",
-          "scan.failed",
-          "search.no_results"
+          "scan.failed"
         ],
         "plannedLanded": [],
         "unrecognised": []
