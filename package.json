@@ -9,6 +9,7 @@
     "report": "node scripts/report.mjs",
     "events": "node scripts/events.mjs",
     "events:report": "node scripts/events-report.mjs",
+    "serve": "node scripts/serve.mjs",
     "daily": "node scripts/collect.mjs && node scripts/report.mjs && node scripts/events.mjs && node scripts/events-report.mjs"
   }
 }

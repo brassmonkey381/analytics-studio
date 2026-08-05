@@ -20,6 +20,7 @@ scripts/collect.mjs      fetches metrics, merges into data/metrics.json
 scripts/report.mjs       renders reports/report.html + reports/latest.md
 scripts/events.mjs       ingests analytics_sessions/_events -> events.json + journeys.json
 scripts/events-report.mjs renders reports/events.html + reports/events.md
+scripts/serve.mjs        localhost dashboard: serves the reports, re-pulls on demand
 data/metrics.json        rolling per-day store (history accumulates across runs)
 data/events.json         event aggregates + history (counts only, committed)
 data/journeys.json       per-session timelines keyed by email (gitignored)
@@ -47,6 +48,7 @@ Two modes, checked in order:
 ## Run
 
 ```powershell
+npm run serve         # live dashboard at http://127.0.0.1:4726 (reload = fresh pull)
 npm run daily         # both lanes: metrics + events
 npm run collect       # just fetch/merge metrics
 npm run report        # just rebuild reports from stored data
@@ -54,6 +56,45 @@ npm run events        # just ingest the event stream
 npm run events:report # just rebuild the events report
 .\setup-schedule.ps1  # register the daily 08:07 scheduled task (run once)
 ```
+
+### Dashboard
+
+`npm run serve` puts the reports behind a small local server so a browser
+reload shows current numbers instead of whatever the last cron run left on
+disk.
+
+| route | |
+| --- | --- |
+| `/` | events report (default) |
+| `/metrics` | DAU + new users |
+| `/api/status` | collection times as JSON |
+
+A control strip is injected into the served page: how old the data is, a
+**Pull fresh data** button, and an optional 5-minute auto-refresh (remembered
+across reloads, or turning it on would switch itself off at the first refresh
+it triggered). A reload also re-pulls on its own when the data is older than
+10 minutes — `DASHBOARD_STALE_MS` to change that — so the first load of the
+morning is current without anyone thinking to press anything.
+
+Three things worth knowing about how it is built:
+
+- **Bound to `127.0.0.1` and nothing else, deliberately.** The rendered reports
+  carry account emails and usernames — the whole reason `events.html` and
+  `report.html` are gitignored. Binding `0.0.0.0` would hand that to anything
+  on the same wifi. If this ever needs to be remote it needs auth first, not a
+  wider bind.
+- **Refreshing runs the same scripts the daily lane runs.** There is one code
+  path that produces a report, so the dashboard cannot drift from the scheduled
+  output. One refresh at a time per lane; overlapping runs would race on the
+  same output files.
+- **The control strip is injected by the server, not baked into the
+  generator**, so `reports/events.html` stays honest when opened straight off
+  disk — no refresh button that cannot refresh.
+
+Default port is 4726 rather than something conventional: 4317/4318 are
+OpenTelemetry's and were already taken here, and a dashboard that silently
+answers from someone else's service is a bad failure. `PORT=4727 npm run serve`
+to move it.
 
 `run-daily.ps1` also commits and pushes `data/metrics.json`, `data/events.json`
 and `reports/events.md` after each run, so the history stays current
