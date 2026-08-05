@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Daily analytics lane: DAU + new users for Doggle, Pickleague, Michi-Maker, TCGScan",
+  "description": "Analytics lanes: DAU + new users for Doggle, Pickleague, Michi-Maker, TCGScan; event/session journeys for Michi-Maker and TCGScan",
   "scripts": {
     "collect": "node scripts/collect.mjs",
     "report": "node scripts/report.mjs",
-    "daily": "node scripts/collect.mjs && node scripts/report.mjs"
+    "events": "node scripts/events.mjs",
+    "events:report": "node scripts/events-report.mjs",
+    "daily": "node scripts/collect.mjs && node scripts/report.mjs && node scripts/events.mjs && node scripts/events-report.mjs"
   }
 }

@@ -1,0 +1,150 @@
+{
+  "_doc": "The events lane: how the studio reads public.analytics_sessions and public.analytics_events (instrumented by the tcgscan sister repo, migration 20260805100000_analytics_events.sql). Both michi-maker and tcgscan-app write to the same two tables on project piikwvntldytjejxmcla, discriminated by the `app` column. Nothing here is queried by the apps themselves; this is read-only interpretation.",
+
+  "projectRef": "piikwvntldytjejxmcla",
+  "windowDays": 30,
+
+  "_appsDoc": "Maps the `app` value the clients write to the studio's own app ids (config/apps.json), so exclusions and the DAU lane line up.",
+  "apps": [
+    { "key": "michi", "id": "michi-maker", "name": "Michi-Maker" },
+    { "key": "tcgscan", "id": "tcgscan", "name": "TCGScan" }
+  ],
+
+  "_taxonomyDoc": "Every event name the two apps can emit, with a plain-English label and a stage. `stage` places the event on the acquisition -> activation -> engagement -> monetization spine; `milestone: true` marks the ones worth calling out on a journey timeline. Names seen in the data but missing here are reported as unrecognised rather than silently dropped, so instrumentation added upstream shows up as a prompt to update this file.",
+  "taxonomy": {
+    "session.start":         { "label": "Session started",          "stage": "acquisition",  "apps": ["michi", "tcgscan"] },
+    "page.view":             { "label": "Viewed a page",            "stage": "engagement",   "apps": ["michi", "tcgscan"] },
+    "auth.login":            { "label": "Signed in",                "stage": "acquisition",  "apps": ["michi", "tcgscan"] },
+    "account.created":       { "label": "Account created",          "stage": "acquisition",  "apps": ["michi", "tcgscan"], "milestone": true },
+
+    "demo.tricolor_search":  { "label": "Tried tri-color search",   "stage": "activation",   "apps": ["michi"], "milestone": true },
+    "demo.csv_import":       { "label": "Tried the example import", "stage": "activation",   "apps": ["michi"], "milestone": true },
+    "demo.curation":         { "label": "Tried collection curation","stage": "activation",   "apps": ["michi"], "milestone": true },
+    "demo.print":            { "label": "Tried the print example",  "stage": "activation",   "apps": ["michi"], "milestone": true },
+
+    "binder.add":            { "label": "Created a binder",         "stage": "activation",   "apps": ["michi"], "milestone": true },
+    "csv.import":            { "label": "Imported a CSV",           "stage": "activation",   "apps": ["michi"], "milestone": true },
+    "card.search":           { "label": "Searched cards",           "stage": "engagement",   "apps": ["michi", "tcgscan"] },
+    "card.add":              { "label": "Added cards",              "stage": "engagement",   "apps": ["michi", "tcgscan"] },
+    "card.open":             { "label": "Opened a card",            "stage": "engagement",   "apps": ["tcgscan"] },
+
+    "scan.capture":          { "label": "Scanned a card",           "stage": "activation",   "apps": ["tcgscan"], "milestone": true },
+    "collection.create":     { "label": "Created a collection",     "stage": "activation",   "apps": ["tcgscan"], "milestone": true },
+    "collection.rename":     { "label": "Renamed a collection",     "stage": "engagement",   "apps": ["tcgscan"] },
+    "collection.delete":     { "label": "Deleted a collection",     "stage": "engagement",   "apps": ["tcgscan"] },
+    "collection.card_add":   { "label": "Added a card to a collection",     "stage": "engagement", "apps": ["tcgscan"] },
+    "collection.card_remove":{ "label": "Removed a card from a collection", "stage": "engagement", "apps": ["tcgscan"] },
+
+    "trial.start":           { "label": "Started a PRO trial",      "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true }
+  },
+
+  "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness — the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
+  "routes": {
+    "/plans":     { "label": "Plans & pricing",   "intent": "pricing" },
+    "/purchases": { "label": "Purchases",         "intent": "pricing" },
+    "/michi-method": { "label": "The michi method" },
+    "/discover":  { "label": "Discover" },
+    "/learn":     { "label": "Learn" },
+    "/contest":   { "label": "Contest" },
+    "/scan":      { "label": "Scan" },
+    "/collection":{ "label": "Collection" },
+    "/":          { "label": "Home" }
+  },
+
+  "_funnelsDoc": "Ordered stages. A user counts at stage N only if they also reached every earlier stage, so the drop-off between rows is real. `match` is one of: event (any of `names`), route (a page.view whose route is in `routes`), or truth (a row in a ground-truth table — instrumentation-independent, so it also back-fills history from before tracking existed).",
+  "funnels": [
+    {
+      "id": "pro-trial",
+      "title": "PRO trial: awareness to activation",
+      "question": "How many users know the PRO trial exists, and how many start one?",
+      "apps": ["michi", "tcgscan"],
+      "stages": [
+        { "id": "arrived",   "label": "Opened the app",              "match": "event", "names": ["session.start"] },
+        { "id": "engaged",   "label": "Did anything past the open",  "match": "event", "names": ["page.view", "card.search", "card.add", "scan.capture", "binder.add", "csv.import", "card.open", "collection.create"] },
+        { "id": "saw-pricing", "label": "Reached a pricing surface", "match": "route", "routes": ["/plans", "/purchases"], "caveat": "trial_awareness" },
+        { "id": "started",   "label": "Started a PRO trial",         "match": "truth", "truth": "trial" }
+      ]
+    },
+    {
+      "id": "activation",
+      "title": "First-session activation",
+      "question": "Do people who open the app ever do the core thing it is for?",
+      "apps": ["michi", "tcgscan"],
+      "stages": [
+        { "id": "arrived", "label": "Opened the app",     "match": "event", "names": ["session.start"] },
+        { "id": "looked",  "label": "Viewed a page",      "match": "event", "names": ["page.view"] },
+        { "id": "tried",   "label": "Tried a demo",       "match": "event", "names": ["demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
+        { "id": "created", "label": "Made something real","match": "event", "names": ["binder.add", "csv.import", "card.add", "scan.capture", "collection.create"] }
+      ]
+    },
+    {
+      "id": "signup",
+      "title": "Guest to account",
+      "question": "Do anonymous guests ever convert into real accounts?",
+      "apps": ["michi", "tcgscan"],
+      "stages": [
+        { "id": "guest",   "label": "Started as a guest",  "match": "guest" },
+        { "id": "engaged", "label": "Did anything at all", "match": "event", "names": ["page.view", "card.search", "card.add", "scan.capture", "demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
+        { "id": "signed",  "label": "Created an account",  "match": "event", "names": ["account.created"], "caveat": "guest_upgrade" }
+      ]
+    }
+  ],
+
+  "_truthDoc": "Ground-truth tables read alongside the event stream. These predate instrumentation, so they answer 'did it actually happen' for the whole history, not just since tracking went live. Used to cross-check the event stream and to catch under-counting.",
+  "truth": {
+    "trial": [
+      { "app": "michi",   "table": "pro_trials",         "userCol": "user_id", "tsCol": "started_at" },
+      { "app": "tcgscan", "table": "tcgscan_pro_trials", "userCol": "user_id", "tsCol": "started_at" }
+    ],
+    "entitlement": [
+      { "app": "michi",   "table": "entitlements", "userCol": "user_id", "tsCol": "granted_at", "filter": "product like 'tier_%'" },
+      { "app": "tcgscan", "table": "entitlements", "userCol": "user_id", "tsCol": "granted_at", "filter": "product like 'tcgscan_%'" }
+    ]
+  },
+
+  "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. Fixes are one-line track() calls in the sister repo unless noted.",
+  "gaps": {
+    "trial_awareness": {
+      "severity": "blocking",
+      "title": "No impression event for the PRO trial offer",
+      "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is therefore not measured; the report substitutes pricing-page views, which is a different and smaller set.",
+      "direction": "understates awareness",
+      "fix": "track('pro.offer_shown', { surface }) on TrialCta mount, in both apps' components/monetization/TrialCta.tsx. Add track('pro.offer_declined') on dismissal of the gate that surfaced it."
+    },
+    "guest_upgrade": {
+      "severity": "high",
+      "title": "Guest-to-account upgrade is not an event",
+      "detail": "resetSessionUser() detects a guest upgrading in place (same uid, is_guest flips) and patches analytics_sessions.is_guest, but emits no event. The conversion is invisible in the stream and the session's own history is rewritten to look like it was never a guest.",
+      "direction": "understates guest conversion, overstates signed-in sessions",
+      "fix": "track('account.upgraded', { from: 'guest' }) in the same branch of resetSessionUser() that patches is_guest, in both apps' lib/analytics.ts."
+    },
+    "session_end": {
+      "severity": "medium",
+      "title": "Session length is a floor, not a duration",
+      "detail": "last_seen_at is bumped opportunistically and throttled to 60s, and only when an event fires. There is no unload/background hook, so a session that ends after a long read records the timestamp of its last tracked action instead. Every duration is an underestimate, and single-event sessions read as zero seconds.",
+      "direction": "understates session length",
+      "fix": "flush a last_seen_at write on web 'visibilitychange'/'pagehide' and on RN AppState 'background'."
+    },
+    "no_error_events": {
+      "severity": "medium",
+      "title": "Nothing records failure",
+      "detail": "No event marks a failed scan, a rejected CSV, a search with no results, or a checkout that errored. Every funnel measures only the happy path, so a stage that drops off cannot be distinguished between 'lost interest' and 'it broke'.",
+      "direction": "hides the reason for every drop-off",
+      "fix": "track('<feature>.failed', { reason }) on the error branches that already exist."
+    },
+    "props_thin": {
+      "severity": "low",
+      "title": "Most events carry no props",
+      "detail": "Only auth.login (method), card.add (source, count), page.view (route) and session.start (is_guest) carry any props. scan.capture, binder.add, csv.import and the demo events carry none, so 'how many cards per import' or 'which demo leads to signup' cannot be segmented.",
+      "direction": "limits segmentation, does not bias counts",
+      "fix": "add a small props object at each call site; keep it ids and counts only, per the no-PII rule in lib/analytics.ts."
+    },
+    "referrer": {
+      "severity": "low",
+      "title": "No acquisition source",
+      "detail": "Nothing records how a session arrived — no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials.",
+      "direction": "no attribution possible",
+      "fix": "capture document.referrer and utm_* on first web load into the analytics_sessions row (add nullable columns); native can send the install referrer."
+    }
+  }
+}

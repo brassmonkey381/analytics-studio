@@ -13,14 +13,23 @@ $log = Join-Path $logDir ("run-" + (Get-Date -Format "yyyy-MM-dd") + ".log")
 & node (Join-Path $root "scripts\collect.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 $collectExit = $LASTEXITCODE
 & node (Join-Path $root "scripts\report.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
-"collect exit=$collectExit report exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
+$reportExit = $LASTEXITCODE
+
+# Events lane: in-app event/session stream for michi-maker and tcgscan. It runs
+# after the DAU lane and its failures are non-fatal - a missing event stream
+# must not cost us the day's DAU history, which cannot be backfilled.
+& node (Join-Path $root "scripts\events.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+$eventsExit = $LASTEXITCODE
+& node (Join-Path $root "scripts\events-report.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+
+"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
 
 # ---------------------------------------------------------------------------
 # Auto-commit the day's data.
 #
-# Only data/metrics.json is staged: it is the accumulating history and cannot
-# be regenerated once days age out of the window. Everything else that changes
-# daily (reports, accounts.json, logs) is gitignored because it embeds emails.
+# Only the counts-only files are staged: they are the accumulating history and
+# cannot be regenerated once days age out of the window. Everything that embeds
+# emails (accounts.json, journeys.json, the HTML reports, logs) is gitignored.
 #
 # The scan below is a fail-closed backstop, NOT the primary defence - .gitignore
 # is. If anything that looks like an email, key or IP reaches the staged diff,
@@ -34,7 +43,7 @@ function Write-Log([string]$msg) { $msg | Out-File $log -Append -Encoding utf8 }
 if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
   Push-Location $root
   try {
-    git add -- "data/metrics.json" 2>&1 | Out-Null
+    git add -- "data/metrics.json" "data/events.json" "reports/events.md" 2>&1 | Out-Null
     $staged = @(git diff --cached --name-only)
 
     if ($staged.Count -eq 0) {
@@ -52,17 +61,17 @@ if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
       $hits = @($diff -split "`n" | Select-String -Pattern $pattern)
 
       if ($hits.Count -gt 0) {
-        git reset -q -- "data/metrics.json" 2>&1 | Out-Null
+        git reset -q -- "data/metrics.json" "data/events.json" "reports/events.md" 2>&1 | Out-Null
         Write-Log "auto-commit: ABORTED - staged diff matched $($hits.Count) sensitive pattern(s); nothing committed."
         foreach ($h in $hits | Select-Object -First 5) {
           $line = $h.Line.Trim()
           Write-Log ("  " + $line.Substring(0, [Math]::Min(120, $line.Length)))
         }
-        Write-Log "  Inspect with: git diff -- data/metrics.json"
+        Write-Log "  Inspect with: git diff -- data/metrics.json data/events.json reports/events.md"
       }
       else {
         $stamp = Get-Date -Format "yyyy-MM-dd"
-        git commit -q -m "chore(data): daily metrics for $stamp" -m "Automated by run-daily.ps1. Counts only; emails and keys stay untracked." 2>&1 | Out-File $log -Append -Encoding utf8
+        git commit -q -m "chore(data): daily metrics and events for $stamp" -m "Automated by run-daily.ps1. Counts only; emails and keys stay untracked." 2>&1 | Out-File $log -Append -Encoding utf8
         if ($LASTEXITCODE -eq 0) {
           Write-Log "auto-commit: committed $($staged -join ', ')"
           if ($AutoPush) {

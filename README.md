@@ -1,18 +1,29 @@
 # Analytics Studio
 
-Daily execution lane that gathers **DAU** and **new Supabase users** for
-**Doggle, Pickleague, Michi-Maker, and TCGScan**, keeps a rolling history, and
-renders a 30-day report (daily + cumulative).
+Two daily lanes over the app fleet:
+
+1. **Metrics** — **DAU** and **new Supabase users** for **Doggle, Pickleague,
+   Michi-Maker, and TCGScan**, with a rolling 30-day history (daily + cumulative).
+2. **Events** — the in-app event/session stream for **Michi-Maker and TCGScan**,
+   turned into per-session **user journeys**, aggregate **funnels**, and a
+   standing **tracking-gap** report. See [Events lane](#events-lane).
 
 ## Layout
 
 ```
 config/apps.json         app registry: project refs, DAU/new-user sources
+config/exclusions.json   who never counts (ours, QA, automated)
+config/events.json       event taxonomy, funnels, ground truth, known gaps
 config/sql/*.sql         custom per-app SQL (TCGScan + Michi-Maker share one project)
+scripts/lib/studio.mjs   shared: .env, Management API SQL, THE exclusion CTE
 scripts/collect.mjs      fetches metrics, merges into data/metrics.json
 scripts/report.mjs       renders reports/report.html + reports/latest.md
+scripts/events.mjs       ingests analytics_sessions/_events -> events.json + journeys.json
+scripts/events-report.mjs renders reports/events.html + reports/events.md
 data/metrics.json        rolling per-day store (history accumulates across runs)
-run-daily.ps1            collect + report + log to logs/
+data/events.json         event aggregates + history (counts only, committed)
+data/journeys.json       per-session timelines keyed by email (gitignored)
+run-daily.ps1            both lanes + log to logs/
 setup-schedule.ps1       registers the "AnalyticsStudio Daily" Windows task (08:07)
 .env                     credentials (gitignored)
 ```
@@ -36,15 +47,19 @@ Two modes, checked in order:
 ## Run
 
 ```powershell
-npm run daily        # collect + report
-npm run collect      # just fetch/merge metrics
-npm run report       # just rebuild reports from stored data
-.\setup-schedule.ps1 # register the daily 08:07 scheduled task (run once)
+npm run daily         # both lanes: metrics + events
+npm run collect       # just fetch/merge metrics
+npm run report        # just rebuild reports from stored data
+npm run events        # just ingest the event stream
+npm run events:report # just rebuild the events report
+.\setup-schedule.ps1  # register the daily 08:07 scheduled task (run once)
 ```
 
-`run-daily.ps1` also commits and pushes `data/metrics.json` after each run,
-so the history stays current unattended. Only that file is staged — the
-report, `accounts.json` and logs are gitignored because they embed emails.
+`run-daily.ps1` also commits and pushes `data/metrics.json`, `data/events.json`
+and `reports/events.md` after each run, so the history stays current
+unattended. Only those counts-only files are staged — the HTML reports,
+`accounts.json`, `journeys.json` and logs are gitignored because they embed
+emails.
 Before committing it scans the staged diff for email addresses, Supabase
 PATs, secret keys, JWTs and IPv4 literals, and **fails closed**: any match
 unstages, logs what matched, and commits nothing. That is a backstop, not
@@ -117,3 +132,70 @@ attributed.
 The collector is idempotent: each run recomputes the trailing 30-day window
 and merges it into `data/metrics.json`, so gaps self-heal and history older
 than the window is preserved.
+
+## Events lane
+
+Michi-Maker and TCGScan write a first-party event stream into two tables on
+their shared project (`piikwvntldytjejxmcla`), instrumented by the sister repo
+(`tcgscan/`, migration `20260805100000_analytics_events.sql`):
+
+- **`analytics_sessions`** — one row per app-open: who, which app, guest or
+  not, platform, `started_at`/`last_seen_at`.
+- **`analytics_events`** — append-only, one row per occurrence: `name` plus a
+  `props` jsonb. Immutable from the client; no UPDATE/DELETE policy exists.
+
+`scripts/events.mjs` reads both through the Management API, applies the same
+exclusion policy as the metrics lane, and writes two files split by whether
+they can be committed: `data/events.json` (aggregates, no emails, no user ids)
+and `data/journeys.json` (per-session timelines keyed by account email,
+gitignored). `reports/events.html` renders both.
+
+### Asking a new question
+
+Everything the report answers lives in `config/events.json`, not in code:
+
+- **`taxonomy`** — every event name, its label, its stage on the
+  acquisition → activation → engagement → monetization spine, and which apps
+  emit it. A name seen in the data but missing here is reported as
+  *unrecognised* rather than silently dropped, so new upstream instrumentation
+  surfaces as a prompt to update this file.
+- **`funnels`** — ordered stages. A user counts at stage N only if they cleared
+  every earlier stage, so the difference between two rows is a real drop-off
+  rather than two unrelated populations printed next to each other. A stage
+  matches on an event (`names`), a page route (`routes`), a **ground-truth
+  table** (`truth`), or guest status.
+- **`truth`** — product tables (`pro_trials`, `tcgscan_pro_trials`,
+  `entitlements`) read over *all* history, not just the window. Instrumentation
+  shipped 2026-08-05; a trial started before that is still a trial, and the
+  event stream has no way to know. The report shows both numbers and flags the
+  difference rather than picking one.
+- **`gaps`** — see below.
+
+Add a funnel to that file and re-run `npm run events:report`; no code changes.
+
+### Coverage is measured on ALL traffic, on purpose
+
+Whether a `track()` call site can fire is a property of the code, not of who
+used the app. Measuring coverage on the excluded stream would report an event
+we have verified by hand in QA as "never fired", which reads as broken
+instrumentation. So the report separates:
+
+- **never fired by anyone** — unverified; the call site may be unreachable.
+- **works, but not yet from a real user** — instrumentation is fine, the
+  behaviour just has not happened outside our own accounts.
+
+Every behavioural number stays exclusion-filtered as normal.
+
+### Tracking gaps
+
+`config/events.json` → `gaps` is a standing list of what the product does but
+the stream does not record. Each entry states its **effect on the numbers**
+("understates awareness") and a concrete **fix**, and any funnel stage a gap
+distorts carries an inline marker linking to it — a gap is never an appendix
+you can read the chart without. Fixes land in the sister repo, not here.
+
+The blocking one today: **there is no impression event for the PRO trial
+offer.** `TrialCta` emits `trial.start` only when pressed, and renders `null`
+for anyone ineligible, so "how many users are *aware* of the trial" is not
+measurable. The report substitutes pricing-page views, which is a different
+and smaller set, and marks the stage accordingly.

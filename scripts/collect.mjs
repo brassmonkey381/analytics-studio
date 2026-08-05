@@ -11,69 +11,19 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const CONFIG = JSON.parse(readFileSync(join(ROOT, "config", "apps.json"), "utf8"));
-const EXCLUSIONS = JSON.parse(readFileSync(join(ROOT, "config", "exclusions.json"), "utf8"));
+import { ROOT, loadEnv, readConfig, runSql, sqlStr, isoDate, exclusionCte } from "./lib/studio.mjs";
+
+const CONFIG = readConfig("apps.json");
 const DATA_FILE = join(ROOT, "data", "metrics.json");
 // Emails live apart from metrics.json: that file is committed as the historical
 // record and must stay free of PII. This sidecar is gitignored.
 const ACCOUNTS_FILE = join(ROOT, "data", "accounts.json");
 
-loadEnv(join(ROOT, ".env"));
+loadEnv();
 
 const WINDOW_DAYS = CONFIG.windowDays ?? 30;
 const PAT = process.env.SUPABASE_ACCESS_TOKEN || "";
-
-function loadEnv(path) {
-  if (!existsSync(path)) return;
-  for (const line of readFileSync(path, "utf8").split(/\r?\n/)) {
-    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
-    if (m && !line.trim().startsWith("#") && !(m[1] in process.env)) {
-      process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
-    }
-  }
-}
-
-function isoDate(d) {
-  return d.toISOString().slice(0, 10);
-}
-
-const sqlStr = (s) => `'${String(s).replace(/'/g, "''")}'`;
-
-// Builds the `excluded_users` CTE: our own accounts, seeded/placeholder rows,
-// QA/test accounts, and anything whose session user-agent looks automated
-// (Playwright/headless browsers, curl, node, etc). Every metrics query filters
-// against this, and the excluded count is reported so it is never silent.
-function exclusionCte(appId) {
-  const g = EXCLUSIONS.global ?? {};
-  const a = EXCLUSIONS.byApp?.[appId] ?? {};
-  const patterns = [...(g.emailPatterns ?? []), ...(a.emailPatterns ?? [])];
-  const exact = [...(g.emailExact ?? []), ...(a.emailExact ?? [])];
-  const ids = [...(g.userIds ?? []), ...(a.userIds ?? [])];
-  // IPs come from .env, never from committed config — an address is location data.
-  const envIps = (process.env.EXCLUDED_IPS ?? "").split(",").map((s) => s.trim()).filter(Boolean);
-  const ips = [...envIps, ...(g.ips ?? []), ...(a.ips ?? [])];
-  const uaRegex = a.userAgentRegex ?? g.userAgentRegex ?? null;
-
-  const clauses = [];
-  if (patterns.length) clauses.push(`u.email ilike any (array[${patterns.map(sqlStr).join(", ")}])`);
-  if (exact.length) clauses.push(`lower(u.email) = any (array[${exact.map((e) => sqlStr(String(e).toLowerCase())).join(", ")}])`);
-  if (ids.length) clauses.push(`u.id = any (array[${ids.map(sqlStr).join(", ")}]::uuid[])`);
-  if (uaRegex) {
-    clauses.push(`exists (select 1 from auth.sessions s where s.user_id = u.id and s.user_agent ~* ${sqlStr(uaRegex)})`);
-  }
-  // IP exclusion applies to ANONYMOUS guests only. A dev box shares its address
-  // with everyone else on that network, and a real signed-in user there must not
-  // vanish from the numbers — real accounts are excluded by identity (email)
-  // instead. This kills dev-machine guest noise without the NAT collateral.
-  if (ips.length) {
-    clauses.push(`(u.is_anonymous and exists (select 1 from auth.sessions s where s.user_id = u.id and host(s.ip) = any (array[${ips.map(sqlStr).join(", ")}])))`);
-  }
-  const where = clauses.length ? clauses.join("\n     or ") : "false";
-  return `excluded_users as (\n  select u.id from auth.users u\n  where ${where}\n)`;
-}
 
 function windowDates() {
   const out = [];
@@ -84,20 +34,7 @@ function windowDates() {
   return out;
 }
 
-// ---------- Path 1: Management API SQL ----------
-
-async function runSql(projectRef, query) {
-  const res = await fetch(`https://api.supabase.com/v1/projects/${projectRef}/database/query`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${PAT}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-  });
-  if (!res.ok) throw new Error(`Management API ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  return res.json();
-}
+// ---------- Path 1: Management API SQL (runSql lives in lib/studio.mjs) ----------
 
 function buildMetricsSql(app) {
   const activityUnion = app.dauSources

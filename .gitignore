@@ -8,3 +8,9 @@ logs/
 data/accounts.json
 reports/report.html
 reports/latest.md
+
+# Events lane. journeys.json is per-session timelines keyed by account email;
+# events.html renders them. data/events.json and reports/events.md stay
+# counts-only and ARE committed.
+data/journeys.json
+reports/events.html
