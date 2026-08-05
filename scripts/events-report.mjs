@@ -142,6 +142,19 @@ function coveragePanel(a) {
       `<p class="note">Verified working but not yet seen from a real user: ${c.neverFiredReal.map((x) => `<code>${esc(x)}</code>`).join(", ")}. The instrumentation is fine; the behaviour has not happened outside our own accounts.</p>`,
     );
   }
+  if (c.planned?.length) {
+    const pending = c.planned.filter((x) => !(c.plannedLanded ?? []).includes(x));
+    if (pending.length) {
+      parts.push(
+        `<p class="note">Specced but not built: ${pending.map((x) => `<code>${esc(x)}</code>`).join(", ")}. Kept out of the counts above — an event nobody has written cannot have a broken call site. See <a href="#gaps">tracking gaps</a>.</p>`,
+      );
+    }
+    if (c.plannedLanded?.length) {
+      parts.push(
+        `<p class="note"><strong>Landed since the spec:</strong> ${c.plannedLanded.map((x) => `<code>${esc(x)}</code>`).join(", ")}. Mark the matching gap <code>fixed</code> in <code>config/events.json</code>.</p>`,
+      );
+    }
+  }
   if (c.unrecognised.length) {
     parts.push(
       `<p class="note warn">Seen in the data but not in the studio taxonomy: ${c.unrecognised.map((x) => `<code>${esc(x)}</code>`).join(", ")}. Add them to <code>config/events.json</code>.</p>`,
@@ -237,17 +250,21 @@ ${journeyPanel(id)}
 function gapsSection() {
   const cards = gapList
     .map(
-      ([id, g]) => `<div class="gap ${esc(g.severity)}" id="gap-${esc(id)}">
-  <div class="ghead"><span class="sev">${esc(g.severity)}</span> <strong>${esc(g.title)}</strong> <code>${esc(id)}</code></div>
+      ([id, g]) => `<div class="gap ${esc(g.severity)}${g.status === "fixed" ? " done" : ""}" id="gap-${esc(id)}">
+  <div class="ghead"><span class="sev">${esc(g.severity)}</span> <span class="status st-${esc(g.status ?? "open")}">${esc(g.status ?? "open")}</span> <strong>${esc(g.title)}</strong> <code>${esc(id)}</code></div>
   <p>${esc(g.detail)}</p>
   <p class="dir"><strong>Effect on the numbers:</strong> ${esc(g.direction)}</p>
   <p class="fix"><strong>Fix:</strong> ${esc(g.fix)}</p>
 </div>`,
     )
     .join("\n");
+  const counts = gapList.reduce((acc, [, g]) => ((acc[g.status ?? "open"] = (acc[g.status ?? "open"] ?? 0) + 1), acc), {});
+  const tally = Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(" · ");
   return `<section>
 <h2 id="gaps">Tracking gaps</h2>
-<p class="note">What the product does but the stream does not record. Ordered by how much they distort a decision. Every fix lands in the sister repo (<code>tcgscan/</code>), not here.</p>
+<p class="note">What the product does but the stream does not record. Ordered by how much they distort a decision — ${esc(tally)}.
+<strong>specced</strong> means written up in <code>../tcgscan/ANALYTICS-TRACKING-GAPS.md</code> and waiting on the app repos;
+<strong>deferred</strong> means a decision was made not to do it, with the reason stated. Every fix lands in the app repos, never here.</p>
 ${cards}
 </section>`;
 }
@@ -353,8 +370,13 @@ a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; 
 .gap.blocking { border-left-color: #d03b3b; }
 .gap.high { border-left-color: var(--warn); }
 .gap.medium { border-left-color: var(--bar); }
+.gap.done { opacity: 0.65; }
 .gap .ghead { margin-bottom: 4px; }
 .gap .sev { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.gap .status { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em;
+  border: 1px solid var(--border); border-radius: 20px; padding: 1px 6px; color: var(--muted); }
+.gap .status.st-specced { color: var(--bar); border-color: var(--bar); }
+.gap .status.st-fixed { color: var(--ms); border-color: var(--ms); }
 .gap p { margin: 5px 0; color: var(--ink-2); }
 .gap .fix { color: var(--ink); }
 </style>
@@ -407,7 +429,7 @@ const md = [
   `## Tracking gaps`,
   ``,
   ...gapList.flatMap(([id, g]) => [
-    `### ${g.title} \`${id}\` (${g.severity})`,
+    `### ${g.title} \`${id}\` (${g.severity}, ${g.status ?? "open"})`,
     ``,
     g.detail,
     ``,

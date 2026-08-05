@@ -283,11 +283,19 @@ for (const app of CFG.apps) {
   // measuring it on the filtered stream would report our own QA passes as
   // "never fired" and read as broken instrumentation. `neverFiredReal` keeps the
   // behavioural view separate.
-  const declared = Object.entries(TAX).filter(([, v]) => (v.apps ?? []).includes(key)).map(([n]) => n);
+  // `planned` names are specced but not built yet. They are kept out of the
+  // "never fired" list, which is a bug signal — an event nobody has written
+  // cannot have a broken call site, and mixing the two hides the real ones.
+  const declaredAll = Object.entries(TAX).filter(([, v]) => (v.apps ?? []).includes(key));
+  const declared = declaredAll.filter(([, v]) => !v.planned).map(([n]) => n);
+  const planned = declaredAll.filter(([, v]) => v.planned).map(([n]) => n);
   const seenAny = new Set(allEvents.map((e) => e.name));
   const seenReal = new Set(events.map((e) => e.name));
   const neverFired = declared.filter((n) => !seenAny.has(n));
   const neverFiredReal = declared.filter((n) => seenAny.has(n) && !seenReal.has(n));
+  // A planned event that has started firing has shipped — say so, so the gap
+  // list and the data cannot disagree about what is done.
+  const plannedLanded = planned.filter((n) => seenAny.has(n));
   const unrecognised = [...seenAny].filter((n) => !(n in TAX));
 
   // Where the event stream and the ground truth disagree. The stream can only
@@ -337,6 +345,8 @@ for (const app of CFG.apps) {
       fired: declared.length - neverFired.length,
       neverFired,
       neverFiredReal,
+      planned,
+      plannedLanded,
       unrecognised,
     },
   };

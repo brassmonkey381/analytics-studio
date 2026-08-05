@@ -2,31 +2,31 @@
   "history": {
     "michi-maker": {
       "2026-08-05": {
-        "sessions": 2,
-        "events": 2,
-        "users": 1
+        "sessions": 4,
+        "events": 13,
+        "users": 3
       }
     }
   },
-  "collectedAt": "2026-08-05T21:54:22.779Z",
+  "collectedAt": "2026-08-05T22:44:38.684Z",
   "windowDays": 30,
   "apps": {
     "michi-maker": {
       "name": "Michi-Maker",
       "eventKey": "michi",
       "totals": {
-        "sessions": 2,
-        "events": 2,
-        "users": 1,
+        "sessions": 4,
+        "events": 13,
+        "users": 3,
         "realUsers": 0,
-        "guestUsers": 1,
-        "excludedSessions": 44,
-        "excludedEvents": 110,
+        "guestUsers": 3,
+        "excludedSessions": 47,
+        "excludedEvents": 113,
         "orphanEvents": 0,
         "bouncedSessions": 2,
-        "medianSessionSecs": 0.094,
+        "medianSessionSecs": 1.65,
         "platforms": {
-          "web": 2
+          "web": 4
         },
         "firstEventAt": "2026-08-05 17:58:28.814278+00"
       },
@@ -207,22 +207,74 @@
         },
         {
           "day": "2026-08-05",
-          "sessions": 2,
-          "events": 2,
-          "users": 1
+          "sessions": 4,
+          "events": 13,
+          "users": 3
         }
       ],
       "eventsByName": [
         {
+          "name": "page.view",
+          "label": "Viewed a page",
+          "stage": "engagement",
+          "count": 8,
+          "users": 2,
+          "known": true
+        },
+        {
           "name": "session.start",
           "label": "Session started",
           "stage": "acquisition",
-          "count": 2,
+          "count": 4,
+          "users": 3,
+          "known": true
+        },
+        {
+          "name": "binder.add",
+          "label": "Created a binder",
+          "stage": "activation",
+          "count": 1,
           "users": 1,
           "known": true
         }
       ],
-      "routes": [],
+      "routes": [
+        {
+          "route": "/",
+          "label": "Home",
+          "intent": null,
+          "count": 4,
+          "users": 2
+        },
+        {
+          "route": "/michi-method",
+          "label": "The michi method",
+          "intent": null,
+          "count": 1,
+          "users": 1
+        },
+        {
+          "route": "/discover",
+          "label": "Discover",
+          "intent": null,
+          "count": 1,
+          "users": 1
+        },
+        {
+          "route": "/my-binders",
+          "label": null,
+          "intent": null,
+          "count": 1,
+          "users": 1
+        },
+        {
+          "route": "/binder/:id",
+          "label": null,
+          "intent": null,
+          "count": 1,
+          "users": 1
+        }
+      ],
       "funnels": [
         {
           "id": "pro-trial",
@@ -232,7 +284,7 @@
             {
               "id": "arrived",
               "label": "Opened the app",
-              "users": 1,
+              "users": 3,
               "ofPrev": 100,
               "ofTop": 100,
               "caveat": null
@@ -240,16 +292,16 @@
             {
               "id": "engaged",
               "label": "Did anything past the open",
-              "users": 0,
-              "ofPrev": 0,
-              "ofTop": 0,
+              "users": 2,
+              "ofPrev": 66.7,
+              "ofTop": 66.7,
               "caveat": null
             },
             {
-              "id": "saw-pricing",
-              "label": "Reached a pricing surface",
+              "id": "saw-offer",
+              "label": "Was shown the PRO offer",
               "users": 0,
-              "ofPrev": null,
+              "ofPrev": 0,
               "ofTop": 0,
               "caveat": "trial_awareness"
             },
@@ -271,7 +323,7 @@
             {
               "id": "arrived",
               "label": "Opened the app",
-              "users": 1,
+              "users": 3,
               "ofPrev": 100,
               "ofTop": 100,
               "caveat": null
@@ -279,16 +331,16 @@
             {
               "id": "looked",
               "label": "Viewed a page",
-              "users": 0,
-              "ofPrev": 0,
-              "ofTop": 0,
+              "users": 2,
+              "ofPrev": 66.7,
+              "ofTop": 66.7,
               "caveat": null
             },
             {
               "id": "tried",
               "label": "Tried a demo",
               "users": 0,
-              "ofPrev": null,
+              "ofPrev": 0,
               "ofTop": 0,
               "caveat": null
             },
@@ -310,7 +362,7 @@
             {
               "id": "guest",
               "label": "Started as a guest",
-              "users": 1,
+              "users": 3,
               "ofPrev": 100,
               "ofTop": 100,
               "caveat": null
@@ -318,16 +370,16 @@
             {
               "id": "engaged",
               "label": "Did anything at all",
-              "users": 0,
-              "ofPrev": 0,
-              "ofTop": 0,
+              "users": 2,
+              "ofPrev": 66.7,
+              "ofTop": 66.7,
               "caveat": null
             },
             {
               "id": "signed",
               "label": "Created an account",
               "users": 0,
-              "ofPrev": null,
+              "ofPrev": 0,
               "ofTop": 0,
               "caveat": "guest_upgrade"
             }
@@ -359,14 +411,20 @@
           "trial.start"
         ],
         "neverFiredReal": [
-          "page.view",
           "auth.login",
           "demo.tricolor_search",
           "demo.csv_import",
           "demo.curation",
-          "binder.add",
           "card.add"
         ],
+        "planned": [
+          "pro.offer_shown",
+          "pro.offer_declined",
+          "trial.start_failed",
+          "csv.import_failed",
+          "search.no_results"
+        ],
+        "plannedLanded": [],
         "unrecognised": []
       }
     },
@@ -594,8 +652,8 @@
               "caveat": null
             },
             {
-              "id": "saw-pricing",
-              "label": "Reached a pricing surface",
+              "id": "saw-offer",
+              "label": "Was shown the PRO offer",
               "users": 0,
               "ofPrev": null,
               "ofTop": null,
@@ -717,6 +775,14 @@
           "auth.login",
           "card.add"
         ],
+        "planned": [
+          "pro.offer_shown",
+          "pro.offer_declined",
+          "trial.start_failed",
+          "scan.failed",
+          "search.no_results"
+        ],
+        "plannedLanded": [],
         "unrecognised": []
       }
     }

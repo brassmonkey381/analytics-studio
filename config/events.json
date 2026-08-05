@@ -11,6 +11,7 @@
   ],
 
   "_taxonomyDoc": "Every event name the two apps can emit, with a plain-English label and a stage. `stage` places the event on the acquisition -> activation -> engagement -> monetization spine; `milestone: true` marks the ones worth calling out on a journey timeline. Names seen in the data but missing here are reported as unrecognised rather than silently dropped, so instrumentation added upstream shows up as a prompt to update this file.",
+  "_plannedDoc": "`planned: true` marks names registered ahead of implementation, specced in ../tcgscan/ANALYTICS-TRACKING-GAPS.md. Declaring them now means they are recognised the moment they land instead of arriving as unrecognised, and the coverage panel names them as unexercised rather than staying silent about the hole. `failure: true` marks events that record something going wrong, so the report can separate a drop-off caused by disinterest from one caused by a break.",
   "taxonomy": {
     "session.start":         { "label": "Session started",          "stage": "acquisition",  "apps": ["michi", "tcgscan"] },
     "page.view":             { "label": "Viewed a page",            "stage": "engagement",   "apps": ["michi", "tcgscan"] },
@@ -35,7 +36,14 @@
     "collection.card_add":   { "label": "Added a card to a collection",     "stage": "engagement", "apps": ["tcgscan"] },
     "collection.card_remove":{ "label": "Removed a card from a collection", "stage": "engagement", "apps": ["tcgscan"] },
 
-    "trial.start":           { "label": "Started a PRO trial",      "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true }
+    "trial.start":           { "label": "Started a PRO trial",      "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true },
+
+    "pro.offer_shown":       { "label": "Saw the PRO offer",        "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true, "planned": true },
+    "pro.offer_declined":    { "label": "Dismissed the PRO offer",  "stage": "monetization", "apps": ["michi", "tcgscan"], "planned": true },
+    "trial.start_failed":    { "label": "PRO trial failed to start","stage": "monetization", "apps": ["michi", "tcgscan"], "planned": true, "failure": true },
+    "csv.import_failed":     { "label": "CSV import failed",        "stage": "activation",   "apps": ["michi"], "planned": true, "failure": true },
+    "scan.failed":           { "label": "Scan failed",              "stage": "activation",   "apps": ["tcgscan"], "planned": true, "failure": true },
+    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi", "tcgscan"], "planned": true, "failure": true }
   },
 
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness — the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
@@ -61,7 +69,7 @@
       "stages": [
         { "id": "arrived",   "label": "Opened the app",              "match": "event", "names": ["session.start"] },
         { "id": "engaged",   "label": "Did anything past the open",  "match": "event", "names": ["page.view", "card.search", "card.add", "scan.capture", "binder.add", "csv.import", "card.open", "collection.create"] },
-        { "id": "saw-pricing", "label": "Reached a pricing surface", "match": "route", "routes": ["/plans", "/purchases"], "caveat": "trial_awareness" },
+        { "id": "saw-offer", "label": "Was shown the PRO offer",     "match": "event", "names": ["pro.offer_shown"], "caveat": "trial_awareness" },
         { "id": "started",   "label": "Started a PRO trial",         "match": "truth", "truth": "trial" }
       ]
     },
@@ -102,24 +110,27 @@
     ]
   },
 
-  "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. Fixes are one-line track() calls in the sister repo unless noted.",
+  "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation in the app repos), deferred (a decision was made not to do it, with the reason), fixed (shipped and verified firing). Fixes land in the app repos, never here.",
   "gaps": {
     "trial_awareness": {
       "severity": "blocking",
+      "status": "specced",
       "title": "No impression event for the PRO trial offer",
-      "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is therefore not measured; the report substitutes pricing-page views, which is a different and smaller set.",
-      "direction": "understates awareness",
-      "fix": "track('pro.offer_shown', { surface }) on TrialCta mount, in both apps' components/monetization/TrialCta.tsx. Add track('pro.offer_declined') on dismissal of the gate that surfaced it."
+      "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.",
+      "direction": "understates awareness — currently makes it unmeasurable",
+      "fix": "track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness."
     },
     "guest_upgrade": {
-      "severity": "high",
-      "title": "Guest-to-account upgrade is not an event",
-      "detail": "resetSessionUser() detects a guest upgrading in place (same uid, is_guest flips) and patches analytics_sessions.is_guest, but emits no event. The conversion is invisible in the stream and the session's own history is rewritten to look like it was never a guest.",
-      "direction": "understates guest conversion, overstates signed-in sessions",
-      "fix": "track('account.upgraded', { from: 'guest' }) in the same branch of resetSessionUser() that patches is_guest, in both apps' lib/analytics.ts."
+      "severity": "medium",
+      "status": "specced",
+      "title": "A guest session is rewritten to look like it never was one",
+      "detail": "The conversion event itself DOES exist: both apps emit account.created with props.via = 'guest_upgrade' (michi store/auth.tsx:309,348; tcgscan store/auth.tsx:198,266,283). What is lost is the session. resetSessionUser() patches analytics_sessions.is_guest in place when a guest signs up mid-session, so the row retroactively claims it was always an account. Sessions cannot be split into 'started as guest' and 'started signed in', and the session-level conversion rate is unrecoverable.",
+      "direction": "guest-started sessions are undercounted; the conversion count itself is correct",
+      "fix": "stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it."
     },
     "session_end": {
       "severity": "medium",
+      "status": "specced",
       "title": "Session length is a floor, not a duration",
       "detail": "last_seen_at is bumped opportunistically and throttled to 60s, and only when an event fires. There is no unload/background hook, so a session that ends after a long read records the timestamp of its last tracked action instead. Every duration is an underestimate, and single-event sessions read as zero seconds.",
       "direction": "understates session length",
@@ -127,6 +138,7 @@
     },
     "no_error_events": {
       "severity": "medium",
+      "status": "specced",
       "title": "Nothing records failure",
       "detail": "No event marks a failed scan, a rejected CSV, a search with no results, or a checkout that errored. Every funnel measures only the happy path, so a stage that drops off cannot be distinguished between 'lost interest' and 'it broke'.",
       "direction": "hides the reason for every drop-off",
@@ -134,17 +146,19 @@
     },
     "props_thin": {
       "severity": "low",
-      "title": "Most events carry no props",
-      "detail": "Only auth.login (method), card.add (source, count), page.view (route) and session.start (is_guest) carry any props. scan.capture, binder.add, csv.import and the demo events carry none, so 'how many cards per import' or 'which demo leads to signup' cannot be segmented.",
-      "direction": "limits segmentation, does not bias counts",
-      "fix": "add a small props object at each call site; keep it ids and counts only, per the no-PII rule in lib/analytics.ts."
+      "status": "specced",
+      "title": "A handful of events carry no props",
+      "detail": "Assessed against the code, not the recorded rows — the sample in the database is small enough to be misleading. Most call sites are already well instrumented: card.search carries kind, scan.capture carries mode and cards, csv.import carries cards, card.add carries source and count, account.created carries via, binder.add carries isDemo. The bare ones are demo.print, demo.tricolor_search, demo.csv_import, card.open, trial.start and the four collection.* events, so 'which demo precedes a signup' and 'which surface sold the trial' cannot be segmented.",
+      "direction": "limits segmentation on those events only; biases no count",
+      "fix": "add a small props object at those call sites; ids and counts only, per the no-PII rule in lib/analytics.ts."
     },
     "referrer": {
       "severity": "low",
+      "status": "deferred",
       "title": "No acquisition source",
-      "detail": "Nothing records how a session arrived — no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials.",
+      "detail": "Nothing records how a session arrived — no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials. DEFERRED by Brian on 2026-08-06, for a real reason rather than as a backlog punt: michi-maker/src/app/legal/privacy.tsx promises first-party records of 'which pages you open and product actions', and referrer/UTM are neither. Capturing them means changing that disclosure first, in both apps.",
       "direction": "no attribution possible",
-      "fix": "capture document.referrer and utm_* on first web load into the analytics_sessions row (add nullable columns); native can send the install referrer."
+      "fix": "not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change."
     }
   }
 }

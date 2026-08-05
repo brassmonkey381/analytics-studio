@@ -190,12 +190,42 @@ Every behavioural number stays exclusion-filtered as normal.
 
 `config/events.json` → `gaps` is a standing list of what the product does but
 the stream does not record. Each entry states its **effect on the numbers**
-("understates awareness") and a concrete **fix**, and any funnel stage a gap
-distorts carries an inline marker linking to it — a gap is never an appendix
-you can read the chart without. Fixes land in the sister repo, not here.
+("understates awareness"), a concrete **fix**, and a **status**:
+
+| status | meaning |
+| --- | --- |
+| `open` | found, not yet written up |
+| `specced` | written up in [`../tcgscan/ANALYTICS-TRACKING-GAPS.md`](../tcgscan/ANALYTICS-TRACKING-GAPS.md), waiting on the app repos |
+| `deferred` | a decision was made not to do it, with the reason recorded |
+| `fixed` | shipped and verified firing |
+
+Any funnel stage a gap distorts carries an inline marker linking to it — a gap
+is never an appendix you can read the chart without. **Fixes land in the app
+repos, never here**; this repo only reads.
 
 The blocking one today: **there is no impression event for the PRO trial
 offer.** `TrialCta` emits `trial.start` only when pressed, and renders `null`
 for anyone ineligible, so "how many users are *aware* of the trial" is not
-measurable. The report substitutes pricing-page views, which is a different
-and smaller set, and marks the stage accordingly.
+measurable. The awareness stage of the PRO funnel reads zero — that zero is the
+gap, not a finding, and pricing-page views in the Pages table are the interim
+proxy.
+
+Deferred: **acquisition attribution**. Referrer/UTM capture would contradict
+michi's privacy disclosure as written, so it needs the copy changed first.
+
+### Planned events
+
+Names in the taxonomy marked `planned: true` are registered before they exist,
+so they are recognised the moment they land instead of arriving as
+*unrecognised*. They are deliberately kept **out** of the "never fired" list —
+an event nobody has written cannot have a broken call site, and mixing the two
+hides the real ones. When a planned name starts appearing, the coverage panel
+says so and prompts you to mark its gap `fixed`.
+
+### Handing work to the app repos
+
+`../tcgscan/` is a workspace of independent repos, not a monorepo, and this one
+is outside it. The studio's job ends at a written work order:
+`../tcgscan/ANALYTICS-TRACKING-GAPS.md` carries the evidence (file:line), the
+effect on each number, the required change, acceptance criteria, and the
+event-name contract that must match this repo's taxonomy exactly.
