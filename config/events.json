@@ -44,7 +44,12 @@
     "trial.start_failed":    { "label": "PRO trial failed to start","stage": "monetization", "apps": ["michi", "tcgscan"], "planned": true, "failure": true },
     "csv.import_failed":     { "label": "CSV import failed",        "stage": "activation",   "apps": ["michi"], "planned": true, "failure": true },
     "scan.failed":           { "label": "Scan failed",              "stage": "activation",   "apps": ["tcgscan"], "planned": true, "failure": true },
-    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi"], "planned": true, "failure": true }
+    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi"], "planned": true, "failure": true },
+
+    "share.link_created":    { "label": "Made a binder shareable",  "stage": "engagement",   "apps": ["michi"], "planned": true, "milestone": true },
+    "share.link_copied":     { "label": "Copied a share link",      "stage": "engagement",   "apps": ["michi"], "planned": true },
+    "share.link_opened":     { "label": "Opened a shared binder",   "stage": "acquisition",  "apps": ["michi"], "planned": true, "milestone": true },
+    "binder.reshare":        { "label": "Copied someone's binder",  "stage": "activation",   "apps": ["michi"], "planned": true, "milestone": true }
   },
 
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness — the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
@@ -87,6 +92,18 @@
       ]
     },
     {
+      "id": "shared-binder",
+      "title": "Shared binder link to signup",
+      "question": "Do people who arrive on someone else's shared binder stick around and make an account?",
+      "apps": ["michi"],
+      "stages": [
+        { "id": "opened",  "label": "Opened a shared binder",       "match": "event", "names": ["share.link_opened"], "caveat": "share_attribution" },
+        { "id": "browsed", "label": "Went somewhere else in the app","match": "event", "names": ["page.view", "card.search", "demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
+        { "id": "signed",  "label": "Created an account",           "match": "event", "names": ["account.created"] },
+        { "id": "made",    "label": "Made something of their own",  "match": "event", "names": ["binder.add", "csv.import", "binder.reshare"] }
+      ]
+    },
+    {
       "id": "signup",
       "title": "Guest to account",
       "question": "Do anonymous guests ever convert into real accounts?",
@@ -113,6 +130,22 @@
 
   "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation), landed (code is in the app repos but no event has been observed yet, so it is not proven), deferred (a decision was made not to do it, with the reason), fixed (observed firing). landed -> fixed is not a judgement call: the coverage panel detects a planned name appearing in the data and says so. Fixes land in the app repos, never here.",
   "gaps": {
+    "share_attribution": {
+      "severity": "blocking",
+      "status": "specced",
+      "title": "A shared binder link is invisible as an arrival",
+      "detail": "Brian expects shared binder links to be a main acquisition channel (2026-08-06). Nothing records one. A share is just the public /binder/[id] URL — ShareSheet flips is_public and copies the link with no token and no event, so an arrival is indistinguishable from the owner opening their own binder or a click from /discover. Verified against the data: of 40 binder page.views, 5 resolve to a real binder and ALL FIVE are the owner's own; zero non-owner views exist, and 32 of the rest are one local-only binder that is not in the binders table at all. binder_reshares (1 row) is the only durable trace of the channel, and it only fires on a copy, not a visit.",
+      "direction": "the entire shared-link acquisition channel reads as zero",
+      "fix": "track('share.link_created', { binder_id }) and share.link_copied in ShareSheet; on /binder/[id], track('share.link_opened', { binder_id, is_owner }) when the viewer is not the owner; track('binder.reshare', { source_binder_id }) where the binder_reshares row is written. Attribution to signup then falls out of the session: the arrival and the account.created share a session_id."
+    },
+    "landing_route_broken": {
+      "severity": "high",
+      "status": "open",
+      "title": "landing_route is never written",
+      "detail": "The column added by 20260806090000_analytics_gap_fixes.sql is null on all 91 sessions, including sessions recorded after the fixing build went live. The build IS deployed — a demo.print at 2026-08-05T23:05Z carries the new props.surface — and session UPDATEs work generally, since 12 of the 38 sessions since 22:30Z have last_seen_at advanced past started_at, and 6 of those had a page.view that should have triggered recordLandingRoute(). Discovered 2026-08-06 while scoping share-link attribution, which is the feature that most needs this field.",
+      "direction": "entry point unknown for every session; blocks landing-page and share-link attribution",
+      "fix": "debug recordLandingRoute() in both apps' lib/analytics.ts. The .is('landing_route', null) filter and the RLS update policy are the two candidates worth checking first; the new analytics_sessions_guard trigger does not touch the column."
+    },
     "tcgscan_search_blind": {
       "severity": "medium",
       "status": "open",

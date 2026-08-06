@@ -1,26 +1,26 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-06T00:23:52.102Z. Own/QA/automated accounts excluded.
+Collected 2026-08-06T00:37:28.060Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-6 sessions · 18 events · 1 account + 4 guests · median session 2s
-Excluded: 79 sessions, 160 events (our own, QA and automated accounts).
+7 sessions · 20 events · 1 account + 4 guests · median session 2s
+Excluded: 80 sessions, 161 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 6 | 18 | 5 |
-| 7d | 6 | 18 | 5 |
-| 14d | 6 | 18 | 5 |
-| 30d | 6 | 18 | 5 |
+| 24h | 7 | 20 | 5 |
+| 7d | 7 | 20 | 5 |
+| 14d | 7 | 20 | 5 |
+| 30d | 7 | 20 | 5 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
 - **5** Opened the app (100% of top)
-- **3** Did anything past the open (60% of top)
+- **4** Did anything past the open (80% of top)
 - **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -29,22 +29,31 @@ _How many users know the PRO trial exists, and how many start one?_
 _Do people who open the app ever do the core thing it is for?_
 
 - **5** Opened the app (100% of top)
-- **3** Viewed a page (60% of top)
+- **4** Viewed a page (80% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
+
+### Shared binder link to signup
+
+_Do people who arrive on someone else's shared binder stick around and make an account?_
+
+- **0** Opened a shared binder (0% of top) — see gap `share_attribution`
+- **0** Went somewhere else in the app (0% of top)
+- **0** Created an account (0% of top)
+- **0** Made something of their own (0% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
 
 - **4** Started as a guest (100% of top)
-- **2** Did anything at all (50% of top)
+- **3** Did anything at all (75% of top)
 - **0** Created an account (0% of top) — see gap `guest_upgrade`
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 11 | 3 |
-| Session started (`session.start`) | 6 | 5 |
+| Viewed a page (`page.view`) | 12 | 4 |
+| Session started (`session.start`) | 7 | 5 |
 | Created a binder (`binder.add`) | 1 | 1 |
 
 Instrumentation: 9/13 events verified firing (all traffic, all time).
@@ -53,7 +62,7 @@ Never fired by anyone (unverified): `account.created`, `csv.import`, `card.searc
 
 Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`, `demo.print`, `card.add`
 
-Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
+Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`, `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
@@ -103,6 +112,14 @@ Registered, not yet fired: `pro.offer_shown`, `trial.start_failed`, `scan.failed
 
 ## Tracking gaps
 
+### landing_route is never written `landing_route_broken` (high, open)
+
+The column added by 20260806090000_analytics_gap_fixes.sql is null on all 91 sessions, including sessions recorded after the fixing build went live. The build IS deployed — a demo.print at 2026-08-05T23:05Z carries the new props.surface — and session UPDATEs work generally, since 12 of the 38 sessions since 22:30Z have last_seen_at advanced past started_at, and 6 of those had a page.view that should have triggered recordLandingRoute(). Discovered 2026-08-06 while scoping share-link attribution, which is the feature that most needs this field.
+
+**Effect:** entry point unknown for every session; blocks landing-page and share-link attribution
+
+**Fix:** debug recordLandingRoute() in both apps' lib/analytics.ts. The .is('landing_route', null) filter and the RLS update policy are the two candidates worth checking first; the new analytics_sessions_guard trigger does not touch the column.
+
 ### TCGScan cannot see its own search queries `tcgscan_search_blind` (medium, open)
 
 Free-typed search on tcgscan runs inside the shared tcgscan-browse package, which exposes no onEvent callback, so the app cannot observe a query or its result count. What it emits are proxies from outside the kit: card.search { kind: 'similar' } when find-similar is pressed, and card.open when a detail opens (documented at tcgscan-app/src/app/(tabs)/browse/index.tsx:169). michi has no such boundary and does emit search.no_results. Discovered 2026-08-06 while verifying the gap fixes; it is why search.no_results is registered for michi only rather than pending forever on tcgscan.
@@ -110,6 +127,14 @@ Free-typed search on tcgscan runs inside the shared tcgscan-browse package, whic
 **Effect:** tcgscan search volume and zero-result rate are both unmeasurable; card.search understates real searching
 
 **Fix:** add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against.
+
+### A shared binder link is invisible as an arrival `share_attribution` (blocking, specced)
+
+Brian expects shared binder links to be a main acquisition channel (2026-08-06). Nothing records one. A share is just the public /binder/[id] URL — ShareSheet flips is_public and copies the link with no token and no event, so an arrival is indistinguishable from the owner opening their own binder or a click from /discover. Verified against the data: of 40 binder page.views, 5 resolve to a real binder and ALL FIVE are the owner's own; zero non-owner views exist, and 32 of the rest are one local-only binder that is not in the binders table at all. binder_reshares (1 row) is the only durable trace of the channel, and it only fires on a copy, not a visit.
+
+**Effect:** the entire shared-link acquisition channel reads as zero
+
+**Fix:** track('share.link_created', { binder_id }) and share.link_copied in ShareSheet; on /binder/[id], track('share.link_opened', { binder_id, is_owner }) when the viewer is not the owner; track('binder.reshare', { source_binder_id }) where the binder_reshares row is written. Attribution to signup then falls out of the session: the arrival and the account.created share a session_id.
 
 ### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
 
