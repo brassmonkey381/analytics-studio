@@ -1,6 +1,6 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-06T00:05:50.242Z. Own/QA/automated accounts excluded.
+Collected 2026-08-06T00:13:33.838Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker

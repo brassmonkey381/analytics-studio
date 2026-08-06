@@ -21,6 +21,8 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { ROOT, loadEnv, readConfig, runSql, exclusionCte } from "./lib/studio.mjs";
+import { hoverAttr, hoverLayer, ROSTER_STORE_CAP } from "./lib/hover.mjs";
+import { ALL_WINDOW, STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
 
 const CFG = readConfig("events.json");
 const PROJECT = CFG.projectRef;
@@ -75,65 +77,72 @@ acct as (
   select au.id,
          coalesce(au.is_anonymous, false) as anon,
          (au.id in (select id from excluded_users)) as ex,
-         pr.username, au.email
+         pr.username, au.email, au.created_at
   from auth.users au
   left join public.profiles pr on pr.id = au.id
 ),
 rows as (
 ${fam}
 )
+-- One row per account per family, ungrouped: the windowing below is a signup
+-- cohort filter and needs each account's own created_at, which a GROUP BY here
+-- would throw away.
 select r.family, r.tier, r.source, r.ex as excluded, r.anon,
-  count(*)::int as accounts,
-  (array_agg(
-     coalesce('@' || a.username, a.email, left(r.id::text, 8))
-     order by coalesce('@' || a.username, a.email, left(r.id::text, 8))
-   ) filter (where not r.anon))[1:${ROSTER_CAP}] as who
+  a.created_at,
+  coalesce('@' || a.username, a.email, left(r.id::text, 8)) as who
 from rows r join acct a on a.id = r.id
-group by 1,2,3,4,5
 order by 1,2,3`;
 }
 
 const rows = await runSql(PROJECT, sql());
 
 const collectedAt = new Date().toISOString();
-const out = { collectedAt, families: {} };
-const rosters = { collectedAt, families: {} };
+const NOW = Date.now();
+// Every slot is cut from the same fetch, per the rule in lib/windows.mjs.
+// `all` leads here: a tier snapshot whose widest view was 30 days would hide
+// every account older than a month, which is nearly all of them.
+const WINDOWS = [ALL_WINDOW, ...STANDARD_WINDOWS];
+const DEFAULT_WINDOW = ALL_WINDOW;
+// The window is a SIGNUP COHORT. The tier itself is always resolved as of now —
+// "of the accounts that signed up in this period, where are they today".
+const inWindow = (row, w) => w === ALL_WINDOW || Date.parse(row.created_at) >= NOW - Number(w) * 86400_000;
+
+const out = { collectedAt, windows: WINDOWS, defaultWindow: DEFAULT_WINDOW, families: {} };
+const rosters = {};
 
 for (const f of FAMILIES) {
-  const mine = rows.filter((r) => r.family === f.id);
-  const tiers = {};
-  for (const t of TIERS) {
-    const at = mine.filter((r) => r.tier === t);
-    const real = at.filter((r) => !r.excluded);
-    const excl = at.filter((r) => r.excluded);
-    const bySource = {};
-    for (const r of at.filter((r) => r.source)) {
-      const b = (bySource[r.source] ??= { real: 0, excluded: 0 });
-      b[r.excluded ? "excluded" : "real"] += r.accounts;
+  const all = rows.filter((r) => r.family === f.id);
+  const perWindow = {};
+  for (const w of WINDOWS) {
+    const mine = all.filter((r) => inWindow(r, w));
+    const tiers = {};
+    for (const t of TIERS) {
+      const at = mine.filter((r) => r.tier === t);
+      const real = at.filter((r) => !r.excluded);
+      const excl = at.filter((r) => r.excluded);
+      const bySource = {};
+      for (const r of at.filter((r) => r.source)) {
+        const b = (bySource[r.source] ??= { real: 0, excluded: 0 });
+        b[r.excluded ? "excluded" : "real"] += 1;
+      }
+      tiers[t] = { real: real.length, excluded: excl.length, bySource };
+      // Flat key space, exactly as lib/hover.mjs expects. `{scope}` in the
+      // markup is replaced with the active window at hover time.
+      const names = (list) => [...new Set(list.map((r) => r.who))].sort((a, b) => a.localeCompare(b));
+      rosters[`${f.id}|${w}|${t}`] = { total: real.length, names: names(real).slice(0, ROSTER_STORE_CAP) };
+      rosters[`${f.id}|${w}|${t}|ours`] = { total: excl.length, names: names(excl).slice(0, ROSTER_STORE_CAP) };
     }
-    tiers[t] = {
-      real: real.reduce((a, r) => a + r.accounts, 0),
-      excluded: excl.reduce((a, r) => a + r.accounts, 0),
-      bySource,
-    };
-    (rosters.families[f.id] ??= {})[t] = {
-      real: real.flatMap((r) => r.who ?? []).sort((a, b) => a.localeCompare(b)),
-      excluded: excl.flatMap((r) => r.who ?? []).sort((a, b) => a.localeCompare(b)),
+    const guests = mine.filter((r) => r.tier === "guest");
+    perWindow[w] = {
+      tiers,
+      guests: {
+        real: guests.filter((r) => !r.excluded).length,
+        excluded: guests.filter((r) => r.excluded).length,
+      },
+      paying: TIERS.reduce((a, t) => a + (t === "free" ? 0 : (tiers[t].bySource.stripe?.real ?? 0)), 0),
     };
   }
-  const guests = mine.filter((r) => r.tier === "guest");
-  out.families[f.id] = {
-    name: f.name,
-    tiers,
-    guests: {
-      real: guests.filter((r) => !r.excluded).reduce((a, r) => a + r.accounts, 0),
-      excluded: guests.filter((r) => r.excluded).reduce((a, r) => a + r.accounts, 0),
-    },
-    paying: Object.entries(tiers).reduce(
-      (a, [t, v]) => a + (t === "free" ? 0 : (v.bySource.stripe?.real ?? 0)),
-      0,
-    ),
-  };
+  out.families[f.id] = { name: f.name, windows: perWindow };
 }
 
 mkdirSync(dirname(DATA_FILE), { recursive: true });
@@ -157,18 +166,23 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const TIER_LABEL = { free: "Free", pro: "PRO", vip: "VIP" };
 const SOURCE_LABEL = { stripe: "paid", trial: "trial", manual: "comp" };
 
+// One scale for every panel AND every window, taken from the widest slot. A
+// per-window scale would make a bar grow when you narrowed the window, which is
+// the opposite of what happened.
 const maxCount = Math.max(
   1,
-  ...FAMILIES.flatMap((f) => TIERS.map((t) => {
-    const v = out.families[f.id].tiers[t];
-    return v.real + v.excluded;
-  })),
+  ...FAMILIES.flatMap((f) =>
+    TIERS.map((t) => {
+      const v = out.families[f.id].windows[ALL_WINDOW].tiers[t];
+      return v.real + v.excluded;
+    }),
+  ),
 );
 
 // Shared scale across both panels: the two families are directly comparable and
 // per-panel scaling would make "4 free" and "1 pro" look the same size.
-function panel(f) {
-  const d = out.families[f.id];
+function panel(f, w) {
+  const d = out.families[f.id].windows[w];
   const W = 420, ROW = 46, PAD_L = 56, PAD_R = 56, top = 8;
   const H = top + TIERS.length * ROW + 8;
   const plotW = W - PAD_L - PAD_R;
@@ -186,35 +200,64 @@ function panel(f) {
       .join(", ");
     const title = `${TIER_LABEL[t]} — ${v.real} account${v.real === 1 ? "" : "s"}` +
       (v.excluded ? `, plus ${v.excluded} of ours` : "") + (srcs ? ` (${srcs})` : "");
-    return `<g class="barrow" data-tier="${t}" data-family="${esc(f.id)}">
+    // {scope} resolves to the active window, so one set of hover keys serves
+    // every slot. The two fills get their own handles: hovering "ours" must
+    // name our accounts, not the real ones.
+    return `<g class="barrow">
   <title>${esc(title)}</title>
   <text class="tlabel" x="${PAD_L - 10}" y="${y + 15}" text-anchor="end">${esc(TIER_LABEL[t])}</text>
-  <rect class="track" x="${PAD_L}" y="${y}" width="${plotW}" height="20" rx="4"></rect>
-  ${v.real > 0 ? `<rect class="bar-real" x="${PAD_L}" y="${y}" width="${Math.max(3, wReal)}" height="20" rx="4"></rect>` : ""}
-  ${v.excluded > 0 ? `<rect class="bar-excl" x="${PAD_L + wReal + gap}" y="${y}" width="${Math.max(3, wExcl - gap)}" height="20" rx="4"></rect>` : ""}
-  <text class="bval${total === 0 ? " zero" : ""}" x="${PAD_L + Math.max(wReal + wExcl, 3) + 8}" y="${y + 15}">${v.real}${v.excluded ? ` <tspan class="ours">+${v.excluded}</tspan>` : ""}</text>
+  <rect class="track" x="${PAD_L}" y="${y}" width="${plotW}" height="20" rx="4" ${hoverAttr(f.id, "{scope}", t)}></rect>
+  ${v.real > 0 ? `<rect class="bar-real" x="${PAD_L}" y="${y}" width="${Math.max(3, wReal)}" height="20" rx="4" ${hoverAttr(f.id, "{scope}", t)}></rect>` : ""}
+  ${v.excluded > 0 ? `<rect class="bar-excl" x="${PAD_L + wReal + gap}" y="${y}" width="${Math.max(3, wExcl - gap)}" height="20" rx="4" ${hoverAttr(f.id, "{scope}", t, "ours")}></rect>` : ""}
+  <text class="bval${total === 0 ? " zero" : ""}" x="${PAD_L + Math.max(wReal + wExcl, 3) + 8}" y="${y + 15}" ${hoverAttr(f.id, "{scope}", t)}>${v.real}${v.excluded ? ` <tspan class="ours">+${v.excluded}</tspan>` : ""}</text>
 </g>`;
   }).join("\n");
 
   return `<figure class="panel">
-  <figcaption>${esc(d.name)}</figcaption>
-  <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.name)} accounts by plan tier">
+  <figcaption>${esc(f.name)}</figcaption>
+  <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(f.name)} accounts by plan tier">
     ${bars}
   </svg>
-  <p class="ctx">${d.guests.real.toLocaleString()} anonymous guest${d.guests.real === 1 ? "" : "s"} are not counted above — a guest has no account and no tier.${d.guests.excluded ? ` A further ${d.guests.excluded.toLocaleString()} guest sessions are ours.` : ""}</p>
+  <p class="ctx">${d.guests.real.toLocaleString()} anonymous guest${d.guests.real === 1 ? "" : "s"} not counted above — a guest has no account and no tier.${d.guests.excluded ? ` A further ${d.guests.excluded.toLocaleString()} are ours.` : ""}</p>
 </figure>`;
 }
 
-const totalReal = FAMILIES.reduce((a, f) => a + TIERS.reduce((b, t) => b + out.families[f.id].tiers[t].real, 0), 0) / FAMILIES.length;
-const totalPaying = FAMILIES.reduce((a, f) => a + out.families[f.id].paying, 0);
+// One block per window; the toggle flips which is shown. Same rule as the
+// events report: precomputed beats recomputed, so the two cannot disagree.
+const blocks = WINDOWS.map((w) => {
+  const paying = FAMILIES.reduce((a, f) => a + out.families[f.id].windows[w].paying, 0);
+  const cohort =
+    w === ALL_WINDOW
+      ? "every account on the project"
+      : `accounts that signed up in the last ${windowLabel(w)}`;
+  const tableRows = FAMILIES.flatMap((f) =>
+    TIERS.map((t) => {
+      const v = out.families[f.id].windows[w].tiers[t];
+      const srcs =
+        Object.entries(v.bySource).map(([s, b]) => `${SOURCE_LABEL[s] ?? s} ${b.real + b.excluded}`).join(", ") || "—";
+      return `<tr ${hoverAttr(f.id, "{scope}", t)}><td>${esc(f.name)}</td><td>${TIER_LABEL[t]}</td><td class="num">${v.real}</td><td class="num muted">${v.excluded}</td><td class="muted">${esc(srcs)}</td></tr>`;
+    }),
+  ).join("");
 
-const rows2 = FAMILIES.flatMap((f) =>
-  TIERS.map((t) => {
-    const v = out.families[f.id].tiers[t];
-    const srcs = Object.entries(v.bySource).map(([s, b]) => `${SOURCE_LABEL[s] ?? s} ${b.real + b.excluded}`).join(", ") || "—";
-    return `<tr><td>${esc(out.families[f.id].name)}</td><td>${TIER_LABEL[t]}</td><td class="num">${v.real}</td><td class="num muted">${v.excluded}</td><td class="muted">${esc(srcs)}</td></tr>`;
-  }),
-).join("");
+  return `<div data-w="${w}"${w === DEFAULT_WINDOW ? "" : " hidden"}>
+<p class="hero">${paying}</p>
+<p class="hero-sub">paying accounts across both apps among ${esc(cohort)}, excluding our own.${paying === 0 ? " Every PRO and VIP grant on this project belongs to an account the exclusion policy filters out." : ""}</p>
+
+<div class="legend">
+  <span><i class="sw real"></i> Real accounts</span>
+  <span><i class="sw excl"></i> Ours / QA (excluded from every other report)</span>
+</div>
+<div class="panels">
+${FAMILIES.map((f) => panel(f, w)).join("\n")}
+</div>
+
+<h2>Table view</h2>
+<table class="tbl">
+  <thead><tr><th>App</th><th>Tier</th><th class="num">Real</th><th class="num">Ours</th><th>Grant source</th></tr></thead>
+  <tbody>${tableRows}</tbody>
+</table>
+</div>`;
+}).join("\n");
 
 const html = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -273,34 +316,24 @@ h2{font-size:16px;margin:32px 0 6px}
 </style>
 <main>
 <h1>Plan tiers</h1>
-<p class="meta">Distinct accounts by effective tier, from the shared <code>entitlements</code> ledger — not from the event stream, so this covers all history. Resolution mirrors the apps: <code>vip &gt; pro &gt; free</code>, active meaning no expiry or an expiry in the future. Collected ${esc(collectedAt)}.</p>
+<p class="meta">Distinct accounts by effective tier, from the shared <code>entitlements</code> ledger — not from the event stream, so this covers all history. Resolution mirrors the apps: <code>vip &gt; pro &gt; free</code>, active meaning no expiry or an expiry in the future. Hover any bar or row for the accounts behind it. Collected ${esc(collectedAt)}.</p>
 
-<p class="hero">${totalPaying}</p>
-<p class="hero-sub">paying accounts across both apps, excluding our own — every PRO and VIP grant on this project belongs to an account the exclusion policy filters out.</p>
+${windowBar(WINDOWS, DEFAULT_WINDOW, "scopes the SIGNUP COHORT; tier is always as of now")}
 
-<div class="legend">
-  <span><i class="sw real"></i> Real accounts</span>
-  <span><i class="sw excl"></i> Ours / QA (excluded from every other report)</span>
-</div>
-<div class="panels">
-${FAMILIES.map(panel).join("\n")}
-</div>
-<p class="note">The two panels are not a partition of one population: both apps read the same ledger and one account can hold a tier in each. An account with a lapsed grant resolves to Free, exactly as the app resolves it.</p>
+${blocks}
 
-<h2>Table view</h2>
-<table class="tbl">
-  <thead><tr><th>App</th><th>Tier</th><th class="num">Real</th><th class="num">Ours</th><th>Grant source</th></tr></thead>
-  <tbody>${rows2}</tbody>
-</table>
-</main>`;
+<p class="note">The two panels are not a partition of one population: both apps read the same ledger and one account can hold a tier in each. An account with a lapsed grant resolves to Free, exactly as the app resolves it. Bar widths share one scale across every panel and every window — a narrower window must never make a bar look bigger.</p>
+</main>
+${hoverLayer(rosters, { unit: "account/accounts" })}
+${windowScript(WINDOWS, DEFAULT_WINDOW)}`;
 
 mkdirSync(dirname(HTML_FILE), { recursive: true });
 writeFileSync(HTML_FILE, html);
 
 for (const f of FAMILIES) {
-  const d = out.families[f.id];
+  const d = out.families[f.id].windows[ALL_WINDOW];
   console.log(
-    `${d.name.padEnd(12)} ` +
+    `${f.name.padEnd(12)} ` +
       TIERS.map((t) => `${TIER_LABEL[t]} ${d.tiers[t].real}${d.tiers[t].excluded ? `(+${d.tiers[t].excluded})` : ""}`).join("  ") +
       `  · ${d.guests.real} guests`,
   );

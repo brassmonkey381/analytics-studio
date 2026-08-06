@@ -1,74 +1,321 @@
 {
-  "collectedAt": "2026-08-06T00:05:51.459Z",
+  "collectedAt": "2026-08-06T00:13:31.498Z",
+  "windows": [
+    "all",
+    1,
+    7,
+    14,
+    30
+  ],
+  "defaultWindow": "all",
   "families": {
     "michi-maker": {
       "name": "Michi-Maker",
-      "tiers": {
-        "free": {
-          "real": 4,
-          "excluded": 5,
-          "bySource": {}
-        },
-        "pro": {
-          "real": 0,
-          "excluded": 0,
-          "bySource": {}
-        },
-        "vip": {
-          "real": 0,
-          "excluded": 3,
-          "bySource": {
-            "manual": {
-              "real": 0,
-              "excluded": 2
+      "windows": {
+        "1": {
+          "tiers": {
+            "free": {
+              "real": 1,
+              "excluded": 0,
+              "bySource": {}
             },
-            "stripe": {
+            "pro": {
               "real": 0,
-              "excluded": 1
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
             }
-          }
+          },
+          "guests": {
+            "real": 6,
+            "excluded": 28
+          },
+          "paying": 0
+        },
+        "7": {
+          "tiers": {
+            "free": {
+              "real": 2,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 39,
+            "excluded": 160
+          },
+          "paying": 0
+        },
+        "14": {
+          "tiers": {
+            "free": {
+              "real": 2,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 70,
+            "excluded": 233
+          },
+          "paying": 0
+        },
+        "30": {
+          "tiers": {
+            "free": {
+              "real": 4,
+              "excluded": 5,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 3,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 2
+                },
+                "stripe": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 210,
+            "excluded": 644
+          },
+          "paying": 0
+        },
+        "all": {
+          "tiers": {
+            "free": {
+              "real": 4,
+              "excluded": 5,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 3,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 2
+                },
+                "stripe": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 210,
+            "excluded": 644
+          },
+          "paying": 0
         }
-      },
-      "guests": {
-        "real": 210,
-        "excluded": 644
-      },
-      "paying": 0
+      }
     },
     "tcgscan": {
       "name": "TCGScan",
-      "tiers": {
-        "free": {
-          "real": 4,
-          "excluded": 6,
-          "bySource": {}
-        },
-        "pro": {
-          "real": 0,
-          "excluded": 1,
-          "bySource": {
-            "trial": {
+      "windows": {
+        "1": {
+          "tiers": {
+            "free": {
+              "real": 1,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "pro": {
               "real": 0,
-              "excluded": 1
-            }
-          }
-        },
-        "vip": {
-          "real": 0,
-          "excluded": 1,
-          "bySource": {
-            "manual": {
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
               "real": 0,
-              "excluded": 1
+              "excluded": 0,
+              "bySource": {}
             }
-          }
+          },
+          "guests": {
+            "real": 6,
+            "excluded": 28
+          },
+          "paying": 0
+        },
+        "7": {
+          "tiers": {
+            "free": {
+              "real": 2,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 39,
+            "excluded": 160
+          },
+          "paying": 0
+        },
+        "14": {
+          "tiers": {
+            "free": {
+              "real": 2,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 70,
+            "excluded": 233
+          },
+          "paying": 0
+        },
+        "30": {
+          "tiers": {
+            "free": {
+              "real": 4,
+              "excluded": 6,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "trial": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 210,
+            "excluded": 644
+          },
+          "paying": 0
+        },
+        "all": {
+          "tiers": {
+            "free": {
+              "real": 4,
+              "excluded": 6,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "trial": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 1,
+              "bySource": {
+                "manual": {
+                  "real": 0,
+                  "excluded": 1
+                }
+              }
+            }
+          },
+          "guests": {
+            "real": 210,
+            "excluded": 644
+          },
+          "paying": 0
         }
-      },
-      "guests": {
-        "real": 210,
-        "excluded": 644
-      },
-      "paying": 0
+      }
     }
   }
 }

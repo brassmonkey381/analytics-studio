@@ -18,6 +18,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { ROOT, readConfig } from "./lib/studio.mjs";
+import { hoverAttr, hoverLayer } from "./lib/hover.mjs";
+import { STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
 
 const DATA = join(ROOT, "data", "events.json");
 if (!existsSync(DATA)) {
@@ -34,8 +36,7 @@ const journeys = existsSync(JPATH) ? JSON.parse(readFileSync(JPATH, "utf8")).app
 
 const MAX_SESSIONS_SHOWN = 40;
 const MAX_EVENTS_PER_SESSION = 60;
-const MAX_HOVER_NAMES = 20;
-const WINDOWS = store.windows ?? [1, 7, 14, 30];
+const WINDOWS = store.windows ?? STANDARD_WINDOWS;
 const DEFAULT_WINDOW = Math.max(...WINDOWS);
 const apps = Object.entries(store.apps ?? {});
 
@@ -52,7 +53,7 @@ function secs(v) {
 }
 const clock = (ts) => new Date(ts).toLocaleTimeString("en-GB", { hour12: false });
 const day = (ts) => new Date(ts).toISOString().slice(0, 10);
-const winLabel = (d) => (d === 1 ? "24h" : `${d}d`);
+const winLabel = windowLabel;
 
 // Sort by how much attention a gap still needs: unfinished work first, then by
 // severity. A fixed or deferred gap stays listed — the record of why a number
@@ -65,11 +66,24 @@ const gapList = Object.entries(GAPS).sort(
     (SEV_ORDER[a[1].severity] ?? 9) - (SEV_ORDER[b[1].severity] ?? 9),
 );
 
-// A hover handle. `kind|key` addresses a roster inside journeys.json; the
-// client resolves it against the active window, so one attribute serves all
-// four. Rendered even when the roster is missing (aggregates-only run) — the
-// handler just finds nothing and shows no tooltip.
-const hov = (appId, kind, key) => ` data-r="${esc(appId)}|${esc(kind)}|${esc(key)}"`;
+// A hover handle. `{scope}` is replaced with the active window by the shared
+// hover layer, so one attribute serves all four windows. Rendered even when the
+// roster is missing (aggregates-only run) — the handler finds nothing and shows
+// no tooltip rather than erroring.
+const hov = (appId, kind, key) => ` ${hoverAttr(appId, "{scope}", kind, key)}`;
+
+// journeys.json nests rosters as app -> window -> kind -> key. The shared hover
+// layer wants one flat map, so flatten to the same key shape the markup emits.
+const flatRosters = {};
+for (const [appId, j] of Object.entries(journeys)) {
+  for (const [win, kinds] of Object.entries(j.rosters ?? {})) {
+    for (const [kind, entries] of Object.entries(kinds)) {
+      for (const [key, r] of Object.entries(entries)) {
+        flatRosters[`${appId}|${win}|${kind}|${key}`] = r;
+      }
+    }
+  }
+}
 
 // ---------- pieces ----------
 
@@ -223,7 +237,7 @@ function journeyPanel(appId) {
         s.events.length > evs.length
           ? `<li class="ev muted">+${s.events.length - evs.length} more event${s.events.length - evs.length === 1 ? "" : "s"}</li>`
           : "";
-      return `<details class="sess" data-start="${Date.parse(s.startedAt)}">
+      return `<details class="sess" data-since="${Date.parse(s.startedAt)}">
   <summary>
     <span class="who">${esc(s.user)}</span>
     ${s.guest ? '<span class="pill guest">guest</span>' : '<span class="pill acct">account</span>'}
@@ -240,7 +254,7 @@ function journeyPanel(appId) {
     j.sessions.length > shown.length
       ? `<p class="note">Showing the ${shown.length} most recent of ${j.sessions.length} sessions.</p>`
       : "";
-  return `<div class="sessions">${cards}</div><p class="note js-nosess" hidden>No sessions started in this window.</p>${trunc}`;
+  return `<div data-since-group>${cards}</div><p class="note win-empty" hidden>No sessions started in this window.</p>${trunc}`;
 }
 
 function appSection(id, a) {
@@ -310,12 +324,6 @@ ${cards}
 </section>`;
 }
 
-// Rosters ride along as JSON in a non-executing script tag. `<` is escaped so a
-// username can never close the tag, and the client parses rather than evals.
-const rosterBlob = JSON.stringify(
-  Object.fromEntries(Object.entries(journeys).map(([id, j]) => [id, j.rosters ?? {}])),
-).replace(/</g, "\\u003c");
-
 // ---------- page ----------
 
 const html = `<meta charset="utf-8">
@@ -358,13 +366,6 @@ h3 { font-size: 15px; margin: 26px 0 6px; }
 h4 { font-size: 13px; margin: 18px 0 4px; color: var(--ink-2); font-weight: 600; }
 .meta { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
 
-.winbar { position: sticky; top: 0; z-index: 5; display: flex; gap: 6px; align-items: center;
-  background: var(--page); padding: 10px 0 12px; margin-bottom: 6px;
-  border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-.winbar .lbl { font-size: 12px; color: var(--muted); margin-right: 2px; }
-.winbtn { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 20px; cursor: pointer;
-  background: var(--surface); color: var(--ink-2); border: 1px solid var(--border); }
-.winbtn[aria-pressed="true"] { background: var(--bar); color: #fff; border-color: var(--bar); font-weight: 600; }
 
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 10px; }
 .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
@@ -377,8 +378,6 @@ h4 { font-size: 13px; margin: 18px 0 4px; color: var(--ink-2); font-weight: 600;
 .warn { color: var(--warn); }
 code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--muted); }
 
-.hoverable { cursor: help; }
-tr.hoverable:hover, .tile.hoverable:hover { background: color-mix(in srgb, var(--bar) 7%, transparent); }
 
 .funnel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin: 8px 0 4px; }
 .funnel .q { color: var(--ink-2); font-size: 13px; margin-bottom: 8px; }
@@ -440,13 +439,6 @@ a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; 
 .gap p { margin: 5px 0; color: var(--ink-2); }
 .gap .fix { color: var(--ink); }
 
-#tip { position: fixed; z-index: 20; pointer-events: none; max-width: 300px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.16); padding: 8px 10px; font-size: 12.5px; display: none; }
-#tip .tip-h { color: var(--muted); font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.04em; margin-bottom: 5px; }
-#tip .tip-n { font-variant-numeric: tabular-nums; padding: 1px 0; }
-#tip .tip-more { color: var(--muted); margin-top: 4px; font-style: italic; }
 </style>
 <main>
 <h1>Event analytics — Michi-Maker &amp; TCGScan</h1>
@@ -454,102 +446,13 @@ a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; 
 Our own, QA and automated accounts are excluded throughout; the excluded volume is stated per app so nothing is dropped silently.
 Hover any count to see who is behind it. <a href="#gaps">Known tracking gaps &rarr;</a></p>
 
-<div class="winbar"><span class="lbl">Window</span>${WINDOWS.map(
-  (d) => `<button class="winbtn" data-win="${d}" aria-pressed="${d === DEFAULT_WINDOW}">${winLabel(d)}</button>`,
-).join("")}</div>
+${windowBar(WINDOWS, DEFAULT_WINDOW, "scopes events and sessions by timestamp")}
 
 ${apps.map(([id, a]) => appSection(id, a)).join("\n")}
 ${gapsSection()}
 </main>
-<div id="tip" role="tooltip"></div>
-<script type="application/json" id="rosters">${rosterBlob}</script>
-<script>
-(function () {
-  var MAX = ${MAX_HOVER_NAMES};
-  var rosters = {};
-  try { rosters = JSON.parse(document.getElementById('rosters').textContent || '{}'); } catch (e) {}
-  var win = String(${DEFAULT_WINDOW});
-  var tip = document.getElementById('tip');
-
-  // Window toggle. Blocks are precomputed and merely shown/hidden; journey
-  // cards are filtered by their own start time against the same cutoff.
-  function setWindow(d) {
-    win = String(d);
-    document.querySelectorAll('.winbtn').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(b.dataset.win === win));
-    });
-    document.querySelectorAll('.wblock').forEach(function (el) {
-      el.hidden = el.dataset.w !== win;
-    });
-    var cutoff = Date.now() - Number(win) * 86400000;
-    document.querySelectorAll('.sessions').forEach(function (wrap) {
-      var shown = 0;
-      wrap.querySelectorAll('.sess').forEach(function (s) {
-        var vis = Number(s.dataset.start) >= cutoff;
-        s.hidden = !vis;
-        if (vis) shown++;
-      });
-      var none = wrap.parentNode.querySelector('.js-nosess');
-      if (none) none.hidden = shown > 0;
-    });
-    hide();
-  }
-  document.querySelectorAll('.winbtn').forEach(function (b) {
-    b.addEventListener('click', function () { setWindow(b.dataset.win); });
-  });
-
-  // Hover roster. Names are user-supplied text and are written with
-  // textContent only — never innerHTML, at any point in this function.
-  function show(el, ev) {
-    var parts = (el.dataset.r || '').split('|');
-    var app = parts[0], kind = parts[1], key = parts.slice(2).join('|');
-    var byWin = (rosters[app] || {})[win] || {};
-    var r = (byWin[kind] || {})[key];
-    if (!r || !r.total) return hide();
-    tip.textContent = '';
-    var h = document.createElement('div');
-    h.className = 'tip-h';
-    h.textContent = r.total + (r.total === 1 ? ' person' : ' people');
-    tip.appendChild(h);
-    var names = r.names.slice(0, MAX);
-    names.forEach(function (nm) {
-      var row = document.createElement('div');
-      row.className = 'tip-n';
-      row.textContent = nm;
-      tip.appendChild(row);
-    });
-    if (r.total > names.length) {
-      var m = document.createElement('div');
-      m.className = 'tip-more';
-      m.textContent = '+' + (r.total - names.length) + ' more';
-      tip.appendChild(m);
-    }
-    tip.style.display = 'block';
-    move(ev);
-  }
-  function move(ev) {
-    if (tip.style.display !== 'block') return;
-    var pad = 14, r = tip.getBoundingClientRect();
-    var x = ev.clientX + pad, y = ev.clientY + pad;
-    if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - pad;
-    if (y + r.height > innerHeight - 8) y = Math.max(8, ev.clientY - r.height - pad);
-    tip.style.left = x + 'px';
-    tip.style.top = y + 'px';
-  }
-  function hide() { tip.style.display = 'none'; }
-
-  document.addEventListener('mouseover', function (e) {
-    var el = e.target.closest ? e.target.closest('[data-r]') : null;
-    if (el) show(el, e); else hide();
-  });
-  document.addEventListener('mousemove', function (e) {
-    if (e.target.closest && e.target.closest('[data-r]')) move(e); else hide();
-  });
-  document.addEventListener('scroll', hide, true);
-
-  setWindow(win);
-})();
-</script>`;
+${hoverLayer(flatRosters, { unit: "person/people" })}
+${windowScript(WINDOWS, DEFAULT_WINDOW)}`;
 
 // ---------- markdown ----------
 
