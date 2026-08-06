@@ -1,12 +1,12 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-05T23:50:16.788Z. Own/QA/automated accounts excluded.
+Collected 2026-08-06T00:05:50.242Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
 5 sessions · 17 events · 1 account + 3 guests · median session 2s
-Excluded: 76 sessions, 148 events (our own, QA and automated accounts).
+Excluded: 79 sessions, 160 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |

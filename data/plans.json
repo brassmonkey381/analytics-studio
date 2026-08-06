@@ -1,0 +1,74 @@
+{
+  "collectedAt": "2026-08-06T00:05:51.459Z",
+  "families": {
+    "michi-maker": {
+      "name": "Michi-Maker",
+      "tiers": {
+        "free": {
+          "real": 4,
+          "excluded": 5,
+          "bySource": {}
+        },
+        "pro": {
+          "real": 0,
+          "excluded": 0,
+          "bySource": {}
+        },
+        "vip": {
+          "real": 0,
+          "excluded": 3,
+          "bySource": {
+            "manual": {
+              "real": 0,
+              "excluded": 2
+            },
+            "stripe": {
+              "real": 0,
+              "excluded": 1
+            }
+          }
+        }
+      },
+      "guests": {
+        "real": 210,
+        "excluded": 644
+      },
+      "paying": 0
+    },
+    "tcgscan": {
+      "name": "TCGScan",
+      "tiers": {
+        "free": {
+          "real": 4,
+          "excluded": 6,
+          "bySource": {}
+        },
+        "pro": {
+          "real": 0,
+          "excluded": 1,
+          "bySource": {
+            "trial": {
+              "real": 0,
+              "excluded": 1
+            }
+          }
+        },
+        "vip": {
+          "real": 0,
+          "excluded": 1,
+          "bySource": {
+            "manual": {
+              "real": 0,
+              "excluded": 1
+            }
+          }
+        }
+      },
+      "guests": {
+        "real": 210,
+        "excluded": 644
+      },
+      "paying": 0
+    }
+  }
+}
