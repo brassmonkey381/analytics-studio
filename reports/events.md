@@ -103,14 +103,6 @@ Registered, not yet fired: `pro.offer_shown`, `trial.start_failed`, `scan.failed
 
 ## Tracking gaps
 
-### landing_route is never written `landing_route_broken` (high, open)
-
-The column added by 20260806090000_analytics_gap_fixes.sql is null on all 91 sessions, including sessions recorded after the fixing build went live. The build IS deployed — a demo.print at 2026-08-05T23:05Z carries the new props.surface — and session UPDATEs work generally, since 12 of the 38 sessions since 22:30Z have last_seen_at advanced past started_at, and 6 of those had a page.view that should have triggered recordLandingRoute(). Discovered 2026-08-06 while scoping share-link attribution, which is the feature that most needs this field.
-
-**Effect:** entry point unknown for every session; blocks landing-page and share-link attribution
-
-**Fix:** debug recordLandingRoute() in both apps' lib/analytics.ts. The .is('landing_route', null) filter and the RLS update policy are the two candidates worth checking first; the new analytics_sessions_guard trigger does not touch the column.
-
 ### TCGScan cannot see its own search queries `tcgscan_search_blind` (medium, open)
 
 Free-typed search on tcgscan runs inside the shared tcgscan-browse package, which exposes no onEvent callback, so the app cannot observe a query or its result count. What it emits are proxies from outside the kit: card.search { kind: 'similar' } when find-similar is pressed, and card.open when a detail opens (documented at tcgscan-app/src/app/(tabs)/browse/index.tsx:169). michi has no such boundary and does emit search.no_results. Discovered 2026-08-06 while verifying the gap fixes; it is why search.no_results is registered for michi only rather than pending forever on tcgscan.
@@ -126,6 +118,14 @@ TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing unti
 **Effect:** understates awareness — currently makes it unmeasurable
 
 **Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
+
+### landing_route was never written — the update was never sent `landing_route_broken` (high, landed)
+
+Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.
+
+**Effect:** was: entry point unknown for every session, and session tails understated on tab-hide
+
+**Fix:** DONE — both sites now await inside a fire-and-forget async IIFE. Awaiting deploy and verification: landing_route should be non-null on sessions started after the next production build. Flip this gap to `fixed` once that is observed.
 
 ### A guest session is rewritten to look like it never was one `guest_upgrade` (medium, landed)
 

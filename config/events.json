@@ -129,11 +129,11 @@
     },
     "landing_route_broken": {
       "severity": "high",
-      "status": "open",
-      "title": "landing_route is never written",
-      "detail": "The column added by 20260806090000_analytics_gap_fixes.sql is null on all 91 sessions, including sessions recorded after the fixing build went live. The build IS deployed — a demo.print at 2026-08-05T23:05Z carries the new props.surface — and session UPDATEs work generally, since 12 of the 38 sessions since 22:30Z have last_seen_at advanced past started_at, and 6 of those had a page.view that should have triggered recordLandingRoute(). Discovered 2026-08-06 while scoping share-link attribution, which is the feature that most needs this field.",
-      "direction": "entry point unknown for every session; blocks landing-page and share-link attribution",
-      "fix": "debug recordLandingRoute() in both apps' lib/analytics.ts. The .is('landing_route', null) filter and the RLS update policy are the two candidates worth checking first; the new analytics_sessions_guard trigger does not touch the column."
+      "status": "landed",
+      "title": "landing_route was never written — the update was never sent",
+      "detail": "Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.",
+      "direction": "was: entry point unknown for every session, and session tails understated on tab-hide",
+      "fix": "DONE — both sites now await inside a fire-and-forget async IIFE. Awaiting deploy and verification: landing_route should be non-null on sessions started after the next production build. Flip this gap to `fixed` once that is observed."
     },
     "tcgscan_search_blind": {
       "severity": "medium",
