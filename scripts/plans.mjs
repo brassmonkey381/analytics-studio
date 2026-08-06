@@ -40,7 +40,9 @@ const FAMILIES = [
   { id: "michi-maker", name: "Michi-Maker", pro: "tier_pro", vip: "tier_vip" },
   { id: "tcgscan", name: "TCGScan", pro: "tcgscan_pro", vip: "tcgscan_vip" },
 ];
-const TIERS = ["free", "pro", "vip"];
+// Ordinal, low to high. `trial` sits above free and below pro: it is full paid
+// access, but it is not revenue and it expires.
+const TIERS = ["free", "trial", "pro", "vip"];
 const ROSTER_CAP = 60;
 
 // One row per account per family, carrying the resolved tier, how the grant was
@@ -53,7 +55,14 @@ function sql() {
   u.id,
   u.anon,
   u.ex,
+  -- The APP deliberately does not special-case a trial: michi's data/tiers.ts
+  -- resolves a trial grant to 'pro' so nothing downstream needs to know. This
+  -- report splits it back out, because "on a free trial" and "paying for PRO"
+  -- are the same access level and completely different business facts. The
+  -- winning grant's source decides: a trial-sourced grant reports as trial
+  -- whatever product it unlocked.
   case when u.anon then 'guest'
+       when coalesce(e.vip_src, e.pro_src) = 'trial' then 'trial'
        when e.vip_src is not null then 'vip'
        when e.pro_src is not null then 'pro'
        else 'free' end as tier,
@@ -139,7 +148,11 @@ for (const f of FAMILIES) {
         real: guests.filter((r) => !r.excluded).length,
         excluded: guests.filter((r) => r.excluded).length,
       },
-      paying: TIERS.reduce((a, t) => a + (t === "free" ? 0 : (tiers[t].bySource.stripe?.real ?? 0)), 0),
+      // Stripe-sourced only. A trial never reaches this by construction (its
+      // source is 'trial', not 'stripe') and neither does a comp — "paying"
+      // has to mean money changed hands.
+      paying: TIERS.reduce((a, t) => a + (tiers[t].bySource.stripe?.real ?? 0), 0),
+      onTrial: tiers.trial.real,
     };
   }
   out.families[f.id] = { name: f.name, windows: perWindow };
@@ -163,7 +176,7 @@ writeFileSync(ROSTER_FILE, JSON.stringify(rosters, null, 2));
 // They are stated as context above the chart instead.
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const TIER_LABEL = { free: "Free", pro: "PRO", vip: "VIP" };
+const TIER_LABEL = { free: "Free", trial: "Free trial", pro: "PRO", vip: "VIP" };
 const SOURCE_LABEL = { stripe: "paid", trial: "trial", manual: "comp" };
 
 // One scale for every panel AND every window, taken from the widest slot. A
@@ -239,9 +252,10 @@ const blocks = WINDOWS.map((w) => {
     }),
   ).join("");
 
+  const onTrial = FAMILIES.reduce((a, f) => a + out.families[f.id].windows[w].onTrial, 0);
   return `<div data-w="${w}"${w === DEFAULT_WINDOW ? "" : " hidden"}>
 <p class="hero">${paying}</p>
-<p class="hero-sub">paying accounts across both apps among ${esc(cohort)}, excluding our own.${paying === 0 ? " Every PRO and VIP grant on this project belongs to an account the exclusion policy filters out." : ""}</p>
+<p class="hero-sub">paying accounts across both apps among ${esc(cohort)}, excluding our own — Stripe-sourced only, so a free trial and a comp are both counted as zero.${onTrial ? ` ${onTrial} on a free trial right now.` : " Nobody is on a free trial either."}${paying === 0 ? " Every PRO, VIP and trial grant on this project belongs to an account the exclusion policy filters out." : ""}</p>
 
 <div class="legend">
   <span><i class="sw real"></i> Real accounts</span>
@@ -316,13 +330,14 @@ h2{font-size:16px;margin:32px 0 6px}
 </style>
 <main>
 <h1>Plan tiers</h1>
-<p class="meta">Distinct accounts by effective tier, from the shared <code>entitlements</code> ledger — not from the event stream, so this covers all history. Resolution mirrors the apps: <code>vip &gt; pro &gt; free</code>, active meaning no expiry or an expiry in the future. Hover any bar or row for the accounts behind it. Collected ${esc(collectedAt)}.</p>
+<p class="meta">Distinct accounts by effective tier, from the shared <code>entitlements</code> ledger — not from the event stream, so this covers all history. Active means no expiry or an expiry in the future. Hover any bar or row for the accounts behind it. Collected ${esc(collectedAt)}.</p>
 
 ${windowBar(WINDOWS, DEFAULT_WINDOW, "scopes the SIGNUP COHORT; tier is always as of now")}
 
 ${blocks}
 
-<p class="note">The two panels are not a partition of one population: both apps read the same ledger and one account can hold a tier in each. An account with a lapsed grant resolves to Free, exactly as the app resolves it. Bar widths share one scale across every panel and every window — a narrower window must never make a bar look bigger.</p>
+<p class="note"><strong>Free trial is a reporting tier, not a product one.</strong> The apps deliberately do not special-case it — michi's <code>data/tiers.ts</code> resolves a trial grant to <code>pro</code> so nothing downstream needs to know, and a trial holder sees PRO everywhere in the UI. It is split out here because full access and paid access are the same thing to the product and completely different things to the business. Ladder used on this page: <code>vip &gt; pro &gt; trial &gt; free</code>, decided by the winning grant's <code>source</code>.</p>
+<p class="note">The two panels are not a partition of one population: both apps read the same ledger and one account can hold a tier in each. An account with a lapsed grant resolves to Free, exactly as the app resolves it — an expired trial is indistinguishable from never having trialled, on this page. Bar widths share one scale across every panel and every window; a narrower window must never make a bar look bigger.</p>
 </main>
 ${hoverLayer(rosters, { unit: "account/accounts" })}
 ${windowScript(WINDOWS, DEFAULT_WINDOW)}`;

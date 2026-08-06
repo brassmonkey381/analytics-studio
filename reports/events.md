@@ -1,26 +1,26 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-06T00:13:33.838Z. Own/QA/automated accounts excluded.
+Collected 2026-08-06T00:23:52.102Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-5 sessions · 17 events · 1 account + 3 guests · median session 2s
+6 sessions · 18 events · 1 account + 4 guests · median session 2s
 Excluded: 79 sessions, 160 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 5 | 17 | 4 |
-| 7d | 5 | 17 | 4 |
-| 14d | 5 | 17 | 4 |
-| 30d | 5 | 17 | 4 |
+| 24h | 6 | 18 | 5 |
+| 7d | 6 | 18 | 5 |
+| 14d | 6 | 18 | 5 |
+| 30d | 6 | 18 | 5 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **4** Opened the app (100% of top)
-- **3** Did anything past the open (75% of top)
+- **5** Opened the app (100% of top)
+- **3** Did anything past the open (60% of top)
 - **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -28,8 +28,8 @@ _How many users know the PRO trial exists, and how many start one?_
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **4** Opened the app (100% of top)
-- **3** Viewed a page (75% of top)
+- **5** Opened the app (100% of top)
+- **3** Viewed a page (60% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -37,14 +37,14 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **3** Started as a guest (100% of top)
-- **2** Did anything at all (66.7% of top)
+- **4** Started as a guest (100% of top)
+- **2** Did anything at all (50% of top)
 - **0** Created an account (0% of top) — see gap `guest_upgrade`
 
 | Event | Fired | People |
 | --- | ---: | ---: |
 | Viewed a page (`page.view`) | 11 | 3 |
-| Session started (`session.start`) | 5 | 4 |
+| Session started (`session.start`) | 6 | 5 |
 | Created a binder (`binder.add`) | 1 | 1 |
 
 Instrumentation: 9/13 events verified firing (all traffic, all time).

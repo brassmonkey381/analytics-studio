@@ -5,10 +5,15 @@
         "sessions": 5,
         "events": 17,
         "users": 4
+      },
+      "2026-08-06": {
+        "sessions": 1,
+        "events": 1,
+        "users": 1
       }
     }
   },
-  "collectedAt": "2026-08-06T00:13:33.838Z",
+  "collectedAt": "2026-08-06T00:23:52.102Z",
   "windowDays": 30,
   "apps": {
     "michi-maker": {
@@ -18,27 +23,27 @@
         "1": {
           "windowDays": 1,
           "totals": {
-            "sessions": 5,
-            "events": 17,
-            "users": 4,
+            "sessions": 6,
+            "events": 18,
+            "users": 5,
             "realUsers": 1,
-            "guestUsers": 3,
+            "guestUsers": 4,
             "excludedSessions": 79,
             "excludedEvents": 160,
             "orphanEvents": 0,
-            "bouncedSessions": 2,
+            "bouncedSessions": 3,
             "medianSessionSecs": 1.65,
             "platforms": {
-              "web": 5
+              "web": 6
             },
             "firstEventAt": "2026-08-05 17:58:28.814278+00"
           },
           "daily": [
             {
               "day": "2026-08-06",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 1,
+              "events": 1,
+              "users": 1
             }
           ],
           "eventsByName": [
@@ -54,8 +59,8 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 5,
-              "users": 4,
+              "count": 6,
+              "users": 5,
               "known": true
             },
             {
@@ -113,7 +118,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -122,8 +127,8 @@
                   "id": "engaged",
                   "label": "Did anything past the open",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -152,7 +157,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -161,8 +166,8 @@
                   "id": "looked",
                   "label": "Viewed a page",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -191,7 +196,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 3,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -200,8 +205,8 @@
                   "id": "engaged",
                   "label": "Did anything at all",
                   "users": 2,
-                  "ofPrev": 66.7,
-                  "ofTop": 66.7,
+                  "ofPrev": 50,
+                  "ofTop": 50,
                   "caveat": null
                 },
                 {
@@ -233,18 +238,18 @@
         "7": {
           "windowDays": 7,
           "totals": {
-            "sessions": 5,
-            "events": 17,
-            "users": 4,
+            "sessions": 6,
+            "events": 18,
+            "users": 5,
             "realUsers": 1,
-            "guestUsers": 3,
+            "guestUsers": 4,
             "excludedSessions": 79,
             "excludedEvents": 160,
             "orphanEvents": 0,
-            "bouncedSessions": 2,
+            "bouncedSessions": 3,
             "medianSessionSecs": 1.65,
             "platforms": {
-              "web": 5
+              "web": 6
             },
             "firstEventAt": "2026-08-05 17:58:28.814278+00"
           },
@@ -287,9 +292,9 @@
             },
             {
               "day": "2026-08-06",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 1,
+              "events": 1,
+              "users": 1
             }
           ],
           "eventsByName": [
@@ -305,8 +310,8 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 5,
-              "users": 4,
+              "count": 6,
+              "users": 5,
               "known": true
             },
             {
@@ -364,7 +369,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -373,8 +378,8 @@
                   "id": "engaged",
                   "label": "Did anything past the open",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -403,7 +408,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -412,8 +417,8 @@
                   "id": "looked",
                   "label": "Viewed a page",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -442,7 +447,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 3,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -451,8 +456,8 @@
                   "id": "engaged",
                   "label": "Did anything at all",
                   "users": 2,
-                  "ofPrev": 66.7,
-                  "ofTop": 66.7,
+                  "ofPrev": 50,
+                  "ofTop": 50,
                   "caveat": null
                 },
                 {
@@ -484,18 +489,18 @@
         "14": {
           "windowDays": 14,
           "totals": {
-            "sessions": 5,
-            "events": 17,
-            "users": 4,
+            "sessions": 6,
+            "events": 18,
+            "users": 5,
             "realUsers": 1,
-            "guestUsers": 3,
+            "guestUsers": 4,
             "excludedSessions": 79,
             "excludedEvents": 160,
             "orphanEvents": 0,
-            "bouncedSessions": 2,
+            "bouncedSessions": 3,
             "medianSessionSecs": 1.65,
             "platforms": {
-              "web": 5
+              "web": 6
             },
             "firstEventAt": "2026-08-05 17:58:28.814278+00"
           },
@@ -580,9 +585,9 @@
             },
             {
               "day": "2026-08-06",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 1,
+              "events": 1,
+              "users": 1
             }
           ],
           "eventsByName": [
@@ -598,8 +603,8 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 5,
-              "users": 4,
+              "count": 6,
+              "users": 5,
               "known": true
             },
             {
@@ -657,7 +662,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -666,8 +671,8 @@
                   "id": "engaged",
                   "label": "Did anything past the open",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -696,7 +701,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -705,8 +710,8 @@
                   "id": "looked",
                   "label": "Viewed a page",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -735,7 +740,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 3,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -744,8 +749,8 @@
                   "id": "engaged",
                   "label": "Did anything at all",
                   "users": 2,
-                  "ofPrev": 66.7,
-                  "ofTop": 66.7,
+                  "ofPrev": 50,
+                  "ofTop": 50,
                   "caveat": null
                 },
                 {
@@ -777,18 +782,18 @@
         "30": {
           "windowDays": 30,
           "totals": {
-            "sessions": 5,
-            "events": 17,
-            "users": 4,
+            "sessions": 6,
+            "events": 18,
+            "users": 5,
             "realUsers": 1,
-            "guestUsers": 3,
+            "guestUsers": 4,
             "excludedSessions": 79,
             "excludedEvents": 160,
             "orphanEvents": 0,
-            "bouncedSessions": 2,
+            "bouncedSessions": 3,
             "medianSessionSecs": 1.65,
             "platforms": {
-              "web": 5
+              "web": 6
             },
             "firstEventAt": "2026-08-05 17:58:28.814278+00"
           },
@@ -969,9 +974,9 @@
             },
             {
               "day": "2026-08-06",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 1,
+              "events": 1,
+              "users": 1
             }
           ],
           "eventsByName": [
@@ -987,8 +992,8 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 5,
-              "users": 4,
+              "count": 6,
+              "users": 5,
               "known": true
             },
             {
@@ -1046,7 +1051,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -1055,8 +1060,8 @@
                   "id": "engaged",
                   "label": "Did anything past the open",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -1085,7 +1090,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 4,
+                  "users": 5,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -1094,8 +1099,8 @@
                   "id": "looked",
                   "label": "Viewed a page",
                   "users": 3,
-                  "ofPrev": 75,
-                  "ofTop": 75,
+                  "ofPrev": 60,
+                  "ofTop": 60,
                   "caveat": null
                 },
                 {
@@ -1124,7 +1129,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 3,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -1133,8 +1138,8 @@
                   "id": "engaged",
                   "label": "Did anything at all",
                   "users": 2,
-                  "ofPrev": 66.7,
-                  "ofTop": 66.7,
+                  "ofPrev": 50,
+                  "ofTop": 50,
                   "caveat": null
                 },
                 {

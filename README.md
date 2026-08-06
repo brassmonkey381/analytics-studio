@@ -193,12 +193,20 @@ than the window is preserved.
 
 `npm run plans` counts distinct accounts at each tier, per app family, from the
 shared `entitlements` ledger — not from the event stream, so it covers all
-history. Resolution mirrors michi's `data/tiers.ts` exactly: `vip > pro > free`,
-where active means `expires_at is null or expires_at > now()`, and a lapsed
+history. Active means `expires_at is null or expires_at > now()`, and a lapsed
 grant leaves the account at Free just as the app does. Both apps read one
 ledger and are told apart by product key (`tier_*` vs `tcgscan_*`), so an
 account can hold a tier in each — the two panels are **not** a partition of one
 population.
+
+**Free trial is a reporting tier, not a product one.** The ladder here is
+`vip > pro > trial > free`, decided by the winning grant's `source`. The apps
+deliberately do *not* special-case a trial — michi's `data/tiers.ts` resolves a
+trial grant to `pro` so nothing downstream has to know, and a trial holder sees
+PRO everywhere in the UI. Splitting it out is an analytics decision: full
+access and paid access are the same thing to the product and completely
+different things to the business. The headline counts Stripe-sourced grants
+only, so a trial and a comp both read as zero revenue.
 
 Two deliberate choices in the chart:
 
