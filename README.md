@@ -21,6 +21,7 @@ scripts/report.mjs       renders reports/report.html + reports/latest.md
 scripts/events.mjs       ingests analytics_sessions/_events -> events.json + journeys.json
 scripts/events-report.mjs renders reports/events.html + reports/events.md
 scripts/plans.mjs        entitlement tiers -> data/plans.json + reports/plans.html
+scripts/shares.mjs       binder visitors -> data/shares.json + reports/shares.html
 config/reports.json      dashboard registry: what appears on the index and how it refreshes
 scripts/serve.mjs        localhost dashboard: serves the reports, re-pulls on demand
 data/metrics.json        rolling per-day store (history accumulates across runs)
@@ -188,6 +189,35 @@ attributed.
 The collector is idempotent: each run recomputes the trailing 30-day window
 and merges it into `data/metrics.json`, so gaps self-heal and history older
 than the window is preserved.
+
+## Shares lane
+
+`npm run shares` answers who opens a binder that is **not theirs**, and what they
+do next — the shared-binder-link channel.
+
+It needs no new instrumentation, which was not obvious at first. A `page.view`
+already carries `props.route = /binder/<uuid>`, so the binder id is in the data;
+joining it to `binders.owner_id` and comparing against the viewer separates a
+visitor from the owner reading their own binder. Three populations come out of
+one route, and the report states all three so none of them hides:
+
+| | |
+| --- | --- |
+| **visitor views** | someone who is not the owner — the arrivals, the number that matters |
+| **owner views** | the baseline to subtract, not a signal |
+| **unresolved** | the binder id is not in `binders` — local-only or deleted, never a share arrival |
+
+What the route *cannot* say is how someone got there: a link from a friend and a
+click from `/discover` look identical. **"Arrived cold"** — a binder open as the
+account's first-ever action — is the proxy, since in-app browsing does not
+produce that. The remaining gap is recorded as `share_attribution`, deferred
+rather than specced: closing it needs either a share token in the URL, which
+puts a tracking parameter in a link people paste to friends, or referrer
+capture, which is deferred for the privacy-copy reason.
+
+The events lane deliberately has **no** shared-binder funnel. It does not load
+binder ownership, so a route-only version would count owners opening their own
+binders as arrivals and overstate the channel. One question, one answer.
 
 ## Plans lane
 

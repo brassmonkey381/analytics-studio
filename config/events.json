@@ -66,6 +66,7 @@
   },
 
   "_funnelsDoc": "Ordered stages. A user counts at stage N only if they also reached every earlier stage, so the drop-off between rows is real. `match` is one of: event (any of `names`), route (a page.view whose route is in `routes`), or truth (a row in a ground-truth table — instrumentation-independent, so it also back-fills history from before tracking existed).",
+  "_funnelsNote": "Shared-binder arrivals are deliberately NOT a funnel here. Answering it needs each binder's owner joined to the viewer, which this lane does not load - a route-only version would count owners opening their own binders as arrivals and quietly overstate the channel. The shares lane (scripts/shares.mjs, reports/shares.html) does it properly.",
   "funnels": [
     {
       "id": "pro-trial",
@@ -89,18 +90,6 @@
         { "id": "looked",  "label": "Viewed a page",      "match": "event", "names": ["page.view"] },
         { "id": "tried",   "label": "Tried a demo",       "match": "event", "names": ["demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
         { "id": "created", "label": "Made something real","match": "event", "names": ["binder.add", "csv.import", "card.add", "scan.capture", "collection.create"] }
-      ]
-    },
-    {
-      "id": "shared-binder",
-      "title": "Shared binder link to signup",
-      "question": "Do people who arrive on someone else's shared binder stick around and make an account?",
-      "apps": ["michi"],
-      "stages": [
-        { "id": "opened",  "label": "Opened a shared binder",       "match": "event", "names": ["share.link_opened"], "caveat": "share_attribution" },
-        { "id": "browsed", "label": "Went somewhere else in the app","match": "event", "names": ["page.view", "card.search", "demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
-        { "id": "signed",  "label": "Created an account",           "match": "event", "names": ["account.created"] },
-        { "id": "made",    "label": "Made something of their own",  "match": "event", "names": ["binder.add", "csv.import", "binder.reshare"] }
       ]
     },
     {
@@ -131,12 +120,12 @@
   "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation), landed (code is in the app repos but no event has been observed yet, so it is not proven), deferred (a decision was made not to do it, with the reason), fixed (observed firing). landed -> fixed is not a judgement call: the coverage panel detects a planned name appearing in the data and says so. Fixes land in the app repos, never here.",
   "gaps": {
     "share_attribution": {
-      "severity": "blocking",
-      "status": "specced",
-      "title": "A shared binder link is invisible as an arrival",
-      "detail": "Brian expects shared binder links to be a main acquisition channel (2026-08-06). Nothing records one. A share is just the public /binder/[id] URL — ShareSheet flips is_public and copies the link with no token and no event, so an arrival is indistinguishable from the owner opening their own binder or a click from /discover. Verified against the data: of 40 binder page.views, 5 resolve to a real binder and ALL FIVE are the owner's own; zero non-owner views exist, and 32 of the rest are one local-only binder that is not in the binders table at all. binder_reshares (1 row) is the only durable trace of the channel, and it only fires on a copy, not a visit.",
-      "direction": "the entire shared-link acquisition channel reads as zero",
-      "fix": "track('share.link_created', { binder_id }) and share.link_copied in ShareSheet; on /binder/[id], track('share.link_opened', { binder_id, is_owner }) when the viewer is not the owner; track('binder.reshare', { source_binder_id }) where the binder_reshares row is written. Attribution to signup then falls out of the session: the arrival and the account.created share a session_id."
+      "severity": "low",
+      "status": "deferred",
+      "title": "A binder open does not say what carried the visitor there",
+      "detail": "CORRECTED 2026-08-06. This was first written up as blocking, on the reasoning that a shared-link arrival was unrecordable. That was wrong, and Brian caught it: page.view already carries props.route = /binder/<uuid>, so the binder id is in the data, and joining it to binders.owner_id separates a visitor from the owner reading their own binder. The whole channel is measurable from rows that already exist — see the shares lane, which needed no app change. What genuinely remains is narrower: the route cannot say HOW someone arrived, so a link from a friend and a click from /discover are identical. 'Arrived cold' (a binder open as the account's first ever action) is the proxy, since in-app browsing does not produce that.",
+      "direction": "channel volume is measurable; only the referring surface is unknown",
+      "fix": "not scheduled — deliberately. Distinguishing the two would need either a share token in the URL, which puts a tracking parameter in a link people paste to friends, or referrer capture, which is deferred for the privacy-copy reason under `referrer`. The share.* events registered in the taxonomy stay planned rather than specced: they would add sharer-side intent (made public, copied the link), which is a different question from arrivals and is not blocking anything."
     },
     "landing_route_broken": {
       "severity": "high",

@@ -19,6 +19,14 @@
       "scripts": ["scripts/collect.mjs", "scripts/report.mjs"]
     },
     {
+      "id": "shares",
+      "title": "Shared binders",
+      "blurb": "Who opens a binder that is not theirs, and whether they stay. Derived from existing page.view routes.",
+      "file": "reports/shares.html",
+      "data": "data/shares.json",
+      "scripts": ["scripts/shares.mjs"]
+    },
+    {
       "id": "plans",
       "title": "Plan tiers",
       "blurb": "Distinct accounts at each plan tier, read from the entitlements ledger.",
