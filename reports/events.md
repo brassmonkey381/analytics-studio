@@ -1,6 +1,6 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-06T00:37:28.060Z. Own/QA/automated accounts excluded.
+Collected 2026-08-06T01:50:38.904Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
@@ -33,15 +33,6 @@ _Do people who open the app ever do the core thing it is for?_
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
-### Shared binder link to signup
-
-_Do people who arrive on someone else's shared binder stick around and make an account?_
-
-- **0** Opened a shared binder (0% of top) — see gap `share_attribution`
-- **0** Went somewhere else in the app (0% of top)
-- **0** Created an account (0% of top)
-- **0** Made something of their own (0% of top)
-
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
@@ -67,7 +58,7 @@ Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start
 ## TCGScan
 
 0 sessions · 0 events · 0 accounts + 0 guests · median session —
-Excluded: 4 sessions, 13 events (our own, QA and automated accounts).
+Excluded: 6 sessions, 15 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
@@ -128,14 +119,6 @@ Free-typed search on tcgscan runs inside the shared tcgscan-browse package, whic
 
 **Fix:** add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against.
 
-### A shared binder link is invisible as an arrival `share_attribution` (blocking, specced)
-
-Brian expects shared binder links to be a main acquisition channel (2026-08-06). Nothing records one. A share is just the public /binder/[id] URL — ShareSheet flips is_public and copies the link with no token and no event, so an arrival is indistinguishable from the owner opening their own binder or a click from /discover. Verified against the data: of 40 binder page.views, 5 resolve to a real binder and ALL FIVE are the owner's own; zero non-owner views exist, and 32 of the rest are one local-only binder that is not in the binders table at all. binder_reshares (1 row) is the only durable trace of the channel, and it only fires on a copy, not a visit.
-
-**Effect:** the entire shared-link acquisition channel reads as zero
-
-**Fix:** track('share.link_created', { binder_id }) and share.link_copied in ShareSheet; on /binder/[id], track('share.link_opened', { binder_id, is_owner }) when the viewer is not the owner; track('binder.reshare', { source_binder_id }) where the binder_reshares row is written. Attribution to signup then falls out of the session: the arrival and the account.created share a session_id.
-
 ### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
 
 TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
@@ -175,6 +158,14 @@ Assessed against the code, not the recorded rows — the sample in the database 
 **Effect:** limits segmentation on those events only; biases no count
 
 **Fix:** add a small props object at those call sites; ids and counts only, per the no-PII rule in lib/analytics.ts.
+
+### A binder open does not say what carried the visitor there `share_attribution` (low, deferred)
+
+CORRECTED 2026-08-06. This was first written up as blocking, on the reasoning that a shared-link arrival was unrecordable. That was wrong, and Brian caught it: page.view already carries props.route = /binder/<uuid>, so the binder id is in the data, and joining it to binders.owner_id separates a visitor from the owner reading their own binder. The whole channel is measurable from rows that already exist — see the shares lane, which needed no app change. What genuinely remains is narrower: the route cannot say HOW someone arrived, so a link from a friend and a click from /discover are identical. 'Arrived cold' (a binder open as the account's first ever action) is the proxy, since in-app browsing does not produce that.
+
+**Effect:** channel volume is measurable; only the referring surface is unknown
+
+**Fix:** not scheduled — deliberately. Distinguishing the two would need either a share token in the URL, which puts a tracking parameter in a link people paste to friends, or referrer capture, which is deferred for the privacy-copy reason under `referrer`. The share.* events registered in the taxonomy stay planned rather than specced: they would add sharer-side intent (made public, copied the link), which is a different question from arrivals and is not blocking anything.
 
 ### No acquisition source `referrer` (low, deferred)
 
