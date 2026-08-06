@@ -20,6 +20,8 @@ scripts/collect.mjs      fetches metrics, merges into data/metrics.json
 scripts/report.mjs       renders reports/report.html + reports/latest.md
 scripts/events.mjs       ingests analytics_sessions/_events -> events.json + journeys.json
 scripts/events-report.mjs renders reports/events.html + reports/events.md
+scripts/plans.mjs        entitlement tiers -> data/plans.json + reports/plans.html
+config/reports.json      dashboard registry: what appears on the index and how it refreshes
 scripts/serve.mjs        localhost dashboard: serves the reports, re-pulls on demand
 data/metrics.json        rolling per-day store (history accumulates across runs)
 data/events.json         event aggregates + history (counts only, committed)
@@ -59,15 +61,28 @@ npm run events:report # just rebuild the events report
 
 ### Dashboard
 
-`npm run serve` puts the reports behind a small local server so a browser
+`npm run serve` puts every report behind a small local server so a browser
 reload shows current numbers instead of whatever the last cron run left on
-disk.
+disk. `/` is an index of all of them; each gets a route at `/<id>` and
+`/api/status` returns the lot as JSON.
 
-| route | |
-| --- | --- |
-| `/` | events report (default) |
-| `/metrics` | DAU + new users |
-| `/api/status` | collection times as JSON |
+**Adding a report.** Anything in `reports/*.html` shows up on the index
+automatically, marked *unregistered*, and is reachable immediately. Adding it
+to `config/reports.json` is what gives it a title, a blurb, a position, and a
+refresh button — not what makes it visible. A dashboard that hides work until
+someone edits a config is a dashboard people stop trusting.
+
+```json
+{ "id": "plans", "title": "Plan tiers", "blurb": "…",
+  "file": "reports/plans.html", "data": "data/plans.json",
+  "scripts": ["scripts/plans.mjs"] }
+```
+
+`scripts` is what a refresh runs, in order, from the repo root. Omit it for a
+hand-written report and it is served without a refresh button rather than
+pretending it has one. `data` is the JSON whose `collectedAt` drives the age
+indicator; omit it and the report file's mtime is used. The registry is read
+per request, so a new report needs no restart.
 
 A control strip is injected into the served page: how old the data is, a
 **Pull fresh data** button, and an optional 5-minute auto-refresh (remembered
@@ -173,6 +188,34 @@ attributed.
 The collector is idempotent: each run recomputes the trailing 30-day window
 and merges it into `data/metrics.json`, so gaps self-heal and history older
 than the window is preserved.
+
+## Plans lane
+
+`npm run plans` counts distinct accounts at each tier, per app family, from the
+shared `entitlements` ledger — not from the event stream, so it covers all
+history. Resolution mirrors michi's `data/tiers.ts` exactly: `vip > pro > free`,
+where active means `expires_at is null or expires_at > now()`, and a lapsed
+grant leaves the account at Free just as the app does. Both apps read one
+ledger and are told apart by product key (`tier_*` vs `tcgscan_*`), so an
+account can hold a tier in each — the two panels are **not** a partition of one
+population.
+
+Two deliberate choices in the chart:
+
+- **Tier is ordinal, so colour is one hue stepped light→dark**, not a
+  categorical set. Steps are validated with the dataviz skill's
+  `validate_palette.js --ordinal` in both modes — an ordinal ramp has a tighter
+  floor than a meter track, and the light end must still clear 2:1 against the
+  surface (light `#2a78d6`/`#86b6ef`, dark `#3987e5`/`#184f95`).
+- **Guests are not a bar.** There are two orders of magnitude more of them than
+  signed-in accounts, so a shared linear scale would flatten every real tier to
+  nothing, and an anonymous session is not an account at a plan tier anyway.
+  They are stated as context under each panel.
+
+As of 2026-08-06 every PRO and VIP grant on the project belongs to an excluded
+account, so the honest headline is **zero paying accounts**. The excluded
+holders are shown in the lighter step rather than dropped, which is what makes
+that fact visible instead of just absent.
 
 ## Events lane
 

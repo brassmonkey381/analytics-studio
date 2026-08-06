@@ -1,0 +1,30 @@
+{
+  "_doc": "The dashboard's registry. Each entry becomes a card on the index and a route at /<id>. `scripts` is what a refresh runs, in order, from the repo root — omit it for a report that is written by hand or produced by something outside this repo, and it will be served without a refresh button rather than pretending it has one. `data` is the JSON whose collectedAt drives the age indicator; omit it and the report's own file mtime is used instead. Any reports/*.html not listed here still appears on the index as unregistered, so a new report is reachable the moment it exists — adding it here is what gives it a title, an order, and a refresh.",
+
+  "reports": [
+    {
+      "id": "events",
+      "title": "Event stream",
+      "blurb": "Per-session user journeys, funnels and tracking gaps for Michi-Maker and TCGScan.",
+      "file": "reports/events.html",
+      "data": "data/events.json",
+      "scripts": ["scripts/events.mjs", "scripts/events-report.mjs"]
+    },
+    {
+      "id": "metrics",
+      "title": "DAU & new users",
+      "blurb": "Daily actives, new signups and active-vs-churned totals across all four apps.",
+      "file": "reports/report.html",
+      "data": "data/metrics.json",
+      "scripts": ["scripts/collect.mjs", "scripts/report.mjs"]
+    },
+    {
+      "id": "plans",
+      "title": "Plan tiers",
+      "blurb": "Distinct accounts at each plan tier, read from the entitlements ledger.",
+      "file": "reports/plans.html",
+      "data": "data/plans.json",
+      "scripts": ["scripts/plans.mjs"]
+    }
+  ]
+}
