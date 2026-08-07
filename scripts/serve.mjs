@@ -90,7 +90,14 @@ function runReport(rep) {
     return { ms: Date.now() - started, log: log.join("") };
   })();
   running.set(rep.id, job);
-  job.finally(() => running.delete(rep.id));
+  // Cleanup must not create a SECOND rejecting branch. `job.finally(fn)` returns
+  // a new promise that rejects alongside `job`; nothing awaits that one, so a
+  // failing lane became an unhandled rejection and Node killed the whole server
+  // — defeating the two callers below that carefully catch and serve the last
+  // good report. `then(done, done)` handles the rejection, so the derived
+  // promise fulfils, while `job` itself still rejects for the caller.
+  const done = () => running.delete(rep.id);
+  job.then(done, done);
   return job;
 }
 
