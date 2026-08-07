@@ -224,7 +224,7 @@
         "table": "profiles",
         "tsCol": "created_at"
       },
-      "reportNote": "Shares one auth pool with Michi-Maker, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (scans, saves, collection edits), so browsing leaves no trace.",
+      "reportNote": "Shares one auth pool with Michi-Maker, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (scans, saves, collection edits), so browsing leaves no trace. The default 'My Collection' the app writes on every fresh install does NOT count as activity — it is a page load, not a visitor doing something.",
       "activitySources": [
         {
           "table": "scan_events",
@@ -237,9 +237,12 @@
           "tsCol": "updated_at"
         },
         {
+          "_note": "A collection only counts if the USER made it. tcgscan-app/src/lib/portfolio.ts loadRaw() mints a default 'My Collection' on any fresh install (no AsyncStorage key) and cloud sync pushes it up, so every new browser context writes exactly one collection row before the visitor does anything. Counting it made 'opened the app' indistinguishable from 'used the app': on 2026-08-06, 72 guests looked active and 71 of them had that single auto-row and nothing else. The filter keeps a collection created well after signup (deliberate) or edited after creation (used), and drops the bootstrap row. Measured cost: 0 real accounts, 0 real collections.",
           "table": "collections",
-          "userCol": "user_id",
-          "tsCol": "updated_at"
+          "userCol": "c.user_id",
+          "tsCol": "c.updated_at",
+          "from": "public.collections c join auth.users cu on cu.id = c.user_id",
+          "filter": "(c.created_at > cu.created_at + interval '2 seconds' or c.updated_at > c.created_at + interval '2 seconds')"
         },
         {
           "table": "portfolio_entries",
