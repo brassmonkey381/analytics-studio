@@ -115,15 +115,22 @@ tr[data-hov]:hover, [data-hov].hovrow:hover { background: color-mix(in srgb, var
       tip.appendChild(m);
     }
     tip.style.display = 'block';
-    move(ev);
+    if (ev) move(ev); else anchor(el);
   }
-  function move(ev) {
+  // Flip to the other side rather than letting the tip leave the viewport.
+  function at(cx, cy) {
     if (tip.style.display !== 'block') return;
     var pad = 14, b = tip.getBoundingClientRect();
-    var x = ev.clientX + pad, y = ev.clientY + pad;
-    if (x + b.width > innerWidth - 8) x = ev.clientX - b.width - pad;
-    if (y + b.height > innerHeight - 8) y = Math.max(8, ev.clientY - b.height - pad);
+    var x = cx + pad, y = cy + pad;
+    if (x + b.width > innerWidth - 8) x = cx - b.width - pad;
+    if (y + b.height > innerHeight - 8) y = Math.max(8, cy - b.height - pad);
     tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function move(ev) { at(ev.clientX, ev.clientY); }
+  // Keyboard focus has no pointer, so anchor to the element's own box instead.
+  function anchor(el) {
+    var r = el.getBoundingClientRect();
+    at(r.left, r.bottom - 14);
   }
   function hide() { tip.style.display = 'none'; }
 
@@ -131,6 +138,11 @@ tr[data-hov]:hover, [data-hov].hovrow:hover { background: color-mix(in srgb, var
   document.addEventListener('mouseover', function (e) { var el = target(e); if (el) show(el, e); else hide(); });
   document.addEventListener('mousemove', function (e) { var el = target(e); if (el) move(e); else hide(); });
   document.addEventListener('scroll', hide, true);
+  // A hover-only roster is unreachable without a mouse. Any [data-hov] carrying
+  // tabindex gets the same tooltip on focus, and Escape dismisses it.
+  document.addEventListener('focusin', function (e) { var el = target(e); if (el) show(el, null); else hide(); });
+  document.addEventListener('focusout', hide);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
 })();
 </script>`;
 }

@@ -15,12 +15,18 @@ Every report in this studio has all four. They are not per-report decisions and
 they are not optional. Shared code exists for each so you get them by calling a
 function, not by remembering.
 
-> **Known exception, 2026-08-06:** `scripts/report.mjs` (the DAU lane, `/metrics`)
-> predates the shared modules. It satisfies staples 1, 3 and 4 with its own
-> crosshair + per-bar hover — showing emails, because Doggle and Pickleague are
-> separate projects with no `profiles.username` to resolve — but it has **no
-> window toggle** and does not use `lib/hover.mjs`. Porting it is outstanding
-> work, not a licence for the next report to skip either.
+> **Known exception, narrowed 2026-08-07:** `scripts/report.mjs` (the DAU lane,
+> `/metrics`) predates the shared modules. Its retention bars now use
+> `lib/hover.mjs` like everything else, and its identity blob is parsed rather
+> than evaluated. Two things remain true of it: it still has **no window
+> toggle** (staple 2), and its line charts keep a bespoke crosshair, because the
+> shared layer shows one roster and that tooltip is a multi-series readout —
+> date, then every app's value. The crosshair reads names out of the shared
+> parsed blob, so the safety rules are not duplicated. Names show as emails
+> because Doggle and Pickleague are separate projects with no
+> `profiles.username` to resolve; they route through `userLabel()` regardless,
+> so that becomes one change if it ever can be. The window toggle is
+> outstanding work, not a licence for the next report to skip it.
 
 ### 1. Hover any plot for who is behind the number — `scripts/lib/hover.mjs`
 
