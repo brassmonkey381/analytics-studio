@@ -16,7 +16,8 @@
       "%automation%@%",
       "%claude-test%@%"
     ],
-    "userAgentRegex": "playwright|headless|puppeteer|selenium|webdriver|cypress|^node$|^node/|^curl|python-requests|go-http-client|postmanruntime|insomnia|^axios|^deno|^java/|^wget|scrapy|bot/|crawler|spider",
+    "_userAgentRegexDoc": "Four groups, in order. (1) Automation drivers and HTTP clients. (2) Self-declaring crawlers: `bot/` catches ClaudeBot/Googlebot/bingbot/AhrefsBot etc, and the `+http` / `+contact@` forms catch anything advertising a contact URL or address the way the robots convention asks. (3) Named agents that declare themselves but match neither of the above — Claude-User and Perplexity-User are USER-INITIATED fetchers with their own UA, distinct from ClaudeBot, and Dataprovider.com names itself with no marker at all. (4) Impossible UAs: a null header stringified to `None`, legacy EdgeHTML (Edge/12-18, retired 2020) bolted onto a modern Chrome token, a truncated `Safari/537.3` (real is 537.36), `Mac OS X 8_` (never existed; real is 10_x or 14_x+), and AppleWebKit/558 (real is 537.36 or 605.1.15). Each of group 4 was observed in this project's traffic on 2026-08-06 and none can be emitted by a real browser. Verified: this costs 0 real signed-in accounts.",
+    "userAgentRegex": "playwright|headless|puppeteer|selenium|webdriver|cypress|^node$|^node/|^curl|python-requests|go-http-client|postmanruntime|insomnia|^axios|^deno|^java/|^wget|scrapy|bot/|crawler|spider|\\+https?://|\\+[a-z0-9._%-]+@|claude-user|anthropic|chatgpt-user|oai-searchbot|perplexity|google-extended|bytespider|meta-externalagent|dataprovider|semrush|yandex|slurp|facebookexternalhit|^none$|^null$|^undefined$|^-?$|edge/1[2-8]\\.|safari/537\\.3$|mac os x 8_|applewebkit/558",
     "userIds": [],
 
     "_emailExactDoc": "Owner accounts, global because the same person signs into every app. brassmonkey381@msn.com matches Brian's GitHub handle and signs in from his dev machine (confirmed 2026-08-04).",

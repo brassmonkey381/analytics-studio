@@ -1,26 +1,26 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-06T18:29:34.745Z. Own/QA/automated accounts excluded.
+Collected 2026-08-06T22:27:15.981Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-18 sessions · 117 events · 1 account + 11 guests · median session 2m
-Excluded: 80 sessions, 161 events (our own, QA and automated accounts).
+20 sessions · 125 events · 1 account + 12 guests · median session 3m
+Excluded: 82 sessions, 172 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 16 | 115 | 11 |
-| 7d | 18 | 117 | 12 |
-| 14d | 18 | 117 | 12 |
-| 30d | 18 | 117 | 12 |
+| 24h | 16 | 112 | 10 |
+| 7d | 20 | 125 | 13 |
+| 14d | 20 | 125 | 13 |
+| 30d | 20 | 125 | 13 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **12** Opened the app (100% of top)
-- **10** Did anything past the open (83.3% of top)
+- **13** Opened the app (100% of top)
+- **10** Did anything past the open (76.9% of top)
 - **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -28,8 +28,8 @@ _How many users know the PRO trial exists, and how many start one?_
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **12** Opened the app (100% of top)
-- **10** Viewed a page (83.3% of top)
+- **13** Opened the app (100% of top)
+- **10** Viewed a page (76.9% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -37,16 +37,16 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **11** Started as a guest (100% of top)
-- **9** Did anything at all (81.8% of top)
+- **12** Started as a guest (100% of top)
+- **9** Did anything at all (75% of top)
 - **0** Created an account (0% of top) — see gap `guest_upgrade`
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 79 | 10 |
-| Session started (`session.start`) | 18 | 12 |
+| Viewed a page (`page.view`) | 84 | 10 |
+| Session started (`session.start`) | 20 | 13 |
 | Added cards (`card.add`) | 16 | 3 |
-| Created a binder (`binder.add`) | 4 | 4 |
+| Created a binder (`binder.add`) | 5 | 4 |
 
 Instrumentation: 9/13 events verified firing (all traffic, all time).
 
@@ -58,8 +58,8 @@ Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start
 
 ## TCGScan
 
-3 sessions · 3 events · 0 accounts + 3 guests · median session 0s
-Excluded: 20 sessions, 69 events (our own, QA and automated accounts).
+3 sessions · 3 events · 0 accounts + 3 guests · median session 1s
+Excluded: 24 sessions, 85 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
