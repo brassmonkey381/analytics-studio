@@ -1,5 +1,7 @@
 // Report generator: reads data/metrics.json, writes reports/report.html and
-// reports/latest.md covering the trailing 30-day window.
+// reports/latest.md. The HTML carries every window (24h/7d/14d/30d) rendered
+// server-side and toggled client-side; the markdown is the 30-day view, since a
+// static summary has no toggle to offer.
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -13,6 +15,7 @@ import {
   roster,
   userLabel,
 } from "./lib/hover.mjs";
+import { STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const store = JSON.parse(readFileSync(join(ROOT, "data", "metrics.json"), "utf8"));
@@ -72,6 +75,38 @@ const plotted = apps.filter((a) => a.hasData);
 const sum = (arr) => arr.reduce((a, b) => a + b, 0);
 const fmt = (n) => (n == null ? "n/a" : n.toLocaleString("en-US"));
 
+// ---------- Windows ----------
+//
+// The toggle scopes the TRAILING DAILY SERIES: how many of the collected days
+// are in view. Every window is rendered server-side from the one metrics.json
+// already in hand, and the toggle only flips which [data-w] block is visible —
+// no window is recomputed in the browser, so none can disagree with another.
+//
+// Two things deliberately do NOT move with it, and both say so where they are
+// drawn: the active/churned bars (they carry their own 7/14/30 split, computed
+// by a different query) and the total-users figure on each tile (point-in-time).
+const WINDOWS = STANDARD_WINDOWS.filter((w) => w <= WINDOW);
+const DEFAULT_WIN = WINDOWS.includes(WINDOW) ? WINDOW : WINDOWS.at(-1);
+// A single day of a daily series is one point, not a trend. At 24h the charts
+// step aside and the tiles — which is the right form for one number — carry it.
+const PLOTTABLE = (w) => w > 1;
+
+const lastN = (arr, w) => arr.slice(-w);
+/** New users accumulated WITHIN the window, not carried in from before it. */
+const cumWithin = (newDaily, w) => {
+  const out = [];
+  lastN(newDaily, w).reduce((acc, v, i) => (out[i] = acc + v), 0);
+  return out;
+};
+// One scale across windows, per the house rule: narrowing the window must not
+// make a mark grow. Both maxima are taken over the WIDEST window and reused by
+// every narrower one, so a quiet week reads as a low curve rather than a
+// rescaled one that looks identical to a busy month.
+const DAU_MAX = Math.max(1, ...plotted.flatMap((a) => a.dau));
+const CUM_MAX = Object.fromEntries(
+  plotted.map((a) => [a.id, Math.max(1, ...cumWithin(a.newDaily, WINDOWS.at(-1)))]),
+);
+
 // ---------- SVG chart builder ----------
 
 const W = 860, H = 300, PAD = { t: 16, r: 120, b: 34, l: 48 };
@@ -86,12 +121,14 @@ function niceTicks(max) {
   return ticks;
 }
 
-function lineChart(id, seriesKey) {
+function lineChart(id, seriesKey, win) {
+  const d8 = lastN(dates, win);
+  const series = Object.fromEntries(plotted.map((a) => [a.id, lastN(a[seriesKey], win)]));
   const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
-  const maxVal = Math.max(1, ...plotted.flatMap((a) => a[seriesKey]));
-  const ticks = niceTicks(maxVal);
+  // Fixed across windows on purpose — see DAU_MAX.
+  const ticks = niceTicks(DAU_MAX);
   const yMax = ticks[ticks.length - 1];
-  const x = (i) => PAD.l + (i / (dates.length - 1)) * plotW;
+  const x = (i) => PAD.l + (i / Math.max(1, d8.length - 1)) * plotW;
   const y = (v) => PAD.t + plotH - (v / yMax) * plotH;
 
   const grid = ticks
@@ -99,31 +136,32 @@ function lineChart(id, seriesKey) {
 <text x="${PAD.l - 8}" y="${y(t) + 4}" class="tick" text-anchor="end">${t.toLocaleString("en-US")}</text>`)
     .join("\n");
 
-  const xTicks = [0, Math.floor((dates.length - 1) / 2), dates.length - 1]
-    .map((i) => `<text x="${x(i)}" y="${H - PAD.b + 18}" class="tick" text-anchor="middle">${dates[i].slice(5)}</text>`)
+  const xTicks = [...new Set([0, Math.floor((d8.length - 1) / 2), d8.length - 1])]
+    .map((i) => `<text x="${x(i)}" y="${H - PAD.b + 18}" class="tick" text-anchor="middle">${d8[i].slice(5)}</text>`)
     .join("\n");
 
   const lines = plotted
     .map((a) => {
-      const d = a[seriesKey].map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
-      const endY = y(a[seriesKey].at(-1));
+      const vals = series[a.id];
+      const d = vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+      const endY = y(vals.at(-1));
       return `<path d="${d}" class="line s${a.slot}"/>
-<circle cx="${x(dates.length - 1)}" cy="${endY}" r="4" class="dot s${a.slot}"/>`;
+<circle cx="${x(d8.length - 1)}" cy="${endY}" r="4" class="dot s${a.slot}"/>`;
     })
     .join("\n");
 
   // Direct end-labels only where they don't collide (>=15px apart); the legend
   // and tooltip carry the rest.
   const ends = plotted
-    .map((a) => ({ a, ey: y(a[seriesKey].at(-1)) }))
+    .map((a) => ({ a, ey: y(series[a.id].at(-1)) }))
     .sort((p, q) => p.ey - q.ey);
   const endLabels = ends
     .filter((p, i) => ends.every((q, j) => j === i || Math.abs(q.ey - p.ey) >= 15))
-    .map((p) => `<g><circle cx="${W - PAD.r + 10}" cy="${p.ey - 4}" r="4" class="dot s${p.a.slot}"/><text x="${W - PAD.r + 18}" y="${p.ey}" class="endlabel">${esc(p.a.name)} ${fmt(p.a[seriesKey].at(-1))}</text></g>`)
+    .map((p) => `<g><circle cx="${W - PAD.r + 10}" cy="${p.ey - 4}" r="4" class="dot s${p.a.slot}"/><text x="${W - PAD.r + 18}" y="${p.ey}" class="endlabel">${esc(p.a.name)} ${fmt(series[p.a.id].at(-1))}</text></g>`)
     .join("\n");
 
-  return `<div class="chart" data-chart="${id}">
-<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${id} chart">
+  return `<div class="chart" data-chart="${id}" data-dates="${esc(JSON.stringify(d8))}">
+<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${id} chart, last ${windowLabel(win)}">
 ${grid}
 ${xTicks}
 ${lines}
@@ -138,15 +176,19 @@ ${endLabels}
 // Small multiples: apps differ in size by orders of magnitude, so a shared
 // y-axis flattens the smaller apps onto the baseline. Each panel gets its own
 // scale; the panel's max is labelled so the scales are never confused.
-function smallMultiples(seriesKey) {
+function smallMultiples(win) {
+  const d8 = lastN(dates, win);
   const w = 300, h = 132, pad = { t: 12, r: 12, b: 22, l: 40 };
   const plotW = w - pad.l - pad.r, plotH = h - pad.t - pad.b;
   return `<div class="sm-grid">${plotted
     .map((a) => {
-      const vals = a[seriesKey];
-      const ticks = niceTicks(Math.max(1, ...vals));
+      // Accumulated within the window: a 7d view must not carry in signups from
+      // day 8. Scale stays pinned to the widest window (CUM_MAX) so a narrower
+      // one reads as a genuinely smaller curve.
+      const vals = cumWithin(a.newDaily, win);
+      const ticks = niceTicks(CUM_MAX[a.id]);
       const yMax = ticks[ticks.length - 1];
-      const x = (i) => pad.l + (i / (dates.length - 1)) * plotW;
+      const x = (i) => pad.l + (i / Math.max(1, d8.length - 1)) * plotW;
       const y = (v) => pad.t + plotH - (v / yMax) * plotH;
       const grid = [0, yMax]
         .map((t) => `<line x1="${pad.l}" y1="${y(t)}" x2="${w - pad.r}" y2="${y(t)}" class="${t === 0 ? "baseline" : "grid"}"/>
@@ -155,12 +197,12 @@ function smallMultiples(seriesKey) {
       const d = vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
       return `<figure class="sm">
 <figcaption><span class="key s${a.slot}"></span>${esc(a.name)} <strong>${fmt(vals.at(-1))}</strong></figcaption>
-<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(a.name)} cumulative new users">
+<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(a.name)} cumulative new users, last ${windowLabel(win)}">
 ${grid}
-<text x="${pad.l}" y="${h - 6}" class="tick">${dates[0].slice(5)}</text>
-<text x="${w - pad.r}" y="${h - 6}" class="tick" text-anchor="end">${dates.at(-1).slice(5)}</text>
+<text x="${pad.l}" y="${h - 6}" class="tick">${d8[0].slice(5)}</text>
+<text x="${w - pad.r}" y="${h - 6}" class="tick" text-anchor="end">${d8.at(-1).slice(5)}</text>
 <path d="${d}" class="line s${a.slot}"/>
-<circle cx="${x(dates.length - 1)}" cy="${y(vals.at(-1))}" r="4" class="dot s${a.slot}"/>
+<circle cx="${x(d8.length - 1)}" cy="${y(vals.at(-1))}" r="4" class="dot s${a.slot}"/>
 </svg>
 </figure>`;
     })
@@ -229,13 +271,16 @@ ${rows}
 
 // ---------- Stat tiles ----------
 
-function tiles() {
+function tiles(win) {
+  const label = windowLabel(win);
   return apps
     .map((a) => {
-      const last7 = sum(a.newDaily.slice(-7));
-      const prev7 = sum(a.newDaily.slice(-14, -7));
-      const delta = last7 - prev7;
-      const deltaTxt = `${delta >= 0 ? "+" : "−"}${fmt(Math.abs(delta))} vs prior week`;
+      const inWin = sum(lastN(a.newDaily, win));
+      // Compare against the immediately preceding window of the same length, so
+      // the delta answers "versus the last one of these" whatever is selected.
+      const prev = sum(a.newDaily.slice(-2 * win, -win));
+      const delta = inWin - prev;
+      const deltaTxt = `${delta >= 0 ? "+" : "−"}${fmt(Math.abs(delta))} vs prior ${label}`;
       const err = a.lastError && (!a.lastCollected || a.lastError.at > a.lastCollected)
         ? `<div class="err">⚠ collection failing: ${esc(a.lastError.message.slice(0, 90))}</div>`
         : "";
@@ -255,8 +300,7 @@ function tiles() {
   <div class="row"><span>DAU yesterday</span><strong>${fmt(a.dau.at(-2) ?? 0)}</strong>${
     a.dauGuest.at(-2) ? `<span class="delta">+${fmt(a.dauGuest.at(-2))} guest sessions</span>` : ""
   }</div>${guestRow}${cov}${exRow}
-  <div class="row"><span>New users, 30d</span><strong>${fmt(sum(a.newDaily))}</strong></div>
-  <div class="row"><span>New users, 7d</span><strong>${fmt(last7)}</strong> <span class="delta ${delta >= 0 ? "up" : "down"}">${deltaTxt}</span></div>`
+  <div class="row"><span>New users, ${label}</span><strong>${fmt(inWin)}</strong> <span class="delta ${delta >= 0 ? "up" : "down"}">${deltaTxt}</span></div>`
         : `<div class="value nodata">—</div>
   <div class="sub">not collected yet</div>`;
       return `<div class="tile">
@@ -274,16 +318,21 @@ function tiles() {
 function table() {
   const head = plotted.map((a) => `<th colspan="3">${esc(a.name)}</th>`).join("");
   const sub = plotted.map(() => `<th>DAU</th><th>Guest</th><th>New</th>`).join("");
+  // Rendered ONCE and filtered by each row's own timestamp — the [data-since]
+  // mechanism in lib/windows.mjs. Four copies of a 30-row table would be four
+  // chances to disagree.
   const rows = dates
     .slice()
     .reverse()
     .map((d, ri) => {
       const i = dates.length - 1 - ri;
       const cells = plotted.map((a) => `<td>${fmt(a.dau[i])}</td><td class="muted">${fmt(a.dauGuest[i])}</td><td>${fmt(a.newDaily[i])}</td>`).join("");
-      return `<tr><td>${d}</td>${cells}</tr>`;
+      // End of that day, so a row is in the window whenever any of it is.
+      const since = Date.parse(`${d}T23:59:59Z`);
+      return `<tr data-since="${since}"><td>${d}</td>${cells}</tr>`;
     })
     .join("\n");
-  return `<table><thead><tr><th rowspan="2">Date</th>${head}</tr><tr>${sub}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th rowspan="2">Date</th>${head}</tr><tr>${sub}</tr></thead><tbody data-since-group>${rows}</tbody></table>`;
 }
 
 // ---------- Page ----------
@@ -292,9 +341,12 @@ const legend = plotted
   .map((a) => `<span class="legend-item"><span class="key s${a.slot}"></span>${esc(a.name)}</span>`)
   .join("");
 
+// The full-length daily series, indexed by the full `dates` list. Each window's
+// chart carries only its own slice of dates and looks values up in here, so the
+// numbers behind every window come from one array.
 const chartData = JSON.stringify({
   dates,
-  apps: plotted.map((a) => ({ id: a.id, name: a.name, slot: a.slot, dau: a.dau, cumNew: a.cumNew })),
+  apps: plotted.map((a) => ({ id: a.id, name: a.name, slot: a.slot, dau: a.dau })),
 });
 
 // Every roster this page can show, flattened to the one shape lib/hover.mjs
@@ -346,7 +398,7 @@ const generated = new Date().toISOString().slice(0, 16).replace("T", " ") + " UT
 
 const html = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>App analytics — last ${WINDOW} days</title>
+<title>App analytics</title>
 <style>
 :root {
   color-scheme: light;
@@ -458,32 +510,47 @@ td.muted { color: var(--muted); }
 .ret-hit:focus-visible { stroke: var(--ink); stroke-width: 1.5; }
 </style>
 <main>
-<h1>App analytics — last ${WINDOW} days</h1>
+<h1>App analytics</h1>
 <div class="meta">Doggle · Pickleague · Michi-Maker · TCGScan &nbsp;·&nbsp; generated ${generated}<br>Excludes our own, seeded, QA/test and automated accounts (see config/exclusions.json). Guest = anonymous session, not an account.</div>
 
+${windowBar(WINDOWS, DEFAULT_WIN, "Scopes the trailing daily series — the days in view, and new users counted over them.")}
+
+<p class="axisnote">Each tile's headline total, guest and excluded counts are point-in-time and do <strong>not</strong> move with the window; only the new-user row does.</p>
 <div class="tiles">
-${tiles()}
+${WINDOWS.map((w) => `<div data-w="${w}" class="tiles-w"${w === DEFAULT_WIN ? "" : " hidden"}>${tiles(w)}</div>`).join("\n")}
 </div>
 
 <h2>Total distinct users — active vs churned</h2>
-<p class="axisnote">Active = signed in <em>or</em> took any tracked in-app action within the window &mdash; a persisted session means sign-in alone understates activity. Churned is the exact complement, so each pair sums to that app's total. Shared scale across apps, so bar length is headcount. Numbers read active / churned; hover a bar to see which accounts.</p>
+<p class="axisnote">Active = signed in <em>or</em> took any tracked in-app action within the window &mdash; a persisted session means sign-in alone understates activity. Churned is the exact complement, so each pair sums to that app's total. Shared scale across apps, so bar length is headcount. Numbers read active / churned; hover a bar to see which accounts. <strong>This panel carries its own 7/14/30 split and does not follow the toggle above.</strong></p>
 <div class="legend"><span class="legend-item"><span class="swatch ret-active"></span>Active</span><span class="legend-item"><span class="swatch ret-churned"></span>Churned</span></div>
 ${retentionChart()}
 
 <h2>Daily active users — signed-in accounts</h2>
+<p class="axisnote">One y-scale across every window, so narrowing the window zooms the dates without ever making a line look taller.</p>
 <div class="legend">${legend}</div>
-${lineChart("dau", "dau")}
+${WINDOWS.map((w) =>
+  `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${
+    PLOTTABLE(w)
+      ? lineChart("dau", "dau", w)
+      : `<p class="axisnote">A single day is one point, not a trend — the <strong>DAU yesterday</strong> row on each tile above is the 24-hour view.</p>`
+  }</div>`).join("\n")}
 
-<h2>Cumulative new users (${WINDOW}-day window)</h2>
-<p class="axisnote">Each panel has its own scale — the apps differ in size by orders of magnitude. The value shown is the ${WINDOW}-day total.</p>
-${smallMultiples("cumNew")}
+<h2>Cumulative new users</h2>
+<p class="axisnote">Accumulated <em>within</em> the selected window — a 7d view does not carry in signups from day 8. Each panel keeps its own scale, pinned to the widest window, because the apps differ in size by orders of magnitude.</p>
+${WINDOWS.map((w) =>
+  `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${
+    PLOTTABLE(w)
+      ? smallMultiples(w)
+      : `<p class="axisnote">Nothing to accumulate over a single day — see the new-user row on each tile.</p>`
+  }</div>`).join("\n")}
 
 <details>
-<summary>Data table (${WINDOW} days × ${plotted.length} apps)</summary>
+<summary>Data table (${plotted.length} apps, one row per day in the window)</summary>
 <div class="tablewrap">${table()}</div>
 </details>
 
 ${hoverLayer(hovRosters, { unit: "account/accounts" })}
+${windowScript(WINDOWS, DEFAULT_WIN)}
 </main>
 <script>
 const DATA = ${chartData};
@@ -517,32 +584,42 @@ function nameList(parent, entry) {
   }
 }
 for (const el of document.querySelectorAll(".chart")) {
-  const kind = el.dataset.chart === "dau" ? "dau" : "cumNew";
+  const kind = "dau"; // the only crosshair chart on this page
   const svg = el.querySelector("svg");
   const hit = el.querySelector(".hit");
   const xhair = el.querySelector(".xhair");
   const tip = el.querySelector(".tooltip");
+  // Each window renders its own chart, so the x-axis is this chart's slice of
+  // dates. Values are still looked up in the ONE full-length series by date —
+  // never re-derived per window, so no two windows can disagree about a day.
+  let DTS = [];
+  try { DTS = JSON.parse(el.dataset.dates || "[]"); } catch (e) {}
   const show = (clientX) => {
+    if (!DTS.length) return;
     const r = svg.getBoundingClientRect();
     const vx = ((clientX - r.left) / r.width) * VW;
     const frac = Math.min(1, Math.max(0, (vx - PADL) / (VW - PADL - PADR)));
-    const i = Math.round(frac * (DATA.dates.length - 1));
-    const snapX = PADL + (i / (DATA.dates.length - 1)) * (VW - PADL - PADR);
+    const span = Math.max(1, DTS.length - 1);
+    const i = Math.round(frac * span);
+    const day = DTS[i];
+    const gi = DATA.dates.indexOf(day);
+    if (gi < 0) return;
+    const snapX = PADL + (i / span) * (VW - PADL - PADR);
     xhair.setAttribute("x1", snapX); xhair.setAttribute("x2", snapX);
     xhair.style.display = "";
     tip.replaceChildren();
     const dt = document.createElement("div"); dt.className = "tt-date";
-    dt.textContent = DATA.dates[i]; tip.appendChild(dt);
+    dt.textContent = day; tip.appendChild(dt);
     for (const a of DATA.apps) {
       const row = document.createElement("div"); row.className = "tt-row";
       const key = document.createElement("span"); key.className = "key s" + a.slot;
       const name = document.createElement("span"); name.textContent = a.name;
       const val = document.createElement("strong");
-      val.textContent = a[kind][i].toLocaleString("en-US");
+      val.textContent = a[kind][gi].toLocaleString("en-US");
       row.append(key, name, val); tip.appendChild(row);
       // On the DAU chart, name who was active that day.
       if (kind === "dau") {
-        const who = HOV["day|" + a.id + "|" + DATA.dates[i]];
+        const who = HOV["day|" + a.id + "|" + day];
         if (who && who.total) {
           const box = document.createElement("div");
           box.className = "tt-emails";

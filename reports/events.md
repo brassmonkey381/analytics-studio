@@ -1,6 +1,6 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-07T01:23:34.705Z. Own/QA/automated accounts excluded.
+Collected 2026-08-07T02:10:45.500Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
@@ -59,7 +59,7 @@ Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start
 ## TCGScan
 
 3 sessions · 3 events · 0 accounts + 3 guests · median session 1s
-Excluded: 37 sessions, 121 events (our own, QA and automated accounts).
+Excluded: 38 sessions, 126 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |

@@ -15,18 +15,16 @@ Every report in this studio has all four. They are not per-report decisions and
 they are not optional. Shared code exists for each so you get them by calling a
 function, not by remembering.
 
-> **Known exception, narrowed 2026-08-07:** `scripts/report.mjs` (the DAU lane,
-> `/metrics`) predates the shared modules. Its retention bars now use
-> `lib/hover.mjs` like everything else, and its identity blob is parsed rather
-> than evaluated. Two things remain true of it: it still has **no window
-> toggle** (staple 2), and its line charts keep a bespoke crosshair, because the
-> shared layer shows one roster and that tooltip is a multi-series readout —
-> date, then every app's value. The crosshair reads names out of the shared
-> parsed blob, so the safety rules are not duplicated. Names show as emails
-> because Doggle and Pickleague are separate projects with no
-> `profiles.username` to resolve; they route through `userLabel()` regardless,
-> so that becomes one change if it ever can be. The window toggle is
-> outstanding work, not a licence for the next report to skip it.
+> **Closed 2026-08-07.** `scripts/report.mjs` (the DAU lane, `/metrics`) used to
+> be the exception here — no window toggle, its own hover code, its identity
+> blob inlined as executable script. It now has all four staples like every
+> other report. Two deliberate choices remain, and they are choices rather than
+> gaps: its line charts keep a bespoke crosshair, because the shared layer shows
+> one roster and that tooltip is a multi-series readout (date, then every app's
+> value) — it reads names out of the shared parsed blob, so the escaping rules
+> are not duplicated. And at 24h the charts step aside for a note, because one
+> day of a daily series is a point, not a trend; the tiles carry that window.
+> **There is no longer a report in this studio that skips a staple.**
 
 ### 1. Hover any plot for who is behind the number — `scripts/lib/hover.mjs`
 
