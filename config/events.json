@@ -38,13 +38,13 @@
 
     "trial.start":           { "label": "Started a PRO trial",      "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true },
 
-    "pro.offer_shown":       { "label": "Saw the PRO offer",        "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true, "planned": true },
+    "pro.offer_shown":       { "label": "Saw the PRO offer",        "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true },
     "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook — tracked as gaps.tcgscan_search_blind, not as a missing call site.",
-    "pro.offer_declined":    { "label": "Dismissed the PRO offer",  "stage": "monetization", "apps": ["michi"], "planned": true },
-    "trial.start_failed":    { "label": "PRO trial failed to start","stage": "monetization", "apps": ["michi", "tcgscan"], "planned": true, "failure": true },
-    "csv.import_failed":     { "label": "CSV import failed",        "stage": "activation",   "apps": ["michi"], "planned": true, "failure": true },
-    "scan.failed":           { "label": "Scan failed",              "stage": "activation",   "apps": ["tcgscan"], "planned": true, "failure": true },
-    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi"], "planned": true, "failure": true },
+    "pro.offer_declined":    { "label": "Dismissed the PRO offer",  "stage": "monetization", "apps": ["michi"] },
+    "trial.start_failed":    { "label": "PRO trial failed to start","stage": "monetization", "apps": ["michi", "tcgscan"], "failure": true },
+    "csv.import_failed":     { "label": "CSV import failed",        "stage": "activation",   "apps": ["michi"], "failure": true },
+    "scan.failed":           { "label": "Scan failed",              "stage": "activation",   "apps": ["tcgscan"], "failure": true },
+    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi"], "failure": true },
 
     "share.link_created":    { "label": "Made a binder shareable",  "stage": "engagement",   "apps": ["michi"], "planned": true, "milestone": true },
     "share.link_copied":     { "label": "Copied a share link",      "stage": "engagement",   "apps": ["michi"], "planned": true },
@@ -129,11 +129,11 @@
     },
     "landing_route_broken": {
       "severity": "high",
-      "status": "landed",
+      "status": "fixed",
       "title": "landing_route was never written — the update was never sent",
       "detail": "Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.",
       "direction": "was: entry point unknown for every session, and session tails understated on tab-hide",
-      "fix": "DONE — both sites now await inside a fire-and-forget async IIFE. Awaiting deploy and verification: landing_route should be non-null on sessions started after the next production build. Flip this gap to `fixed` once that is observed."
+      "fix": "FIXED — verified in production 2026-08-08: 30 of the 58 sessions started in the preceding 48h carry a non-null landing_route, where every one of the 91 sessions before the fix was null. The remainder are sessions that never recorded a page.view (landing_route is backfilled from the first one), not a residual failure."
     },
     "tcgscan_search_blind": {
       "severity": "medium",
@@ -145,20 +145,31 @@
     },
     "trial_awareness": {
       "severity": "blocking",
-      "status": "landed",
+      "status": "fixed",
       "title": "No impression event for the PRO trial offer",
       "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.",
       "direction": "understates awareness — currently makes it unmeasurable",
       "_whyStillZero": "Verified 2026-08-06: the stage will keep reading zero even after pro.offer_shown ships, and that is a PRODUCT fact rather than an instrumentation one. useTrial returns early for guests (`if (!isSignedIn || !user) return`) and its state falls back to 'ineligible' when unresolved, so TrialCta renders null for every anonymous visitor. Guests are 3 of the 4 real users on michi. The one signed-in account (@ramicide) has only ever visited /my-binders and two binder pages — never /plans, never a print gate. So nobody has been eligible AND in the right place. Do not read a persistent zero here as the fix having failed.",
-      "fix": "track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness."
+      "fix": "track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.",
+      "_landed": "Verified 2026-08-07 17:25 UTC: pro.offer_shown fired twice on michi, once per surface — { surface: 'print_gate' } and { surface: 'plans' } — from a guest who had just converted in place. The awareness stage is measurable. It reads 1 impression / 0 starts, which is a rate with n=1, not yet a conversion rate."
+    },
+    "trial_start_dropped": {
+      "severity": "high",
+      "status": "open",
+      "title": "A real trial activation produced no trial.start event",
+      "detail": "Found 2026-08-08 by activating a trial by hand on an owner account. Ground truth recorded it — public.pro_trials gained a row and entitlements a 14-day tier_pro grant, both stamped 23:33:09.484Z — but analytics_events has no trial.start, and has never had one. The call site is not missing: michi-maker/src/components/monetization/TrialCta.tsx:61 calls track('trial.start', { surface }) immediately after the RPC resolves, and its catch would have emitted trial.start_failed had the RPC thrown. Neither appeared. The cause is the guard at michi-maker/src/lib/analytics.ts:385 — `if (!supabase || !cachedUser) return;` — which discards an event when the analytics module has not yet been handed the auth identity by resetSessionUser(). Corroborated by the clock: michi's analytics_sessions row for that user was not created until 23:33:31.262Z, 21.8 seconds AFTER the grant, so no session and no cachedUser existed at the moment of the click. Every event emitted in that window is lost with no error and no counter.",
+      "direction": "understates trial starts, and silently — the surface attribution just added by trial_awareness cannot be joined to an activation, so offer-to-start conversion stays unmeasurable even though both ends now exist",
+      "_whyItMatters": "This is the exact failure the house rule about ground truth is for. The trial is not missing from the studio, because trials are read from pro_trials rather than the stream. Any metric that had trusted the event stream alone would have reported zero trials on a day one was actually started.",
+      "fix": "Preferred: emit from the start_pro_trial RPC server-side, which cannot be lost to a bootstrap race, a crash, or a blocked request — the comment at TrialCta.tsx:59 already names this as the more authoritative option. Cheaper alternative: buffer events emitted while cachedUser is null and flush on resetSessionUser(), rather than dropping them. Either way the drop should stop being silent — a swallowed analytics failure is correct, an unrecorded one that nothing counts is not. Specced in ../tcgscan/ANALYTICS-TRIAL-START-DROPPED.md."
     },
     "guest_upgrade": {
       "severity": "medium",
-      "status": "landed",
+      "status": "fixed",
       "title": "A guest session is rewritten to look like it never was one",
       "detail": "The conversion event itself DOES exist: both apps emit account.created with props.via = 'guest_upgrade' (michi store/auth.tsx:309,348; tcgscan store/auth.tsx:198,266,283). What is lost is the session. resetSessionUser() patches analytics_sessions.is_guest in place when a guest signs up mid-session, so the row retroactively claims it was always an account. Sessions cannot be split into 'started as guest' and 'started signed in', and the session-level conversion rate is unrecoverable.",
       "direction": "guest-started sessions are undercounted; the conversion count itself is correct",
-      "fix": "stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it."
+      "fix": "stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it.",
+      "_fixed": "Proven by the first real conversion, 2026-08-07 17:24:58.845Z on michi — the only one that has ever happened, so this went from unexercised to verified on a sample of one. The session kept is_guest = true AND carries upgraded_at, and across all 181 sessions there are zero rows where upgraded_at is set but is_guest is false, which is the contradiction the old in-place rewrite produced. account.created followed 229ms later with via = 'guest_upgrade'. The whole pre-signup journey — /plans, /learn, a binder created while still a guest — stayed joined to the same uid."
     },
     "session_end": {
       "severity": "medium",

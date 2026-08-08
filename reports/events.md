@@ -1,93 +1,91 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-08T15:07:23.750Z. Own/QA/automated accounts excluded.
+Collected 2026-08-08T23:38:36.940Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-35 sessions · 219 events · 2 accounts + 23 guests · median session 1m
-Excluded: 86 sessions, 178 events (our own, QA and automated accounts).
+37 sessions · 225 events · 2 accounts + 25 guests · median session 1m
+Excluded: 87 sessions, 179 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 8 | 62 | 8 |
-| 7d | 35 | 219 | 25 |
-| 14d | 35 | 219 | 25 |
-| 30d | 35 | 219 | 25 |
+| 24h | 5 | 9 | 5 |
+| 7d | 37 | 225 | 27 |
+| 14d | 37 | 225 | 27 |
+| 30d | 37 | 225 | 27 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **25** Opened the app (100% of top)
-- **17** Did anything past the open (68% of top)
-- **1** Was shown the PRO offer (4% of top) — see gap `trial_awareness`
+- **27** Opened the app (100% of top)
+- **18** Did anything past the open (66.7% of top)
+- **1** Was shown the PRO offer (3.7% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **25** Opened the app (100% of top)
-- **17** Viewed a page (68% of top)
-- **1** Tried a demo (4% of top)
-- **1** Made something real (4% of top)
+- **27** Opened the app (100% of top)
+- **18** Viewed a page (66.7% of top)
+- **1** Tried a demo (3.7% of top)
+- **1** Made something real (3.7% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **23** Started as a guest (100% of top)
-- **15** Did anything at all (65.2% of top)
-- **0** Created an account (0% of top) — see gap `guest_upgrade`
+- **25** Started as a guest (100% of top)
+- **16** Did anything at all (64% of top)
+- **0** Created an account (0% of top)
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 156 | 17 |
-| Session started (`session.start`) | 35 | 25 |
+| Viewed a page (`page.view`) | 159 | 18 |
+| Session started (`session.start`) | 37 | 27 |
 | Added cards (`card.add`) | 16 | 3 |
-| Created a binder (`binder.add`) | 8 | 6 |
+| Created a binder (`binder.add`) | 9 | 7 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Account created (`account.created`) | 1 | 1 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 
-Instrumentation: 10/13 events verified firing (all traffic, all time).
+Instrumentation: 11/18 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `csv.import`, `card.search`, `trial.start`
+Never fired by anyone (unverified): `csv.import`, `card.search`, `trial.start`, `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
 
 Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
 
-Registered, not yet fired: `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`, `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
-
-**Landed since the spec:** `pro.offer_shown` — mark the matching gap `fixed`.
+Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
-7 sessions · 32 events · 0 accounts + 6 guests · median session 8s
-Excluded: 47 sessions, 251 events (our own, QA and automated accounts).
+8 sessions · 33 events · 0 accounts + 7 guests · median session 8s
+Excluded: 49 sessions, 262 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 20 | 1 |
-| 7d | 7 | 32 | 6 |
-| 14d | 7 | 32 | 6 |
-| 30d | 7 | 32 | 6 |
+| 24h | 1 | 1 | 1 |
+| 7d | 8 | 33 | 7 |
+| 14d | 8 | 33 | 7 |
+| 30d | 8 | 33 | 7 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **6** Opened the app (100% of top)
-- **2** Did anything past the open (33.3% of top)
-- **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
+- **7** Opened the app (100% of top)
+- **2** Did anything past the open (28.6% of top)
+- **0** Was shown the PRO offer (0% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **6** Opened the app (100% of top)
-- **2** Viewed a page (33.3% of top)
+- **7** Opened the app (100% of top)
+- **2** Viewed a page (28.6% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -95,27 +93,33 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **6** Started as a guest (100% of top)
-- **2** Did anything at all (33.3% of top)
-- **1** Created an account (16.7% of top) — see gap `guest_upgrade`
+- **7** Started as a guest (100% of top)
+- **2** Did anything at all (28.6% of top)
+- **1** Created an account (14.3% of top)
 
 | Event | Fired | People |
 | --- | ---: | ---: |
 | Viewed a page (`page.view`) | 19 | 2 |
-| Session started (`session.start`) | 7 | 6 |
+| Session started (`session.start`) | 8 | 7 |
 | Account created (`account.created`) | 4 | 1 |
 | Searched cards (`card.search`) | 1 | 1 |
 | Opened a card (`card.open`) | 1 | 1 |
 
-Instrumentation: 10/14 events verified firing (all traffic, all time).
+Instrumentation: 10/17 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `collection.create`, `collection.rename`, `collection.delete`, `trial.start`
+Never fired by anyone (unverified): `collection.create`, `collection.rename`, `collection.delete`, `trial.start`, `pro.offer_shown`, `trial.start_failed`, `scan.failed`
 
 Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `collection.card_add`, `collection.card_remove`
 
-Registered, not yet fired: `pro.offer_shown`, `trial.start_failed`, `scan.failed`
-
 ## Tracking gaps
+
+### A real trial activation produced no trial.start event `trial_start_dropped` (high, open)
+
+Found 2026-08-08 by activating a trial by hand on an owner account. Ground truth recorded it — public.pro_trials gained a row and entitlements a 14-day tier_pro grant, both stamped 23:33:09.484Z — but analytics_events has no trial.start, and has never had one. The call site is not missing: michi-maker/src/components/monetization/TrialCta.tsx:61 calls track('trial.start', { surface }) immediately after the RPC resolves, and its catch would have emitted trial.start_failed had the RPC thrown. Neither appeared. The cause is the guard at michi-maker/src/lib/analytics.ts:385 — `if (!supabase || !cachedUser) return;` — which discards an event when the analytics module has not yet been handed the auth identity by resetSessionUser(). Corroborated by the clock: michi's analytics_sessions row for that user was not created until 23:33:31.262Z, 21.8 seconds AFTER the grant, so no session and no cachedUser existed at the moment of the click. Every event emitted in that window is lost with no error and no counter.
+
+**Effect:** understates trial starts, and silently — the surface attribution just added by trial_awareness cannot be joined to an activation, so offer-to-start conversion stays unmeasurable even though both ends now exist
+
+**Fix:** Preferred: emit from the start_pro_trial RPC server-side, which cannot be lost to a bootstrap race, a crash, or a blocked request — the comment at TrialCta.tsx:59 already names this as the more authoritative option. Cheaper alternative: buffer events emitted while cachedUser is null and flush on resetSessionUser(), rather than dropping them. Either way the drop should stop being silent — a swallowed analytics failure is correct, an unrecorded one that nothing counts is not. Specced in ../tcgscan/ANALYTICS-TRIAL-START-DROPPED.md.
 
 ### TCGScan cannot see its own search queries `tcgscan_search_blind` (medium, open)
 
@@ -124,30 +128,6 @@ Free-typed search on tcgscan runs inside the shared tcgscan-browse package, whic
 **Effect:** tcgscan search volume and zero-result rate are both unmeasurable; card.search understates real searching
 
 **Fix:** add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against.
-
-### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
-
-TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
-
-**Effect:** understates awareness — currently makes it unmeasurable
-
-**Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
-
-### landing_route was never written — the update was never sent `landing_route_broken` (high, landed)
-
-Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.
-
-**Effect:** was: entry point unknown for every session, and session tails understated on tab-hide
-
-**Fix:** DONE — both sites now await inside a fire-and-forget async IIFE. Awaiting deploy and verification: landing_route should be non-null on sessions started after the next production build. Flip this gap to `fixed` once that is observed.
-
-### A guest session is rewritten to look like it never was one `guest_upgrade` (medium, landed)
-
-The conversion event itself DOES exist: both apps emit account.created with props.via = 'guest_upgrade' (michi store/auth.tsx:309,348; tcgscan store/auth.tsx:198,266,283). What is lost is the session. resetSessionUser() patches analytics_sessions.is_guest in place when a guest signs up mid-session, so the row retroactively claims it was always an account. Sessions cannot be split into 'started as guest' and 'started signed in', and the session-level conversion rate is unrecoverable.
-
-**Effect:** guest-started sessions are undercounted; the conversion count itself is correct
-
-**Fix:** stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it.
 
 ### Session length is a floor, not a duration `session_end` (medium, landed)
 
@@ -188,3 +168,27 @@ Nothing records how a session arrived — no referrer, no UTM capture. Marketing
 **Effect:** no attribution possible
 
 **Fix:** not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change.
+
+### No impression event for the PRO trial offer `trial_awareness` (blocking, fixed)
+
+TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
+
+**Effect:** understates awareness — currently makes it unmeasurable
+
+**Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
+
+### landing_route was never written — the update was never sent `landing_route_broken` (high, fixed)
+
+Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.
+
+**Effect:** was: entry point unknown for every session, and session tails understated on tab-hide
+
+**Fix:** FIXED — verified in production 2026-08-08: 30 of the 58 sessions started in the preceding 48h carry a non-null landing_route, where every one of the 91 sessions before the fix was null. The remainder are sessions that never recorded a page.view (landing_route is backfilled from the first one), not a residual failure.
+
+### A guest session is rewritten to look like it never was one `guest_upgrade` (medium, fixed)
+
+The conversion event itself DOES exist: both apps emit account.created with props.via = 'guest_upgrade' (michi store/auth.tsx:309,348; tcgscan store/auth.tsx:198,266,283). What is lost is the session. resetSessionUser() patches analytics_sessions.is_guest in place when a guest signs up mid-session, so the row retroactively claims it was always an account. Sessions cannot be split into 'started as guest' and 'started signed in', and the session-level conversion rate is unrecoverable.
+
+**Effect:** guest-started sessions are undercounted; the conversion count itself is correct
+
+**Fix:** stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it.

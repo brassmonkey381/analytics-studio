@@ -105,14 +105,20 @@ function tiles(w, appId) {
 
 // Funnel bars are width-proportional to the top stage, so the drop-off is the
 // visual, not the numbers. A stage with a caveat gets a marker linking to the
-// gap that makes it untrustworthy.
+// gap that makes it untrustworthy — but only while that gap is still live. A
+// `fixed` gap stays in the register as the record of what was wrong and when;
+// carrying its marker on the number would keep telling the reader not to trust
+// a figure that has since been proven, which is its own kind of wrong. Every
+// other status (open / specced / landed / deferred) still earns the marker:
+// landed means shipped-but-unproven, which is precisely when to keep warning.
 function funnel(f, appId) {
   const top = f.stages[0]?.users ?? 0;
   const rows = f.stages
     .map((s, i) => {
       const w = top > 0 ? Math.max(s.users > 0 ? 2 : 0, (s.users / top) * 100) : 0;
       const drop = i > 0 && f.stages[i - 1].users > s.users ? f.stages[i - 1].users - s.users : 0;
-      const mark = s.caveat
+      const live = s.caveat && GAPS[s.caveat]?.status !== "fixed";
+      const mark = live
         ? ` <a class="caveat" href="#gap-${esc(s.caveat)}" title="${esc(GAPS[s.caveat]?.title ?? s.caveat)}">!</a>`
         : "";
       return `<tr class="hoverable"${hov(appId, "funnels", `${f.id}|${s.id}`)}>
@@ -483,7 +489,9 @@ const md = [
     for (const f of w.funnels) {
       lines.push(`### ${f.title}`, ``, `_${f.question}_`, ``);
       for (const s of f.stages) {
-        lines.push(`- **${s.users}** ${s.label}${s.ofTop != null ? ` (${s.ofTop}% of top)` : ""}${s.caveat ? ` — see gap \`${s.caveat}\`` : ""}`);
+        // Same rule as the HTML: a fixed gap no longer caveats its number.
+        const caveat = s.caveat && GAPS[s.caveat]?.status !== "fixed" ? ` — see gap \`${s.caveat}\`` : "";
+        lines.push(`- **${s.users}** ${s.label}${s.ofTop != null ? ` (${s.ofTop}% of top)` : ""}${caveat}`);
       }
       lines.push(``);
     }
