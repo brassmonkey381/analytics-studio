@@ -1,79 +1,84 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-07T15:07:26.412Z. Own/QA/automated accounts excluded.
+Collected 2026-08-08T15:07:23.750Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-27 sessions · 157 events · 1 account + 17 guests · median session 2m
-Excluded: 85 sessions, 175 events (our own, QA and automated accounts).
+35 sessions · 219 events · 2 accounts + 23 guests · median session 1m
+Excluded: 86 sessions, 178 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 16 | 73 | 12 |
-| 7d | 27 | 157 | 18 |
-| 14d | 27 | 157 | 18 |
-| 30d | 27 | 157 | 18 |
+| 24h | 8 | 62 | 8 |
+| 7d | 35 | 219 | 25 |
+| 14d | 35 | 219 | 25 |
+| 30d | 35 | 219 | 25 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **18** Opened the app (100% of top)
-- **13** Did anything past the open (72.2% of top)
-- **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
+- **25** Opened the app (100% of top)
+- **17** Did anything past the open (68% of top)
+- **1** Was shown the PRO offer (4% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **18** Opened the app (100% of top)
-- **13** Viewed a page (72.2% of top)
-- **0** Tried a demo (0% of top)
-- **0** Made something real (0% of top)
+- **25** Opened the app (100% of top)
+- **17** Viewed a page (68% of top)
+- **1** Tried a demo (4% of top)
+- **1** Made something real (4% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **17** Started as a guest (100% of top)
-- **12** Did anything at all (70.6% of top)
+- **23** Started as a guest (100% of top)
+- **15** Did anything at all (65.2% of top)
 - **0** Created an account (0% of top) — see gap `guest_upgrade`
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 109 | 13 |
-| Session started (`session.start`) | 27 | 18 |
+| Viewed a page (`page.view`) | 156 | 17 |
+| Session started (`session.start`) | 35 | 25 |
 | Added cards (`card.add`) | 16 | 3 |
-| Created a binder (`binder.add`) | 5 | 4 |
+| Created a binder (`binder.add`) | 8 | 6 |
+| Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
+| Account created (`account.created`) | 1 | 1 |
+| Tried the print example (`demo.print`) | 1 | 1 |
 
-Instrumentation: 9/13 events verified firing (all traffic, all time).
+Instrumentation: 10/13 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `account.created`, `csv.import`, `card.search`, `trial.start`
+Never fired by anyone (unverified): `csv.import`, `card.search`, `trial.start`
 
-Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`, `demo.print`
+Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
 
-Registered, not yet fired: `pro.offer_shown`, `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`, `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
+Registered, not yet fired: `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`, `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
+
+**Landed since the spec:** `pro.offer_shown` — mark the matching gap `fixed`.
 
 ## TCGScan
 
-6 sessions · 12 events · 0 accounts + 5 guests · median session 8s
-Excluded: 38 sessions, 142 events (our own, QA and automated accounts).
+7 sessions · 32 events · 0 accounts + 6 guests · median session 8s
+Excluded: 47 sessions, 251 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 4 | 10 | 3 |
-| 7d | 6 | 12 | 5 |
-| 14d | 6 | 12 | 5 |
-| 30d | 6 | 12 | 5 |
+| 24h | 1 | 20 | 1 |
+| 7d | 7 | 32 | 6 |
+| 14d | 7 | 32 | 6 |
+| 30d | 7 | 32 | 6 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **5** Opened the app (100% of top)
-- **1** Did anything past the open (20% of top)
+- **6** Opened the app (100% of top)
+- **2** Did anything past the open (33.3% of top)
 - **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -81,8 +86,8 @@ _How many users know the PRO trial exists, and how many start one?_
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **5** Opened the app (100% of top)
-- **1** Viewed a page (20% of top)
+- **6** Opened the app (100% of top)
+- **2** Viewed a page (33.3% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -90,20 +95,23 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **5** Started as a guest (100% of top)
-- **1** Did anything at all (20% of top)
-- **0** Created an account (0% of top) — see gap `guest_upgrade`
+- **6** Started as a guest (100% of top)
+- **2** Did anything at all (33.3% of top)
+- **1** Created an account (16.7% of top) — see gap `guest_upgrade`
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Session started (`session.start`) | 6 | 5 |
-| Viewed a page (`page.view`) | 6 | 1 |
+| Viewed a page (`page.view`) | 19 | 2 |
+| Session started (`session.start`) | 7 | 6 |
+| Account created (`account.created`) | 4 | 1 |
+| Searched cards (`card.search`) | 1 | 1 |
+| Opened a card (`card.open`) | 1 | 1 |
 
-Instrumentation: 8/14 events verified firing (all traffic, all time).
+Instrumentation: 10/14 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `account.created`, `card.search`, `collection.create`, `collection.rename`, `collection.delete`, `trial.start`
+Never fired by anyone (unverified): `collection.create`, `collection.rename`, `collection.delete`, `trial.start`
 
-Works, but not yet from a real user: `auth.login`, `card.add`, `card.open`, `scan.capture`, `collection.card_add`, `collection.card_remove`
+Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `collection.card_add`, `collection.card_remove`
 
 Registered, not yet fired: `pro.offer_shown`, `trial.start_failed`, `scan.failed`
 
