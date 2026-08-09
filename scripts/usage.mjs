@@ -302,11 +302,9 @@ const blocks = WINDOWS.map((w) => {
     w === 1
       ? `<p class="note">One day of a daily series is a point, not a trend — the tiles above carry this window. Widen it for the charts.</p>`
       : `<h2>Michi-Maker</h2>
-${chart(SERIES[0], w)}
-${chart(SERIES[1], w)}
+<div class="two">${chart(SERIES[0], w)}${chart(SERIES[1], w)}</div>
 <h2>TCGScan</h2>
-${chart(SERIES[2], w)}
-${chart(SERIES[3], w)}`;
+<div class="two">${chart(SERIES[2], w)}${chart(SERIES[3], w)}</div>`;
   return `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>
 <div class="tiles">${tiles}</div>
 <p class="note">Not shown anywhere on this page: <strong>${excTotal}</strong> row${excTotal === 1 ? "" : "s"} in this window from our own, bot, seeded or QA accounts${excBits ? ` (${excBits})` : ""} — excluded by policy, stated here so the drop is never silent.</p>
@@ -350,6 +348,8 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .tile .sub{color:var(--muted);font-size:12px}
 .note{color:var(--muted);font-size:12.5px;margin:10px 0}
 .seg.real{background:var(--bar)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:840px){.two{grid-template-columns:1fr}}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:10px 0}
 .phead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .scale{font-size:11px;color:var(--muted)}

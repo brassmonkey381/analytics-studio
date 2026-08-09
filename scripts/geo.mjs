@@ -734,19 +734,31 @@ ${subMap}
 <table class="tbl half"><thead><tr><th>Region</th><th class="num">Places</th><th class="num">30d</th></tr></thead>
 <tbody>${dogRegions.filter((g) => g.state === st).map((g) => `<tr><td>${esc(g.name)}</td><td class="num">${fmt(g.n)}</td><td class="num">${fmt(g.d30)}</td></tr>`).join("")}</tbody></table>`
           : "";
-      return `<section class="drill" id="drill-${ds.id}-${st}" hidden>
+      // The biggest county opens automatically so the detail column is never
+      // an empty pane when the panel appears.
+      const defaultCl = withData.length
+        ? `cl-${ds.id}-${withData.map((c) => ({ c, n: countyData[ds.id].acc.get(c.id).n })).sort((x, y) => y.n - x.n)[0].c.id}`
+        : "";
+      return `<section class="drill" id="drill-${ds.id}-${st}"${defaultCl ? ` data-defcl="${defaultCl}"` : ""} hidden>
 <div class="dhead"><h3>${esc(ds.app)} — ${esc(stateName[st] ?? st)} by county</h3><button class="dclose" type="button">close &times;</button></div>
+<div class="drillgrid">
+<div>
 <svg viewBox="${vb.map((v) => v.toFixed(1)).join(" ")}" class="ctymap" role="img" aria-label="${esc(stateName[st] ?? st)} counties with city dots">
 ${paths}
 ${dots}
 </svg>
 <p class="note">County split is geometric (~1 km cells, point-in-polygon) and can differ by a hair from the
 ledger-based state total above. ${withData.length} of ${counties.length} counties have ${esc(ds.unit)}.
-Hover a county for its enrichment percentages; <strong>click it for its subdivision map and city list</strong>.
-The dots mark the ${fmt(stCities.length)} cities (size = all-time volume, color follows the window) — they are
-markers, not targets; the county click is the way in.</p>
-<div class="citylists">${cityLists}</div>
+Hover a county for its enrichment percentages; <strong>click it and the panel on the right follows</strong> —
+its subdivision map and city list. The dots mark the ${fmt(stCities.length)} cities (size = all-time volume,
+color follows the window); they are markers, not targets.</p>
 ${stateDebtTable(ds, r)}
+</div>
+<div class="citylists">
+<p class="note cl-hint">Click a county on the left to see its subdivisions and cities here.</p>
+${cityLists}
+</div>
+</div>
 <details><summary>All cities in ${esc(stateName[st] ?? st)} (${fmt(stCities.length)})</summary>
 <table class="tbl half"><thead><tr><th>City</th><th>County</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
 <tbody>${cityRows || `<tr><td colspan="4" class="empty">Nothing here.</td></tr>`}</tbody></table>
@@ -818,9 +830,11 @@ states' ledger totals above but in no county panel. A per-tile bbox clip against
     return `<div class="apppanel" data-app-panel="${ds.id}"${i === 0 ? "" : " hidden"}>
 <h2>${esc(ds.unit[0].toUpperCase() + ds.unit.slice(1))} by state</h2>
 <p class="note">Click (or press Enter on) a shaded state for its county drill-down, state debt table and regions.</p>
-${nationalMap(ds)}
-${winTables}
-${offNote}${spillNote}${unNote}${ctyNote}
+<div class="maprow">
+<div>${nationalMap(ds)}</div>
+<div>${winTables}
+${offNote}${spillNote}${unNote}${ctyNote}</div>
+</div>
 ${drillPanels(ds)}
 <h2>Enrichment debt</h2>
 <p class="note">Debt is rows the script has not touched yet, app-wide; per-state debt lives in each drill panel.
@@ -854,7 +868,12 @@ const html = `<meta charset="utf-8">
   --b1:#184f95; --b2:#2f65ab; --b3:#4a80cc; --b4:#6ea3e8; --b5:#9cc3f5; }
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:900px;margin:0 auto;padding:28px 20px 60px}
+main{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+.maprow{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:18px;align-items:start}
+.drillgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:920px){.maprow,.drillgrid{grid-template-columns:1fr}}
+.citylists .cl-hint{font-style:italic}
+.citylists:has(.citylist:not([hidden])) .cl-hint{display:none}
 h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-size:14px;margin:0} h4{font-size:13px;margin:14px 0 2px}
 .meta{color:var(--muted);font-size:13px;margin:0 0 12px}
 .note{color:var(--muted);font-size:12.5px;margin:8px 0}
@@ -871,11 +890,10 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .stmap,.ctymap{width:100%;height:auto;display:block;margin:6px 0}
 .ctymap{max-width:560px}
 .stp{stroke:var(--page);stroke-width:0.75;vector-effect:non-scaling-stroke}
-.stp[data-drill]{cursor:pointer}
+.stp[data-drill],.stp[data-citylist]{cursor:pointer}
 .stp:hover,.stp:focus{stroke:var(--ink);stroke-width:1.4;outline:none}
-.dot{stroke:var(--surface);stroke-width:1;vector-effect:non-scaling-stroke;cursor:help}
+.dot{stroke:var(--surface);stroke-width:1;vector-effect:non-scaling-stroke;pointer-events:none}
 .dot.bin0{fill:transparent;stroke:var(--muted);opacity:.45}
-.dot:hover,.dot:focus{stroke:var(--ink);stroke-width:1.6;outline:none}
 .drill{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0}
 .dhead{display:flex;justify-content:space-between;align-items:baseline}
 .dclose{font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:16px;padding:2px 10px;cursor:pointer}
@@ -951,19 +969,39 @@ ${windowScript(WINDOWS, DEFAULT_WIN)}
     var was = document.getElementById(id);
     var open = was && was.hidden;
     document.querySelectorAll('.drill').forEach(function (d) { d.hidden = true; });
-    if (was && open) { was.hidden = false; was.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    if (was && open) {
+      was.hidden = false;
+      was.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Never present an empty detail column: the biggest county starts open.
+      if (!was.querySelector('.citylist:not([hidden])') && was.dataset.defcl) toggleCounty(was.dataset.defcl, true);
+    }
   }
-  document.addEventListener('click', function (e) {
-    var t = e.target;
-    var p = t.closest ? t.closest('[data-drill]') : null;
-    if (p) return toggle(p.getAttribute('data-drill'));
-    var c = t.closest ? t.closest('.dclose') : null;
-    if (c) c.closest('.drill').hidden = true;
-  });
+  // County click: show that county's subdivision map + city list in the detail
+  // column; one open per panel, click again to dismiss. quiet skips the
+  // scroll for the auto-opened default.
+  function toggleCounty(id, quiet) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var open = el.hidden;
+    var panel = el.closest('.drill') || document;
+    panel.querySelectorAll('.citylist').forEach(function (d) { d.hidden = true; });
+    if (open) {
+      el.hidden = false;
+      if (!quiet) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+  function act(target) {
+    var el = target && target.closest ? target.closest('[data-drill],[data-citylist],.dclose') : null;
+    if (!el) return false;
+    if (el.hasAttribute && el.hasAttribute('data-drill')) toggle(el.getAttribute('data-drill'));
+    else if (el.hasAttribute && el.hasAttribute('data-citylist')) toggleCounty(el.getAttribute('data-citylist'));
+    else el.closest('.drill').hidden = true;
+    return true;
+  }
+  document.addEventListener('click', function (e) { act(e.target); });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
-    var p = e.target.closest ? e.target.closest('[data-drill]') : null;
-    if (p) { e.preventDefault(); toggle(p.getAttribute('data-drill')); }
+    if (act(e.target)) e.preventDefault();
   });
 })();
 </script>`;
