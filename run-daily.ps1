@@ -35,15 +35,12 @@ $sharesExit = $LASTEXITCODE
 & node (Join-Path $root "scripts\usage.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 $usageExit = $LASTEXITCODE
 
-# Geo lane: state-by-state ingestion and enrichment coverage. Also non-fatal.
+# Geo lane: ingestion coverage maps AND per-script enrichment debt (it owns
+# data/enrich.json, one history row per day - a missed day is a hole in the
+# burn-down chart). Also non-fatal.
 & node (Join-Path $root "scripts\geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
-$geoExit = $LASTEXITCODE
 
-# Enrich lane: per-script enrichment debt; accumulates its own daily history,
-# so a missed day is a hole in the burn-down chart. Also non-fatal.
-& node (Join-Path $root "scripts\enrich.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
-
-"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit geo exit=$geoExit enrich exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
+"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit geo exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
 
 # ---------------------------------------------------------------------------
 # Auto-commit the day's data.

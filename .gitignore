@@ -30,13 +30,9 @@ reports/shares.html
 data/usage-roster.json
 reports/usage.html
 
-# Geo lane. geo-roster.json carries place/venue names for the hover layer;
-# geo.html renders them. data/geo.json stays counts-only and IS committed.
+# Geo lane (includes the enrichment-debt board). geo-roster.json carries
+# place/venue names for the hover layer; geo.html renders them. data/geo.json
+# stays counts-only and IS committed, and so is data/enrich.json — counts-only
+# HISTORY (one row per day) that cannot be regenerated once days pass.
 data/geo-roster.json
 reports/geo.html
-
-# Enrichment-debt lane. enrich-roster.json carries sample place/venue names;
-# enrich.html renders them. data/enrich.json is counts-only HISTORY (one row
-# per day) and IS committed — it cannot be regenerated once days pass.
-data/enrich-roster.json
-reports/enrich.html
