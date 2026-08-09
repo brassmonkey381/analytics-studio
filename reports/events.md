@@ -1,59 +1,60 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-09T04:53:01.221Z. Own/QA/automated accounts excluded.
+Collected 2026-08-09T15:07:20.605Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-38 sessions · 231 events · 2 accounts + 26 guests · median session 1m
+40 sessions · 237 events · 2 accounts + 27 guests · median session 1m
 Excluded: 87 sessions, 180 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 6 | 15 | 6 |
-| 7d | 38 | 231 | 28 |
-| 14d | 38 | 231 | 28 |
-| 30d | 38 | 231 | 28 |
+| 24h | 5 | 18 | 5 |
+| 7d | 40 | 237 | 29 |
+| 14d | 40 | 237 | 29 |
+| 30d | 40 | 237 | 29 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **28** Opened the app (100% of top)
-- **19** Did anything past the open (67.9% of top)
-- **1** Was shown the PRO offer (3.6% of top)
+- **29** Opened the app (100% of top)
+- **20** Did anything past the open (69% of top)
+- **1** Was shown the PRO offer (3.4% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **28** Opened the app (100% of top)
-- **19** Viewed a page (67.9% of top)
-- **1** Tried a demo (3.6% of top)
-- **1** Made something real (3.6% of top)
+- **29** Opened the app (100% of top)
+- **20** Viewed a page (69% of top)
+- **1** Tried a demo (3.4% of top)
+- **1** Made something real (3.4% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **26** Started as a guest (100% of top)
-- **17** Did anything at all (65.4% of top)
+- **27** Started as a guest (100% of top)
+- **18** Did anything at all (66.7% of top)
 - **0** Created an account (0% of top)
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 164 | 19 |
-| Session started (`session.start`) | 38 | 28 |
+| Viewed a page (`page.view`) | 167 | 20 |
+| Session started (`session.start`) | 40 | 29 |
 | Added cards (`card.add`) | 16 | 3 |
 | Created a binder (`binder.add`) | 9 | 7 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Account created (`account.created`) | 1 | 1 |
 | Tried the print example (`demo.print`) | 1 | 1 |
+| Searched cards (`card.search`) | 1 | 1 |
 
-Instrumentation: 11/18 events verified firing (all traffic, all time).
+Instrumentation: 12/18 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `csv.import`, `card.search`, `trial.start`, `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
+Never fired by anyone (unverified): `csv.import`, `trial.start`, `pro.offer_declined`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
 
 Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
 
