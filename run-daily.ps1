@@ -37,8 +37,13 @@ $usageExit = $LASTEXITCODE
 
 # Geo lane: state-by-state ingestion and enrichment coverage. Also non-fatal.
 & node (Join-Path $root "scripts\geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+$geoExit = $LASTEXITCODE
 
-"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit geo exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
+# Enrich lane: per-script enrichment debt; accumulates its own daily history,
+# so a missed day is a hole in the burn-down chart. Also non-fatal.
+& node (Join-Path $root "scripts\enrich.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+
+"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit geo exit=$geoExit enrich exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
 
 # ---------------------------------------------------------------------------
 # Auto-commit the day's data.
@@ -59,7 +64,7 @@ function Write-Log([string]$msg) { $msg | Out-File $log -Append -Encoding utf8 }
 if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
   Push-Location $root
   try {
-    git add -- "data/metrics.json" "data/events.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/geo.json" "reports/events.md" 2>&1 | Out-Null
+    git add -- "data/metrics.json" "data/events.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/geo.json" "data/enrich.json" "reports/events.md" 2>&1 | Out-Null
     $staged = @(git diff --cached --name-only)
 
     if ($staged.Count -eq 0) {
@@ -77,7 +82,7 @@ if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
       $hits = @($diff -split "`n" | Select-String -Pattern $pattern)
 
       if ($hits.Count -gt 0) {
-        git reset -q -- "data/metrics.json" "data/events.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/geo.json" "reports/events.md" 2>&1 | Out-Null
+        git reset -q -- "data/metrics.json" "data/events.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/geo.json" "data/enrich.json" "reports/events.md" 2>&1 | Out-Null
         Write-Log "auto-commit: ABORTED - staged diff matched $($hits.Count) sensitive pattern(s); nothing committed."
         foreach ($h in $hits | Select-Object -First 5) {
           $line = $h.Line.Trim()

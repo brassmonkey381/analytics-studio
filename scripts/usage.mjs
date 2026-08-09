@@ -152,21 +152,25 @@ const DAYS = lastDays(MAX_W);
 const rosters = {};
 const daily = {}; // seriesId -> { real: Map(day->n), exc: Map(day->n), max }
 for (const s of SERIES) {
-  const real = new Map(), exc = new Map(), whoReal = new Map(), whoExc = new Map();
+  const real = new Map(), exc = new Map(), whoReal = new Map();
   for (const r of s.rows) {
     const d = dayOf(r.ts);
     if (!DAYS.includes(d)) continue;
-    const [m, w] = r.excluded ? [exc, whoExc] : [real, whoReal];
-    m.set(d, (m.get(d) ?? 0) + 1);
-    if (!w.has(d)) w.set(d, []);
-    w.get(d).push(r.uid);
+    if (r.excluded) {
+      // Excluded rows are counted (for the JSON record and the inline note)
+      // but never drawn — owner decision 2026-08-08. Stated, not silent.
+      exc.set(d, (exc.get(d) ?? 0) + 1);
+      continue;
+    }
+    real.set(d, (real.get(d) ?? 0) + 1);
+    if (!whoReal.has(d)) whoReal.set(d, []);
+    whoReal.get(d).push(r.uid);
   }
-  // ONE scale per series across every window: the max stacked day of the
-  // widest window. Narrowing the toggle must never make a bar grow.
-  const max = Math.max(1, ...DAYS.map((d) => (real.get(d) ?? 0) + (exc.get(d) ?? 0)));
+  // ONE scale per series across every window: the max day of the widest
+  // window. Narrowing the toggle must never make a bar grow.
+  const max = Math.max(1, ...DAYS.map((d) => real.get(d) ?? 0));
   daily[s.id] = { real, exc, max };
   for (const [d, ids] of whoReal) rosters[`d|${s.id}|${d}`] = rosterOf(ids);
-  for (const [d, ids] of whoExc) rosters[`dx|${s.id}|${d}`] = rosterOf(ids);
 }
 
 const out = { collectedAt, windows: WINDOWS, defaultWindow: DEFAULT_WIN, byWindow: {}, daily: {}, allTime: {}, credits: {} };
@@ -197,7 +201,6 @@ for (const w of WINDOWS) {
     };
     if (s.qty) block[s.id].qty = real.reduce((a, r) => a + (r.quantity ?? 1), 0);
     rosters[`t|${w}|${s.id}`] = rosterOf(real.map((r) => r.uid));
-    rosters[`tx|${w}|${s.id}`] = rosterOf(rs.filter((r) => r.excluded).map((r) => r.uid));
   }
   out.byWindow[w] = block;
 }
@@ -244,34 +247,31 @@ function chart(s, w) {
   const max = d.max;
   // Selective direct label: the window's biggest day only; everything else is
   // on hover, and the full table is under <details>.
-  const winMax = Math.max(...days.map((dd) => (d.real.get(dd) ?? 0) + (d.exc.get(dd) ?? 0)));
+  const winMax = Math.max(...days.map((dd) => d.real.get(dd) ?? 0));
   let labeled = false;
   const cols = days
     .map((dd, i) => {
       const r = d.real.get(dd) ?? 0;
-      const x = d.exc.get(dd) ?? 0;
-      const tot = r + x;
       const hr = r ? Math.max(2, Math.round((r / max) * BAR_H)) : 0;
-      const hx = x ? Math.max(2, Math.round((x / max) * BAR_H)) : 0;
-      const lbl = tot > 0 && tot === winMax && !labeled ? `<span class="dlab">${tot}</span>` : "";
+      const lbl = r > 0 && r === winMax && !labeled ? `<span class="dlab">${r}</span>` : "";
       if (lbl) labeled = true;
       const tick = i === 0 || i === days.length - 1 || (days.length - 1 - i) % 7 === 0 ? dd.slice(5) : "";
       return `<div class="day">
-  ${lbl}${x ? `<span class="seg exc" style="height:${hx}px" ${hoverAttr("dx", s.id, dd)} tabindex="0"></span>` : ""}${r ? `<span class="seg real" style="height:${hr}px" ${hoverAttr("d", s.id, dd)} tabindex="0"></span>` : ""}
+  ${lbl}${r ? `<span class="seg real" style="height:${hr}px" ${hoverAttr("d", s.id, dd)} tabindex="0"></span>` : ""}
   <span class="tick">${tick}</span>
 </div>`;
     })
     .join("");
   const tableRows = days
-    .filter((dd) => (d.real.get(dd) ?? 0) + (d.exc.get(dd) ?? 0) > 0)
-    .map((dd) => `<tr><td>${dd}</td><td class="num">${d.real.get(dd) ?? 0}</td><td class="num">${d.exc.get(dd) ?? 0}</td></tr>`)
+    .filter((dd) => (d.real.get(dd) ?? 0) > 0)
+    .map((dd) => `<tr><td>${dd}</td><td class="num">${d.real.get(dd) ?? 0}</td></tr>`)
     .join("");
   return `<div class="panel">
 <div class="phead"><h3>${esc(s.title)}</h3><span class="scale">y-max ${max}/day, fixed across windows</span></div>
 <div class="chart" role="img" aria-label="${esc(s.title)} per day">${cols}</div>
 <details><summary>Data table</summary>
-<table class="tbl"><thead><tr><th>Day</th><th class="num">Counted</th><th class="num">Ours (excluded)</th></tr></thead>
-<tbody>${tableRows || `<tr><td colspan="3" class="empty">Nothing in this window.</td></tr>`}</tbody></table>
+<table class="tbl"><thead><tr><th>Day</th><th class="num">Counted</th></tr></thead>
+<tbody>${tableRows || `<tr><td colspan="2" class="empty">Nothing in this window.</td></tr>`}</tbody></table>
 </details>
 </div>`;
 }
@@ -288,8 +288,7 @@ const blocks = WINDOWS.map((w) => {
   const charts =
     w === 1
       ? `<p class="note">One day of a daily series is a point, not a trend — the tiles above carry this window. Widen it for the charts.</p>`
-      : `<div class="legend"><span class="chip"><span class="sw real"></span>counted</span><span class="chip"><span class="sw exc"></span>ours / QA (excluded, shown so the drop is never silent)</span></div>
-<h2>Michi-Maker</h2>
+      : `<h2>Michi-Maker</h2>
 ${chart(SERIES[0], w)}
 ${chart(SERIES[1], w)}
 <h2>TCGScan</h2>
@@ -297,16 +296,19 @@ ${chart(SERIES[2], w)}
 ${chart(SERIES[3], w)}`;
   return `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>
 <div class="tiles">${tiles}</div>
-<p class="note">Excluded in this window: <strong>${excTotal}</strong> row${excTotal === 1 ? "" : "s"} from our own, seeded or QA accounts${excBits ? ` (${excBits})` : ""} — drawn lighter in the bars, never dropped silently.</p>
+<p class="note">Not shown anywhere on this page: <strong>${excTotal}</strong> row${excTotal === 1 ? "" : "s"} in this window from our own, bot, seeded or QA accounts${excBits ? ` (${excBits})` : ""} — excluded by policy, stated here so the drop is never silent.</p>
 ${charts}
 </div>`;
 }).join("\n");
 
+// Our own / bot / QA scanners never appear in the table — excluded by policy,
+// with the count stated below it so the drop is never silent.
 const creditRowsHtml = creditRows
+  .filter((r) => !r.ours)
   .map((r) => {
     const capTxt = r.cap === null ? "&infin;" : r.cap;
     const meter = r.cap === null ? "" : `<span class="meter"><span class="fill${r.used >= r.cap ? " full" : ""}" style="width:${r.pct.toFixed(0)}%"></span></span>`;
-    return `<tr${r.ours ? ' class="ours"' : ""}><td>${esc(r.who)}${r.ours ? ' <span class="pill">ours</span>' : ""}</td><td>${esc(r.tier)}</td><td class="num">${r.used}</td><td class="num">${capTxt}</td><td class="mcell">${meter}</td></tr>`;
+    return `<tr><td>${esc(r.who)}</td><td>${esc(r.tier)}</td><td class="num">${r.used}</td><td class="num">${capTxt}</td><td class="mcell">${meter}</td></tr>`;
   })
   .join("");
 
@@ -334,9 +336,7 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .tile .value.zero{color:var(--muted)}
 .tile .sub{color:var(--muted);font-size:12px}
 .note{color:var(--muted);font-size:12.5px;margin:10px 0}
-.legend{display:flex;gap:14px;margin:12px 0 2px;font-size:12px;color:var(--ink-2)}
-.legend .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.sw.real,.seg.real{background:var(--bar)} .sw.exc,.seg.exc{background:var(--bar-lt)}
+.seg.real{background:var(--bar)}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:10px 0}
 .phead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .scale{font-size:11px;color:var(--muted)}
@@ -367,7 +367,9 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12px}
 <p class="meta">What people are making, daily: binders and placed cards on Michi-Maker, scans and
 collection adds on TCGScan, and credit consumption against the tier caps. Every number reads a
 product table, not the event stream — <strong>a zero here means it did not happen</strong>, because these tables
-see everything and predate instrumentation. Hover (or tab to) any tile or bar for who is behind it.
+see everything and predate instrumentation. Our own, bot, seeded and QA accounts are excluded from
+every number and every chart; each window states how much that removed. Hover (or tab to) any tile
+or bar for who is behind it.
 ${demoBinders ? `${demoBinders} demo binder${demoBinders === 1 ? "" : "s"} and its contents are not counted anywhere on this page. ` : ""}Collected ${esc(collectedAt)}.</p>
 
 ${windowBar(WINDOWS, DEFAULT_WIN, "scopes rows by when they were created")}
@@ -379,10 +381,10 @@ ${blocks}
 this section deliberately does <strong>not</strong> move with the window toggle above. Caps: guest ${cm.scan.caps.guest},
 free ${cm.scan.caps.free}, pro ${cm.scan.caps.pro}, vip unlimited. Tier is read from the entitlements ledger as of now.</p>
 <table class="tbl"><thead><tr><th>Who</th><th>Tier</th><th class="num">Scans used</th><th class="num">Monthly cap</th><th>Usage</th></tr></thead>
-<tbody>${creditRowsHtml || `<tr><td colspan="5" class="empty">Nobody has scanned this month.</td></tr>`}</tbody></table>
-<p class="note">${cm.scan.nearCap
-    ? `<strong>${cm.scan.nearCap}</strong> non-excluded ${cm.scan.nearCap === 1 ? "user is" : "users are"} at &ge;80% of their cap — a guest or free user running out of scans is the strongest upgrade signal this data has.`
-    : `No non-excluded user is near their cap this month.`}</p>
+<tbody>${creditRowsHtml || `<tr><td colspan="5" class="empty">No real user has scanned this month.</td></tr>`}</tbody></table>
+<p class="note">${cm.scan.ours ? `${cm.scan.ours} scanner${cm.scan.ours === 1 ? "" : "s"} from our own / bot / QA accounts excluded from this table, stated here so the drop is never silent. ` : ""}${cm.scan.nearCap
+    ? `<strong>${cm.scan.nearCap}</strong> real ${cm.scan.nearCap === 1 ? "user is" : "users are"} at &ge;80% of their cap — a guest or free user running out of scans is the strongest upgrade signal this data has.`
+    : `No real user is near their cap this month.`}</p>
 
 <h2>Print credits — ${esc(cm.month)}</h2>
 <p class="note">Also calendar-month scoped. PRO includes ${cm.print.includedPro}/month, VIP ${cm.print.includedVip}/month.

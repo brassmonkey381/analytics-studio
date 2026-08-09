@@ -43,6 +43,14 @@
       "scripts": ["scripts/geo.mjs"]
     },
     {
+      "id": "enrich",
+      "title": "Enrichment debt",
+      "blurb": "How far behind each enrichment script is — coverage, debt and daily burn-down for Doggle places and Pickleague venues.",
+      "file": "reports/enrich.html",
+      "data": "data/enrich.json",
+      "scripts": ["scripts/enrich.mjs"]
+    },
+    {
       "id": "plans",
       "title": "Plan tiers",
       "blurb": "Distinct accounts at each plan tier, read from the entitlements ledger.",

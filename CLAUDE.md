@@ -73,9 +73,11 @@ import { STANDARD_WINDOWS, windowBar, windowScript, ALL_WINDOW } from "./lib/win
 `exclusionCte()` in `scripts/lib/studio.mjs` is the single definition. Our own,
 seeded, QA and automated accounts never count toward a behavioural number.
 
-**Never drop them silently.** Every report states how much was excluded, and
-where it fits, renders it as a distinct lighter segment. That is what makes "all
-our paid tiers are ours" visible instead of merely absent. See
+**Never drop them silently.** Every report states how much was excluded. Since
+2026-08-08 (owner decision) excluded traffic is **stated in text, not drawn**:
+no lighter segments, no "ours" rows in tables — a one-line inline count per
+window/section is the whole footprint. That line is not optional; it is what
+makes "all our paid tiers are ours" visible instead of merely absent. See
 `config/exclusions.json`.
 
 One exception, and it is deliberate: **instrumentation coverage counts ALL
