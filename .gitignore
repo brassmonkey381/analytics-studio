@@ -23,3 +23,14 @@ reports/plans.html
 # Shares lane. shares-roster.json names the visitors; shares.html renders them.
 data/shares-roster.json
 reports/shares.html
+
+# Usage lane. usage-roster.json names who made each binder/scan/card; usage.html
+# renders them plus the per-user credit table. data/usage.json stays counts-only
+# and IS committed.
+data/usage-roster.json
+reports/usage.html
+
+# Geo lane. geo-roster.json carries place/venue names for the hover layer;
+# geo.html renders them. data/geo.json stays counts-only and IS committed.
+data/geo-roster.json
+reports/geo.html

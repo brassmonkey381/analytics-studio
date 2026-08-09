@@ -27,6 +27,22 @@
       "scripts": ["scripts/shares.mjs"]
     },
     {
+      "id": "usage",
+      "title": "Product usage",
+      "blurb": "Daily binders created, cards placed, scans and collection adds, plus scan/print credit consumption against tier caps.",
+      "file": "reports/usage.html",
+      "data": "data/usage.json",
+      "scripts": ["scripts/usage.mjs"]
+    },
+    {
+      "id": "geo",
+      "title": "Geographic coverage",
+      "blurb": "US tile-grid map of where the Doggle and Pickleague ingestion + enrichment pipelines have been, by state and census region.",
+      "file": "reports/geo.html",
+      "data": "data/geo.json",
+      "scripts": ["scripts/geo.mjs"]
+    },
+    {
       "id": "plans",
       "title": "Plan tiers",
       "blurb": "Distinct accounts at each plan tier, read from the entitlements ledger.",

@@ -1,50 +1,50 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-08T23:38:36.940Z. Own/QA/automated accounts excluded.
+Collected 2026-08-09T04:53:01.221Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-37 sessions · 225 events · 2 accounts + 25 guests · median session 1m
-Excluded: 87 sessions, 179 events (our own, QA and automated accounts).
+38 sessions · 231 events · 2 accounts + 26 guests · median session 1m
+Excluded: 87 sessions, 180 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 5 | 9 | 5 |
-| 7d | 37 | 225 | 27 |
-| 14d | 37 | 225 | 27 |
-| 30d | 37 | 225 | 27 |
+| 24h | 6 | 15 | 6 |
+| 7d | 38 | 231 | 28 |
+| 14d | 38 | 231 | 28 |
+| 30d | 38 | 231 | 28 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **27** Opened the app (100% of top)
-- **18** Did anything past the open (66.7% of top)
-- **1** Was shown the PRO offer (3.7% of top)
+- **28** Opened the app (100% of top)
+- **19** Did anything past the open (67.9% of top)
+- **1** Was shown the PRO offer (3.6% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **27** Opened the app (100% of top)
-- **18** Viewed a page (66.7% of top)
-- **1** Tried a demo (3.7% of top)
-- **1** Made something real (3.7% of top)
+- **28** Opened the app (100% of top)
+- **19** Viewed a page (67.9% of top)
+- **1** Tried a demo (3.6% of top)
+- **1** Made something real (3.6% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **25** Started as a guest (100% of top)
-- **16** Did anything at all (64% of top)
+- **26** Started as a guest (100% of top)
+- **17** Did anything at all (65.4% of top)
 - **0** Created an account (0% of top)
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 159 | 18 |
-| Session started (`session.start`) | 37 | 27 |
+| Viewed a page (`page.view`) | 164 | 19 |
+| Session started (`session.start`) | 38 | 28 |
 | Added cards (`card.add`) | 16 | 3 |
 | Created a binder (`binder.add`) | 9 | 7 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
