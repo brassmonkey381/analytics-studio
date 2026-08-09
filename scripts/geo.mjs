@@ -40,7 +40,7 @@ import { dirname, join } from "node:path";
 import { ROOT, loadEnv, readConfig, runSql } from "./lib/studio.mjs";
 import { hoverAttr, hoverLayer } from "./lib/hover.mjs";
 import { ALL_WINDOW, STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
-import { loadTopo, decode, bboxOf, contains, svgPath, projectedBbox, MAP_W, MAP_H, FIPS_TO_POSTAL, POSTAL_TO_FIPS } from "./lib/usmap.mjs";
+import { loadTopo, decode, bboxOf, contains, svgPath, projectedBbox, albersUsa, MAP_W, MAP_H, FIPS_TO_POSTAL, POSTAL_TO_FIPS } from "./lib/usmap.mjs";
 
 const APPS = readConfig("apps.json");
 const refOf = (id) => APPS.apps.find((a) => a.id === id)?.projectRef;
@@ -219,7 +219,7 @@ select count(*)::int total,
   (select json_agg(name) from (select name from ${table} where not ${l.done} ${sampleOrder} limit 20) s_${l.id}) ${l.id}_missing`).join(",\n  ")}
 from ${table}`;
 
-const [dogStatesRaw, dogOffCells, dogTiles, dogRegions, pickleCells, dogFine, pickleFine, dogBoard, pickleBoard] = await Promise.all([
+const [dogStatesRaw, dogOffCells, dogTiles, dogRegions, pickleCells, dogFine, pickleFine, dogBoard, pickleBoard, usCities] = await Promise.all([
   runSql(DOGGLE, dogPlacesSql),
   runSql(DOGGLE, dogOffLedgerSql),
   runSql(DOGGLE, dogTilesSql),
@@ -229,6 +229,9 @@ const [dogStatesRaw, dogOffCells, dogTiles, dogRegions, pickleCells, dogFine, pi
   runSql(PICKLE, fineCellsSql("venues", LANES.p)),
   runSql(DOGGLE, boardSql("dog_places", LANES.d, "order by dog_score desc nulls last, name")).then((r) => r[0]),
   runSql(PICKLE, boardSql("venues", LANES.p, "order by name")).then((r) => r[0]),
+  // The sub-county drill unit: cities are the deepest NAMED thing the data
+  // has (no city polygons exist in assets, so cities render as dots).
+  runSql(DOGGLE, "select city, state_code, lat, lng from us_cities"),
 ]);
 
 const collectedAt = new Date().toISOString();
@@ -372,8 +375,11 @@ function countyCounts(fine, laneIds) {
     if (!hit) {
       hit = nearestCounty(lon, lat);
       if (hit) shoreline += cell.n;
-      else { foreign += cell.n; continue; }
+      else { foreign += cell.n; cell.usOk = false; continue; }
     }
+    // The city rollup reuses this verdict: a foreign cell must not borrow the
+    // nearest US border town (Point Roberts would swallow Vancouver).
+    cell.usOk = true;
     if (!dataFips.has(hit.stateFips)) {
       const p = FIPS_TO_POSTAL[hit.stateFips] ?? hit.stateFips;
       spill.set(p, (spill.get(p) ?? 0) + cell.n);
@@ -386,6 +392,48 @@ function countyCounts(fine, laneIds) {
   return { acc, spill, foreign, shoreline };
 }
 const countyData = Object.fromEntries(datasets.map((ds) => [ds.id, countyCounts(ds.fine, ds.lanes.map((l) => l.id))]));
+
+// ---------- city rollup: the drill level BELOW county ----------
+// Every ~1 km cell is credited to its nearest us_cities entry (1-degree bucket
+// index, capped at ~30 km so a Canadian cell cannot borrow a border town).
+// Cities render as dots on the county map — sized by all-time volume, colored
+// by the windowed bins — because no city polygons exist to shade.
+
+const cityBuckets = new Map();
+for (const c of usCities) {
+  const k = `${Math.round(c.lat)}|${Math.round(c.lng)}`;
+  if (!cityBuckets.has(k)) cityBuckets.set(k, []);
+  cityBuckets.get(k).push(c);
+}
+const CITY_MAX_D = 0.35; // degrees, ~30 km
+function nearestCityOf(lon, lat) {
+  let best = null, bestD = CITY_MAX_D;
+  const blat = Math.round(lat), blng = Math.round(lon);
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+    for (const c of cityBuckets.get(`${blat + dy}|${blng + dx}`) ?? []) {
+      const d = Math.hypot(c.lng - lon, c.lat - lat);
+      if (d < bestD) { bestD = d; best = c; }
+    }
+  }
+  return best;
+}
+function cityRollup(ds) {
+  const keys = ["n", ...ds.lanes.map((l) => l.id), ...STANDARD_WINDOWS.map((w) => `d${w}`)];
+  const acc = new Map();
+  for (const cell of ds.fine) {
+    if (cell.usOk === false) continue; // classified foreign by the county pass
+    const lon = Number(cell.clng), lat = Number(cell.clat);
+    const city = nearestCityOf(lon, lat);
+    if (!city || !dataPostals.includes(city.state_code)) continue;
+    // Same-named cities exist within a state; the rounded latitude keeps them apart.
+    const key = `${city.state_code}|${city.city}|${city.lat.toFixed(1)}`;
+    const a = acc.get(key) ?? { city: city.city, st: city.state_code, lat: city.lat, lng: city.lng, ...Object.fromEntries(keys.map((k) => [k, 0])) };
+    for (const k of keys) a[k] += cell[k] ?? 0;
+    acc.set(key, a);
+  }
+  return acc;
+}
+const cityData = Object.fromEntries(datasets.map((ds) => [ds.id, cityRollup(ds)]));
 
 // ---------- enrichment history: committed, append-or-replace today's row ----------
 
@@ -442,10 +490,23 @@ for (const ds of datasets) {
       names: (ds.board[`${l.id}_missing`] ?? []).filter(Boolean),
     };
   }
+  // City-dot hover: static per city (the dot's SIZE is all-time; its color
+  // follows the window), so the roster carries every window count as text.
+  for (const [key, a] of cityData[ds.id]) {
+    rosters[`city|${ds.id}|${key.replace(/"/g, "")}`] = {
+      total: a.n,
+      names: [
+        `${a.city}, ${a.st}`,
+        `all-time ${fmt(a.n)} · 30d ${fmt(a.d30)} · 7d ${fmt(a.d7)} · 24h ${fmt(a.d1)}`,
+        ...ds.countyLines(a),
+      ],
+    };
+  }
   out.apps[ds.historyKey] = {
     states,
     counties,
     statesCovered: Object.keys(states).length,
+    cities: cityData[ds.id].size,
     unassigned: ds.states.get("??")?.n ?? 0,
     foreign: countyData[ds.id].foreign,
     shorelineAssigned: countyData[ds.id].shoreline,
@@ -570,6 +631,22 @@ function drillPanels(ds) {
         .sort((x, y) => y.a.n - x.a.n)
         .map(({ c, a }) => `<tr><td>${esc(c.name)}</td><td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`)
         .join("");
+      // The level below county: one dot per city, radius by all-time volume
+      // (log bins, converted to user units so it displays the same at any
+      // viewBox zoom), fill by the SAME windowed bins as the polygons.
+      const stCities = [...cityData[ds.id].entries()].filter(([, a]) => a.st === st).sort((x, y) => y[1].n - x[1].n);
+      const uu = vb[2] / 560; // 1 display px in this panel's user units
+      const R = [0, 2.2, 3, 3.9, 5, 6.3];
+      const dots = stCities
+        .map(([key, a]) => {
+          const [cx, cy] = albersUsa(a.lng, a.lat);
+          return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(R[binOf(a.n)] * uu).toFixed(2)}" class="dot bin${binOf(a.n)}" ${hoverAttr("city", ds.id, key.replace(/"/g, ""))} ${binAttrs(a)} tabindex="0"/>`;
+        })
+        .join("\n");
+      const cityRows = stCities
+        .slice(0, 20)
+        .map(([key, a]) => `<tr ${hoverAttr("city", ds.id, key.replace(/"/g, ""))} tabindex="0"><td>${esc(a.city)}</td><td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`)
+        .join("");
       const regions =
         ds.id === "d" && dogRegions.some((g) => g.state === st)
           ? `<h4>Named ingestion regions</h4>
@@ -579,13 +656,20 @@ function drillPanels(ds) {
           : "";
       return `<section class="drill" id="drill-${ds.id}-${st}" hidden>
 <div class="dhead"><h3>${esc(ds.app)} — ${esc(stateName[st] ?? st)} by county</h3><button class="dclose" type="button">close &times;</button></div>
-<svg viewBox="${vb.map((v) => v.toFixed(1)).join(" ")}" class="ctymap" role="img" aria-label="${esc(stateName[st] ?? st)} counties">
+<svg viewBox="${vb.map((v) => v.toFixed(1)).join(" ")}" class="ctymap" role="img" aria-label="${esc(stateName[st] ?? st)} counties with city dots">
 ${paths}
+${dots}
 </svg>
 <p class="note">County split is geometric (~1 km cells, point-in-polygon) and can differ by a hair from the
 ledger-based state total above. ${withData.length} of ${counties.length} counties have ${esc(ds.unit)}.
-Hover a county for its own enrichment percentages.</p>
+Hover a county for its own enrichment percentages. <strong>Dots are cities</strong> — the level below county:
+size is all-time volume, color follows the window toggle, and hover gives that city's counts and
+enrichment. ${fmt(stCities.length)} cities in this state.</p>
 ${stateDebtTable(ds, r)}
+<details><summary>Top cities</summary>
+<table class="tbl half"><thead><tr><th>City</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
+<tbody>${cityRows || `<tr><td colspan="3" class="empty">Nothing here.</td></tr>`}</tbody></table>
+</details>
 <details><summary>County table</summary>
 <table class="tbl half"><thead><tr><th>County</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
 <tbody>${tableRows || `<tr><td colspan="3" class="empty">Nothing here.</td></tr>`}</tbody></table>
@@ -708,6 +792,9 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .stp{stroke:var(--page);stroke-width:0.75;vector-effect:non-scaling-stroke}
 .stp[data-drill]{cursor:pointer}
 .stp:hover,.stp:focus{stroke:var(--ink);stroke-width:1.4;outline:none}
+.dot{stroke:var(--surface);stroke-width:1;vector-effect:non-scaling-stroke;cursor:help}
+.dot.bin0{fill:transparent;stroke:var(--muted);opacity:.45}
+.dot:hover,.dot:focus{stroke:var(--ink);stroke-width:1.6;outline:none}
 .drill{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0}
 .dhead{display:flex;justify-content:space-between;align-items:baseline}
 .dclose{font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:16px;padding:2px 10px;cursor:pointer}
@@ -736,7 +823,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12px}
 <h1>Geographic coverage &amp; enrichment</h1>
 <p class="meta">Where the ingestion pipelines have been, on real geography, and how far behind each
 enrichment script is — one tab per app. Hover (or tab to) a state for its pipeline detail; click a
-shaded one to drill into counties, its own debt table, and (where defined) named regions.
+shaded one to drill into counties, city dots, its own debt table, and (where defined) named regions.
 <strong>A blank state means the pipeline has not run there</strong> — "we can't see it", not "nothing exists
 there". This page counts places and venues, not people, so account exclusions do not apply.
 Collected ${esc(collectedAt)}.</p>
