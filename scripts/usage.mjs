@@ -245,30 +245,43 @@ function chart(s, w) {
   const d = daily[s.id];
   const days = DAYS.slice(-w);
   const max = d.max;
-  // Selective direct label: the window's biggest day only; everything else is
-  // on hover, and the full table is under <details>.
+  // Direct value labels: every nonzero bar up to 14 days (it reads fine), only
+  // the window's biggest day at 30 (anything more collides). Hover always has
+  // the roster; the full table is under <details>.
   const winMax = Math.max(...days.map((dd) => d.real.get(dd) ?? 0));
+  const labelAll = w <= 14;
+  // X ticks: every day at 7, every other at 14, weekly at 30 — anchored so the
+  // most recent day is always labeled.
+  const tickStep = days.length <= 7 ? 1 : days.length <= 14 ? 2 : 7;
   let labeled = false;
   const cols = days
     .map((dd, i) => {
       const r = d.real.get(dd) ?? 0;
       const hr = r ? Math.max(2, Math.round((r / max) * BAR_H)) : 0;
-      const lbl = r > 0 && r === winMax && !labeled ? `<span class="dlab">${r}</span>` : "";
-      if (lbl) labeled = true;
-      const tick = i === 0 || i === days.length - 1 || (days.length - 1 - i) % 7 === 0 ? dd.slice(5) : "";
+      const isMax = r > 0 && r === winMax && !labeled;
+      const lbl = r > 0 && (labelAll || isMax) ? `<span class="dlab">${r}</span>` : "";
+      if (isMax) labeled = true;
+      const tick = (days.length - 1 - i) % tickStep === 0 ? dd.slice(5) : "";
       return `<div class="day">
   ${lbl}${r ? `<span class="seg real" style="height:${hr}px" ${hoverAttr("d", s.id, dd)} tabindex="0"></span>` : ""}
   <span class="tick">${tick}</span>
 </div>`;
     })
     .join("");
+  // Y axis: gridlines with labels at max and its midpoint; zero is the baseline.
+  const mid = Math.round(max / 2);
+  const yAxis = `<div class="ygrid" aria-hidden="true">
+  <div class="gl" style="bottom:${BAR_H + 16}px"><span class="gv">${max}</span></div>
+  ${mid > 0 && mid < max ? `<div class="gl" style="bottom:${Math.round((mid / max) * BAR_H) + 16}px"><span class="gv">${mid}</span></div>` : ""}
+  <div class="gl base" style="bottom:16px"><span class="gv">0</span></div>
+</div>`;
   const tableRows = days
     .filter((dd) => (d.real.get(dd) ?? 0) > 0)
     .map((dd) => `<tr><td>${dd}</td><td class="num">${d.real.get(dd) ?? 0}</td></tr>`)
     .join("");
   return `<div class="panel">
-<div class="phead"><h3>${esc(s.title)}</h3><span class="scale">y-max ${max}/day, fixed across windows</span></div>
-<div class="chart" role="img" aria-label="${esc(s.title)} per day">${cols}</div>
+<div class="phead"><h3>${esc(s.title)}</h3><span class="scale">per day, y-scale fixed across windows</span></div>
+<div class="plot">${yAxis}<div class="chart" role="img" aria-label="${esc(s.title)} per day, max ${max}">${cols}</div></div>
 <details><summary>Data table</summary>
 <table class="tbl"><thead><tr><th>Day</th><th class="num">Counted</th></tr></thead>
 <tbody>${tableRows || `<tr><td colspan="2" class="empty">Nothing in this window.</td></tr>`}</tbody></table>
@@ -340,6 +353,12 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:10px 0}
 .phead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .scale{font-size:11px;color:var(--muted)}
+.plot{display:flex;gap:0;position:relative;overflow:hidden}
+.ygrid{position:relative;width:30px;flex:none;height:${BAR_H + 34}px}
+.ygrid .gl{position:absolute;left:0;right:-9999px;border-bottom:1px solid var(--border);z-index:0;pointer-events:none}
+.ygrid .gl.base{border-bottom-color:color-mix(in srgb, var(--ink) 25%, transparent)}
+.ygrid .gv{position:absolute;right:6px;top:-8px;font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums;background:var(--surface);padding:0 2px}
+.plot .chart{flex:1;position:relative;z-index:1;overflow:hidden}
 .chart{display:flex;align-items:flex-end;gap:2px;height:${BAR_H + 34}px;padding-top:14px}
 .chart .day{flex:1;min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;height:100%;position:relative;gap:2px}
 .chart .seg{display:block;border-radius:0}

@@ -1,22 +1,27 @@
 // Geographic coverage lane: where the ingestion + enrichment pipelines have
-// actually been, state by state, for the two location apps.
+// actually been, on real US geometry, with drill-down.
 //
-//   Doggle      dog_places, assigned to a state by the ingestion ledger itself —
-//               a place's region maps to a state (CA), else the ingest tile
-//               whose bbox contains it (NV/OR/UT/WA...). Enrichment coverage
-//               (photo, description, dog score, boundary, nearby amenities) is
-//               read straight off the columns those scripts fill.
-//   Pickleague  venues, assigned to a state by nearest us_cities entry
-//               (approximate near borders, and says so).
+//   National view  a true AlbersUSA choropleth per app (vendored us-atlas
+//                  boundaries in assets/, decoded and projected at build time —
+//                  the page stays self-contained).
+//   Drill-down     click a state with data -> that state's county choropleth,
+//                  cropped to the state, same bins. CA also lists the named
+//                  ingestion regions (dog_place_regions), which are the
+//                  ledger's own sub-state units.
 //
-// Rendered as a US tile-grid cartogram — every state the same size, grouped by
-// census region — because the question is coverage, not acreage. A state with
-// zero means THE PIPELINE HAS NOT RUN THERE, not that nothing exists there; the
-// page says so, because that zero is "we can't see it", the second kind.
+// Assignment happens in two DIFFERENT ways, on purpose:
+//   - STATE totals come from the ingestion ledger itself (region -> state,
+//     else containing ingest tile, done-tiles preferred) — so the map can
+//     surface places the ledger cannot account for (off-ledger).
+//   - COUNTY splits are geometric: places bucketed to ~1 km cells in SQL,
+//     assigned by point-in-polygon in raw lon/lat (no projection involved in
+//     any count). The two can differ by a hair at state lines; the drill
+//     panel says so.
 //
-// This lane counts places, not people, so account exclusions do not apply —
-// stated on the page. The window toggle scopes rows by when they were ingested
-// (created_at); the ingestion ledger table is as-of-now and says so inline.
+// A blank state means THE PIPELINE HAS NOT RUN THERE — "we can't see it", not
+// "nothing exists there". This lane counts places, not people, so account
+// exclusions do not apply — stated on the page. The window toggle re-colors
+// the maps from precomputed per-window bins; nothing is recomputed client-side.
 //
 // Writes data/geo.json (counts only, committed) + data/geo-roster.json
 // (place/venue names, gitignored) + reports/geo.html (gitignored).
@@ -27,6 +32,7 @@ import { dirname, join } from "node:path";
 import { ROOT, loadEnv, readConfig, runSql } from "./lib/studio.mjs";
 import { hoverAttr, hoverLayer } from "./lib/hover.mjs";
 import { ALL_WINDOW, STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
+import { loadTopo, decode, bboxOf, contains, svgPath, projectedBbox, MAP_W, MAP_H, FIPS_TO_POSTAL, POSTAL_TO_FIPS } from "./lib/usmap.mjs";
 
 const APPS = readConfig("apps.json");
 const refOf = (id) => APPS.apps.find((a) => a.id === id)?.projectRef;
@@ -46,18 +52,6 @@ if (!DOGGLE || !PICKLE) {
   process.exit(1);
 }
 
-// ---------- the cartogram ----------
-// Standard US tile grid (11 cols), states in their census region. col,row.
-const GRID = {
-  AK: [0, 0], ME: [10, 0],
-  WI: [5, 1], VT: [9, 1], NH: [10, 1],
-  WA: [0, 2], ID: [1, 2], MT: [2, 2], ND: [3, 2], MN: [4, 2], IL: [5, 2], MI: [6, 2], NY: [8, 2], MA: [9, 2], RI: [10, 2],
-  OR: [0, 3], NV: [1, 3], WY: [2, 3], SD: [3, 3], IA: [4, 3], IN: [5, 3], OH: [6, 3], PA: [7, 3], NJ: [8, 3], CT: [9, 3],
-  CA: [0, 4], UT: [1, 4], CO: [2, 4], NE: [3, 4], MO: [4, 4], KY: [5, 4], WV: [6, 4], VA: [7, 4], MD: [8, 4], DE: [9, 4],
-  AZ: [1, 5], NM: [2, 5], KS: [3, 5], AR: [4, 5], TN: [5, 5], NC: [6, 5], SC: [7, 5], DC: [8, 5],
-  OK: [3, 6], LA: [4, 6], MS: [5, 6], AL: [6, 6], GA: [7, 6],
-  HI: [0, 7], TX: [3, 7], FL: [7, 7],
-};
 const REGIONS = {
   Northeast: ["CT", "ME", "MA", "NH", "RI", "VT", "NJ", "NY", "PA"],
   Midwest: ["IL", "IN", "MI", "OH", "WI", "IA", "KS", "MN", "MO", "NE", "ND", "SD"],
@@ -68,9 +62,11 @@ const regionOf = (st) => Object.keys(REGIONS).find((r) => REGIONS[r].includes(st
 
 // ---------- queries: one fetch per concern, every window computed from it ----------
 
+const WINDOW_COLS = (ts) => STANDARD_WINDOWS.map((w) => `count(*) filter (where ${ts} >= now() - interval '${w} day')::int d${w}`).join(",\n    ");
+
 // State assignment comes from the ingestion machinery itself: region -> state
 // (how CA was loaded), else the ingest tile whose bbox contains the point (how
-// every tiled state was loaded). What matches neither lands in 'unassigned'.
+// every tiled state was loaded).
 const dogPlacesSql = `
 with placed as (
   select p.name, p.created_at, p.source,
@@ -99,17 +95,14 @@ select st, count(*)::int n,
   count(*) filter (where scored)::int scored,
   count(*) filter (where bounded)::int bounded,
   count(*) filter (where amenities)::int amenities,
-  count(*) filter (where created_at >= now() - interval '1 day')::int d1,
-  count(*) filter (where created_at >= now() - interval '7 day')::int d7,
-  count(*) filter (where created_at >= now() - interval '14 day')::int d14,
-  count(*) filter (where created_at >= now() - interval '30 day')::int d30,
+  ${WINDOW_COLS("created_at")},
   (array_agg(name order by scored desc, name))[1:20] top_names
 from placed group by st order by n desc`;
 
 // Places that matched no region and no tile — ingested OFF the ledger. They are
-// real places somewhere, so nearest us_cities decides their state (same cell
-// trick as pickleague), and they carry an off-ledger counter so the map can say
-// how many of a state's places the ingestion ledger cannot account for.
+// real places somewhere, so nearest us_cities decides their state, and they
+// carry an off-ledger counter so the map can say how many of a state's places
+// the ingestion ledger cannot account for.
 const dogOffLedgerSql = `
 with un as (
   select p.name, p.created_at, p.source,
@@ -134,10 +127,7 @@ cells as (
     count(*) filter (where scored)::int scored,
     count(*) filter (where bounded)::int bounded,
     count(*) filter (where amenities)::int amenities,
-    count(*) filter (where created_at >= now() - interval '1 day')::int d1,
-    count(*) filter (where created_at >= now() - interval '7 day')::int d7,
-    count(*) filter (where created_at >= now() - interval '14 day')::int d14,
-    count(*) filter (where created_at >= now() - interval '30 day')::int d30,
+    ${WINDOW_COLS("created_at")},
     (array_agg(name))[1:6] names
   from un group by 1, 2
 )
@@ -163,9 +153,17 @@ select state, count(*)::int tiles,
   max(done_at) last_done
 from ingest_tiles group by state order by state`;
 
+// The named sub-state regions the Doggle ingestion is organised around.
+const dogRegionsSql = `
+select r.state, r.name, count(p.id)::int n,
+  count(p.id) filter (where p.created_at >= now() - interval '30 day')::int d30
+from dog_place_regions r
+left join dog_places p on p.region_slug = r.slug
+group by 1, 2 order by n desc`;
+
 // Venues have no region ledger, so nearest us_cities entry decides the state.
-// Venues are bucketed into 0.2-degree cells first so the correlated scan runs
-// per cell, not per venue. Approximate within ~20 km of a state line.
+// Venues are bucketed into 0.1-degree cells first so the correlated scan runs
+// per cell, not per venue. Approximate within ~10 km of a state line.
 const pickleVenuesSql = `
 with cells as (
   select round(v.lat::numeric, 1) clat, round(v.lng::numeric, 1) clng,
@@ -176,10 +174,7 @@ with cells as (
     count(*) filter (where v.boundary is not null)::int bounded,
     count(*) filter (where v.last_refreshed_at is not null)::int refreshed,
     coalesce(sum(v.court_count), 0)::int courts,
-    count(*) filter (where v.created_at >= now() - interval '1 day')::int d1,
-    count(*) filter (where v.created_at >= now() - interval '7 day')::int d7,
-    count(*) filter (where v.created_at >= now() - interval '14 day')::int d14,
-    count(*) filter (where v.created_at >= now() - interval '30 day')::int d30,
+    ${WINDOW_COLS("v.created_at")},
     (array_agg(v.name))[1:6] names
   from venues v
   where v.lat is not null
@@ -195,18 +190,34 @@ select c.*,
   ), '??') st
 from cells c`;
 
-const [dogStatesRaw, dogOffCells, dogTiles, pickleCells] = await Promise.all([
+// Fine (~1 km) cells for the county drill-down. Counted in SQL, assigned to a
+// county in Node by point-in-polygon in raw lon/lat.
+const fineCellsSql = (table, latCol, lngCol, ts) => `
+select round(${latCol}::numeric, 2) clat, round(${lngCol}::numeric, 2) clng, count(*)::int n,
+    ${WINDOW_COLS(ts)}
+from ${table}
+where ${latCol} is not null
+group by 1, 2`;
+
+const [dogStatesRaw, dogOffCells, dogTiles, dogRegions, pickleCells, dogFine, pickleFine] = await Promise.all([
   runSql(DOGGLE, dogPlacesSql),
   runSql(DOGGLE, dogOffLedgerSql),
   runSql(DOGGLE, dogTilesSql),
+  runSql(DOGGLE, dogRegionsSql),
   runSql(PICKLE, pickleVenuesSql),
+  runSql(DOGGLE, fineCellsSql("dog_places", "lat", "lng", "created_at")),
+  runSql(PICKLE, fineCellsSql("venues", "lat", "lng", "created_at")),
 ]);
 
 const collectedAt = new Date().toISOString();
 const WINDOWS = [ALL_WINDOW, ...STANDARD_WINDOWS];
 const DEFAULT_WIN = ALL_WINDOW;
+const winCount = (row, w) => (w === ALL_WINDOW ? row.n : row[`d${w}`]) ?? 0;
+const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
+const fmt = (n) => Number(n).toLocaleString("en-US");
 
-// Fold state-keyed cells into per-state rows, summing every numeric field.
+// ---------- fold state-keyed cells into per-state rows ----------
+
 function foldCells(map, cells, numKeys, blank) {
   for (const c of cells) {
     const s = map.get(c.st) ?? { st: c.st, top_names: [], ...blank };
@@ -228,54 +239,112 @@ for (const r of dogStatesRaw) {
 }
 foldCells(dogStates, dogOffCells.map((c) => ({ ...c, offLedger: c.n })), DOG_KEYS, Object.fromEntries(DOG_KEYS.map((k) => [k, 0])));
 
-// Pickleague: everything arrives as cells.
 const PICKLE_KEYS = ["n", "osm", "google", "indoor", "bounded", "refreshed", "courts", "d1", "d7", "d14", "d30"];
 const pickleStates = foldCells(new Map(), pickleCells, PICKLE_KEYS, Object.fromEntries(PICKLE_KEYS.map((k) => [k, 0])));
 
+// ---------- geometry + county assignment ----------
+
+const statesGeo = decode(loadTopo("us-states-10m.json"), "states")
+  .filter((s) => FIPS_TO_POSTAL[s.id] && !["PR", "VI"].includes(FIPS_TO_POSTAL[s.id]))
+  .map((s) => ({ ...s, postal: FIPS_TO_POSTAL[s.id] }));
+const stateName = Object.fromEntries(statesGeo.map((s) => [s.postal, s.name]));
+
 const tilesByState = new Map(dogTiles.map((t) => [t.state, t]));
-const winCount = (row, w) => (w === ALL_WINDOW ? row.n : row[`d${w}`]);
-const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
 
 const datasets = [
   {
-    id: "d",
-    app: "Doggle",
-    unit: "places",
-    states: dogStates,
+    id: "d", app: "Doggle", unit: "places", states: dogStates, fine: dogFine,
     statLines(r, w) {
-      const lines = [`${regionOf(r.st)} region`];
+      const lines = [`${stateName[r.st] ?? r.st} — ${regionOf(r.st)} region`];
       const t = tilesByState.get(r.st);
       if (t) {
         lines.push(`ingest tiles: ${t.done} done, ${t.pending} pending${t.running ? `, ${t.running} running` : ""}${t.empty ? `, ${t.empty} empty` : ""}${t.errored ? `, ${t.errored} ERRORED` : ""}`);
-        lines.push(`features ${t.features} seen, ${t.loaded} loaded`);
+        lines.push(`features ${fmt(t.features)} seen, ${fmt(t.loaded)} loaded`);
       }
       if (w === ALL_WINDOW) {
         lines.push(`enriched: photo ${pct(r.photo, r.n)}%, descr ${pct(r.descr, r.n)}%, score ${pct(r.scored, r.n)}%, boundary ${pct(r.bounded, r.n)}%, amenities ${pct(r.amenities, r.n)}%`);
         if (r.curated) lines.push(`${r.curated} curated by hand, rest osm`);
-        if (r.offLedger) lines.push(`${r.offLedger} OFF-LEDGER (no region, no tile; state by nearest city)`);
+        if (r.offLedger) lines.push(`${fmt(r.offLedger)} OFF-LEDGER (no region, no tile; state by nearest city)`);
       } else {
-        lines.push(`ingested in last ${windowLabel(w)}: ${winCount(r, w)} (enrichment %s are all-time)`);
+        lines.push(`ingested in last ${windowLabel(w)}: ${fmt(winCount(r, w))} (enrichment %s are all-time)`);
       }
       return lines;
     },
   },
   {
-    id: "p",
-    app: "Pickleague",
-    unit: "venues",
-    states: pickleStates,
+    id: "p", app: "Pickleague", unit: "venues", states: pickleStates, fine: pickleFine,
     statLines(r, w) {
-      const lines = [`${regionOf(r.st)} region`];
-      lines.push(`sources: ${r.osm} osm, ${r.google} google`);
+      const lines = [`${stateName[r.st] ?? r.st} — ${regionOf(r.st)} region`];
+      lines.push(`sources: ${fmt(r.osm)} osm, ${fmt(r.google)} google`);
       if (w === ALL_WINDOW) {
-        lines.push(`${r.courts} courts counted · ${r.indoor} indoor · boundary ${pct(r.bounded, r.n)}% · details refreshed ${pct(r.refreshed, r.n)}%`);
+        lines.push(`${fmt(r.courts)} courts counted · ${fmt(r.indoor)} indoor · boundary ${pct(r.bounded, r.n)}% · details refreshed ${pct(r.refreshed, r.n)}%`);
       } else {
-        lines.push(`ingested in last ${windowLabel(w)}: ${winCount(r, w)} (enrichment %s are all-time)`);
+        lines.push(`ingested in last ${windowLabel(w)}: ${fmt(winCount(r, w))} (enrichment %s are all-time)`);
       }
       return lines;
     },
   },
 ];
+
+// Point-in-polygon runs against ALL counties, because ingest tile bboxes are
+// rectangles that cross state lines — a place the ledger credits to WA can sit
+// geographically in Idaho, and only the full county set can see that. Drill
+// panels are still rendered only for states the ledger credits.
+const dataPostals = [...new Set(datasets.flatMap((ds) => [...ds.states.keys()].filter((s) => s !== "??")))];
+const dataFips = new Set(dataPostals.map((p) => POSTAL_TO_FIPS[p]).filter(Boolean));
+const countiesGeo = decode(loadTopo("us-counties-10m.json"), "counties")
+  .map((c) => ({ ...c, stateFips: String(c.id).slice(0, 2), bbox: bboxOf(c.rings) }));
+const countiesByState = new Map();
+for (const c of countiesGeo) {
+  if (!dataFips.has(c.stateFips)) continue; // panels only where the ledger has data
+  if (!countiesByState.has(c.stateFips)) countiesByState.set(c.stateFips, []);
+  countiesByState.get(c.stateFips).push(c);
+}
+
+// Assign each fine cell to a county: bbox prefilter, then even-odd PIP.
+// `spill` collects counts that land geographically in states the ledger does
+// not credit — tile-bbox spillover, reported per state. A cell that misses
+// every county gets a nearest-county fallback within ~5 km (shoreline points
+// pushed into the water by cell rounding and 10 m simplification); what is
+// left after THAT is not in the United States at all — ingest tile rectangles
+// cross the national border — and is reported as `foreign`.
+const NEAR = 0.05; // degrees, ~5 km
+function nearestCounty(lon, lat) {
+  let best = null, bestD = NEAR;
+  for (const k of countiesGeo) {
+    if (lon < k.bbox[0] - NEAR || lon > k.bbox[2] + NEAR || lat < k.bbox[1] - NEAR || lat > k.bbox[3] + NEAR) continue;
+    for (const r of k.rings) for (const [x, y] of r) {
+      const d = Math.hypot(x - lon, y - lat);
+      if (d < bestD) { bestD = d; best = k; }
+    }
+  }
+  return best;
+}
+function countyCounts(fine) {
+  const acc = new Map(); // fips5 -> {n, d1, d7, d14, d30}
+  const spill = new Map(); // postal -> n
+  let foreign = 0, shoreline = 0;
+  for (const cell of fine) {
+    const lon = Number(cell.clng), lat = Number(cell.clat);
+    let hit = countiesGeo.find((c) => contains(c.rings, c.bbox, lon, lat));
+    if (!hit) {
+      hit = nearestCounty(lon, lat);
+      if (hit) shoreline += cell.n;
+      else { foreign += cell.n; continue; }
+    }
+    if (!dataFips.has(hit.stateFips)) {
+      const p = FIPS_TO_POSTAL[hit.stateFips] ?? hit.stateFips;
+      spill.set(p, (spill.get(p) ?? 0) + cell.n);
+      continue;
+    }
+    const a = acc.get(hit.id) ?? { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
+    a.n += cell.n;
+    for (const w of STANDARD_WINDOWS) a[`d${w}`] += cell[`d${w}`] ?? 0;
+    acc.set(hit.id, a);
+  }
+  return { acc, spill, foreign, shoreline };
+}
+const countyData = Object.fromEntries(datasets.map((ds) => [ds.id, countyCounts(ds.fine)]));
 
 // ---------- outputs ----------
 
@@ -285,6 +354,7 @@ const out = { collectedAt, windows: WINDOWS, defaultWindow: DEFAULT_WIN, apps: {
 for (const ds of datasets) {
   const states = {};
   for (const [st, r] of ds.states) {
+    if (st === "??") continue;
     states[st] = { n: r.n, d1: r.d1, d7: r.d7, d14: r.d14, d30: r.d30 };
     if (ds.id === "d") Object.assign(states[st], { photo: r.photo, descr: r.descr, scored: r.scored, bounded: r.bounded, amenities: r.amenities, curated: r.curated, offLedger: r.offLedger });
     else Object.assign(states[st], { osm: r.osm, google: r.google, courts: r.courts, bounded: r.bounded, refreshed: r.refreshed });
@@ -295,14 +365,33 @@ for (const ds of datasets) {
       };
     }
   }
+  const counties = {};
+  for (const [fips, a] of countyData[ds.id].acc) {
+    counties[fips] = { n: a.n, d1: a.d1, d7: a.d7, d14: a.d14, d30: a.d30 };
+    const geo = countiesGeo.find((c) => c.id === fips);
+    for (const w of WINDOWS) {
+      rosters[`cty|${w}|${ds.id}|${fips}`] = {
+        total: winCount(a, w),
+        names: [
+          `${geo?.name ?? fips}, ${FIPS_TO_POSTAL[String(fips).slice(0, 2)]}`,
+          `all-time ${fmt(a.n)} · last 30d ${fmt(a.d30)}`,
+        ],
+      };
+    }
+  }
   out.apps[ds.id === "d" ? "doggle" : "pickleague"] = {
     states,
-    statesCovered: [...ds.states.keys()].filter((s) => s !== "??").length,
+    counties,
+    statesCovered: Object.keys(states).length,
     unassigned: ds.states.get("??")?.n ?? 0,
+    foreign: countyData[ds.id].foreign,
+    shorelineAssigned: countyData[ds.id].shoreline,
+    spillover: Object.fromEntries([...countyData[ds.id].spill.entries()].sort((a, b) => b[1] - a[1])),
     ...(ds.id === "d" ? { offLedger: [...ds.states.values()].reduce((a, r) => a + (r.offLedger ?? 0), 0) } : {}),
   };
 }
 out.apps.doggle.tiles = dogTiles.map((t) => ({ ...t }));
+out.apps.doggle.regions = dogRegions.map((r) => ({ state: r.state, n: r.n, d30: r.d30 }));
 
 mkdirSync(dirname(DATA_FILE), { recursive: true });
 writeFileSync(DATA_FILE, JSON.stringify(out, null, 2));
@@ -311,62 +400,119 @@ writeFileSync(ROSTER_FILE, JSON.stringify(rosters, null, 2));
 // ---------- report ----------
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const fmt = (n) => Number(n).toLocaleString("en-US");
 
-// ONE binning across apps and across windows: log-decade bins. Narrowing the
-// window empties the map; it never rescales it.
+// ONE binning across apps, windows, and drill levels: log-decade bins.
+// Narrowing the window empties the map; it never rescales it.
 const BINS = [1, 10, 100, 1000, 10000];
 const binOf = (v) => (v <= 0 ? 0 : BINS.filter((b) => v >= b).length);
-const binLabel = (i) =>
-  i === 0 ? "0" : i === BINS.length ? `${fmt(BINS.at(-1))}+` : `${fmt(BINS[i - 1])}–${fmt(BINS[i] - 1)}`;
+const binLabel = (i) => (i === 0 ? "0" : i === BINS.length ? `${fmt(BINS.at(-1))}+` : `${fmt(BINS[i - 1])}–${fmt(BINS[i] - 1)}`);
+const binAttrs = (row) => WINDOWS.map((w) => `data-b-${w}="${binOf(winCount(row, w))}"`).join(" ");
 
-function usMap(ds, w) {
-  const tiles = Object.entries(GRID)
-    .map(([st, [col, row]]) => {
-      const r = ds.states.get(st);
-      const v = r ? winCount(r, w) : 0;
-      const bin = binOf(v);
-      return `<div class="st b${bin}" style="grid-column:${col + 1};grid-row:${row + 1}" ${hoverAttr("st", "{scope}", ds.id, st)} tabindex="0">
-<span class="ab">${st}</span><span class="ct">${v ? fmt(v) : ""}</span></div>`;
+// Every state path is rendered ONCE; the window toggle re-colors it from the
+// data-b-* attributes. States with data are clickable and open their county
+// drill-down panel.
+function nationalMap(ds) {
+  const paths = statesGeo
+    .map((s) => {
+      const r = ds.states.get(s.postal);
+      const drill = r && r.n > 0 ? ` data-drill="drill-${ds.id}-${s.postal}"` : "";
+      const empty = { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
+      return `<path d="${svgPath(s.rings)}" fill-rule="evenodd" class="stp bin${binOf(r?.n ?? 0)}" ${hoverAttr("st", "{scope}", ds.id, s.postal)} ${binAttrs(r ?? empty)}${drill}${drill ? ' tabindex="0" role="button" aria-label="' + esc(s.name) + ", open county detail\"" : ""}/>`;
     })
-    .join("");
-  return `<div class="usmap" role="img" aria-label="${esc(ds.app)} ${esc(ds.unit)} by state">${tiles}</div>`;
+    .join("\n");
+  return `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" class="stmap" role="img" aria-label="${esc(ds.app)} ${esc(ds.unit)} by state">
+${paths}
+</svg>`;
+}
+
+function drillPanels(ds) {
+  return [...ds.states.entries()]
+    .filter(([st, r]) => st !== "??" && r.n > 0)
+    .map(([st, r]) => {
+      const fips = POSTAL_TO_FIPS[st];
+      const counties = countiesByState.get(fips) ?? [];
+      const vb = projectedBbox(counties.map((c) => c.rings));
+      const paths = counties
+        .map((c) => {
+          const a = countyData[ds.id].acc.get(c.id) ?? { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
+          return `<path d="${svgPath(c.rings, { thin: 0.3 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${hoverAttr("cty", "{scope}", ds.id, c.id)} ${binAttrs(a)} tabindex="0"/>`;
+        })
+        .join("\n");
+      const withData = counties.filter((c) => countyData[ds.id].acc.has(c.id));
+      const tableRows = withData
+        .map((c) => ({ c, a: countyData[ds.id].acc.get(c.id) }))
+        .sort((x, y) => y.a.n - x.a.n)
+        .map(({ c, a }) => `<tr><td>${esc(c.name)}</td><td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`)
+        .join("");
+      const regions =
+        ds.id === "d" && dogRegions.some((g) => g.state === st)
+          ? `<h4>Named ingestion regions</h4>
+<p class="note">The ledger's own sub-state units for ${esc(stateName[st] ?? st)} — coverage by region, all-time and last 30d.</p>
+<table class="tbl half"><thead><tr><th>Region</th><th class="num">Places</th><th class="num">30d</th></tr></thead>
+<tbody>${dogRegions.filter((g) => g.state === st).map((g) => `<tr><td>${esc(g.name)}</td><td class="num">${fmt(g.n)}</td><td class="num">${fmt(g.d30)}</td></tr>`).join("")}</tbody></table>`
+          : "";
+      return `<section class="drill" id="drill-${ds.id}-${st}" hidden>
+<div class="dhead"><h3>${esc(ds.app)} — ${esc(stateName[st] ?? st)} by county</h3><button class="dclose" type="button">close &times;</button></div>
+<svg viewBox="${vb.map((v) => v.toFixed(1)).join(" ")}" class="ctymap" role="img" aria-label="${esc(stateName[st] ?? st)} counties">
+${paths}
+</svg>
+<p class="note">County split is geometric (~1 km cells, point-in-polygon) and can differ by a hair from the
+ledger-based state total above. ${withData.length} of ${counties.length} counties have ${esc(ds.unit)}.</p>
+<details><summary>County table</summary>
+<table class="tbl half"><thead><tr><th>County</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
+<tbody>${tableRows || `<tr><td colspan="3" class="empty">Nothing here.</td></tr>`}</tbody></table>
+</details>
+${regions}
+</section>`;
+    })
+    .join("\n");
 }
 
 function regionTable(ds, w) {
+  const empty = { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
   const rows = Object.entries(REGIONS)
     .map(([name, sts]) => {
-      const covered = sts.filter((s) => (winCount(ds.states.get(s) ?? { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 }, w) ?? 0) > 0);
-      const total = sts.reduce((a, s) => a + (winCount(ds.states.get(s) ?? { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 }, w) ?? 0), 0);
+      const covered = sts.filter((s) => winCount(ds.states.get(s) ?? empty, w) > 0);
+      const total = sts.reduce((a, s) => a + winCount(ds.states.get(s) ?? empty, w), 0);
       return { name, covered: covered.length, of: sts.length, total };
     })
     .sort((a, b) => b.total - a.total)
-    .map(
-      (r) =>
-        `<tr><td>${esc(r.name)}</td><td class="num">${r.covered} / ${r.of}</td><td class="num">${fmt(r.total)}</td></tr>`,
-    )
+    .map((r) => `<tr><td>${esc(r.name)}</td><td class="num">${r.covered} / ${r.of}</td><td class="num">${fmt(r.total)}</td></tr>`)
     .join("");
-  return `<table class="tbl rgn"><thead><tr><th>Census region</th><th class="num">States covered</th><th class="num">${esc(ds.unit[0].toUpperCase() + ds.unit.slice(1))}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table class="tbl half"><thead><tr><th>Census region</th><th class="num">States covered</th><th class="num">${esc(ds.unit[0].toUpperCase() + ds.unit.slice(1))}</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-const legend = `<div class="legend">${Array.from({ length: BINS.length + 1 }, (_, i) => `<span class="chip"><span class="sw b${i}"></span>${binLabel(i)}</span>`).join("")}<span class="chip lgnote">same bins across apps and windows</span></div>`;
+const legend = `<div class="legend">${Array.from({ length: BINS.length + 1 }, (_, i) => `<span class="chip"><span class="sw bin${i}"></span>${binLabel(i)}</span>`).join("")}<span class="chip lgnote">${"log-decade bins, fixed across apps, windows and drill levels"}</span></div>`;
 
-const blocks = WINDOWS.map((w) => {
-  const parts = datasets
-    .map((ds) => {
-      const meta = out.apps[ds.id === "d" ? "doggle" : "pickleague"];
-      const offNote = ds.id === "d" && meta.offLedger
+const appSections = datasets
+  .map((ds) => {
+    const meta = out.apps[ds.id === "d" ? "doggle" : "pickleague"];
+    const offNote =
+      ds.id === "d" && meta.offLedger
         ? `<p class="note"><strong>${fmt(meta.offLedger)}</strong> places are <strong>off-ledger</strong> — inside no defined region and no ingest tile, so no pipeline
 run accounts for them; they are placed by nearest city and flagged per-state on hover. Worth knowing which script wrote them.</p>`
         : "";
-      return `<h2>${esc(ds.app)} — ${esc(ds.unit)} by state</h2>
-${usMap(ds, w)}
-${regionTable(ds, w)}
-${offNote}${meta.unassigned ? `<p class="note">${fmt(meta.unassigned)} ${esc(ds.unit)} could not be assigned to any state at all — counted nowhere on the map, stated here instead.</p>` : ""}`;
-    })
-    .join("\n");
-  return `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${legend}\n${parts}</div>`;
-}).join("\n");
+    const unNote = meta.unassigned ? `<p class="note">${fmt(meta.unassigned)} ${esc(ds.unit)} could not be assigned to any state at all — on no map, stated here instead.</p>` : "";
+    const spillTotal = Object.values(meta.spillover).reduce((a, v) => a + v, 0);
+    const spillNote = spillTotal
+      ? `<p class="note"><strong>${fmt(spillTotal)}</strong> ${esc(ds.unit)} sit <strong>geographically</strong> in states the ledger does not credit
+(${Object.entries(meta.spillover).map(([s, v]) => `${s} ${fmt(v)}`).join(", ")}) — ingest tile bboxes are rectangles and cross state lines.
+They are in the shaded states' totals above but in no county panel.</p>`
+      : "";
+    const ctyNote = meta.foreign
+      ? `<p class="note"><strong>${fmt(meta.foreign)}</strong> ${esc(ds.unit)} are <strong>not in the United States at all</strong> — ingest tile
+rectangles cross the national border (the cluster is British Columbia, north of the WA tiles). They are inside the shaded
+states' ledger totals above but in no county panel. A per-tile bbox clip against the border would stop this at the source.</p>`
+      : "";
+    const winTables = WINDOWS.map((w) => `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${regionTable(ds, w)}</div>`).join("\n");
+    return `<h2>${esc(ds.app)} — ${esc(ds.unit)} by state</h2>
+<p class="note">Click (or press Enter on) a shaded state for its county drill-down.</p>
+${nationalMap(ds)}
+${winTables}
+${offNote}${spillNote}${unNote}${ctyNote}
+${drillPanels(ds)}`;
+  })
+  .join("\n");
 
 const tileRows = dogTiles
   .map((t) => {
@@ -381,63 +527,64 @@ const html = `<meta charset="utf-8">
 <style>
 :root { color-scheme: light; --page:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink-2:#52514e;
   --muted:#898781; --border:rgba(11,11,11,0.10); --bar:#2a78d6; --warn:#b45309;
-  --b1:#86b6ef; --b2:#649de6; --b3:#4383d8; --b4:#2a68c0; --b5:#1c4f9c; --b45-ink:#fff; }
+  --b1:#86b6ef; --b2:#649de6; --b3:#4383d8; --b4:#2a68c0; --b5:#1c4f9c; }
 @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) {
   color-scheme: dark; --page:#0d0d0d; --surface:#1a1a19; --ink:#fff; --ink-2:#c3c2b7;
   --muted:#898781; --border:rgba(255,255,255,0.10); --bar:#3987e5; --warn:#eda100;
-  --b1:#184f95; --b2:#2f65ab; --b3:#4a80cc; --b4:#6ea3e8; --b5:#9cc3f5; --b45-ink:#0b0b0b; } }
+  --b1:#184f95; --b2:#2f65ab; --b3:#4a80cc; --b4:#6ea3e8; --b5:#9cc3f5; } }
 :root[data-theme="dark"] { color-scheme: dark; --page:#0d0d0d; --surface:#1a1a19; --ink:#fff;
   --ink-2:#c3c2b7; --muted:#898781; --border:rgba(255,255,255,0.10); --bar:#3987e5; --warn:#eda100;
-  --b1:#184f95; --b2:#2f65ab; --b3:#4a80cc; --b4:#6ea3e8; --b5:#9cc3f5; --b45-ink:#0b0b0b; }
+  --b1:#184f95; --b2:#2f65ab; --b3:#4a80cc; --b4:#6ea3e8; --b5:#9cc3f5; }
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:900px;margin:0 auto;padding:28px 20px 60px}
-h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 8px}
+h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-size:14px;margin:0} h4{font-size:13px;margin:14px 0 2px}
 .meta{color:var(--muted);font-size:13px;margin:0 0 12px}
-.note{color:var(--muted);font-size:12.5px;margin:10px 0}
+.note{color:var(--muted);font-size:12.5px;margin:8px 0}
 .legend{display:flex;gap:12px;margin:12px 0 4px;font-size:12px;color:var(--ink-2);flex-wrap:wrap;align-items:center}
 .legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px;border:1px solid var(--border)}
 .legend .lgnote{color:var(--muted);font-size:11px}
-.sw.b0,.st.b0{background:transparent}
-.sw.b1,.st.b1{background:var(--b1)} .sw.b2,.st.b2{background:var(--b2)} .sw.b3,.st.b3{background:var(--b3)}
-.sw.b4,.st.b4{background:var(--b4)} .sw.b5,.st.b5{background:var(--b5)}
-.usmap{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;max-width:640px;margin:8px 0}
-.st{aspect-ratio:1;border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border:1px solid var(--border);min-width:0}
-.st.b0{border-style:dashed}
-.st.b0 .ab,.st.b0 .ct{color:var(--muted)}
-.st .ab{font-size:11px;font-weight:650;line-height:1.1}
-.st .ct{font-size:9.5px;line-height:1.1;font-variant-numeric:tabular-nums}
-.st.b1 .ab,.st.b1 .ct,.st.b2 .ab,.st.b2 .ct{color:#0b0b0b}
-.st.b3 .ab,.st.b3 .ct{color:#fff}
-.st.b4 .ab,.st.b4 .ct,.st.b5 .ab,.st.b5 .ct{color:var(--b45-ink)}
+.bin0{fill:var(--page)} .bin1{fill:var(--b1)} .bin2{fill:var(--b2)} .bin3{fill:var(--b3)} .bin4{fill:var(--b4)} .bin5{fill:var(--b5)}
+.sw.bin0{background:var(--page)} .sw.bin1{background:var(--b1)} .sw.bin2{background:var(--b2)}
+.sw.bin3{background:var(--b3)} .sw.bin4{background:var(--b4)} .sw.bin5{background:var(--b5)}
+.stmap,.ctymap{width:100%;height:auto;display:block;margin:6px 0}
+.ctymap{max-width:560px}
+.stp{stroke:var(--page);stroke-width:0.75;vector-effect:non-scaling-stroke}
+.stp[data-drill]{cursor:pointer}
+.stp:hover,.stp:focus{stroke:var(--ink);stroke-width:1.4;outline:none}
+.drill{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0}
+.dhead{display:flex;justify-content:space-between;align-items:baseline}
+.dclose{font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:16px;padding:2px 10px;cursor:pointer}
+details{margin-top:8px;font-size:12.5px} summary{cursor:pointer;color:var(--muted)}
 .tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;background:var(--surface);
   border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tbl.half{max-width:560px}
 .tbl th,.tbl td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
 .tbl th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
 .tbl tr:last-child td{border-bottom:0}
 .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
-.tbl.rgn{max-width:640px}
 .meter{display:inline-block;width:110px;height:8px;border-radius:4px;background:color-mix(in srgb, var(--bar) 14%, transparent);vertical-align:middle;overflow:hidden}
 .meter .fill{display:block;height:100%;border-radius:4px;background:var(--bar)}
 .mcell{width:120px}
 .warntxt{color:var(--warn)}
 .dt{font-variant-numeric:tabular-nums;color:var(--muted)}
+.empty{color:var(--muted);font-style:italic}
 code{font-family:ui-monospace,Menlo,monospace;font-size:12px}
 </style>
 <main>
 <h1>Geographic coverage</h1>
-<p class="meta">Where the ingestion and enrichment pipelines have actually been, as a US tile grid —
-every state the same size, because the question is coverage, not acreage. Hover (or tab to) a state
-for its pipeline detail and top entries. <strong>A blank state means the pipeline has not run there</strong> —
-"we can't see it", not "nothing exists there". This page counts places and venues, not people, so
-account exclusions do not apply. Doggle states come from the ingestion ledger itself (region &rarr; state,
-else containing ingest tile); Pickleague venues use the nearest <code>us_cities</code> entry, approximate
-within ~20&nbsp;km of a state line. Collected ${esc(collectedAt)}.</p>
+<p class="meta">Where the ingestion and enrichment pipelines have actually been, on real geography.
+Hover (or tab to) a state for its pipeline detail and top entries; click a shaded one to drill into
+its counties. <strong>A blank state means the pipeline has not run there</strong> — "we can't see it", not
+"nothing exists there". This page counts places and venues, not people, so account exclusions do not
+apply. Doggle states come from the ingestion ledger itself (region &rarr; state, else containing ingest
+tile); Pickleague venues use the nearest <code>us_cities</code> entry; county splits are geometric.
+Collected ${esc(collectedAt)}.</p>
 
-${windowBar(WINDOWS, DEFAULT_WIN, "scopes rows by when they were ingested (created_at)")}
+${windowBar(WINDOWS, DEFAULT_WIN, "re-colors the maps by rows ingested in the window (created_at)")}
+${legend}
 
-${blocks}
+${appSections}
 
 <h2>Doggle ingest tile ledger</h2>
 <p class="note">The queue behind the map: each state is split into bbox tiles and loaded tile by tile.
@@ -447,14 +594,51 @@ This table is the ledger <strong>as of now</strong> — it does not move with th
 <tbody>${tileRows || `<tr><td colspan="9" class="empty">No ingest tiles yet.</td></tr>`}</tbody></table>
 </main>
 ${hoverLayer(rosters, { unit: "row/rows" })}
-${windowScript(WINDOWS, DEFAULT_WIN)}`;
+${windowScript(WINDOWS, DEFAULT_WIN)}
+<script>
+(function () {
+  // Re-color every map from its precomputed per-window bins. Rides on the
+  // window machinery: windowScript calls setHoverScope on every toggle, so
+  // wrapping it keeps ONE source of truth for the active window.
+  function recolor(w) {
+    document.querySelectorAll('[data-b-all]').forEach(function (el) {
+      var b = el.getAttribute('data-b-' + w) || '0';
+      el.setAttribute('class', el.getAttribute('class').replace(/\\bbin\\d\\b/, 'bin' + b));
+    });
+  }
+  var prev = window.setHoverScope;
+  window.setHoverScope = function (s) { if (prev) prev(s); recolor(String(s)); };
+  var btn = document.querySelector('.winbtn[aria-pressed="true"]');
+  recolor(btn ? btn.dataset.win : 'all');
+
+  // Drill-down: one open panel at a time; click again (or close) to dismiss.
+  function toggle(id) {
+    var was = document.getElementById(id);
+    var open = was && was.hidden;
+    document.querySelectorAll('.drill').forEach(function (d) { d.hidden = true; });
+    if (was && open) { was.hidden = false; was.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var p = t.closest ? t.closest('[data-drill]') : null;
+    if (p) return toggle(p.getAttribute('data-drill'));
+    var c = t.closest ? t.closest('.dclose') : null;
+    if (c) c.closest('.drill').hidden = true;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var p = e.target.closest ? e.target.closest('[data-drill]') : null;
+    if (p) { e.preventDefault(); toggle(p.getAttribute('data-drill')); }
+  });
+})();
+</script>`;
 
 mkdirSync(dirname(HTML_FILE), { recursive: true });
 writeFileSync(HTML_FILE, html);
 
 const dg = out.apps.doggle, pk = out.apps.pickleague;
-console.log(`Geo  Doggle ${dg.statesCovered} states covered (${fmt(Object.values(dg.states).reduce((a, s) => a + s.n, 0))} places, ${fmt(dg.unassigned)} unassigned)`);
-console.log(`     Pickleague ${pk.statesCovered} states covered (${fmt(Object.values(pk.states).reduce((a, s) => a + s.n, 0))} venues, ${fmt(pk.unassigned)} unassigned)`);
+console.log(`Geo  Doggle ${dg.statesCovered} states (${fmt(Object.values(dg.states).reduce((a, s) => a + s.n, 0))} places, ${fmt(dg.offLedger)} off-ledger), ${Object.keys(dg.counties).length} counties`);
+console.log(`     Pickleague ${pk.statesCovered} states (${fmt(Object.values(pk.states).reduce((a, s) => a + s.n, 0))} venues), ${Object.keys(pk.counties).length} counties`);
 console.log(`Wrote ${DATA_FILE}`);
 console.log(`Wrote ${ROSTER_FILE} (gitignored - contains place/venue names)`);
 console.log(`Wrote reports/geo.html`);

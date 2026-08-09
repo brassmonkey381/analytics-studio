@@ -167,7 +167,7 @@ const blocks = WINDOWS.map((w) => {
       })
       .join("\n");
     return `<h2>${esc(b.title)}</h2>
-<table class="tbl"><thead><tr><th>Enrichment</th><th class="num">Done / rows</th><th>Coverage</th><th class="num">Debt</th><th class="num">&Delta; ${w === ALL_WINDOW ? "all time" : windowLabel(w)}</th><th>Debt trend</th></tr></thead>
+<table class="tbl"><thead><tr><th>Enrichment</th><th class="num">Done / rows</th><th>Coverage</th><th class="num">Debt</th><th class="num">&Delta; ${w === ALL_WINDOW ? "all time" : windowLabel(w)}</th><th>Debt trend <span class="thsub">since ${esc(history[0].date)}</span></th></tr></thead>
 <tbody>${rows}</tbody></table>`;
   }).join("\n");
   return `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${boards}</div>`;
@@ -207,6 +207,7 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px}
 .pct{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .spark{display:block}
 .worse{color:var(--warn)}
+.thsub{text-transform:none;letter-spacing:0;font-weight:400}
 .mut{color:var(--muted)}
 code{font-family:ui-monospace,Menlo,monospace;font-size:12px}
 </style>

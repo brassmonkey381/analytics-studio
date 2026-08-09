@@ -115,6 +115,13 @@ Drop a series that would flatten the others rather than log-scaling it, and say
 where it went — guests outnumber accounts ~50:1 on the shared project, so the
 plans chart states them as context instead of drawing them.
 
+Axes and value labels (owner ask, 2026-08-08): every plot gets labeled axes and
+on-mark values wherever they fit without clutter. The working rules: y-axis
+gridlines at 0 / mid / max with labels; x date ticks every day at 7d, every
+other at 14d, weekly at 30d, anchored so the newest day is always labeled;
+per-bar values up to 14 days, max-bar-only at 30; hover carries what the labels
+cannot.
+
 ## Adding a report
 
 1. A script that writes `data/<id>.json` (counts) plus, if it has identity, a

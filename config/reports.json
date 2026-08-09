@@ -37,7 +37,7 @@
     {
       "id": "geo",
       "title": "Geographic coverage",
-      "blurb": "US tile-grid map of where the Doggle and Pickleague ingestion + enrichment pipelines have been, by state and census region.",
+      "blurb": "US choropleth of where the Doggle and Pickleague ingestion + enrichment pipelines have been — click a state to drill into counties and named regions.",
       "file": "reports/geo.html",
       "data": "data/geo.json",
       "scripts": ["scripts/geo.mjs"]
