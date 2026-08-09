@@ -338,6 +338,17 @@ const dataPostals = [...new Set(datasets.flatMap((ds) => [...ds.states.keys()].f
 const dataFips = new Set(dataPostals.map((p) => POSTAL_TO_FIPS[p]).filter(Boolean));
 const countiesGeo = decode(loadTopo("us-counties-10m.json"), "counties")
   .map((c) => ({ ...c, stateFips: String(c.id).slice(0, 2), bbox: bboxOf(c.rings) }));
+
+// County subdivisions (census CCDs, 500k cartographic, vendored for the data
+// states) — the sub-county choropleth unit. GEOID = state+county+cousub, so
+// membership in a county is exact, no geometry needed.
+const cousubGeo = JSON.parse(readFileSync(join(ROOT, "assets", "us-cousub-west.json"), "utf8"))
+  .map((s) => ({ ...s, countyFips: s.id.slice(0, 5), bbox: bboxOf(s.rings) }));
+const cousubsByCounty = new Map();
+for (const s of cousubGeo) {
+  if (!cousubsByCounty.has(s.countyFips)) cousubsByCounty.set(s.countyFips, []);
+  cousubsByCounty.get(s.countyFips).push(s);
+}
 const countiesByState = new Map();
 for (const c of countiesGeo) {
   if (!dataFips.has(c.stateFips)) continue; // panels only where the ledger has data
@@ -367,6 +378,7 @@ function nearestCounty(lon, lat) {
 function countyCounts(fine, laneIds) {
   const keys = ["n", ...laneIds, ...STANDARD_WINDOWS.map((w) => `d${w}`)];
   const acc = new Map(); // fips5 -> {n, <lanes>, d1, d7, d14, d30}
+  const sub = new Map(); // cousub GEOID -> same shape
   const spill = new Map(); // postal -> n
   let foreign = 0, shoreline = 0;
   for (const cell of fine) {
@@ -388,8 +400,25 @@ function countyCounts(fine, laneIds) {
     const a = acc.get(hit.id) ?? Object.fromEntries(keys.map((k) => [k, 0]));
     for (const k of keys) a[k] += cell[k] ?? 0;
     acc.set(hit.id, a);
+    // One level further: which subdivision of that county. Candidates are the
+    // county's own cousubs (GEOID prefix), so this is a handful of PIPs; a
+    // rounding miss falls back to the nearest cousub ring of the county.
+    const subs = cousubsByCounty.get(hit.id) ?? [];
+    let sh = subs.find((s) => contains(s.rings, s.bbox, lon, lat));
+    if (!sh && subs.length) {
+      let bestD = Infinity;
+      for (const s of subs) for (const r of s.rings) for (const [x, y] of r) {
+        const d = Math.hypot(x - lon, y - lat);
+        if (d < bestD) { bestD = d; sh = s; }
+      }
+    }
+    if (sh) {
+      const b = sub.get(sh.id) ?? Object.fromEntries(keys.map((k) => [k, 0]));
+      for (const k of keys) b[k] += cell[k] ?? 0;
+      sub.set(sh.id, b);
+    }
   }
-  return { acc, spill, foreign, shoreline };
+  return { acc, sub, spill, foreign, shoreline };
 }
 const countyData = Object.fromEntries(datasets.map((ds) => [ds.id, countyCounts(ds.fine, ds.lanes.map((l) => l.id))]));
 
@@ -431,9 +460,16 @@ function cityRollup(ds) {
     for (const k of keys) a[k] += cell[k] ?? 0;
     acc.set(key, a);
   }
+  // Each city belongs to a county, so a county click can list its cities.
+  for (const a of acc.values()) {
+    const hit = countiesGeo.find((c) => contains(c.rings, c.bbox, a.lng, a.lat)) ?? nearestCounty(a.lng, a.lat);
+    a.county = hit?.id ?? null;
+  }
   return acc;
 }
 const cityData = Object.fromEntries(datasets.map((ds) => [ds.id, cityRollup(ds)]));
+const countyName = Object.fromEntries(countiesGeo.map((c) => [c.id, c.name]));
+const cousubById = Object.fromEntries(cousubGeo.map((s) => [s.id, s]));
 
 // ---------- enrichment history: committed, append-or-replace today's row ----------
 
@@ -490,6 +526,20 @@ for (const ds of datasets) {
       names: (ds.board[`${l.id}_missing`] ?? []).filter(Boolean),
     };
   }
+  // Subdivision hover: the sub-county choropleth's roster, per window.
+  for (const [geoid, a] of countyData[ds.id].sub) {
+    const s = cousubById[geoid];
+    for (const w of WINDOWS) {
+      rosters[`sub|${w}|${ds.id}|${geoid}`] = {
+        total: winCount(a, w),
+        names: [
+          `${s?.name ?? geoid} — ${countyName[geoid.slice(0, 5)] ?? ""}`,
+          `all-time ${fmt(a.n)} · last 30d ${fmt(a.d30)}`,
+          ...ds.countyLines(a),
+        ],
+      };
+    }
+  }
   // City-dot hover: static per city (the dot's SIZE is all-time; its color
   // follows the window), so the roster carries every window count as text.
   for (const [key, a] of cityData[ds.id]) {
@@ -507,6 +557,7 @@ for (const ds of datasets) {
     counties,
     statesCovered: Object.keys(states).length,
     cities: cityData[ds.id].size,
+    subdivisions: countyData[ds.id].sub.size,
     unassigned: ds.states.get("??")?.n ?? 0,
     foreign: countyData[ds.id].foreign,
     shorelineAssigned: countyData[ds.id].shoreline,
@@ -622,7 +673,8 @@ function drillPanels(ds) {
       const paths = counties
         .map((c) => {
           const a = countyData[ds.id].acc.get(c.id) ?? empty;
-          return `<path d="${svgPath(c.rings, { thin: 0.3 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${hoverAttr("cty", "{scope}", ds.id, c.id)} ${binAttrs(a)} tabindex="0"/>`;
+          const cl = a.n > 0 ? ` data-citylist="cl-${ds.id}-${c.id}" role="button" aria-label="${esc(c.name)}, list its cities"` : "";
+          return `<path d="${svgPath(c.rings, { thin: 0.3 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${hoverAttr("cty", "{scope}", ds.id, c.id)} ${binAttrs(a)} tabindex="0"${cl}/>`;
         })
         .join("\n");
       const withData = counties.filter((c) => countyData[ds.id].acc.has(c.id));
@@ -637,16 +689,44 @@ function drillPanels(ds) {
       const stCities = [...cityData[ds.id].entries()].filter(([, a]) => a.st === st).sort((x, y) => y[1].n - x[1].n);
       const uu = vb[2] / 560; // 1 display px in this panel's user units
       const R = [0, 2.2, 3, 3.9, 5, 6.3];
+      // Dots are texture, not targets — county polygons carry hover and click;
+      // the city DATA lives in the per-county lists and the state table below.
       const dots = stCities
-        .map(([key, a]) => {
+        .map(([, a]) => {
           const [cx, cy] = albersUsa(a.lng, a.lat);
-          return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(R[binOf(a.n)] * uu).toFixed(2)}" class="dot bin${binOf(a.n)}" ${hoverAttr("city", ds.id, key.replace(/"/g, ""))} ${binAttrs(a)} tabindex="0"/>`;
+          return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(R[binOf(a.n)] * uu).toFixed(2)}" class="dot bin${binOf(a.n)}" ${binAttrs(a)}/>`;
         })
         .join("\n");
-      const cityRows = stCities
-        .slice(0, 20)
-        .map(([key, a]) => `<tr ${hoverAttr("city", ds.id, key.replace(/"/g, ""))} tabindex="0"><td>${esc(a.city)}</td><td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`)
-        .join("");
+      const cityRow = ([key, a], withCounty) =>
+        `<tr ${hoverAttr("city", ds.id, key.replace(/"/g, ""))} tabindex="0"><td>${esc(a.city)}</td>${withCounty ? `<td>${esc(countyName[a.county] ?? "—")}</td>` : ""}<td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`;
+      const cityRows = stCities.map((e) => cityRow(e, true)).join("");
+      // One pre-rendered panel per county with data; a county click shows it:
+      // the county's SUBDIVISION choropleth (census CCDs — they tile the
+      // county completely) plus the full list of its cities.
+      const cityLists = withData
+        .map((c) => {
+          const cs = stCities.filter(([, a]) => a.county === c.id);
+          const rows = cs.map((e) => cityRow(e, false)).join("");
+          const subs = cousubsByCounty.get(c.id) ?? [];
+          const emptySub = Object.fromEntries(["n", ...ds.lanes.map((l) => l.id), "d1", "d7", "d14", "d30"].map((k) => [k, 0]));
+          const subMap = subs.length
+            ? `<svg viewBox="${projectedBbox(subs.map((s) => s.rings), 3).map((v) => v.toFixed(1)).join(" ")}" class="ctymap submap" role="img" aria-label="${esc(c.name)} subdivisions">
+${subs.map((s) => {
+                const a = countyData[ds.id].sub.get(s.id) ?? emptySub;
+                return `<path d="${svgPath(s.rings, { thin: 0.25 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${hoverAttr("sub", "{scope}", ds.id, s.id)} ${binAttrs(a)} tabindex="0"/>`;
+              }).join("\n")}
+</svg>
+<p class="note">Census county subdivisions — same bins, same window behaviour; hover one for its counts and enrichment.</p>`
+            : "";
+          const cname = `${esc(c.name)}${String(c.name).match(/county|parish|borough|municipality/i) ? "" : " County"}`;
+          return `<div class="citylist" id="cl-${ds.id}-${c.id}" hidden>
+<h4>${cname} — ${fmt(cs.reduce((x, [, a]) => x + a.n, 0))} ${esc(ds.unit)} in ${cs.length} ${cs.length === 1 ? "city" : "cities"}</h4>
+${subMap}
+<table class="tbl half"><thead><tr><th>City</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
+<tbody>${rows || `<tr><td colspan="3" class="empty">No city resolved here — the ${esc(ds.unit)} sit farther than ~30 km from any listed city.</td></tr>`}</tbody></table>
+</div>`;
+        })
+        .join("\n");
       const regions =
         ds.id === "d" && dogRegions.some((g) => g.state === st)
           ? `<h4>Named ingestion regions</h4>
@@ -662,13 +742,14 @@ ${dots}
 </svg>
 <p class="note">County split is geometric (~1 km cells, point-in-polygon) and can differ by a hair from the
 ledger-based state total above. ${withData.length} of ${counties.length} counties have ${esc(ds.unit)}.
-Hover a county for its own enrichment percentages. <strong>Dots are cities</strong> — the level below county:
-size is all-time volume, color follows the window toggle, and hover gives that city's counts and
-enrichment. ${fmt(stCities.length)} cities in this state.</p>
+Hover a county for its enrichment percentages; <strong>click it for its subdivision map and city list</strong>.
+The dots mark the ${fmt(stCities.length)} cities (size = all-time volume, color follows the window) — they are
+markers, not targets; the county click is the way in.</p>
+<div class="citylists">${cityLists}</div>
 ${stateDebtTable(ds, r)}
-<details><summary>Top cities</summary>
-<table class="tbl half"><thead><tr><th>City</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
-<tbody>${cityRows || `<tr><td colspan="3" class="empty">Nothing here.</td></tr>`}</tbody></table>
+<details><summary>All cities in ${esc(stateName[st] ?? st)} (${fmt(stCities.length)})</summary>
+<table class="tbl half"><thead><tr><th>City</th><th>County</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
+<tbody>${cityRows || `<tr><td colspan="4" class="empty">Nothing here.</td></tr>`}</tbody></table>
 </details>
 <details><summary>County table</summary>
 <table class="tbl half"><thead><tr><th>County</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
