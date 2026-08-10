@@ -1,0 +1,512 @@
+{
+  "collectedAt": "2026-08-10T15:07:28.859Z",
+  "windows": [
+    "all",
+    1,
+    7,
+    14,
+    30
+  ],
+  "defaultWindow": 30,
+  "apps": {
+    "doggle": {
+      "currency": "points",
+      "balances": {
+        "accounts": 7,
+        "outstanding": 1660,
+        "excludedAccounts": 35,
+        "distribution": {
+          "buckets": [
+            "1–9",
+            "10–99",
+            "100+"
+          ],
+          "byWindow": {
+            "1": [
+              0,
+              3,
+              4
+            ],
+            "7": [
+              0,
+              3,
+              4
+            ],
+            "14": [
+              0,
+              3,
+              4
+            ],
+            "30": [
+              0,
+              3,
+              4
+            ],
+            "all": [
+              0,
+              3,
+              4
+            ]
+          }
+        }
+      },
+      "flows": {
+        "1": {
+          "earned": 0,
+          "spent": 0,
+          "rows": 0,
+          "earners": 0
+        },
+        "7": {
+          "earned": 15,
+          "spent": 0,
+          "rows": 1,
+          "earners": 1
+        },
+        "14": {
+          "earned": 364,
+          "spent": 0,
+          "rows": 8,
+          "earners": 2
+        },
+        "30": {
+          "earned": 888,
+          "spent": 0,
+          "rows": 27,
+          "earners": 4
+        },
+        "all": {
+          "earned": 1685,
+          "spent": 25,
+          "rows": 73,
+          "earners": 7
+        }
+      },
+      "earnedDistribution": {
+        "buckets": [
+          "1–9",
+          "10–99",
+          "100+"
+        ],
+        "byWindow": {
+          "1": [
+            0,
+            0,
+            0
+          ],
+          "7": [
+            0,
+            1,
+            0
+          ],
+          "14": [
+            0,
+            1,
+            1
+          ],
+          "30": [
+            0,
+            1,
+            3
+          ],
+          "all": [
+            0,
+            3,
+            4
+          ]
+        }
+      },
+      "byReason": {
+        "1": [],
+        "7": [
+          {
+            "category": "Login bonus",
+            "points": 15,
+            "rows": 1,
+            "users": 1
+          }
+        ],
+        "14": [
+          {
+            "category": "Referral welcome",
+            "points": 150,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Referral",
+            "points": 100,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Login bonus",
+            "points": 84,
+            "rows": 5,
+            "users": 2
+          },
+          {
+            "category": "Onboarding",
+            "points": 30,
+            "rows": 1,
+            "users": 1
+          }
+        ],
+        "30": [
+          {
+            "category": "Login bonus",
+            "points": 318,
+            "rows": 17,
+            "users": 4
+          },
+          {
+            "category": "Referral welcome",
+            "points": 300,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Referral",
+            "points": 200,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Onboarding",
+            "points": 50,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 20,
+            "rows": 4,
+            "users": 1
+          }
+        ],
+        "all": [
+          {
+            "category": "Login bonus",
+            "points": 801,
+            "rows": 36,
+            "users": 7
+          },
+          {
+            "category": "Referral welcome",
+            "points": 300,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Onboarding",
+            "points": 290,
+            "rows": 16,
+            "users": 6
+          },
+          {
+            "category": "Referral",
+            "points": 200,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 60,
+            "rows": 12,
+            "users": 2
+          },
+          {
+            "category": "Completed a walk",
+            "points": 24,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Joined a group",
+            "points": 5,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Vibe bonus",
+            "points": 5,
+            "rows": 1,
+            "users": 1
+          }
+        ]
+      },
+      "excludedLedgerRows": 613
+    },
+    "pickleague": {
+      "currency": "pickles",
+      "balances": {
+        "accounts": 7,
+        "outstanding": 8821995,
+        "excludedAccounts": 497,
+        "topShare": 99.8,
+        "distribution": {
+          "buckets": [
+            "1–9",
+            "10–99",
+            "100–999",
+            "1,000–9,999",
+            "10,000–99,999",
+            "100,000–999,999",
+            "1,000,000+"
+          ],
+          "byWindow": {
+            "1": [
+              0,
+              0,
+              1,
+              5,
+              0,
+              0,
+              1
+            ],
+            "7": [
+              0,
+              0,
+              1,
+              5,
+              0,
+              0,
+              1
+            ],
+            "14": [
+              0,
+              0,
+              1,
+              5,
+              0,
+              0,
+              1
+            ],
+            "30": [
+              0,
+              0,
+              1,
+              5,
+              0,
+              0,
+              1
+            ],
+            "all": [
+              0,
+              0,
+              1,
+              5,
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "flows": {
+        "1": {
+          "earnedMeasured": 0,
+          "spent": 0,
+          "grantEventsWithoutAmount": 0
+        },
+        "7": {
+          "earnedMeasured": 100,
+          "spent": 0,
+          "grantEventsWithoutAmount": 1
+        },
+        "14": {
+          "earnedMeasured": 100,
+          "spent": 0,
+          "grantEventsWithoutAmount": 1
+        },
+        "30": {
+          "earnedMeasured": 100,
+          "spent": 0,
+          "grantEventsWithoutAmount": 1
+        },
+        "all": {
+          "earnedMeasured": 500,
+          "spent": 1400,
+          "grantEventsWithoutAmount": 9
+        }
+      },
+      "earnedDistribution": {
+        "buckets": [
+          "1–9",
+          "10+"
+        ],
+        "byWindow": {
+          "1": [
+            0,
+            0
+          ],
+          "7": [
+            0,
+            2
+          ],
+          "14": [
+            0,
+            2
+          ],
+          "30": [
+            0,
+            2
+          ],
+          "all": [
+            0,
+            6
+          ]
+        }
+      },
+      "excludedFlowRows": 197
+    },
+    "caps": {
+      "binders": {
+        "app": "michi",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          0,
+          2,
+          2,
+          0,
+          15
+        ],
+        "users": 19,
+        "uncapped": 0,
+        "atCap": 15
+      },
+      "pagesPerBinder": {
+        "app": "michi",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          17,
+          0,
+          1,
+          0,
+          1
+        ],
+        "users": 19,
+        "uncapped": 0,
+        "atCap": 1
+      },
+      "artUploads": {
+        "app": "michi",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          0,
+          0,
+          2,
+          3,
+          0
+        ],
+        "users": 5,
+        "uncapped": 0,
+        "atCap": 0
+      },
+      "includedPrintsPerMonth": {
+        "app": "michi",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "users": 0,
+        "uncapped": 0,
+        "atCap": 0
+      },
+      "cardScansPerMonth": {
+        "app": "tcgscan",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "users": 0,
+        "uncapped": 0,
+        "atCap": 0
+      },
+      "collections": {
+        "app": "tcgscan",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        "users": 2,
+        "uncapped": 0,
+        "atCap": 2
+      },
+      "cardsPerCollection": {
+        "app": "tcgscan",
+        "bands": [
+          "1–25%",
+          "25–50%",
+          "50–80%",
+          "80–99%",
+          "at / over cap"
+        ],
+        "counts": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "users": 1,
+        "uncapped": 0,
+        "atCap": 0
+      },
+      "_accounts": {
+        "total": 937,
+        "guests": 924,
+        "excluded": 709,
+        "excludedUsageRows": 84
+      }
+    }
+  }
+}

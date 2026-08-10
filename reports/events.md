@@ -1,52 +1,52 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-09T15:07:20.605Z. Own/QA/automated accounts excluded.
+Collected 2026-08-10T15:07:24.009Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-40 sessions · 237 events · 2 accounts + 27 guests · median session 1m
-Excluded: 87 sessions, 180 events (our own, QA and automated accounts).
+51 sessions · 276 events · 2 accounts + 35 guests · median session 54s
+Excluded: 88 sessions, 183 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 5 | 18 | 5 |
-| 7d | 40 | 237 | 29 |
-| 14d | 40 | 237 | 29 |
-| 30d | 40 | 237 | 29 |
+| 24h | 11 | 39 | 9 |
+| 7d | 51 | 276 | 37 |
+| 14d | 51 | 276 | 37 |
+| 30d | 51 | 276 | 37 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **29** Opened the app (100% of top)
-- **20** Did anything past the open (69% of top)
-- **1** Was shown the PRO offer (3.4% of top)
+- **37** Opened the app (100% of top)
+- **28** Did anything past the open (75.7% of top)
+- **1** Was shown the PRO offer (2.7% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **29** Opened the app (100% of top)
-- **20** Viewed a page (69% of top)
-- **1** Tried a demo (3.4% of top)
-- **1** Made something real (3.4% of top)
+- **37** Opened the app (100% of top)
+- **28** Viewed a page (75.7% of top)
+- **1** Tried a demo (2.7% of top)
+- **1** Made something real (2.7% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts?_
 
-- **27** Started as a guest (100% of top)
-- **18** Did anything at all (66.7% of top)
+- **35** Started as a guest (100% of top)
+- **26** Did anything at all (74.3% of top)
 - **0** Created an account (0% of top)
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 167 | 20 |
-| Session started (`session.start`) | 40 | 29 |
-| Added cards (`card.add`) | 16 | 3 |
-| Created a binder (`binder.add`) | 9 | 7 |
+| Viewed a page (`page.view`) | 193 | 28 |
+| Session started (`session.start`) | 51 | 37 |
+| Added cards (`card.add`) | 17 | 3 |
+| Created a binder (`binder.add`) | 10 | 8 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Account created (`account.created`) | 1 | 1 |
 | Tried the print example (`demo.print`) | 1 | 1 |
@@ -58,16 +58,16 @@ Never fired by anyone (unverified): `csv.import`, `trial.start`, `pro.offer_decl
 
 Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
 
-Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
+Registered, not yet fired: `cap.gate_shown`, `cap.gate_dismissed`, `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
 8 sessions · 33 events · 0 accounts + 7 guests · median session 8s
-Excluded: 49 sessions, 262 events (our own, QA and automated accounts).
+Excluded: 74 sessions, 387 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 1 | 1 |
+| 24h | 0 | 0 | 0 |
 | 7d | 8 | 33 | 7 |
 | 14d | 8 | 33 | 7 |
 | 30d | 8 | 33 | 7 |
@@ -78,7 +78,7 @@ _How many users know the PRO trial exists, and how many start one?_
 
 - **7** Opened the app (100% of top)
 - **2** Did anything past the open (28.6% of top)
-- **0** Was shown the PRO offer (0% of top)
+- **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
@@ -106,11 +106,13 @@ _Do anonymous guests ever convert into real accounts?_
 | Searched cards (`card.search`) | 1 | 1 |
 | Opened a card (`card.open`) | 1 | 1 |
 
-Instrumentation: 10/17 events verified firing (all traffic, all time).
+Instrumentation: 12/17 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `collection.create`, `collection.rename`, `collection.delete`, `trial.start`, `pro.offer_shown`, `trial.start_failed`, `scan.failed`
+Never fired by anyone (unverified): `collection.delete`, `trial.start`, `pro.offer_shown`, `trial.start_failed`, `scan.failed`
 
-Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `collection.card_add`, `collection.card_remove`
+Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `collection.create`, `collection.rename`, `collection.card_add`, `collection.card_remove`
+
+Registered, not yet fired: `cap.gate_shown`, `cap.gate_dismissed`
 
 ## Tracking gaps
 
@@ -129,6 +131,22 @@ Free-typed search on tcgscan runs inside the shared tcgscan-browse package, whic
 **Effect:** tcgscan search volume and zero-result rate are both unmeasurable; card.search understates real searching
 
 **Fix:** add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against.
+
+### Cap gates emit nothing, so upgrade intent is invisible `cap_gates_blind` (blocking, specced)
+
+Every tier limit in tier_caps can stop a user — binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection — and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.
+
+**Effect:** understates upgrade intent to exactly zero — every cap hit ever is unrecorded
+
+**Fix:** Emit cap.gate_shown { limit, surface, tier, used, cap } once per gate impression, where `limit` is the tier_caps limit_key verbatim (pagesPerBinder, binders, artUploads, cardScansPerMonth, collections, cardsPerCollection) so it joins to the cap with no lookup table. Emit cap.gate_dismissed { limit, surface } when the user backs out without acting. Where a gate already renders TrialCta, pass the SAME surface string so cap.gate_shown, pro.offer_shown and trial.start share one attribution key and the gate-to-trial funnel is a join rather than a guess. Specced in ../tcgscan/ANALYTICS-CAP-GATES.md.
+
+### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
+
+TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
+
+**Effect:** understates awareness — currently makes it unmeasurable
+
+**Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
 
 ### Session length is a floor, not a duration `session_end` (medium, landed)
 
@@ -169,14 +187,6 @@ Nothing records how a session arrived — no referrer, no UTM capture. Marketing
 **Effect:** no attribution possible
 
 **Fix:** not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change.
-
-### No impression event for the PRO trial offer `trial_awareness` (blocking, fixed)
-
-TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
-
-**Effect:** understates awareness — currently makes it unmeasurable
-
-**Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
 
 ### landing_route was never written — the update was never sent `landing_route_broken` (high, fixed)
 
