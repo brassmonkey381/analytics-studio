@@ -1,73 +1,114 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-11T15:07:26.724Z. Own/QA/automated accounts excluded.
+Collected 2026-08-12T15:07:22.759Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-60 sessions · 362 events · 3 accounts + 41 guests · median session 58s
-Excluded: 99 sessions, 232 events (our own, QA and automated accounts).
+71 sessions · 404 events · 4 accounts + 46 guests · median session 53s
+Excluded: 100 sessions, 234 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 9 | 86 | 8 |
-| 7d | 60 | 362 | 44 |
-| 14d | 60 | 362 | 44 |
-| 30d | 60 | 362 | 44 |
+| 24h | 11 | 42 | 8 |
+| 7d | 71 | 404 | 50 |
+| 14d | 71 | 404 | 50 |
+| 30d | 71 | 404 | 50 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **44** Opened the app (100% of top)
-- **35** Did anything past the open (79.5% of top)
-- **1** Was shown the PRO offer (2.3% of top) — see gap `trial_awareness`
+- **50** Opened the app (100% of top)
+- **40** Did anything past the open (80% of top)
+- **1** Was shown the PRO offer (2% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **44** Opened the app (100% of top)
-- **35** Viewed a page (79.5% of top)
-- **1** Tried a demo (2.3% of top)
-- **1** Made something real (2.3% of top)
+- **50** Opened the app (100% of top)
+- **40** Viewed a page (80% of top)
+- **1** Tried a demo (2% of top)
+- **1** Made something real (2% of top)
 
 ### Guest to account
 
-_Do anonymous guests ever convert into real accounts?_
+_Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **41** Started as a guest (100% of top)
-- **32** Did anything at all (78% of top)
-- **1** Created an account (2.4% of top)
+- **48** Started as a guest (100% of top)
+- **38** Did anything at all (79.2% of top)
+- **4** Submitted the upgrade (8.3% of top) — see gap `upgrade_unconfirmed`
+- **2** Completed it (ground truth) (4.2% of top)
+
+### What guests did past the open
+
+48 people opened as a guest across 66 sessions.
+
+| How far they got | People | of 48 |
+| --- | ---: | ---: |
+| Opened and left | 10 | 20.8% |
+| Looked at a page or two | 8 | 16.7% |
+| Wandered the site | 16 | 33.3% |
+| Built something | 14 | 29.2% |
+
+Of the 14 who built something, **2** created an account.
+
+**11** guests walked to a pricing page; **1** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
+
+| Guest action | People | Times |
+| --- | ---: | ---: |
+| Created a binder (`binder.add`) | 14 | 16 |
+| Added cards (`card.add`) | 4 | 25 |
+| Account created (`account.created`) | 4 | 4 |
+| Searched cards (`card.search`) | 2 | 2 |
+| Saw the PRO offer (`pro.offer_shown`) | 1 | 2 |
+| Tried the print example (`demo.print`) | 1 | 1 |
+
+| Route guests reached | People | Views |
+| --- | ---: | ---: |
+| `/` | 31 | 66 |
+| `/welcome` | 23 | 26 |
+| `/my-binders` | 15 | 35 |
+| `/binder/:id` | 14 | 25 |
+| `/discover` | 11 | 16 |
+| `/michi-method` | 11 | 15 |
+| `/plans` _(pricing)_ | 10 | 14 |
+| `/browse` | 10 | 14 |
+| `/learn` | 9 | 15 |
+| `/contest` | 5 | 11 |
+| `/binder/ex-pitch-black-chase` | 4 | 4 |
+| `/learn/slice-studio` | 3 | 4 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 251 | 35 |
-| Session started (`session.start`) | 60 | 44 |
+| Viewed a page (`page.view`) | 277 | 40 |
+| Session started (`session.start`) | 71 | 50 |
 | Added cards (`card.add`) | 30 | 5 |
-| Created a binder (`binder.add`) | 13 | 11 |
-| Account created (`account.created`) | 3 | 3 |
+| Created a binder (`binder.add`) | 16 | 14 |
+| Account created (`account.created`) | 4 | 4 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Searched cards (`card.search`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
+| Signed in (`auth.login`) | 1 | 1 |
 
 Instrumentation: 12/20 events verified firing (all traffic, all time).
 
 Never fired by anyone (unverified): `csv.import`, `trial.start`, `pro.offer_declined`, `cap.gate_shown`, `cap.gate_dismissed`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
 
-Works, but not yet from a real user: `auth.login`, `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
+Works, but not yet from a real user: `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
 
 Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
 9 sessions · 33 events · 0 accounts + 7 guests · median session 6s
-Excluded: 120 sessions, 892 events (our own, QA and automated accounts).
+Excluded: 146 sessions, 1142 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 0 | 1 |
+| 24h | 0 | 0 | 0 |
 | 7d | 9 | 33 | 7 |
 | 14d | 9 | 33 | 7 |
 | 30d | 9 | 33 | 7 |
@@ -92,11 +133,39 @@ _Do people who open the app ever do the core thing it is for?_
 
 ### Guest to account
 
-_Do anonymous guests ever convert into real accounts?_
+_Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
 - **7** Started as a guest (100% of top)
 - **2** Did anything at all (28.6% of top)
-- **1** Created an account (14.3% of top)
+- **1** Submitted the upgrade (14.3% of top) — see gap `upgrade_unconfirmed`
+- **0** Completed it (ground truth) (0% of top)
+
+### What guests did past the open
+
+7 people opened as a guest across 9 sessions.
+
+| How far they got | People | of 7 |
+| --- | ---: | ---: |
+| Opened and left | 5 | 71.4% |
+| Looked at a page or two | 0 | 0% |
+| Wandered the site | 2 | 28.6% |
+| Built something | 0 | 0% |
+
+| Guest action | People | Times |
+| --- | ---: | ---: |
+| Account created (`account.created`) | 1 | 4 |
+| Searched cards (`card.search`) | 1 | 1 |
+| Opened a card (`card.open`) | 1 | 1 |
+
+| Route guests reached | People | Views |
+| --- | ---: | ---: |
+| `/browse` | 2 | 5 |
+| `/settings` | 2 | 4 |
+| `/scan` | 2 | 3 |
+| `/collection` | 2 | 3 |
+| `/` | 1 | 2 |
+| `/collection/col-msjkro33-0` | 1 | 1 |
+| `/card/:n` | 1 | 1 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
@@ -129,6 +198,22 @@ Free-typed search on tcgscan runs inside the shared tcgscan-browse package, whic
 **Effect:** tcgscan search volume and zero-result rate are both unmeasurable; card.search understates real searching
 
 **Fix:** add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against.
+
+### account.created counts submitted upgrades, not completed ones `upgrade_unconfirmed` (medium, open)
+
+Both apps fire account.created {via:'guest_upgrade'} the moment updateUser() returns, which is before the email is confirmed. An upgrade whose email is never confirmed leaves auth.users.is_anonymous = true forever - the person stays a guest and keeps their guest caps, while the stream says they made an account. On 2026-08-11, 4 users had fired the event and only 2 had confirmed: the event overstates completed conversion by 2x.
+
+**Effect:** conversion is overstated; the guest population is understated by the same people
+
+**Fix:** emit a second event on confirmation (auth.confirmed, or account.created {via:'guest_upgrade_confirmed'}) so submit and complete are separable in the stream. Until then the funnel reads completion from ground truth (auth.users.is_anonymous + analytics_sessions.upgraded_at), which is why that stage is labelled as such.
+
+### A guest who clears storage becomes a new person `guest_device_churn` (medium, specced)
+
+analytics_sessions has no device column, so identity for an anonymous user is only as durable as the Supabase session in storage. A reload keeps the same anon uid (persistence works - 5 michi anon uids span multiple days, one has 10 sessions), but cleared site data, incognito, a second browser or a reinstall mints a fresh uid with no join key to the old one. Guest counts are therefore an upper bound on guest PEOPLE.
+
+**Effect:** guest people are overstated; every rate with guests in the denominator is understated
+
+**Fix:** add analytics_sessions.device_id - a random opaque UUID generated once at first launch, persisted in localStorage/AsyncStorage, never regenerated on sign-out or upgrade. Specced in ../tcgscan/ANALYTICS-GUEST-DEVICE-ID.md.
 
 ### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
 
