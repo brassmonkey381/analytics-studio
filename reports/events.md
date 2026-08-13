@@ -1,66 +1,66 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-12T15:07:22.759Z. Own/QA/automated accounts excluded.
+Collected 2026-08-13T15:07:21.540Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-71 sessions · 404 events · 4 accounts + 46 guests · median session 53s
-Excluded: 100 sessions, 234 events (our own, QA and automated accounts).
+77 sessions · 429 events · 4 accounts + 50 guests · median session 53s
+Excluded: 103 sessions, 245 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 11 | 42 | 8 |
-| 7d | 71 | 404 | 50 |
-| 14d | 71 | 404 | 50 |
-| 30d | 71 | 404 | 50 |
+| 24h | 6 | 25 | 6 |
+| 7d | 66 | 345 | 48 |
+| 14d | 77 | 429 | 54 |
+| 30d | 77 | 429 | 54 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **50** Opened the app (100% of top)
-- **40** Did anything past the open (80% of top)
-- **1** Was shown the PRO offer (2% of top) — see gap `trial_awareness`
+- **54** Opened the app (100% of top)
+- **44** Did anything past the open (81.5% of top)
+- **1** Was shown the PRO offer (1.9% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **50** Opened the app (100% of top)
-- **40** Viewed a page (80% of top)
-- **1** Tried a demo (2% of top)
-- **1** Made something real (2% of top)
+- **54** Opened the app (100% of top)
+- **44** Viewed a page (81.5% of top)
+- **1** Tried a demo (1.9% of top)
+- **1** Made something real (1.9% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **48** Started as a guest (100% of top)
-- **38** Did anything at all (79.2% of top)
-- **4** Submitted the upgrade (8.3% of top) — see gap `upgrade_unconfirmed`
-- **2** Completed it (ground truth) (4.2% of top)
+- **52** Started as a guest (100% of top)
+- **42** Did anything at all (80.8% of top)
+- **4** Submitted the upgrade (7.7% of top) — see gap `upgrade_unconfirmed`
+- **2** Completed it (ground truth) (3.8% of top)
 
 ### What guests did past the open
 
-48 people opened as a guest across 66 sessions.
+52 people opened as a guest across 71 sessions.
 
-| How far they got | People | of 48 |
+| How far they got | People | of 52 |
 | --- | ---: | ---: |
-| Opened and left | 10 | 20.8% |
-| Looked at a page or two | 8 | 16.7% |
-| Wandered the site | 16 | 33.3% |
-| Built something | 14 | 29.2% |
+| Opened and left | 10 | 19.2% |
+| Looked at a page or two | 10 | 19.2% |
+| Wandered the site | 17 | 32.7% |
+| Built something | 15 | 28.8% |
 
-Of the 14 who built something, **2** created an account.
+Of the 15 who built something, **2** created an account.
 
 **11** guests walked to a pricing page; **1** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 14 | 16 |
-| Added cards (`card.add`) | 4 | 25 |
+| Created a binder (`binder.add`) | 15 | 17 |
+| Added cards (`card.add`) | 5 | 26 |
 | Account created (`account.created`) | 4 | 4 |
 | Searched cards (`card.search`) | 2 | 2 |
 | Saw the PRO offer (`pro.offer_shown`) | 1 | 2 |
@@ -68,25 +68,25 @@ Of the 14 who built something, **2** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 31 | 66 |
-| `/welcome` | 23 | 26 |
-| `/my-binders` | 15 | 35 |
-| `/binder/:id` | 14 | 25 |
+| `/` | 33 | 69 |
+| `/welcome` | 27 | 31 |
+| `/my-binders` | 16 | 37 |
+| `/binder/:id` | 15 | 29 |
 | `/discover` | 11 | 16 |
 | `/michi-method` | 11 | 15 |
 | `/plans` _(pricing)_ | 10 | 14 |
 | `/browse` | 10 | 14 |
-| `/learn` | 9 | 15 |
+| `/learn` | 9 | 16 |
 | `/contest` | 5 | 11 |
 | `/binder/ex-pitch-black-chase` | 4 | 4 |
 | `/learn/slice-studio` | 3 | 4 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 277 | 40 |
-| Session started (`session.start`) | 71 | 50 |
-| Added cards (`card.add`) | 30 | 5 |
-| Created a binder (`binder.add`) | 16 | 14 |
+| Viewed a page (`page.view`) | 294 | 44 |
+| Session started (`session.start`) | 77 | 54 |
+| Added cards (`card.add`) | 31 | 6 |
+| Created a binder (`binder.add`) | 17 | 15 |
 | Account created (`account.created`) | 4 | 4 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Searched cards (`card.search`) | 2 | 2 |
@@ -104,12 +104,12 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 9 sessions · 33 events · 0 accounts + 7 guests · median session 6s
-Excluded: 146 sessions, 1142 events (our own, QA and automated accounts).
+Excluded: 160 sessions, 1379 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 0 | 0 | 0 |
-| 7d | 9 | 33 | 7 |
+| 7d | 7 | 31 | 5 |
 | 14d | 9 | 33 | 7 |
 | 30d | 9 | 33 | 7 |
 
