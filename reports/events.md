@@ -1,81 +1,82 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-13T15:07:21.540Z. Own/QA/automated accounts excluded.
+Collected 2026-08-14T15:07:25.688Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-77 sessions · 429 events · 4 accounts + 50 guests · median session 53s
-Excluded: 103 sessions, 245 events (our own, QA and automated accounts).
+82 sessions · 461 events · 4 accounts + 55 guests · median session 53s
+Excluded: 112 sessions, 270 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 6 | 25 | 6 |
-| 7d | 66 | 345 | 48 |
-| 14d | 77 | 429 | 54 |
-| 30d | 77 | 429 | 54 |
+| 24h | 5 | 32 | 5 |
+| 7d | 55 | 304 | 42 |
+| 14d | 82 | 461 | 59 |
+| 30d | 82 | 461 | 59 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **54** Opened the app (100% of top)
-- **44** Did anything past the open (81.5% of top)
-- **1** Was shown the PRO offer (1.9% of top) — see gap `trial_awareness`
+- **59** Opened the app (100% of top)
+- **49** Did anything past the open (83.1% of top)
+- **1** Was shown the PRO offer (1.7% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **54** Opened the app (100% of top)
-- **44** Viewed a page (81.5% of top)
-- **1** Tried a demo (1.9% of top)
-- **1** Made something real (1.9% of top)
+- **59** Opened the app (100% of top)
+- **49** Viewed a page (83.1% of top)
+- **1** Tried a demo (1.7% of top)
+- **1** Made something real (1.7% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **52** Started as a guest (100% of top)
-- **42** Did anything at all (80.8% of top)
-- **4** Submitted the upgrade (7.7% of top) — see gap `upgrade_unconfirmed`
-- **2** Completed it (ground truth) (3.8% of top)
+- **57** Started as a guest (100% of top)
+- **47** Did anything at all (82.5% of top)
+- **4** Submitted the upgrade (7% of top) — see gap `upgrade_unconfirmed`
+- **2** Completed it (ground truth) (3.5% of top)
 
 ### What guests did past the open
 
-52 people opened as a guest across 71 sessions.
+57 people opened as a guest across 76 sessions.
 
-| How far they got | People | of 52 |
+| How far they got | People | of 57 |
 | --- | ---: | ---: |
-| Opened and left | 10 | 19.2% |
-| Looked at a page or two | 10 | 19.2% |
-| Wandered the site | 17 | 32.7% |
-| Built something | 15 | 28.8% |
+| Opened and left | 10 | 17.5% |
+| Looked at a page or two | 13 | 22.8% |
+| Wandered the site | 17 | 29.8% |
+| Built something | 17 | 29.8% |
 
-Of the 15 who built something, **2** created an account.
+Of the 17 who built something, **2** created an account.
 
 **11** guests walked to a pricing page; **1** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 15 | 17 |
-| Added cards (`card.add`) | 5 | 26 |
+| Created a binder (`binder.add`) | 17 | 19 |
+| Added cards (`card.add`) | 7 | 32 |
 | Account created (`account.created`) | 4 | 4 |
 | Searched cards (`card.search`) | 2 | 2 |
+| Hit a plan limit (`cap.gate_shown`) | 2 | 2 |
 | Saw the PRO offer (`pro.offer_shown`) | 1 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 33 | 69 |
-| `/welcome` | 27 | 31 |
-| `/my-binders` | 16 | 37 |
-| `/binder/:id` | 15 | 29 |
+| `/` | 36 | 74 |
+| `/welcome` | 31 | 35 |
+| `/my-binders` | 18 | 39 |
+| `/binder/:id` | 17 | 31 |
+| `/michi-method` | 12 | 16 |
+| `/browse` | 12 | 16 |
 | `/discover` | 11 | 16 |
-| `/michi-method` | 11 | 15 |
 | `/plans` _(pricing)_ | 10 | 14 |
-| `/browse` | 10 | 14 |
 | `/learn` | 9 | 16 |
 | `/contest` | 5 | 11 |
 | `/binder/ex-pitch-black-chase` | 4 | 4 |
@@ -83,19 +84,20 @@ Of the 15 who built something, **2** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 294 | 44 |
-| Session started (`session.start`) | 77 | 54 |
-| Added cards (`card.add`) | 31 | 6 |
-| Created a binder (`binder.add`) | 17 | 15 |
+| Viewed a page (`page.view`) | 311 | 49 |
+| Session started (`session.start`) | 82 | 59 |
+| Added cards (`card.add`) | 37 | 8 |
+| Created a binder (`binder.add`) | 19 | 17 |
 | Account created (`account.created`) | 4 | 4 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Searched cards (`card.search`) | 2 | 2 |
+| Hit a plan limit (`cap.gate_shown`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Signed in (`auth.login`) | 1 | 1 |
 
-Instrumentation: 12/20 events verified firing (all traffic, all time).
+Instrumentation: 13/20 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `csv.import`, `trial.start`, `pro.offer_declined`, `cap.gate_shown`, `cap.gate_dismissed`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
+Never fired by anyone (unverified): `csv.import`, `trial.start`, `pro.offer_declined`, `cap.gate_dismissed`, `trial.start_failed`, `csv.import_failed`, `search.no_results`
 
 Works, but not yet from a real user: `demo.tricolor_search`, `demo.csv_import`, `demo.curation`
 
@@ -103,22 +105,22 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 
 ## TCGScan
 
-9 sessions · 33 events · 0 accounts + 7 guests · median session 6s
-Excluded: 160 sessions, 1379 events (our own, QA and automated accounts).
+10 sessions · 38 events · 0 accounts + 8 guests · median session 8s
+Excluded: 168 sessions, 1529 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 0 | 0 | 0 |
-| 7d | 7 | 31 | 5 |
-| 14d | 9 | 33 | 7 |
-| 30d | 9 | 33 | 7 |
+| 24h | 1 | 5 | 1 |
+| 7d | 4 | 26 | 3 |
+| 14d | 10 | 38 | 8 |
+| 30d | 10 | 38 | 8 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **7** Opened the app (100% of top)
-- **2** Did anything past the open (28.6% of top)
+- **8** Opened the app (100% of top)
+- **3** Did anything past the open (37.5% of top)
 - **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -126,8 +128,8 @@ _How many users know the PRO trial exists, and how many start one?_
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **7** Opened the app (100% of top)
-- **2** Viewed a page (28.6% of top)
+- **8** Opened the app (100% of top)
+- **3** Viewed a page (37.5% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -135,20 +137,20 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **7** Started as a guest (100% of top)
-- **2** Did anything at all (28.6% of top)
-- **1** Submitted the upgrade (14.3% of top) — see gap `upgrade_unconfirmed`
+- **8** Started as a guest (100% of top)
+- **3** Did anything at all (37.5% of top)
+- **1** Submitted the upgrade (12.5% of top) — see gap `upgrade_unconfirmed`
 - **0** Completed it (ground truth) (0% of top)
 
 ### What guests did past the open
 
-7 people opened as a guest across 9 sessions.
+8 people opened as a guest across 10 sessions.
 
-| How far they got | People | of 7 |
+| How far they got | People | of 8 |
 | --- | ---: | ---: |
-| Opened and left | 5 | 71.4% |
+| Opened and left | 5 | 62.5% |
 | Looked at a page or two | 0 | 0% |
-| Wandered the site | 2 | 28.6% |
+| Wandered the site | 3 | 37.5% |
 | Built something | 0 | 0% |
 
 | Guest action | People | Times |
@@ -159,18 +161,18 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/browse` | 2 | 5 |
-| `/settings` | 2 | 4 |
-| `/scan` | 2 | 3 |
-| `/collection` | 2 | 3 |
+| `/browse` | 3 | 6 |
+| `/settings` | 3 | 5 |
+| `/scan` | 3 | 4 |
+| `/collection` | 3 | 4 |
 | `/` | 1 | 2 |
 | `/collection/col-msjkro33-0` | 1 | 1 |
 | `/card/:n` | 1 | 1 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 19 | 2 |
-| Session started (`session.start`) | 8 | 7 |
+| Viewed a page (`page.view`) | 23 | 3 |
+| Session started (`session.start`) | 9 | 8 |
 | Account created (`account.created`) | 4 | 1 |
 | Searched cards (`card.search`) | 1 | 1 |
 | Opened a card (`card.open`) | 1 | 1 |
@@ -180,6 +182,82 @@ Instrumentation: 14/19 events verified firing (all traffic, all time).
 Never fired by anyone (unverified): `trial.start`, `cap.gate_shown`, `cap.gate_dismissed`, `trial.start_failed`, `scan.failed`
 
 Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `collection.create`, `collection.rename`, `collection.delete`, `collection.card_add`, `collection.card_remove`, `pro.offer_shown`
+
+## Doggle
+
+2 sessions · 5 events · 0 accounts + 3 guests · median session 0s
+Excluded: 0 sessions, 0 events (our own, QA and automated accounts).
+
+| Window | Sessions | Events | People |
+| --- | ---: | ---: | ---: |
+| 24h | 2 | 5 | 3 |
+| 7d | 2 | 5 | 3 |
+| 14d | 2 | 5 | 3 |
+| 30d | 2 | 5 | 3 |
+
+### Visitor to account
+
+_Do signed-out visitors (QR scans included) become Doggle accounts?_
+
+- **3** Arrived signed out (100% of top)
+- **3** Viewed any screen (100% of top)
+- **0** Created an account (0% of top) — see gap `doggle_oauth_signup_untracked`
+- **0** Signed in on that visit (0% of top)
+
+### Print & QR campaigns
+
+| Campaign | People | Sessions | Converted on a visit | Signups carrying the code |
+| --- | ---: | ---: | ---: | ---: |
+| `test_doggle_qr` (qr · print) | 1 | 1 | 0 | 0 |
+
+### What guests did past the open
+
+3 people opened as a guest across 2 sessions.
+
+| How far they got | People | of 3 |
+| --- | ---: | ---: |
+| Opened and left | 0 | 0% |
+| Looked at a page or two | 3 | 100% |
+| Wandered the site | 0 | 0% |
+| Built something | 0 | 0% |
+
+| Route guests reached | People | Views |
+| --- | ---: | ---: |
+| `Landing` | 3 | 3 |
+
+| Event | Fired | People |
+| --- | ---: | ---: |
+| Viewed a page (`page.view`) | 3 | 3 |
+| Session started (`session.start`) | 2 | 2 |
+
+Instrumentation: 2/4 events verified firing (all traffic, all time).
+
+Never fired by anyone (unverified): `auth.login`, `account.created`
+
+## Pickleague
+
+0 sessions · 0 events · 0 accounts + 0 guests · median session —
+Excluded: 0 sessions, 0 events (our own, QA and automated accounts).
+
+| Window | Sessions | Events | People |
+| --- | ---: | ---: | ---: |
+| 24h | 0 | 0 | 0 |
+| 7d | 0 | 0 | 0 |
+| 14d | 0 | 0 | 0 |
+| 30d | 0 | 0 | 0 |
+
+### Visitor to account
+
+_Do signed-out visitors (QR scans included) become Pickleague accounts?_
+
+- **0** Arrived signed out
+- **0** Viewed any screen
+- **0** Created an account
+- **0** Signed in on that visit
+
+Instrumentation: 0/4 events verified firing (all traffic, all time).
+
+Never fired by anyone (unverified): `session.start`, `page.view`, `auth.login`, `account.created`
 
 ## Tracking gaps
 
@@ -206,6 +284,22 @@ Both apps fire account.created {via:'guest_upgrade'} the moment updateUser() ret
 **Effect:** conversion is overstated; the guest population is understated by the same people
 
 **Fix:** emit a second event on confirmation (auth.confirmed, or account.created {via:'guest_upgrade_confirmed'}) so submit and complete are separable in the stream. Until then the funnel reads completion from ground truth (auth.users.is_anonymous + analytics_sessions.upgraded_at), which is why that stage is labelled as such.
+
+### Signed-out visits cannot be excluded `anon_visitor_exclusions` (medium, open)
+
+Exclusions key on auth identity: email/uid always, IPs only for anonymous AUTH users. Doggle and pickleague visitor sessions have no auth user at all, so our own signed-out browsing counts as real traffic in their behavioural numbers. Signed-in dev traffic is still excluded normally, and michi/tcgscan are unaffected (their guests are anon auth users, IP exclusion applies).
+
+**Effect:** doggle/pickleague visitor counts are overstated by however much we browse our own public pages signed out.
+
+**Fix:** Either add a device_id exclusion list once dev devices are known, or browse the public pages signed in. Until then read visitor spikes next to the deploy/QA calendar.
+
+### Doggle OAuth signups fire no account.created `doggle_oauth_signup_untracked` (low, open)
+
+account.created fires from the email/phone signUp wrappers in doggle's data/auth.ts. An OAuth (Google/Apple) signup never passes through them, so it emits only auth.login plus the session claim (upgraded_at). The doggle signup funnel stage carries this caveat.
+
+**Effect:** doggle signups are undercounted by the OAuth share; the 'signed in on that visit' stage is the honest ceiling.
+
+**Fix:** Fire account.created from the OAuth return path when the auth user was created moments before, mirroring michi's handling of the same ambiguity.
 
 ### A guest who clears storage becomes a new person `guest_device_churn` (medium, specced)
 
@@ -246,6 +340,14 @@ No event marks a failed scan, a rejected CSV, a search with no results, or a che
 **Effect:** hides the reason for every drop-off
 
 **Fix:** track('<feature>.failed', { reason }) on the error branches that already exist.
+
+### Campaign codes ride on landing_route and account.created `qr_campaign_capture` (medium, landed)
+
+The emitters keep an allowlisted ?code/utm_* query on the first page.view (stored in landing_route) and merge the code into account.created props; all four apps landed the change 2026-08-13. Verified end-to-end against real rows in dev the same day: a fresh-context scan wrote landing_route='/welcome?code=...' plus device_id on michi, and 'Landing?code=...' plus the heartbeat/claim RPCs on doggle (the claim exercised as an authenticated JWT and reverted). Two bugs were found and fixed on the way: the fresh-visitor buffer wipe and the RLS select-gating no-op. What remains unproven is only production: the app code must deploy, and a printed code must be scanned for real.
+
+**Effect:** until a real scan lands, a zero in the campaigns panel means 'not verified end-to-end', not 'the card show produced nothing'.
+
+**Fix:** Deploy the app changes (migrations are already applied), then scan a printed code against production and confirm the session row carries code=<campaign>; then mark fixed.
 
 ### A handful of events carry no props `props_thin` (low, landed)
 
