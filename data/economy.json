@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-08-14T15:07:30.964Z",
+  "collectedAt": "2026-08-15T15:07:36.596Z",
   "windows": [
     "all",
     1,
@@ -52,10 +52,10 @@
       },
       "flows": {
         "1": {
-          "earned": 20,
+          "earned": 0,
           "spent": 0,
-          "rows": 2,
-          "earners": 1
+          "rows": 0,
+          "earners": 0
         },
         "7": {
           "earned": 20,
@@ -91,7 +91,7 @@
         "byWindow": {
           "1": [
             0,
-            1,
+            0,
             0
           ],
           "7": [
@@ -117,20 +117,7 @@
         }
       },
       "byReason": {
-        "1": [
-          {
-            "category": "Login bonus",
-            "points": 15,
-            "rows": 1,
-            "users": 1
-          },
-          {
-            "category": "Checked in at a dog place",
-            "points": 5,
-            "rows": 1,
-            "users": 1
-          }
-        ],
+        "1": [],
         "7": [
           {
             "category": "Login bonus",
@@ -260,13 +247,13 @@
           }
         ]
       },
-      "excludedLedgerRows": 621
+      "excludedLedgerRows": 626
     },
     "pickleague": {
       "currency": "pickles",
       "balances": {
         "accounts": 7,
-        "outstanding": 8821995,
+        "outstanding": 8822045,
         "excludedAccounts": 497,
         "topShare": 99.8,
         "distribution": {
@@ -330,27 +317,27 @@
       },
       "flows": {
         "1": {
-          "earnedMeasured": 0,
+          "earnedMeasured": 50,
           "spent": 0,
           "grantEventsWithoutAmount": 0
         },
         "7": {
-          "earnedMeasured": 100,
+          "earnedMeasured": 150,
           "spent": 0,
           "grantEventsWithoutAmount": 1
         },
         "14": {
-          "earnedMeasured": 100,
+          "earnedMeasured": 150,
           "spent": 0,
           "grantEventsWithoutAmount": 1
         },
         "30": {
-          "earnedMeasured": 100,
+          "earnedMeasured": 150,
           "spent": 0,
           "grantEventsWithoutAmount": 1
         },
         "all": {
-          "earnedMeasured": 500,
+          "earnedMeasured": 550,
           "spent": 1400,
           "grantEventsWithoutAmount": 9
         }
@@ -363,7 +350,7 @@
         "byWindow": {
           "1": [
             0,
-            0
+            1
           ],
           "7": [
             0,
@@ -383,7 +370,7 @@
           ]
         }
       },
-      "excludedFlowRows": 199
+      "excludedFlowRows": 201
     },
     "caps": {
       "binders": {
@@ -397,12 +384,12 @@
         ],
         "counts": [
           0,
-          3,
+          4,
           2,
           0,
           23
         ],
-        "users": 28,
+        "users": 29,
         "uncapped": 0,
         "atCap": 23
       },
@@ -416,13 +403,13 @@
           "at / over cap"
         ],
         "counts": [
-          25,
+          26,
           0,
           1,
           0,
           2
         ],
-        "users": 28,
+        "users": 29,
         "uncapped": 0,
         "atCap": 2
       },
@@ -437,12 +424,12 @@
         ],
         "counts": [
           0,
-          0,
+          1,
           4,
           3,
           0
         ],
-        "users": 7,
+        "users": 8,
         "uncapped": 0,
         "atCap": 0
       },
@@ -527,9 +514,9 @@
         "atCap": 0
       },
       "_accounts": {
-        "total": 974,
-        "guests": 959,
-        "excluded": 723,
+        "total": 979,
+        "guests": 963,
+        "excluded": 724,
         "excludedUsageRows": 82
       }
     }

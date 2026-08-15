@@ -1,82 +1,83 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-14T15:07:25.688Z. Own/QA/automated accounts excluded.
+Collected 2026-08-15T15:07:24.801Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-82 sessions · 461 events · 4 accounts + 55 guests · median session 53s
-Excluded: 112 sessions, 270 events (our own, QA and automated accounts).
+86 sessions · 494 events · 5 accounts + 58 guests · median session 53s
+Excluded: 113 sessions, 274 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 5 | 32 | 5 |
-| 7d | 55 | 304 | 42 |
-| 14d | 82 | 461 | 59 |
-| 30d | 82 | 461 | 59 |
+| 24h | 4 | 33 | 4 |
+| 7d | 51 | 275 | 39 |
+| 14d | 86 | 494 | 63 |
+| 30d | 86 | 494 | 63 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **59** Opened the app (100% of top)
-- **49** Did anything past the open (83.1% of top)
-- **1** Was shown the PRO offer (1.7% of top) — see gap `trial_awareness`
+- **63** Opened the app (100% of top)
+- **53** Did anything past the open (84.1% of top)
+- **1** Was shown the PRO offer (1.6% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **59** Opened the app (100% of top)
-- **49** Viewed a page (83.1% of top)
-- **1** Tried a demo (1.7% of top)
-- **1** Made something real (1.7% of top)
+- **63** Opened the app (100% of top)
+- **53** Viewed a page (84.1% of top)
+- **1** Tried a demo (1.6% of top)
+- **1** Made something real (1.6% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **57** Started as a guest (100% of top)
-- **47** Did anything at all (82.5% of top)
-- **4** Submitted the upgrade (7% of top) — see gap `upgrade_unconfirmed`
-- **2** Completed it (ground truth) (3.5% of top)
+- **61** Started as a guest (100% of top)
+- **51** Did anything at all (83.6% of top)
+- **5** Submitted the upgrade (8.2% of top) — see gap `upgrade_unconfirmed`
+- **3** Completed it (ground truth) (4.9% of top)
 
 ### What guests did past the open
 
-57 people opened as a guest across 76 sessions.
+61 people opened as a guest across 80 sessions.
 
-| How far they got | People | of 57 |
+| How far they got | People | of 61 |
 | --- | ---: | ---: |
-| Opened and left | 10 | 17.5% |
-| Looked at a page or two | 13 | 22.8% |
-| Wandered the site | 17 | 29.8% |
-| Built something | 17 | 29.8% |
+| Opened and left | 10 | 16.4% |
+| Looked at a page or two | 15 | 24.6% |
+| Wandered the site | 18 | 29.5% |
+| Built something | 18 | 29.5% |
 
-Of the 17 who built something, **2** created an account.
+Of the 18 who built something, **3** created an account.
 
-**11** guests walked to a pricing page; **1** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
+**12** guests walked to a pricing page; **1** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 17 | 19 |
-| Added cards (`card.add`) | 7 | 32 |
-| Account created (`account.created`) | 4 | 4 |
+| Created a binder (`binder.add`) | 18 | 20 |
+| Added cards (`card.add`) | 8 | 39 |
+| Account created (`account.created`) | 5 | 5 |
 | Searched cards (`card.search`) | 2 | 2 |
 | Hit a plan limit (`cap.gate_shown`) | 2 | 2 |
 | Saw the PRO offer (`pro.offer_shown`) | 1 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
+| Signed in (`auth.login`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 36 | 74 |
-| `/welcome` | 31 | 35 |
-| `/my-binders` | 18 | 39 |
-| `/binder/:id` | 17 | 31 |
-| `/michi-method` | 12 | 16 |
+| `/` | 39 | 79 |
+| `/welcome` | 35 | 39 |
+| `/my-binders` | 19 | 41 |
+| `/binder/:id` | 18 | 35 |
+| `/michi-method` | 13 | 17 |
 | `/browse` | 12 | 16 |
 | `/discover` | 11 | 16 |
-| `/plans` _(pricing)_ | 10 | 14 |
+| `/plans` _(pricing)_ | 11 | 16 |
 | `/learn` | 9 | 16 |
 | `/contest` | 5 | 11 |
 | `/binder/ex-pitch-black-chase` | 4 | 4 |
@@ -84,16 +85,16 @@ Of the 17 who built something, **2** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 311 | 49 |
-| Session started (`session.start`) | 82 | 59 |
-| Added cards (`card.add`) | 37 | 8 |
-| Created a binder (`binder.add`) | 19 | 17 |
-| Account created (`account.created`) | 4 | 4 |
+| Viewed a page (`page.view`) | 330 | 53 |
+| Session started (`session.start`) | 86 | 63 |
+| Added cards (`card.add`) | 44 | 9 |
+| Created a binder (`binder.add`) | 20 | 18 |
+| Account created (`account.created`) | 5 | 5 |
 | Saw the PRO offer (`pro.offer_shown`) | 2 | 1 |
 | Searched cards (`card.search`) | 2 | 2 |
+| Signed in (`auth.login`) | 2 | 2 |
 | Hit a plan limit (`cap.gate_shown`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
-| Signed in (`auth.login`) | 1 | 1 |
 
 Instrumentation: 13/20 events verified firing (all traffic, all time).
 
@@ -106,12 +107,12 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 10 sessions · 38 events · 0 accounts + 8 guests · median session 8s
-Excluded: 168 sessions, 1529 events (our own, QA and automated accounts).
+Excluded: 168 sessions, 1514 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 5 | 1 |
-| 7d | 4 | 26 | 3 |
+| 24h | 0 | 0 | 0 |
+| 7d | 3 | 6 | 2 |
 | 14d | 10 | 38 | 8 |
 | 30d | 10 | 38 | 8 |
 
@@ -185,22 +186,22 @@ Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `
 
 ## Doggle
 
-2 sessions · 5 events · 0 accounts + 3 guests · median session 0s
-Excluded: 0 sessions, 0 events (our own, QA and automated accounts).
+3 sessions · 7 events · 0 accounts + 4 guests · median session 0s
+Excluded: 5 sessions, 16 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 2 | 5 | 3 |
-| 7d | 2 | 5 | 3 |
-| 14d | 2 | 5 | 3 |
-| 30d | 2 | 5 | 3 |
+| 24h | 1 | 2 | 1 |
+| 7d | 3 | 7 | 4 |
+| 14d | 3 | 7 | 4 |
+| 30d | 3 | 7 | 4 |
 
 ### Visitor to account
 
 _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
-- **3** Arrived signed out (100% of top)
-- **3** Viewed any screen (100% of top)
+- **4** Arrived signed out (100% of top)
+- **4** Viewed any screen (100% of top)
 - **0** Created an account (0% of top) — see gap `doggle_oauth_signup_untracked`
 - **0** Signed in on that visit (0% of top)
 
@@ -212,23 +213,24 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 ### What guests did past the open
 
-3 people opened as a guest across 2 sessions.
+4 people opened as a guest across 3 sessions.
 
-| How far they got | People | of 3 |
+| How far they got | People | of 4 |
 | --- | ---: | ---: |
 | Opened and left | 0 | 0% |
-| Looked at a page or two | 3 | 100% |
+| Looked at a page or two | 4 | 100% |
 | Wandered the site | 0 | 0% |
 | Built something | 0 | 0% |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
 | `Landing` | 3 | 3 |
+| `Login` | 1 | 1 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 3 | 3 |
-| Session started (`session.start`) | 2 | 2 |
+| Viewed a page (`page.view`) | 4 | 4 |
+| Session started (`session.start`) | 3 | 3 |
 
 Instrumentation: 2/4 events verified firing (all traffic, all time).
 
@@ -236,28 +238,52 @@ Never fired by anyone (unverified): `auth.login`, `account.created`
 
 ## Pickleague
 
-0 sessions · 0 events · 0 accounts + 0 guests · median session —
-Excluded: 0 sessions, 0 events (our own, QA and automated accounts).
+1 sessions · 5 events · 1 account + 1 guest · median session 0s
+Excluded: 3 sessions, 66 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 0 | 0 | 0 |
-| 7d | 0 | 0 | 0 |
-| 14d | 0 | 0 | 0 |
-| 30d | 0 | 0 | 0 |
+| 24h | 1 | 5 | 2 |
+| 7d | 1 | 5 | 2 |
+| 14d | 1 | 5 | 2 |
+| 30d | 1 | 5 | 2 |
 
 ### Visitor to account
 
 _Do signed-out visitors (QR scans included) become Pickleague accounts?_
 
-- **0** Arrived signed out
-- **0** Viewed any screen
-- **0** Created an account
-- **0** Signed in on that visit
+- **2** Arrived signed out (100% of top)
+- **2** Viewed any screen (100% of top)
+- **0** Created an account (0% of top)
+- **0** Signed in on that visit (0% of top)
 
-Instrumentation: 0/4 events verified firing (all traffic, all time).
+### What guests did past the open
 
-Never fired by anyone (unverified): `session.start`, `page.view`, `auth.login`, `account.created`
+2 people opened as a guest across 0 sessions.
+
+| How far they got | People | of 2 |
+| --- | ---: | ---: |
+| Opened and left | 0 | 0% |
+| Looked at a page or two | 2 | 100% |
+| Wandered the site | 0 | 0% |
+| Built something | 0 | 0% |
+
+| Route guests reached | People | Views |
+| --- | ---: | ---: |
+| `Home` | 1 | 1 |
+| `Settings` | 1 | 1 |
+| `Login` | 1 | 1 |
+
+| Event | Fired | People |
+| --- | ---: | ---: |
+| Viewed a page (`page.view`) | 3 | 2 |
+| Session started (`session.start`) | 2 | 2 |
+
+Instrumentation: 3/4 events verified firing (all traffic, all time).
+
+Never fired by anyone (unverified): `account.created`
+
+Works, but not yet from a real user: `auth.login`
 
 ## Tracking gaps
 
