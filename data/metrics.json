@@ -244,23 +244,29 @@
           "new_guest": 0
         },
         "2026-08-15": {
+          "dau": 1,
+          "new_users": 1,
+          "dau_guest": 0,
+          "new_guest": 0
+        },
+        "2026-08-16": {
           "dau": 0,
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
         }
       },
-      "totalUsers": 8,
+      "totalUsers": 9,
       "guestUsers": 0,
-      "excludedUsers": 35,
+      "excludedUsers": 36,
       "coverage": null,
-      "lastCollected": "2026-08-15T15:07:06.807Z",
+      "lastCollected": "2026-08-16T15:07:05.177Z",
       "lastSource": "sql",
       "retention": {
-        "total": 8,
-        "active_7": 1,
-        "active_14": 2,
-        "active_30": 3
+        "total": 9,
+        "active_7": 2,
+        "active_14": 3,
+        "active_30": 4
       },
       "lastError": {
         "at": "2026-08-10T16:45:16.600Z",
@@ -515,13 +521,19 @@
           "new_users": 0,
           "dau_guest": 1,
           "new_guest": 0
+        },
+        "2026-08-16": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 5,
       "guestUsers": 5,
-      "excludedUsers": 497,
+      "excludedUsers": 513,
       "coverage": null,
-      "lastCollected": "2026-08-15T15:07:10.403Z",
+      "lastCollected": "2026-08-16T15:07:08.968Z",
       "lastSource": "sql",
       "retention": {
         "total": 4,
@@ -776,20 +788,26 @@
         "2026-08-15": {
           "dau": 1,
           "new_users": 1,
+          "dau_guest": 3,
+          "new_guest": 3
+        },
+        "2026-08-16": {
+          "dau": 0,
+          "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
         }
       },
       "totalUsers": 6,
-      "guestUsers": 24,
+      "guestUsers": 27,
       "excludedUsers": 28,
       "coverage": {
         "registered": 8,
-        "guest_sessions": 247,
-        "excluded": 724,
+        "guest_sessions": 254,
+        "excluded": 734,
         "no_activity": 2
       },
-      "lastCollected": "2026-08-15T15:07:14.942Z",
+      "lastCollected": "2026-08-16T15:07:16.314Z",
       "lastSource": "sql",
       "retention": {
         "total": 6,
@@ -1045,19 +1063,25 @@
           "dau": 0,
           "new_users": 0,
           "dau_guest": 0,
+          "new_guest": 1
+        },
+        "2026-08-16": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
           "new_guest": 0
         }
       },
       "totalUsers": 0,
       "guestUsers": 2,
-      "excludedUsers": 35,
+      "excludedUsers": 40,
       "coverage": {
         "registered": 8,
-        "guest_sessions": 247,
-        "excluded": 724,
+        "guest_sessions": 254,
+        "excluded": 734,
         "no_activity": 2
       },
-      "lastCollected": "2026-08-15T15:07:20.185Z",
+      "lastCollected": "2026-08-16T15:07:20.705Z",
       "lastSource": "sql",
       "retention": {
         "total": 0,

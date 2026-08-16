@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-08-15T15:07:36.596Z",
+  "collectedAt": "2026-08-16T15:07:36.965Z",
   "windows": [
     "all",
     1,
@@ -12,9 +12,9 @@
     "doggle": {
       "currency": "points",
       "balances": {
-        "accounts": 7,
-        "outstanding": 1680,
-        "excludedAccounts": 35,
+        "accounts": 8,
+        "outstanding": 1695,
+        "excludedAccounts": 36,
         "distribution": {
           "buckets": [
             "1–9",
@@ -24,27 +24,27 @@
           "byWindow": {
             "1": [
               0,
-              3,
+              4,
               4
             ],
             "7": [
               0,
-              3,
+              4,
               4
             ],
             "14": [
               0,
-              3,
+              4,
               4
             ],
             "30": [
               0,
-              3,
+              4,
               4
             ],
             "all": [
               0,
-              3,
+              4,
               4
             ]
           }
@@ -52,34 +52,34 @@
       },
       "flows": {
         "1": {
-          "earned": 0,
+          "earned": 15,
           "spent": 0,
-          "rows": 0,
-          "earners": 0
-        },
-        "7": {
-          "earned": 20,
-          "spent": 0,
-          "rows": 2,
+          "rows": 1,
           "earners": 1
         },
-        "14": {
-          "earned": 369,
+        "7": {
+          "earned": 35,
           "spent": 0,
-          "rows": 9,
+          "rows": 3,
           "earners": 2
         },
-        "30": {
-          "earned": 863,
+        "14": {
+          "earned": 74,
           "spent": 0,
-          "rows": 26,
+          "rows": 5,
           "earners": 3
         },
+        "30": {
+          "earned": 878,
+          "spent": 0,
+          "rows": 27,
+          "earners": 4
+        },
         "all": {
-          "earned": 1705,
+          "earned": 1720,
           "spent": 25,
-          "rows": 75,
-          "earners": 7
+          "rows": 76,
+          "earners": 8
         }
       },
       "earnedDistribution": {
@@ -91,39 +91,46 @@
         "byWindow": {
           "1": [
             0,
-            0,
+            1,
             0
           ],
           "7": [
             0,
-            1,
+            2,
             0
           ],
           "14": [
             0,
-            1,
-            1
+            3,
+            0
           ],
           "30": [
             0,
-            0,
+            1,
             3
           ],
           "all": [
             0,
-            3,
+            4,
             4
           ]
         }
       },
       "byReason": {
-        "1": [],
-        "7": [
+        "1": [
           {
             "category": "Login bonus",
             "points": 15,
             "rows": 1,
             "users": 1
+          }
+        ],
+        "7": [
+          {
+            "category": "Login bonus",
+            "points": 30,
+            "rows": 2,
+            "users": 2
           },
           {
             "category": "Checked in at a dog place",
@@ -134,28 +141,10 @@
         ],
         "14": [
           {
-            "category": "Referral welcome",
-            "points": 150,
-            "rows": 1,
-            "users": 1
-          },
-          {
-            "category": "Referral",
-            "points": 100,
-            "rows": 1,
-            "users": 1
-          },
-          {
             "category": "Login bonus",
-            "points": 84,
-            "rows": 5,
-            "users": 2
-          },
-          {
-            "category": "Onboarding",
-            "points": 30,
-            "rows": 1,
-            "users": 1
+            "points": 69,
+            "rows": 4,
+            "users": 3
           },
           {
             "category": "Checked in at a dog place",
@@ -166,16 +155,16 @@
         ],
         "30": [
           {
+            "category": "Login bonus",
+            "points": 303,
+            "rows": 16,
+            "users": 4
+          },
+          {
             "category": "Referral welcome",
             "points": 300,
             "rows": 2,
             "users": 2
-          },
-          {
-            "category": "Login bonus",
-            "points": 288,
-            "rows": 15,
-            "users": 3
           },
           {
             "category": "Referral",
@@ -199,9 +188,9 @@
         "all": [
           {
             "category": "Login bonus",
-            "points": 816,
-            "rows": 37,
-            "users": 7
+            "points": 831,
+            "rows": 38,
+            "users": 8
           },
           {
             "category": "Referral welcome",
@@ -247,14 +236,14 @@
           }
         ]
       },
-      "excludedLedgerRows": 626
+      "excludedLedgerRows": 632
     },
     "pickleague": {
       "currency": "pickles",
       "balances": {
         "accounts": 7,
         "outstanding": 8822045,
-        "excludedAccounts": 497,
+        "excludedAccounts": 513,
         "topShare": 99.8,
         "distribution": {
           "buckets": [
@@ -317,14 +306,14 @@
       },
       "flows": {
         "1": {
-          "earnedMeasured": 50,
+          "earnedMeasured": 0,
           "spent": 0,
           "grantEventsWithoutAmount": 0
         },
         "7": {
-          "earnedMeasured": 150,
+          "earnedMeasured": 50,
           "spent": 0,
-          "grantEventsWithoutAmount": 1
+          "grantEventsWithoutAmount": 0
         },
         "14": {
           "earnedMeasured": 150,
@@ -350,11 +339,11 @@
         "byWindow": {
           "1": [
             0,
-            1
+            0
           ],
           "7": [
             0,
-            2
+            1
           ],
           "14": [
             0,
@@ -370,7 +359,7 @@
           ]
         }
       },
-      "excludedFlowRows": 201
+      "excludedFlowRows": 235
     },
     "caps": {
       "binders": {
@@ -387,11 +376,11 @@
           4,
           2,
           0,
-          23
+          26
         ],
-        "users": 29,
+        "users": 32,
         "uncapped": 0,
-        "atCap": 23
+        "atCap": 26
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -403,13 +392,13 @@
           "at / over cap"
         ],
         "counts": [
-          26,
+          29,
           0,
           1,
           0,
           2
         ],
-        "users": 29,
+        "users": 32,
         "uncapped": 0,
         "atCap": 2
       },
@@ -423,13 +412,13 @@
           "at / over cap"
         ],
         "counts": [
-          0,
           1,
+          0,
           4,
-          3,
+          4,
           0
         ],
-        "users": 8,
+        "users": 9,
         "uncapped": 0,
         "atCap": 0
       },
@@ -514,10 +503,10 @@
         "atCap": 0
       },
       "_accounts": {
-        "total": 979,
-        "guests": 963,
-        "excluded": 724,
-        "excludedUsageRows": 82
+        "total": 997,
+        "guests": 980,
+        "excluded": 734,
+        "excludedUsageRows": 87
       }
     }
   }
