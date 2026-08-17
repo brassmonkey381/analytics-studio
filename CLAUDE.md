@@ -126,14 +126,34 @@ cannot.
 
 1. A script that writes `data/<id>.json` (counts) plus, if it has identity, a
    gitignored `data/<id>-roster.json`, and renders `reports/<id>.html`.
-2. Register it in `config/reports.json` for a title, a blurb and a refresh.
-   **It is already reachable without this** — the dashboard lists any
-   `reports/*.html` as unregistered. Registering adds chrome, not visibility.
+2. Register it in `config/reports.json` for a title, a blurb, a `group`, an
+   `apps` list and a refresh. **It is already reachable without this** — the
+   dashboard lists any `reports/*.html` as unregistered. Registering adds chrome,
+   not visibility.
+   - `group` places it in a sidebar section (`groups` at the top of that file
+     orders them); `apps` lists the `config/apps.json` ids it can speak about.
+   - **Mark every per-app section with `data-app-scope="<app id>"`.** That single
+     attribute is the whole contract with the dashboard's app filter — with it a
+     report filters by app for free; without it the filter can only dim the
+     report in the sidebar, and the page says so rather than appearing to work.
+     A report with its own app tab bar keeps it (so the file still works opened
+     off disk) but the dashboard hides it and drives the panels itself.
 3. Add it to `run-daily.ps1` (non-fatal, after the DAU lane) and to the
    auto-commit file list if its data file is committed.
 4. All four staples above.
 
 ## Reporting numbers
+
+- **A day is a Pacific day.** `REPORT_TZ` in `scripts/lib/studio.mjs` (owner decision,
+  2026-08-16) is the single definition, and everything that buckets by day goes through
+  `isoDate` / `dayOf` in JS and `{{DAY:col}}` / `{{TODAY}}` — or `dayExpr()` / `todayExpr()`
+  — in SQL. Never `::date`, never `current_date`, never `String(ts).slice(0, 10)`: each of
+  those silently answers in UTC, which puts a Pacific evening on tomorrow. Two things are
+  deliberately NOT rezoned: rolling windows (24h/7d/30d are durations, and a duration has no
+  timezone) and product-defined periods like the monthly credit cycle, which resets on a
+  boundary the app itself enforces. `metrics.json` records `dayTz` and the seam
+  (`dayTzSince` / `dayTzPrevious`) because days that aged out of the window keep the old
+  boundary and cannot be recomputed.
 
 - **State the caveat next to the number, not in an appendix.** A funnel stage
   whose definition is known to be wrong carries an inline marker to its gap.

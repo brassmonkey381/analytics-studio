@@ -185,6 +185,31 @@ Open follow-ups, registered as gaps in `config/events.json`: `qr_campaign_captur
 unproven until a real scan), `anon_visitor_exclusions` (signed-out dev browsing on
 doggle/pickleague cannot be excluded), `doggle_oauth_signup_untracked`.
 
+### The report (2026-08-15, studio)
+
+The answer now has a page of its own: **`scripts/campaigns.mjs` -> `reports/campaigns.html`**,
+registered as **Print & QR campaigns** in the dashboard, plus a committed
+`reports/campaigns.md` so marketing-studio can read the result without the gitignored HTML.
+It is all-time by default (a card is read for months; a 30-day ceiling would hide the campaign
+it is named after) with the standard 24h/7d/14d/30d slots, and follows the person forward:
+arrived -> went further -> became a member -> came back.
+
+Two things in it exist specifically because of this document's own warnings:
+
+- **The printed registry is joined.** `assets/qr/campaigns.yaml` is read directly, so all 11
+  printed codes are listed whether or not anyone scanned them. A registered code with no
+  arrival reads "printed, not yet scanned"; a code in the data that is on no paper is flagged
+  unregistered. Campaign identity is (app, code) — `wom` and `cardshow` are printed for more
+  than one app and would otherwise merge.
+- **Capture readiness is a separate table**, over ALL traffic including ours, all time. It
+  distinguishes three states that a single zero would blur: a code has been recorded here; a
+  landing route has, but never one carrying a code (so a zero cannot be told apart from a build
+  that has not shipped); or no landing route ever. As of 2026-08-15 michi and doggle are in the
+  first state (our own verification scans), tcgscan and pickleague in the second.
+
+Current reading: **0 arrivals, 0 members, 11 codes printed, none scanned by anyone but us.**
+That is the honest state — the app code still has to deploy, and someone has to scan paper.
+
 ### Verification (2026-08-13, real rows — two live findings)
 
 End-to-end simulated scans (fresh headless browser context = a true first-time visitor)

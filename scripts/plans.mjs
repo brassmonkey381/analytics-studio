@@ -226,7 +226,7 @@ function panel(f, w) {
 </g>`;
   }).join("\n");
 
-  return `<figure class="panel">
+  return `<figure class="panel" data-app-scope="${f.id}">
   <figcaption>${esc(f.name)}</figcaption>
   <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(f.name)} accounts by plan tier">
     ${bars}
@@ -248,7 +248,7 @@ const blocks = WINDOWS.map((w) => {
       const v = out.families[f.id].windows[w].tiers[t];
       const srcs =
         Object.entries(v.bySource).map(([s, b]) => `${SOURCE_LABEL[s] ?? s} ${b.real + b.excluded}`).join(", ") || "—";
-      return `<tr ${hoverAttr(f.id, "{scope}", t)}><td>${esc(f.name)}</td><td>${TIER_LABEL[t]}</td><td class="num">${v.real}</td><td class="num muted">${v.excluded}</td><td class="muted">${esc(srcs)}</td></tr>`;
+      return `<tr data-app-scope="${f.id}" ${hoverAttr(f.id, "{scope}", t)}><td>${esc(f.name)}</td><td>${TIER_LABEL[t]}</td><td class="num">${v.real}</td><td class="num muted">${v.excluded}</td><td class="muted">${esc(srcs)}</td></tr>`;
     }),
   ).join("");
 

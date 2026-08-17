@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { ROOT, loadEnv, readConfig, runSql, sqlStr, isoDate, exclusionCte } from "./lib/studio.mjs";
+import { ROOT, loadEnv, readConfig, runSql, sqlStr, isoDate, dayOf, dayExpr, todayExpr, exclusionCte, REPORT_TZ } from "./lib/studio.mjs";
 
 const CONFIG = readConfig("apps.json");
 const DATA_FILE = join(ROOT, "data", "metrics.json");
@@ -42,7 +42,7 @@ function buildMetricsSql(app) {
       const where = [`${s.tsCol} >= now() - interval '${WINDOW_DAYS} days'`, s.filter]
         .filter(Boolean)
         .join(" and ");
-      return `select ${s.userCol} as uid, (${s.tsCol})::date as d from public.${s.table} where ${where}`;
+      return `select ${s.userCol} as uid, ${dayExpr(s.tsCol)} as d from public.${s.table} where ${where}`;
     })
     .join("\nunion all\n");
 
@@ -60,7 +60,7 @@ function buildMetricsSql(app) {
   return `
 with ${exclusionCte(app.id)},
 days as (
-  select generate_series((current_date - ${WINDOW_DAYS - 1})::date, current_date, interval '1 day')::date as d
+  select generate_series((${todayExpr()} - ${WINDOW_DAYS - 1})::date, ${todayExpr()}, interval '1 day')::date as d
 ),
 activity as (
 ${activityUnion}
@@ -77,7 +77,7 @@ dau as (
   from cls group by d
 ),
 newu as (
-  select (n.${app.newUsers.tsCol})::date as d,
+  select ${dayExpr(`n.${app.newUsers.tsCol}`)} as d,
     count(*) filter (where not coalesce(u.is_anonymous, false)) as c,
     count(*) filter (where coalesce(u.is_anonymous, false)) as g
   from ${newUsersFrom} n
@@ -191,7 +191,7 @@ function buildActiveByDaySql(app) {
 activity as (
 ${activityUnion(app, true)}
 )
-select distinct a.ts::date::text as day, coalesce(u.email, '(no email)') as email
+select distinct ${dayExpr("a.ts")}::text as day, coalesce(u.email, '(no email)') as email
 from activity a join auth.users u on u.id = a.uid
 where not coalesce(u.is_anonymous, false)
   and a.uid not in (select id from excluded_users)
@@ -216,6 +216,10 @@ function buildTotalsSql(app) {
 function sqlFromFile(name, appId) {
   return readFileSync(join(ROOT, "config", "sql", name), "utf8")
     .replaceAll("{{WINDOW}}", String(WINDOW_DAYS))
+    // {{DAY:expr}} buckets a timestamp into a reporting-zone day; {{TODAY}} is today in that
+    // zone. Both exist so a hand-written .sql file cannot quietly go back to UTC days.
+    .replaceAll(/\{\{DAY:([^}]+)\}\}/g, (_, col) => dayExpr(col))
+    .replaceAll("{{TODAY}}", todayExpr())
     .replaceAll("{{EXCLUDED_CTE}}", exclusionCte(appId))
     .replaceAll("{{ACTIVITY_UNION}}", activityUnion(CONFIG.apps.find((a) => a.id === appId), true))
     .replaceAll(
@@ -309,7 +313,7 @@ async function collectViaRest(app, key) {
     const filters = [`${s.tsCol}=gte.${start}T00:00:00Z`, s.restFilter].filter(Boolean).join("&");
     const rows = await restFetchAll(app, key, s.table, `${s.userCol},${s.tsCol}`, filters);
     for (const r of rows) {
-      const day = String(r[s.tsCol]).slice(0, 10);
+      const day = dayOf(r[s.tsCol]);
       if (!(day in days)) continue;
       if (!activeByDay.has(day)) activeByDay.set(day, new Set());
       activeByDay.get(day).add(r[s.userCol]);
@@ -323,7 +327,7 @@ async function collectViaRest(app, key) {
     const filters = [`${nu.tsCol}=gte.${start}T00:00:00Z`, nu.restFilter].filter(Boolean).join("&");
     const rows = await restFetchAll(app, key, nu.table, nu.tsCol, filters);
     for (const r of rows) {
-      const day = String(r[nu.tsCol]).slice(0, 10);
+      const day = dayOf(r[nu.tsCol]);
       if (day in days) days[day].new_users++;
     }
     const head = await fetch(
@@ -383,6 +387,23 @@ for (const app of CONFIG.apps) {
 }
 
 mkdirSync(dirname(DATA_FILE), { recursive: true });
+// Which timezone the day KEYS in this file mean, and from when. Every run rewrites the
+// trailing window, so those days are re-cut on the current zone; days that have already
+// aged out keep whatever boundary was in force when they were written and CANNOT be
+// recomputed — the source rows are outside the window now. Recording the seam is the only
+// honest option: a reader comparing a day either side of it is comparing two definitions.
+if (store.dayTz && store.dayTz !== REPORT_TZ) {
+  store.dayTzPrevious = { tz: store.dayTz, until: windowDates()[0] };
+  console.warn(
+    `NOTE: reporting timezone changed ${store.dayTz} -> ${REPORT_TZ}. Days from ${windowDates()[0]} are re-cut on the new zone; ` +
+      `earlier days keep the old boundary and cannot be rebuilt (their source rows are outside the ${WINDOW_DAYS}-day window).`,
+  );
+}
+store.dayTz = REPORT_TZ;
+store.dayTzSince ??= windowDates()[0];
+// Everything this studio wrote before 2026-08-16 was cut on UTC days. Recorded once, from
+// the fact that the field was absent, so the seam does not depend on anyone remembering.
+if (!store.dayTzPrevious && store.dayTzSince) store.dayTzPrevious = { tz: "UTC", until: store.dayTzSince };
 writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
 console.log(`\nWrote ${DATA_FILE}`);
 if (Object.keys(accountsStore.apps).length) {

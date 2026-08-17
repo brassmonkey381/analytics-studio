@@ -15,6 +15,18 @@ reports/latest.md
 data/journeys.json
 reports/events.html
 
+# Daily digest email. Its whole point is naming the accounts behind each number, so the
+# rendered email is PII by construction and never enters git. The recipient address and the
+# Resend key live in .env for the same reason - an email address is identity.
+state/
+
+# Print/QR campaign lane. campaigns-roster.json names who arrived on each printed
+# code; campaigns.html renders them. data/campaigns.json stays counts-only and IS
+# committed, and so is reports/campaigns.md — marketing-studio reads that file, and
+# a campaign code is a value we print on our own paper, not identity.
+data/campaigns-roster.json
+reports/campaigns.html
+
 # Plans lane. plans-roster.json names the account at each tier; plans.html
 # renders it. data/plans.json stays counts-only and IS committed.
 data/plans-roster.json
@@ -29,6 +41,12 @@ reports/shares.html
 # and IS committed.
 data/usage-roster.json
 reports/usage.html
+
+# Economy lane. economy-roster.json names the account behind every balance,
+# every flow bucket and every cap meter; economy.html renders them.
+# data/economy.json stays counts-only and IS committed.
+data/economy-roster.json
+reports/economy.html
 
 # Geo lane (includes the enrichment-debt board). geo-roster.json carries
 # place/venue names for the hover layer; geo.html renders them. data/geo.json

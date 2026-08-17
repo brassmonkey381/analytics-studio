@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { ROOT, readConfig } from "./lib/studio.mjs";
+import { ROOT, readConfig, dayOf } from "./lib/studio.mjs";
 import { hoverAttr, hoverLayer } from "./lib/hover.mjs";
 import { STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
 
@@ -52,7 +52,7 @@ function secs(v) {
   return `${(v / 3600).toFixed(1)}h`;
 }
 const clock = (ts) => new Date(ts).toLocaleTimeString("en-GB", { hour12: false });
-const day = (ts) => new Date(ts).toISOString().slice(0, 10);
+const day = (ts) => dayOf(ts);
 const winLabel = windowLabel;
 
 // Sort by how much attention a gap still needs: unfinished work first, then by
@@ -93,6 +93,17 @@ function tiles(w, appId) {
     ["Sessions", t.sessions, `${t.bouncedSessions} ended without a second event`, "sessions"],
     ["Events", t.events, t.firstEventAt ? `since ${day(t.firstEventAt)}` : "none recorded", "events"],
     ["People", t.users, `${t.realUsers} account${t.realUsers === 1 ? "" : "s"}, ${t.guestUsers} guest${t.guestUsers === 1 ? "" : "s"}`, "users"],
+    // "Ever a guest" is the population every conversion question is really
+    // about, and it is the one number here that does not move when somebody
+    // signs up. Converted is a subset of it, not of the accounts tile.
+    [
+      "Ever a guest",
+      t.everGuestUsers ?? 0,
+      (t.convertedUsers ?? 0) > 0
+        ? `${t.convertedUsers} converted — their guest history stays joined`
+        : "none have converted yet",
+      "everGuestUsers",
+    ],
     ["Median session", secs(t.medianSessionSecs), "a floor — see session_end gap", null],
   ];
   return `<div class="tiles">${cells
@@ -176,6 +187,110 @@ function routeTable(w, appId) {
     )
     .join("");
   return `<h4>Pages</h4><table class="tbl"><thead><tr><th>Route</th><th class="num">Views</th><th class="num">People</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// "Did anything past the open" is four different people wearing one number.
+// The ladder splits them, and the only rung that is an activation is the last.
+// Ordered worst-to-best so the eye travels toward the outcome that matters.
+const PRICING = new Set(
+  Object.entries(CFG.routes ?? {})
+    .filter(([, v]) => v.intent === "pricing")
+    .map(([r]) => r),
+);
+
+const DEPTH_RUNGS = [
+  ["openOnly", "Opened and left", "fired session.start and nothing else"],
+  ["looked", "Looked at a page or two", "read, but never went three deep"],
+  ["explored", "Wandered the site", "3+ pages, built nothing"],
+  ["made", "Built something", "created a binder, added cards, ran a demo"],
+];
+
+function guestPanel(w, appId) {
+  const g = w.guests;
+  if (!g || !g.people) return '<p class="empty">No guest traffic in this window.</p>';
+
+  const top = g.people;
+  const rungs = DEPTH_RUNGS.map(([k, label, sub]) => {
+    const v = g.depth[k] ?? 0;
+    const pc = top ? Math.round((v / top) * 1000) / 10 : 0;
+    return `<tr class="hoverable${k === "made" ? " made" : ""}"${hov(appId, "tiles", `guestDepth_${k}`)}>
+<td>${esc(label)}<div class="muted">${esc(sub)}</div></td>
+<td class="num">${v}</td>
+<td class="bar"><span style="width:${Math.max(pc, v ? 1.5 : 0)}%"></span></td>
+<td class="num">${pctS(pc)}</td></tr>`;
+  }).join("");
+
+  // Conversion is quoted against the makers, not against all guests. A guest who
+  // opened and left was never a candidate, and dividing by them makes a real
+  // signal look like noise.
+  const made = g.depth.made ?? 0;
+  const convLine = made
+    ? `<p class="note">Of the <strong>${made}</strong> who built something, <strong>${g.convertedOfMade}</strong> went on to create an account${
+        g.converted > g.convertedOfMade ? ` (${g.converted} converted in total)` : ""
+      }. Building is the step that predicts staying — nobody has ever converted without it.</p>`
+    : "";
+
+  // Demand vs answer. Only worth printing when somebody actually asked.
+  const p = g.pricing ?? { asked: 0, offered: 0 };
+  const pricingLine = p.asked
+    ? `<p class="note${p.offered < p.asked ? " warn" : ""}"><strong class="hoverable"${hov(appId, "tiles", "guestAskedPricing")}>${p.asked}</strong> guest${
+        p.asked === 1 ? "" : "s"
+      } walked to a pricing page; <strong class="hoverable"${hov(appId, "tiles", "guestOffered")}>${p.offered}</strong> ${
+        p.offered === 1 ? "was" : "were"
+      } shown the PRO offer.${
+        p.offered < p.asked
+          ? " <code>TrialCta</code> renders only when <code>isSignedIn &amp;&amp; !is_anonymous</code>, so a guest on that page sees no offer by design — the impression event is correctly silent, and the demand above it is real."
+          : ""
+      }</p>`
+    : "";
+
+  const actions = g.actions.filter((a) => a.name !== "session.start");
+  const actionRows = actions.length
+    ? actions
+        .map(
+          (a) =>
+            `<tr class="hoverable"${hov(appId, "events", `guestAction_${a.name}`)}><td>${esc(a.label)}<div class="mono">${esc(a.name)}</div></td><td class="num">${a.people}</td><td class="num">${a.fires}</td></tr>`,
+        )
+        .join("")
+    : `<tr><td colspan="3" class="empty">Guests fired nothing but session.start.</td></tr>`;
+
+  const routeRows = g.routes
+    .map(
+      (r) =>
+        `<tr class="hoverable"${hov(appId, "routes", `guestRoute_${r.route}`)}><td><code>${esc(r.route)}</code>${
+          PRICING.has(r.route) ? ' <span class="pill pricing">pricing</span>' : ""
+        }</td><td class="num">${r.people}</td><td class="num">${r.fires}</td></tr>`,
+    )
+    .join("");
+
+  return `<table class="tbl depth"><thead><tr><th>How far they got</th><th class="num">People</th><th></th><th class="num">of ${top}</th></tr></thead><tbody>${rungs}</tbody></table>
+${convLine}${pricingLine}
+<div class="cols">
+<div><h4>What guests did</h4><table class="tbl"><thead><tr><th>Action</th><th class="num">People</th><th class="num">Times</th></tr></thead><tbody>${actionRows}</tbody></table></div>
+<div><h4>Where guests went</h4><table class="tbl"><thead><tr><th>Route</th><th class="num">People</th><th class="num">Views</th></tr></thead><tbody>${routeRows}</tbody></table></div>
+</div>`;
+}
+
+// Print/QR campaign attribution: arrivals by code, and what became of them. The three columns
+// answer marketing's actual question ("did the card show produce members?") in order: people who
+// arrived carrying the code, people who gained an account mid-visit, people whose account.created
+// itself carried the code. Empty is a real state and says WHICH zero it is — capture landed
+// 2026-08-13 but is unproven until the first genuine scan (gap qr_campaign_capture).
+function campaignPanel(w, appId) {
+  const rows = w.campaigns ?? [];
+  const deeper = `<p class="note">This is the summary. The <a href="../reports/campaigns.html">Print &amp; QR campaigns</a> lane carries the same codes joined to marketing-studio's registry of what actually exists on paper, all-time by default, with the capture-readiness table that says which kind of zero a zero is.</p>`;
+  if (!rows.length) {
+    return `<p class="empty">No campaign-tagged arrivals in this window. Capture is landed but a printed code has yet to be scanned — a zero here is "not verified end-to-end", not "campaigns produce nothing" <a href="#gap-qr_campaign_capture"><code>qr_campaign_capture</code></a>.</p>${deeper}`;
+  }
+  const body = rows
+    .map(
+      (r) => `<tr class="hoverable"${hov(appId, "tiles", `campaign_${r.code}`)}>
+<td><code>${esc(r.code)}</code>${r.source || r.medium ? `<div class="muted">${esc([r.source, r.medium].filter(Boolean).join(" · "))}</div>` : ""}</td>
+<td class="num">${r.people}</td><td class="num">${r.sessions}</td><td class="num">${r.converted}</td><td class="num">${r.signups}</td></tr>`,
+    )
+    .join("");
+  return `<table class="tbl"><thead><tr><th>Campaign</th><th class="num">People</th><th class="num">Sessions</th><th class="num">Converted on a visit</th><th class="num">Signups carrying the code</th></tr></thead><tbody>${body}</tbody></table>
+<p class="note">"Converted" = a session that arrived with the code and gained an account mid-visit. "Signups carrying the code" = <code>account.created</code> whose props carry it (survives a reload, so it can attribute a signup whose landing fell outside this window). Neither is a scan counter — a scan that never loaded the page is invisible by design (static codes, no redirect service).</p>${deeper}`;
 }
 
 function coveragePanel(a) {
@@ -287,13 +402,17 @@ ${excl}${orphan}
 <h3>Questions</h3>
 ${w.funnels.length ? w.funnels.map((f) => `<h4>${esc(f.title)}</h4>${funnel(f, id)}`).join("\n") : '<p class="empty">No funnels configured.</p>'}
 ${truthPanel(w)}
+<h3>Print &amp; QR campaigns</h3>
+${campaignPanel(w, id)}
+<h3>What guests did past the open</h3>
+${guestPanel(w, id)}
 <h3>What people did</h3>
 ${eventTable(w, id)}
 ${routeTable(w, id)}
 </div>`;
   }).join("\n");
 
-  return `<section>
+  return `<section data-app-scope="${esc(id)}">
 <h2>${esc(a.name)}</h2>
 ${plats ? `<p class="note">Platforms over ${winLabel(DEFAULT_WINDOW)}: ${plats}.</p>` : ""}
 ${blocks}
@@ -395,6 +514,13 @@ code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-
 .ftab .fn { width: 8%; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; padding-left: 10px; }
 .ftab .fp { width: 10%; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
 .ftab .fd { width: 8%; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; }
+/* Guest depth ladder. One scale across all four rungs and across every window,
+   so a bar shrinking always means fewer people and never a rescale. */
+.tbl.depth td.bar { width: 34%; padding-right: 12px; }
+.tbl.depth td.bar span { display: block; height: 13px; background: var(--bar); border-radius: 3px; }
+.tbl.depth tr.made td.bar span { background: var(--ms); }
+.tbl.depth tr.made td:first-child { font-weight: 600; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 22px; align-items: start; }
 a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; text-align: center;
   background: var(--warn); color: var(--page); border-radius: 50%; font-size: 11px; font-weight: 700;
   text-decoration: none; vertical-align: 1px; }
@@ -494,6 +620,48 @@ const md = [
         lines.push(`- **${s.users}** ${s.label}${s.ofTop != null ? ` (${s.ofTop}% of top)` : ""}${caveat}`);
       }
       lines.push(``);
+    }
+    if (w.campaigns?.length) {
+      lines.push(`### Print & QR campaigns`, ``, `| Campaign | People | Sessions | Converted on a visit | Signups carrying the code |`, `| --- | ---: | ---: | ---: | ---: |`);
+      for (const r of w.campaigns) {
+        lines.push(`| \`${r.code}\`${r.source ? ` (${[r.source, r.medium].filter(Boolean).join(" · ")})` : ""} | ${r.people} | ${r.sessions} | ${r.converted} | ${r.signups} |`);
+      }
+      lines.push(``);
+    }
+    const g = w.guests;
+    if (g?.people) {
+      lines.push(`### What guests did past the open`, ``, `${g.people} people opened as a guest across ${g.sessions} session${g.sessions === 1 ? "" : "s"}.`, ``);
+      lines.push(`| How far they got | People | of ${g.people} |`, `| --- | ---: | ---: |`);
+      for (const [k, label] of DEPTH_RUNGS.map(([k, label]) => [k, label])) {
+        const v = g.depth[k] ?? 0;
+        lines.push(`| ${label} | ${v} | ${g.people ? Math.round((v / g.people) * 1000) / 10 : 0}% |`);
+      }
+      lines.push(``);
+      if (g.depth.made) {
+        lines.push(`Of the ${g.depth.made} who built something, **${g.convertedOfMade}** created an account.`, ``);
+      }
+      if (g.pricing?.asked) {
+        lines.push(
+          `**${g.pricing.asked}** guests walked to a pricing page; **${g.pricing.offered}** saw the PRO offer.` +
+            (g.pricing.offered < g.pricing.asked
+              ? ` \`TrialCta\` renders only when \`isSignedIn && !is_anonymous\`, so a guest there sees no offer by design.`
+              : ``),
+          ``,
+        );
+      }
+      const acts = g.actions.filter((a) => a.name !== "session.start");
+      if (acts.length) {
+        lines.push(`| Guest action | People | Times |`, `| --- | ---: | ---: |`);
+        for (const a of acts) lines.push(`| ${a.label} (\`${a.name}\`) | ${a.people} | ${a.fires} |`);
+        lines.push(``);
+      }
+      if (g.routes.length) {
+        lines.push(`| Route guests reached | People | Views |`, `| --- | ---: | ---: |`);
+        for (const r of g.routes.slice(0, 12)) {
+          lines.push(`| \`${r.route}\`${PRICING.has(r.route) ? " _(pricing)_" : ""} | ${r.people} | ${r.fires} |`);
+        }
+        lines.push(``);
+      }
     }
     if (w.eventsByName.length) {
       lines.push(`| Event | Fired | People |`, `| --- | ---: | ---: |`);

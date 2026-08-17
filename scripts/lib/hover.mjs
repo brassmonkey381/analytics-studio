@@ -65,7 +65,13 @@ export function hoverAttr(...parts) {
  */
 export function hoverLayer(rosters, { maxNames = HOVER_MAX_NAMES, unit = "person/people" } = {}) {
   const [one, many] = unit.split("/");
-  const blob = JSON.stringify(rosters ?? {}).replace(/</g, "\\u003c");
+  // A roster with no one in it is never rendered — `show()` below bails on
+  // falsy `total` — so shipping it is pure page weight. On the geo lane that is
+  // 6,052 of 24,597 entries, because the sport x window x county matrix is
+  // mostly empty. Dropped here rather than at each call site: the rule is a
+  // property of the tooltip, not of any one report.
+  const live = Object.fromEntries(Object.entries(rosters ?? {}).filter(([, r]) => r && r.total));
+  const blob = JSON.stringify(live).replace(/</g, "\\u003c");
   return `<div id="hovtip" role="tooltip"></div>
 <style>
 [data-hov] { cursor: help; }
@@ -85,8 +91,16 @@ tr[data-hov]:hover, [data-hov].hovrow:hover { background: color-mix(in srgb, var
 (function () {
   var MAX = ${maxNames};
   var ONE = ${JSON.stringify(one)}, MANY = ${JSON.stringify(many)};
-  var data = {};
-  try { data = JSON.parse(document.getElementById('hov-data').textContent || '{}'); } catch (e) {}
+  // Parsed on the FIRST hover, not at load. The blob is a few megabytes on the
+  // geo lane, and blocking first paint to parse names nobody has asked for yet
+  // is the wrong trade — by the time a pointer reaches a mark, this has run.
+  var data = null;
+  function rosters() {
+    if (data) return data;
+    data = {};
+    try { data = JSON.parse(document.getElementById('hov-data').textContent || '{}'); } catch (e) {}
+    return data;
+  }
   var tip = document.getElementById('hovtip');
   var scope = '';
   // Reports with a time-window toggle call this; everything else never does.
@@ -94,7 +108,7 @@ tr[data-hov]:hover, [data-hov].hovrow:hover { background: color-mix(in srgb, var
 
   function show(el, ev) {
     var key = (el.getAttribute('data-hov') || '').replace('{scope}', scope);
-    var r = data[key];
+    var r = rosters()[key];
     if (!r || !r.total) return hide();
     tip.textContent = '';
     var h = document.createElement('div');

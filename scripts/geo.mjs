@@ -37,7 +37,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { ROOT, loadEnv, readConfig, runSql } from "./lib/studio.mjs";
+import { ROOT, loadEnv, readConfig, runSql, dayOf } from "./lib/studio.mjs";
 import { hoverAttr, hoverLayer } from "./lib/hover.mjs";
 import { ALL_WINDOW, STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
 import { loadTopo, decode, bboxOf, contains, svgPath, projectedBbox, albersUsa, MAP_W, MAP_H, FIPS_TO_POSTAL, POSTAL_TO_FIPS } from "./lib/usmap.mjs";
@@ -94,6 +94,27 @@ const laneCols = (lanes) =>
 // ---------- queries: one fetch per concern, every window computed from it ----------
 
 const WINDOW_COLS = (ts) => STANDARD_WINDOWS.map((w) => `count(*) filter (where ${ts} >= now() - interval '${w} day')::int d${w}`).join(",\n    ");
+
+// Pickleague venues carry a `sport` text[] — a venue can host several sports.
+// The list is discovered from the data (ordered by volume) so a new sport is a
+// new chip, not a code change. This preliminary query only ORDERS the chips;
+// every number on the page still comes from the one main fetch below.
+const sportRows = await runSql(PICKLE, `
+select s sport, count(*)::int n
+from venues v cross join lateral unnest(v.sport) s
+where v.lat is not null group by 1 order by n desc`);
+const SPORTS = sportRows.map((r) => r.sport).filter((s) => /^[a-z0-9_]+$/.test(s));
+for (const r of sportRows) {
+  if (!SPORTS.includes(r.sport)) console.error(`Skipping sport ${JSON.stringify(r.sport)} — not a safe identifier.`);
+}
+const SPORT_KEYS = SPORTS.flatMap((s) => [`sp_${s}`, ...STANDARD_WINDOWS.map((w) => `sp_${s}_d${w}`)]);
+// `p` is the column prefix ("v." or "") so the same columns drop into both the
+// state cells query and the bare fine-cells query.
+const sportCountCols = (p) => SPORTS.map((s) =>
+  [`count(*) filter (where '${s}' = any(${p}sport))::int sp_${s}`,
+   ...STANDARD_WINDOWS.map((w) => `count(*) filter (where '${s}' = any(${p}sport) and ${p}created_at >= now() - interval '${w} day')::int sp_${s}_d${w}`),
+  ].join(",\n    ")).join(",\n    ");
+const sportNameCols = (p) => SPORTS.map((s) => `(array_agg(${p}name) filter (where '${s}' = any(${p}sport)))[1:4] nm_${s}`).join(",\n    ");
 
 // State assignment comes from the ingestion machinery itself: region -> state
 // (how CA was loaded), else the ingest tile whose bbox contains the point (how
@@ -185,6 +206,8 @@ with cells as (
     coalesce(sum(v.court_count), 0)::int courtsum,
     ${laneCols(LANES.p)},
     ${WINDOW_COLS("v.created_at")},
+    ${sportCountCols("v.")},
+    ${sportNameCols("v.")},
     (array_agg(v.name))[1:6] names
   from venues v
   where v.lat is not null
@@ -200,13 +223,21 @@ select c.*,
   ), '??') st
 from cells c`;
 
+// Per-venue rows for the real-map drill below the subdivisions: name, address,
+// geofence radius and the mapped boundary. Names and addresses land ONLY in the
+// gitignored report HTML, never in committed data.
+const pickleVenueRowsSql = `
+select v.name, v.address, v.lat, v.lng, v.geofence_radius_m r, v.boundary, v.sport,
+  v.surface, v.indoor, v.court_count, v.source
+from venues v where v.lat is not null`;
+
 // Fine (~1 km) cells for the county drill-down, carrying the enrichment flags
 // so county hover can state its own percentages. Counted in SQL, assigned to a
 // county in Node by point-in-polygon in raw lon/lat.
-const fineCellsSql = (table, lanes) => `
+const fineCellsSql = (table, lanes, extraCols = "") => `
 select round(lat::numeric, 2) clat, round(lng::numeric, 2) clng, count(*)::int n,
     ${laneCols(lanes)},
-    ${WINDOW_COLS("created_at")}
+    ${WINDOW_COLS("created_at")}${extraCols ? `,\n    ${extraCols}` : ""}
 from ${table}
 where lat is not null
 group by 1, 2`;
@@ -219,26 +250,29 @@ select count(*)::int total,
   (select json_agg(name) from (select name from ${table} where not ${l.done} ${sampleOrder} limit 20) s_${l.id}) ${l.id}_missing`).join(",\n  ")}
 from ${table}`;
 
-const [dogStatesRaw, dogOffCells, dogTiles, dogRegions, pickleCells, dogFine, pickleFine, dogBoard, pickleBoard, usCities] = await Promise.all([
+const [dogStatesRaw, dogOffCells, dogTiles, dogRegions, pickleCells, dogFine, pickleFine, dogBoard, pickleBoard, usCities, pickleVenues] = await Promise.all([
   runSql(DOGGLE, dogPlacesSql),
   runSql(DOGGLE, dogOffLedgerSql),
   runSql(DOGGLE, dogTilesSql),
   runSql(DOGGLE, dogRegionsSql),
   runSql(PICKLE, pickleVenuesSql),
   runSql(DOGGLE, fineCellsSql("dog_places", LANES.d)),
-  runSql(PICKLE, fineCellsSql("venues", LANES.p)),
+  runSql(PICKLE, fineCellsSql("venues", LANES.p, sportCountCols(""))),
   runSql(DOGGLE, boardSql("dog_places", LANES.d, "order by dog_score desc nulls last, name")).then((r) => r[0]),
   runSql(PICKLE, boardSql("venues", LANES.p, "order by name")).then((r) => r[0]),
   // The sub-county drill unit: cities are the deepest NAMED thing the data
   // has (no city polygons exist in assets, so cities render as dots).
   runSql(DOGGLE, "select city, state_code, lat, lng from us_cities"),
+  runSql(PICKLE, pickleVenueRowsSql),
 ]);
 
 const collectedAt = new Date().toISOString();
-const today = collectedAt.slice(0, 10);
+const today = dayOf(collectedAt);
 const WINDOWS = [ALL_WINDOW, ...STANDARD_WINDOWS];
 const DEFAULT_WIN = ALL_WINDOW;
 const winCount = (row, w) => (w === ALL_WINDOW ? row.n : row[`d${w}`]) ?? 0;
+const sportWinCount = (row, s, w) => (w === ALL_WINDOW ? row[`sp_${s}`] : row[`sp_${s}_d${w}`]) ?? 0;
+const sportLabel = (s) => s.replace(/_/g, " ");
 const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
 const fmt = (n) => Number(n).toLocaleString("en-US");
 
@@ -265,8 +299,32 @@ for (const r of dogStatesRaw) {
 }
 foldCells(dogStates, dogOffCells.map((c) => ({ ...c, offLedger: c.n })), DOG_KEYS, Object.fromEntries(DOG_KEYS.map((k) => [k, 0])));
 
-const PICKLE_KEYS = ["n", "osm", "google", "indoor", "courtsum", ...LANES.p.map((l) => l.id), "d1", "d7", "d14", "d30"];
+const PICKLE_KEYS = ["n", "osm", "google", "indoor", "courtsum", ...LANES.p.map((l) => l.id), "d1", "d7", "d14", "d30", ...SPORT_KEYS];
 const pickleStates = foldCells(new Map(), pickleCells.map((c) => ({ ...c, courtsum: c.courtsum ?? c.courtSum ?? 0 })), PICKLE_KEYS, Object.fromEntries(PICKLE_KEYS.map((k) => [k, 0])));
+
+// Second pass over the same cells for the per-sport name samples — foldCells
+// only folds numbers and the single shared top_names list.
+for (const c of pickleCells) {
+  const s = pickleStates.get(c.st);
+  if (!s) continue;
+  s.spNames ??= {};
+  for (const sp of SPORTS) {
+    const arr = (s.spNames[sp] ??= []);
+    if (arr.length < 20) arr.push(...(c[`nm_${sp}`] ?? []).filter(Boolean).slice(0, 20 - arr.length));
+  }
+}
+
+// App-wide per-sport totals, from the SAME fetch as everything else. The '??'
+// bucket is included: the sport mix is about the app, not the map.
+const sportTotals = {};
+for (const sp of SPORTS) {
+  const t = { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
+  for (const r of pickleStates.values()) {
+    t.n += r[`sp_${sp}`] ?? 0;
+    for (const w of STANDARD_WINDOWS) t[`d${w}`] += r[`sp_${sp}_d${w}`] ?? 0;
+  }
+  sportTotals[sp] = t;
+}
 
 // ---------- geometry + county assignment ----------
 
@@ -309,7 +367,7 @@ const datasets = [
   },
   {
     id: "p", app: "Pickleague", unit: "venues", states: pickleStates, fine: pickleFine, board: pickleBoard,
-    lanes: LANES.p, historyKey: "pickleague",
+    lanes: LANES.p, historyKey: "pickleague", extraKeys: SPORT_KEYS,
     statLines(r, w) {
       const lines = [`${stateName[r.st] ?? r.st} — ${regionOf(r.st)} region`];
       lines.push(`sources: ${fmt(r.osm)} osm, ${fmt(r.google)} google`);
@@ -375,8 +433,8 @@ function nearestCounty(lon, lat) {
   }
   return best;
 }
-function countyCounts(fine, laneIds) {
-  const keys = ["n", ...laneIds, ...STANDARD_WINDOWS.map((w) => `d${w}`)];
+function countyCounts(fine, laneIds, extraKeys = []) {
+  const keys = ["n", ...laneIds, ...STANDARD_WINDOWS.map((w) => `d${w}`), ...extraKeys];
   const acc = new Map(); // fips5 -> {n, <lanes>, d1, d7, d14, d30}
   const sub = new Map(); // cousub GEOID -> same shape
   const spill = new Map(); // postal -> n
@@ -420,7 +478,38 @@ function countyCounts(fine, laneIds) {
   }
   return { acc, sub, spill, foreign, shoreline };
 }
-const countyData = Object.fromEntries(datasets.map((ds) => [ds.id, countyCounts(ds.fine, ds.lanes.map((l) => l.id))]));
+const countyData = Object.fromEntries(datasets.map((ds) => [ds.id, countyCounts(ds.fine, ds.lanes.map((l) => l.id), ds.extraKeys ?? [])]));
+
+// Every Pickleague venue assigned to its census county subdivision — venue by
+// venue, not cell by cell, because the drill panel below shows THE venues, not
+// counts. Finer than the ~1 km cells, so the two can differ by a hair at
+// subdivision lines; the panel says so.
+const venuesByCousub = new Map();
+const venuesByCounty = new Map();
+for (const v of pickleVenues) {
+  const lon = Number(v.lng), lat = Number(v.lat);
+  const cty = countiesGeo.find((c) => contains(c.rings, c.bbox, lon, lat)) ?? nearestCounty(lon, lat);
+  if (!cty) continue;
+  const subs = cousubsByCounty.get(cty.id) ?? [];
+  let sh = subs.find((s) => contains(s.rings, s.bbox, lon, lat));
+  if (!sh && subs.length) {
+    let bestD = Infinity;
+    for (const s of subs) for (const ring of s.rings) for (const [x, y] of ring) {
+      const d = Math.hypot(x - lon, y - lat);
+      if (d < bestD) { bestD = d; sh = s; }
+    }
+  }
+  if (!sh) continue;
+  if (!venuesByCousub.has(sh.id)) venuesByCousub.set(sh.id, []);
+  venuesByCousub.get(sh.id).push(v);
+  // The same venue also belongs to a county, which is the coarser real-map
+  // level. Both maps point at ONE roster entry per venue, so adding the county
+  // view costs marks, not another copy of every name and address.
+  if (!venuesByCounty.has(cty.id)) venuesByCounty.set(cty.id, []);
+  venuesByCounty.get(cty.id).push(v);
+}
+const venuesPlaced = [...venuesByCousub.values()].reduce((a, vs) => a + vs.length, 0);
+const venuesUnplaced = pickleVenues.length - venuesPlaced;
 
 // ---------- city rollup: the drill level BELOW county ----------
 // Every ~1 km cell is credited to its nearest us_cities entry (1-degree bucket
@@ -447,7 +536,7 @@ function nearestCityOf(lon, lat) {
   return best;
 }
 function cityRollup(ds) {
-  const keys = ["n", ...ds.lanes.map((l) => l.id), ...STANDARD_WINDOWS.map((w) => `d${w}`)];
+  const keys = ["n", ...ds.lanes.map((l) => l.id), ...STANDARD_WINDOWS.map((w) => `d${w}`), ...(ds.extraKeys ?? [])];
   const acc = new Map();
   for (const cell of ds.fine) {
     if (cell.usOk === false) continue; // classified foreign by the county pass
@@ -503,6 +592,26 @@ for (const ds of datasets) {
         names: [...ds.statLines(r, w), `— top ${ds.unit} —`, ...(r.top_names ?? []).filter(Boolean)],
       };
     }
+    // Sport-scoped rosters, keyed `<all-sports key>@<sport>` — the page appends
+    // the active sport to data-hov, so the same mark resolves per sport.
+    if (ds.id === "p") {
+      states[st].sports = Object.fromEntries(SPORTS.filter((sp) => (r[`sp_${sp}`] ?? 0) > 0).map((sp) => [sp, r[`sp_${sp}`]]));
+      for (const sp of SPORTS) {
+        if (!((r[`sp_${sp}`] ?? 0) > 0)) continue;
+        for (const w of WINDOWS) {
+          rosters[`st|${w}|p|${st}@${sp}`] = {
+            total: sportWinCount(r, sp, w),
+            names: [
+              `${stateName[st] ?? st} — ${sportLabel(sp)}`,
+              `all-time ${fmt(r[`sp_${sp}`])} · 30d ${fmt(sportWinCount(r, sp, 30))} · 7d ${fmt(sportWinCount(r, sp, 7))} · 24h ${fmt(sportWinCount(r, sp, 1))}`,
+              `sources and enrichment %s count all sports — pick "All sports" for them`,
+              `— top ${sportLabel(sp)} venues —`,
+              ...(r.spNames?.[sp] ?? []).filter(Boolean),
+            ],
+          };
+        }
+      }
+    }
   }
   const counties = {};
   for (const [fips, a] of countyData[ds.id].acc) {
@@ -517,6 +626,20 @@ for (const ds of datasets) {
           ...ds.countyLines(a),
         ],
       };
+    }
+    if (ds.id === "p") {
+      for (const sp of SPORTS) {
+        if (!((a[`sp_${sp}`] ?? 0) > 0)) continue;
+        for (const w of WINDOWS) {
+          rosters[`cty|${w}|p|${fips}@${sp}`] = {
+            total: sportWinCount(a, sp, w),
+            names: [
+              `${geo?.name ?? fips}, ${FIPS_TO_POSTAL[String(fips).slice(0, 2)]} — ${sportLabel(sp)}`,
+              `all-time ${fmt(a[`sp_${sp}`])} · last 30d ${fmt(sportWinCount(a, sp, 30))}`,
+            ],
+          };
+        }
+      }
     }
   }
   // Debt-board hover: the highest-value rows each script has not touched.
@@ -539,6 +662,20 @@ for (const ds of datasets) {
         ],
       };
     }
+    if (ds.id === "p") {
+      for (const sp of SPORTS) {
+        if (!((a[`sp_${sp}`] ?? 0) > 0)) continue;
+        for (const w of WINDOWS) {
+          rosters[`sub|${w}|p|${geoid}@${sp}`] = {
+            total: sportWinCount(a, sp, w),
+            names: [
+              `${s?.name ?? geoid} — ${countyName[geoid.slice(0, 5)] ?? ""} — ${sportLabel(sp)}`,
+              `all-time ${fmt(a[`sp_${sp}`])} · last 30d ${fmt(sportWinCount(a, sp, 30))}`,
+            ],
+          };
+        }
+      }
+    }
   }
   // City-dot hover: static per city (the dot's SIZE is all-time; its color
   // follows the window), so the roster carries every window count as text.
@@ -551,6 +688,18 @@ for (const ds of datasets) {
         ...ds.countyLines(a),
       ],
     };
+    if (ds.id === "p") {
+      for (const sp of SPORTS) {
+        if (!((a[`sp_${sp}`] ?? 0) > 0)) continue;
+        rosters[`city|p|${key.replace(/"/g, "")}@${sp}`] = {
+          total: a[`sp_${sp}`],
+          names: [
+            `${a.city}, ${a.st} — ${sportLabel(sp)}`,
+            `all-time ${fmt(a[`sp_${sp}`])} · 30d ${fmt(sportWinCount(a, sp, 30))} · 7d ${fmt(sportWinCount(a, sp, 7))} · 24h ${fmt(sportWinCount(a, sp, 1))}`,
+          ],
+        };
+      }
+    }
   }
   out.apps[ds.historyKey] = {
     states,
@@ -564,6 +713,7 @@ for (const ds of datasets) {
     spillover: Object.fromEntries([...countyData[ds.id].spill.entries()].sort((a, b) => b[1] - a[1])),
     board: { total: ds.board.total, ...Object.fromEntries(ds.lanes.map((l) => [l.id, ds.board[l.id]])) },
     ...(ds.id === "d" ? { offLedger: [...ds.states.values()].reduce((a, r) => a + (r.offLedger ?? 0), 0) } : {}),
+    ...(ds.id === "p" ? { sports: sportTotals } : {}),
   };
 }
 out.apps.doggle.tiles = dogTiles.map((t) => ({ ...t }));
@@ -583,6 +733,172 @@ const BINS = [1, 10, 100, 1000, 10000];
 const binOf = (v) => (v <= 0 ? 0 : BINS.filter((b) => v >= b).length);
 const binLabel = (i) => (i === 0 ? "0" : i === BINS.length ? `${fmt(BINS.at(-1))}+` : `${fmt(BINS[i - 1])}–${fmt(BINS[i] - 1)}`);
 const binAttrs = (row) => WINDOWS.map((w) => `data-b-${w}="${binOf(winCount(row, w))}"`).join(" ");
+// Per-sport bins for Pickleague marks. Zero bins are omitted — the recolorer
+// reads a missing attribute as 0 — so the sparse sport×window matrix stays
+// cheap. data-spb marks the element as sport-aware: without it the recolorer
+// would fall back to the all-sports bin instead of showing 0.
+const sportBinAttrs = (row) =>
+  SPORTS.map((sp) =>
+    WINDOWS.map((w) => {
+      const b = binOf(sportWinCount(row, sp, w));
+      return b ? `data-b-${sp}-${w}="${b}"` : "";
+    }).filter(Boolean).join(" "),
+  ).filter(Boolean).join(" ");
+const markAttrs = (ds, row) => (ds.id === "p" ? `${binAttrs(row)} data-spb="" ${sportBinAttrs(row)}`.trim() : binAttrs(row));
+// Pickleague hoverables carry the all-sports key twice: data-hov is live and
+// data-hovall is the base the sport filter appends `@<sport>` to.
+const spHover = (ds, ...parts) => {
+  const h = hoverAttr(...parts);
+  return ds.id === "p" ? `${h} ${h.replace('data-hov="', 'data-hovall="')}` : h;
+};
+
+// ---------- real-map venue panels (Pickleague): OSM tiles + geofences ----------
+// A census-subdivision click opens THE venues on a real map: a static grid of
+// OpenStreetMap raster tiles (free, no key, no library — plain web-mercator
+// math) under an SVG overlay of geofences. Tile URLs sit in data-src and only
+// load when the panel first opens, so a page load requests zero tiles and the
+// OSM servers see a handful per click, with attribution. This is the one thing
+// on the page that needs the network; everything else stays offline.
+
+const TILE = 256;
+const OSM_MAX_Z = 17;
+function mercPx(lon, lat, z) {
+  const n = TILE * 2 ** z;
+  const rad = (lat * Math.PI) / 180;
+  return [((lon + 180) / 360) * n, ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * n];
+}
+
+function miniMapHtml(vs, { fences = true } = {}) {
+  let minLon = Infinity, minLat = Infinity, maxLon = -Infinity, maxLat = -Infinity;
+  for (const v of vs) {
+    minLon = Math.min(minLon, v.lng); maxLon = Math.max(maxLon, v.lng);
+    minLat = Math.min(minLat, v.lat); maxLat = Math.max(maxLat, v.lat);
+  }
+  // Frame the venue cluster (not the whole subdivision — a rural CCD would
+  // shrink every geofence to a subpixel), padded, with a floor so a lone venue
+  // still gets its neighbourhood.
+  const padLon = Math.max((maxLon - minLon) * 0.18, 0.004);
+  const padLat = Math.max((maxLat - minLat) * 0.18, 0.003);
+  minLon -= padLon; maxLon += padLon; minLat -= padLat; maxLat += padLat;
+  // 520 px fits the drill's detail column without clipping under .vmap's
+  // max-width — a clipped map would silently hide edge venues.
+  let z = OSM_MAX_Z;
+  for (; z > 3; z--) {
+    const [ax, ay] = mercPx(minLon, maxLat, z);
+    const [bx, by] = mercPx(maxLon, minLat, z);
+    if (bx - ax <= 520 && by - ay <= 420) break;
+  }
+  const [x0, y0] = mercPx(minLon, maxLat, z);
+  const [x1, y1] = mercPx(maxLon, minLat, z);
+  const W = Math.round(x1 - x0), H = Math.round(y1 - y0);
+  const imgs = [];
+  for (let tx = Math.floor(x0 / TILE); tx <= Math.floor(x1 / TILE); tx++) {
+    for (let ty = Math.floor(y0 / TILE); ty <= Math.floor(y1 / TILE); ty++) {
+      imgs.push(`<img data-src="https://tile.openstreetmap.org/${z}/${tx}/${ty}.png" alt="" style="left:${tx * TILE - Math.round(x0)}px;top:${ty * TILE - Math.round(y0)}px">`);
+    }
+  }
+  const mpp = (40075016.686 * Math.cos((((minLat + maxLat) / 2) * Math.PI) / 180)) / (TILE * 2 ** z);
+  const px = (lon, lat) => { const [x, y] = mercPx(lon, lat, z); return [(x - x0).toFixed(1), (y - y0).toFixed(1)]; };
+  const shapes = vs
+    .map((v) => {
+      const sports = (v.sport ?? []).filter((s) => SPORTS.includes(s));
+      const [cx, cy] = px(v.lng, v.lat);
+      let fence = "";
+      // Geofences are drawn only where they are legible. A county frame lands
+      // around 60 m per pixel, which renders a 45 m fence at under one pixel and
+      // a 250 m one at four — ink that says nothing. Dots carry the county view;
+      // the subdivision view, ~10x closer in, keeps the real shapes.
+      if (fences) {
+        if (v.boundary?.coordinates) {
+          const polys = v.boundary.type === "MultiPolygon" ? v.boundary.coordinates : [v.boundary.coordinates];
+          const d = polys.map((rings) => rings.map((ring) => `M${ring.map(([lo, la]) => px(lo, la).join(" ")).join("L")}Z`).join("")).join("");
+          fence = `<path d="${d}" fill-rule="evenodd" class="vfence"/>`;
+        } else if (v.r) {
+          fence = `<circle cx="${cx}" cy="${cy}" r="${Math.max(3, v.r / mpp).toFixed(1)}" class="vring"/>`;
+        }
+      }
+      // The whole group is one hover target on the shared layer — the venue's
+      // detail roster. The invisible halo keeps a lone 3 px dot hoverable.
+      return `<g ${hoverAttr(v.key)} tabindex="0"${sports.length ? ` data-sports="${sports.join(" ")}"` : ""}>${fence}<circle cx="${cx}" cy="${cy}" r="${fences ? 3.2 : 2.6}" class="vdot"/><circle cx="${cx}" cy="${cy}" r="${fences ? 9 : 7}" class="vhit"/></g>`;
+    })
+    .join("\n");
+  return `<div class="vmap" style="width:${W}px;height:${H}px">
+${imgs.join("\n")}
+<svg class="voverlay" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${fences ? "Venue geofences" : "Venue locations"} on OpenStreetMap">${shapes}</svg>
+</div>`;
+}
+
+// One detail roster per venue, built ONCE and shared by every mark that stands
+// for it: its county dot, its subdivision geofence, and its table row. Names and
+// addresses stay in the gitignored page, like every roster.
+pickleVenues.forEach((v, i) => {
+  v.key = `ven|${i}`;
+  const sports = (v.sport ?? []).filter((s) => SPORTS.includes(s)).map(sportLabel).join(", ");
+  const traits = [
+    v.indoor ? "indoor" : "",
+    v.surface ? `${v.surface} surface` : "",
+    v.court_count ? `${v.court_count} ${v.court_count === 1 ? "court" : "courts"}` : "",
+  ].filter(Boolean).join(" · ");
+  rosters[v.key] = {
+    total: 1,
+    names: [
+      v.name,
+      v.address ?? "no address recorded",
+      ...(sports ? [sports] : []),
+      ...(traits ? [traits] : []),
+      `${v.boundary?.coordinates ? "court boundary mapped" : "no boundary mapped"} · geofence ${fmt(v.r ?? 0)} m`,
+      ...(v.source ? [`source: ${v.source}`] : []),
+    ],
+  };
+});
+
+// Why Doggle gets no real-map view, in its own numbers rather than a shrug.
+const DOG_CELLS = new Set(dogFine.map((c) => `${c.clat}|${c.clng}`)).size;
+const DOG_PLACE_MB = 11;
+
+// The county-level real map: every venue in the county as a dot on OSM tiles.
+function countyMapPanel(county, vs) {
+  const bounded = vs.filter((v) => v.boundary?.coordinates).length;
+  const cname = `${esc(county.name)}${String(county.name).match(/county|parish|borough|municipality/i) ? "" : " County"}`;
+  return `<template class="ctpl" data-cm="cm-${county.id}"><div class="cmap" id="cm-${county.id}">
+<h4>${cname} on a real map — <span class="ccount" data-n="${vs.length}">${fmt(vs.length)} ${vs.length === 1 ? "venue" : "venues"}</span></h4>
+${miniMapHtml(vs, { fences: false })}
+<p class="note">Basemap <a href="https://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> contributors.
+The whole county at once — hover (or tab to) any dot for that venue's address, sports, surface, courts and geofence.
+<strong>No geofences at this zoom</strong>: a county frame is around 60 m per pixel, so the ${fmt(bounded)} mapped court
+boundaries would draw at well under a pixel. Click a subdivision below to get ~10x closer, where the real shapes are
+legible. The sport chips filter these dots and the count above.</p>
+</div></template>`;
+}
+
+function venuePanel(sub, vs) {
+  const rows = [...vs]
+    .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+    .map((v) => {
+      const sports = (v.sport ?? []).filter((s) => SPORTS.includes(s));
+      return `<tr ${hoverAttr(v.key)} tabindex="0"${sports.length ? ` data-sports="${sports.join(" ")}"` : ""}><td>${esc(v.name)}</td><td>${v.address ? esc(v.address) : '<span class="mut">—</span>'}</td><td>${esc(sports.map(sportLabel).join(", "))}</td></tr>`;
+    })
+    .join("\n");
+  const bounded = vs.filter((v) => v.boundary?.coordinates).length;
+  // Wrapped in <template> so the browser parses it once into an inert fragment
+  // and never styles or lays it out. All 221 of these live at once: as real DOM
+  // they were ~2 MB and ~12,000 SVG nodes competing with the page you can
+  // actually see. Cloned into place on the click that asks for it.
+  return `<template class="vtpl" data-vp="vp-${sub.id}"><div class="vpanel" id="vp-${sub.id}">
+<h4>${esc(sub.name)} — <span class="vcount" data-n="${vs.length}">${fmt(vs.length)} ${vs.length === 1 ? "venue" : "venues"} on a real map</span></h4>
+${miniMapHtml(vs)}
+<p class="note">Basemap <a href="https://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> contributors; tiles
+load from openstreetmap.org when this panel opens — the rest of the page works offline. Solid outlines are the
+${fmt(bounded)} mapped court boundaries; dashed rings are the app's stored geofence radius for the rest.
+<strong>Marks overlap</strong>: courts sharing a park are separate venues a few dozen metres apart, which is a pixel or
+two at this zoom — the count above is venues, not blobs, and hover (or tab) on a mark or a row spells out each one:
+address, sports, surface, courts, geofence. Venues are assigned point-by-point and can differ by a hair from the
+subdivision hover counts (those are cell-based). Map and list are all-time; the sport chips filter both and the count
+above follows.</p>
+<table class="tbl"><thead><tr><th>Venue</th><th>Address</th><th>Sports</th></tr></thead>
+<tbody>${rows}</tbody></table>
+</div></template>`;
+}
 
 // Every state path is rendered ONCE; the window toggle re-colors it from the
 // data-b-* attributes. States with data are clickable and open their county
@@ -593,7 +909,7 @@ function nationalMap(ds) {
       const r = ds.states.get(s.postal);
       const drill = r && r.n > 0 ? ` data-drill="drill-${ds.id}-${s.postal}"` : "";
       const empty = { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
-      return `<path d="${svgPath(s.rings)}" fill-rule="evenodd" class="stp bin${binOf(r?.n ?? 0)}" ${hoverAttr("st", "{scope}", ds.id, s.postal)} ${binAttrs(r ?? empty)}${drill}${drill ? ' tabindex="0" role="button" aria-label="' + esc(s.name) + ", open county detail\"" : ""}/>`;
+      return `<path d="${svgPath(s.rings)}" fill-rule="evenodd" class="stp bin${binOf(r?.n ?? 0)}" ${spHover(ds, "st", "{scope}", ds.id, s.postal)} ${markAttrs(ds, r ?? empty)}${drill}${drill ? ' tabindex="0" role="button" aria-label="' + esc(s.name) + ", open county detail\"" : ""}/>`;
     })
     .join("\n");
   return `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" class="stmap" role="img" aria-label="${esc(ds.app)} ${esc(ds.unit)} by state">
@@ -674,7 +990,7 @@ function drillPanels(ds) {
         .map((c) => {
           const a = countyData[ds.id].acc.get(c.id) ?? empty;
           const cl = a.n > 0 ? ` data-citylist="cl-${ds.id}-${c.id}" role="button" aria-label="${esc(c.name)}, list its cities"` : "";
-          return `<path d="${svgPath(c.rings, { thin: 0.3 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${hoverAttr("cty", "{scope}", ds.id, c.id)} ${binAttrs(a)} tabindex="0"${cl}/>`;
+          return `<path d="${svgPath(c.rings, { thin: 0.3 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${spHover(ds, "cty", "{scope}", ds.id, c.id)} ${markAttrs(ds, a)} tabindex="0"${cl}/>`;
         })
         .join("\n");
       const withData = counties.filter((c) => countyData[ds.id].acc.has(c.id));
@@ -683,22 +999,13 @@ function drillPanels(ds) {
         .sort((x, y) => y.a.n - x.a.n)
         .map(({ c, a }) => `<tr><td>${esc(c.name)}</td><td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`)
         .join("");
-      // The level below county: one dot per city, radius by all-time volume
-      // (log bins, converted to user units so it displays the same at any
-      // viewBox zoom), fill by the SAME windowed bins as the polygons.
+      // The level below county lives in the per-county lists and the state
+      // table below — the county map itself stays clean (the city dots it
+      // used to carry were dropped 2026-08-09, owner ask, once the real-map
+      // venue drill landed).
       const stCities = [...cityData[ds.id].entries()].filter(([, a]) => a.st === st).sort((x, y) => y[1].n - x[1].n);
-      const uu = vb[2] / 560; // 1 display px in this panel's user units
-      const R = [0, 2.2, 3, 3.9, 5, 6.3];
-      // Dots are texture, not targets — county polygons carry hover and click;
-      // the city DATA lives in the per-county lists and the state table below.
-      const dots = stCities
-        .map(([, a]) => {
-          const [cx, cy] = albersUsa(a.lng, a.lat);
-          return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(R[binOf(a.n)] * uu).toFixed(2)}" class="dot bin${binOf(a.n)}" ${binAttrs(a)}/>`;
-        })
-        .join("\n");
       const cityRow = ([key, a], withCounty) =>
-        `<tr ${hoverAttr("city", ds.id, key.replace(/"/g, ""))} tabindex="0"><td>${esc(a.city)}</td>${withCounty ? `<td>${esc(countyName[a.county] ?? "—")}</td>` : ""}<td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`;
+        `<tr ${spHover(ds, "city", ds.id, key.replace(/"/g, ""))} tabindex="0"><td>${esc(a.city)}</td>${withCounty ? `<td>${esc(countyName[a.county] ?? "—")}</td>` : ""}<td class="num">${fmt(a.n)}</td><td class="num">${fmt(a.d30)}</td></tr>`;
       const cityRows = stCities.map((e) => cityRow(e, true)).join("");
       // One pre-rendered panel per county with data; a county click shows it:
       // the county's SUBDIVISION choropleth (census CCDs — they tile the
@@ -709,18 +1016,29 @@ function drillPanels(ds) {
           const rows = cs.map((e) => cityRow(e, false)).join("");
           const subs = cousubsByCounty.get(c.id) ?? [];
           const emptySub = Object.fromEntries(["n", ...ds.lanes.map((l) => l.id), "d1", "d7", "d14", "d30"].map((k) => [k, 0]));
+          const withVenues = (s) => ds.id === "p" && venuesByCousub.has(s.id);
           const subMap = subs.length
             ? `<svg viewBox="${projectedBbox(subs.map((s) => s.rings), 3).map((v) => v.toFixed(1)).join(" ")}" class="ctymap submap" role="img" aria-label="${esc(c.name)} subdivisions">
 ${subs.map((s) => {
                 const a = countyData[ds.id].sub.get(s.id) ?? emptySub;
-                return `<path d="${svgPath(s.rings, { thin: 0.25 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${hoverAttr("sub", "{scope}", ds.id, s.id)} ${binAttrs(a)} tabindex="0"/>`;
+                const vp = withVenues(s) ? ` data-venues="vp-${s.id}" role="button" aria-label="${esc(s.name)}, open its venues on a real map"` : "";
+                return `<path d="${svgPath(s.rings, { thin: 0.25 })}" fill-rule="evenodd" class="stp bin${binOf(a.n)}" ${spHover(ds, "sub", "{scope}", ds.id, s.id)} ${markAttrs(ds, a)} tabindex="0"${vp}/>`;
               }).join("\n")}
 </svg>
-<p class="note">Census county subdivisions — same bins, same window behaviour; hover one for its counts and enrichment.</p>`
+<p class="note">Census county subdivisions — same bins, same window behaviour; hover one for its counts and enrichment.${
+                ds.id === "p" ? " <strong>Click a subdivision for its venues on a real map</strong> — geofences, names and addresses." : ""
+              }</p>
+${ds.id === "p" ? subs.filter(withVenues).map((s) => venuePanel(s, venuesByCousub.get(s.id))).join("\n") : ""}`
             : "";
           const cname = `${esc(c.name)}${String(c.name).match(/county|parish|borough|municipality/i) ? "" : " County"}`;
+          // The county-level real map sits above the subdivision choropleth:
+          // the whole county on OSM first, then the choropleth to pick a
+          // subdivision and go closer. Templated like everything else in here,
+          // so opening a state does not build 58 counties' worth of maps.
+          const countyMap = ds.id === "p" && venuesByCounty.has(c.id) ? countyMapPanel(c, venuesByCounty.get(c.id)) : "";
           return `<div class="citylist" id="cl-${ds.id}-${c.id}" hidden>
 <h4>${cname} — ${fmt(cs.reduce((x, [, a]) => x + a.n, 0))} ${esc(ds.unit)} in ${cs.length} ${cs.length === 1 ? "city" : "cities"}</h4>
+${countyMap}
 ${subMap}
 <table class="tbl half"><thead><tr><th>City</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
 <tbody>${rows || `<tr><td colspan="3" class="empty">No city resolved here — the ${esc(ds.unit)} sit farther than ~30 km from any listed city.</td></tr>`}</tbody></table>
@@ -739,20 +1057,37 @@ ${subMap}
       const defaultCl = withData.length
         ? `cl-${ds.id}-${withData.map((c) => ({ c, n: countyData[ds.id].acc.get(c.id).n })).sort((x, y) => y.n - x.n)[0].c.id}`
         : "";
-      return `<section class="drill" id="drill-${ds.id}-${st}"${defaultCl ? ` data-defcl="${defaultCl}"` : ""} hidden>
+      // Inert until opened. One state's panel is a county choropleth, a
+      // subdivision map per county, every city list and every venue panel; all
+      // 20 of them in live DOM meant thousands of SVG paths laid out for panels
+      // you may never open. The <template> is parsed once and never styled.
+      return `<template class="dtpl" data-drill-tpl="drill-${ds.id}-${st}"><section class="drill" id="drill-${ds.id}-${st}"${defaultCl ? ` data-defcl="${defaultCl}"` : ""} hidden>
 <div class="dhead"><h3>${esc(ds.app)} — ${esc(stateName[st] ?? st)} by county</h3><button class="dclose" type="button">close &times;</button></div>
 <div class="drillgrid">
 <div>
-<svg viewBox="${vb.map((v) => v.toFixed(1)).join(" ")}" class="ctymap" role="img" aria-label="${esc(stateName[st] ?? st)} counties with city dots">
+<svg viewBox="${vb.map((v) => v.toFixed(1)).join(" ")}" class="ctymap" role="img" aria-label="${esc(stateName[st] ?? st)} counties">
 ${paths}
-${dots}
 </svg>
 <p class="note">County split is geometric (~1 km cells, point-in-polygon) and can differ by a hair from the
 ledger-based state total above. ${withData.length} of ${counties.length} counties have ${esc(ds.unit)}.
 Hover a county for its enrichment percentages; <strong>click it and the panel on the right follows</strong> —
-its subdivision map and city list. The dots mark the ${fmt(stCities.length)} cities (size = all-time volume,
-color follows the window); they are markers, not targets.</p>
+its ${ds.id === "p" ? "real map, subdivision map and city list" : "subdivision map and city list"}.
+The ${fmt(stCities.length)} cities live in those lists and the tables below.</p>
+${ds.id === "d"
+  ? `<p class="note">Doggle has <strong>no real-map view</strong> at county or subdivision level, deliberately.
+Pickleague ships 4,072 venue points, so its dots cost about 650 KB; Doggle has ${fmt(dogBoard.total)} places in
+${fmt(DOG_CELLS)} distinct ~1 km cells, which would add roughly 3 MB to a page already over ${Math.round(DOG_PLACE_MB)} MB.
+The choropleths carry the density either way — what a basemap adds is street context, at a price this page cannot pay yet.</p>`
+  : ""}
 ${stateDebtTable(ds, r)}
+${ds.id === "p"
+  ? `<h4>Sport mix in ${esc(stateName[r.st] ?? r.st)}</h4>
+<p class="note">All-time and last 30d, as of collection; a multi-sport venue counts once per sport.</p>
+<table class="tbl half"><thead><tr><th>Sport</th><th class="num">All-time</th><th class="num">30d</th></tr></thead>
+<tbody>${SPORTS.filter((sp) => (r[`sp_${sp}`] ?? 0) > 0)
+      .map((sp) => `<tr><td>${esc(sportLabel(sp))}</td><td class="num">${fmt(r[`sp_${sp}`])}</td><td class="num">${fmt(r[`sp_${sp}_d30`] ?? 0)}</td></tr>`)
+      .join("")}</tbody></table>`
+  : ""}
 </div>
 <div class="citylists">
 <p class="note cl-hint">Click a county on the left to see its subdivisions and cities here.</p>
@@ -768,17 +1103,21 @@ ${cityLists}
 <tbody>${tableRows || `<tr><td colspan="3" class="empty">Nothing here.</td></tr>`}</tbody></table>
 </details>
 ${regions}
-</section>`;
+</section></template>`;
     })
     .join("\n");
 }
 
-function regionTable(ds, w) {
-  const empty = { n: 0, d1: 0, d7: 0, d14: 0, d30: 0 };
+function regionTable(ds, w, sport = "all") {
+  const cnt = (s) => {
+    const row = ds.states.get(s);
+    if (!row) return 0;
+    return sport === "all" ? winCount(row, w) : sportWinCount(row, sport, w);
+  };
   const rows = Object.entries(REGIONS)
     .map(([name, sts]) => {
-      const covered = sts.filter((s) => winCount(ds.states.get(s) ?? empty, w) > 0);
-      const total = sts.reduce((a, s) => a + winCount(ds.states.get(s) ?? empty, w), 0);
+      const covered = sts.filter((s) => cnt(s) > 0);
+      const total = sts.reduce((a, s) => a + cnt(s), 0);
       return { name, covered: covered.length, of: sts.length, total };
     })
     .sort((a, b) => b.total - a.total)
@@ -801,7 +1140,7 @@ This table is the ledger <strong>as of now</strong> — it does not move with th
 <tbody>${dogTiles
     .map((t) => {
       const prog = t.tiles ? Math.round((t.done / t.tiles) * 100) : 0;
-      return `<tr><td>${esc(t.state)}</td><td class="num">${t.done} / ${t.tiles}</td><td class="mcell"><span class="meter"><span class="fill" style="width:${prog}%"></span></span></td><td class="num">${t.pending}</td><td class="num">${t.running}</td><td class="num">${t.errored ? `<strong class="warntxt">${t.errored}</strong>` : 0}</td><td class="num">${fmt(t.features)}</td><td class="num">${fmt(t.loaded)}</td><td class="dt">${t.last_done ? esc(String(t.last_done).slice(0, 10)) : "—"}</td></tr>`;
+      return `<tr><td>${esc(t.state)}</td><td class="num">${t.done} / ${t.tiles}</td><td class="mcell"><span class="meter"><span class="fill" style="width:${prog}%"></span></span></td><td class="num">${t.pending}</td><td class="num">${t.running}</td><td class="num">${t.errored ? `<strong class="warntxt">${t.errored}</strong>` : 0}</td><td class="num">${fmt(t.features)}</td><td class="num">${fmt(t.loaded)}</td><td class="dt">${t.last_done ? esc(dayOf(t.last_done)) : "—"}</td></tr>`;
     })
     .join("") || `<tr><td colspan="9" class="empty">No ingest tiles yet.</td></tr>`}</tbody></table>`;
 
@@ -825,22 +1164,74 @@ They are in the shaded states' totals above but in no county panel.</p>`
 rectangles cross the national border (the cluster is British Columbia, north of the WA tiles). They are inside the shaded
 states' ledger totals above but in no county panel. A per-tile bbox clip against the border would stop this at the source.</p>`
       : "";
-    const winTables = WINDOWS.map((w) => `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${regionTable(ds, w)}</div>`).join("\n");
+    // Pickleague's region table follows the sport filter too: one small table
+    // per sport per window, visibility-toggled — never recomputed client-side.
+    const vpNote =
+      ds.id === "p" && venuesUnplaced
+        ? `<p class="note">${fmt(venuesUnplaced)} ${venuesUnplaced === 1 ? "venue is" : "venues are"} in <strong>no real-map panel</strong> — outside every
+vendored census subdivision (over a state or national border), so no subdivision click can list ${venuesUnplaced === 1 ? "it" : "them"}.</p>`
+        : "";
+    const winTables = (ds.id === "p" ? ["all", ...SPORTS] : ["all"])
+      .map((sp) => {
+        const inner = WINDOWS.map((w) => `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${regionTable(ds, w, sp)}</div>`).join("\n");
+        // data-spBLOCK, not data-sp: the chip buttons carry data-sp too, so a
+        // `[data-sp]` visibility sweep hid every chip except the selected one —
+        // which is how the control for choosing a sport disappeared the moment
+        // you chose one.
+        return ds.id === "p" ? `<div data-spblock="${sp}"${sp === "all" ? "" : " hidden"}>${inner}</div>` : inner;
+      })
+      .join("\n");
     const winBoards = WINDOWS.map((w) => `<div data-w="${w}"${w === DEFAULT_WIN ? "" : " hidden"}>${debtBoard(ds, w)}</div>`).join("\n");
-    return `<div class="apppanel" data-app-panel="${ds.id}"${i === 0 ? "" : " hidden"}>
+    const pairTotal = Object.values(sportTotals).reduce((a, t) => a + t.n, 0);
+    const sportBar =
+      ds.id === "p"
+        ? `<div class="sportbar" role="group" aria-label="Sport">
+<span class="lbl">Sport</span>
+<button class="spbtn" data-sp="all" aria-pressed="true">All sports</button>
+${SPORTS.map((sp) => `<button class="spbtn" data-sp="${sp}" data-label="${esc(sportLabel(sp))}" aria-pressed="false">${esc(sportLabel(sp))} <span class="spn">${fmt(sportTotals[sp].n)}</span></button>`).join("\n")}
+</div>
+<p class="note">The sport filter re-colors every map on this tab (states, counties, subdivisions, city dots), scopes
+hover rosters and the census-region table, and persists across visits. A venue can host several sports — the
+${SPORTS.length} sports sum to ${fmt(pairTotal)} across ${fmt(ds.board.total)} venues, so a multi-sport venue counts
+once per sport. Enrichment debt, coverage %s, sources and the county/city tables always count <strong>all sports</strong>.</p>`
+        : "";
+    const sportMix =
+      ds.id === "p"
+        ? `<h2>Sport mix</h2>
+<p class="note">Every venue by sport, app-wide — all-time and last 30 days as of collection; this table does not move
+with the window or sport controls. Share is of all ${fmt(ds.board.total)} venues, so shares sum past 100% where venues
+host several sports.</p>
+<table class="tbl half"><thead><tr><th>Sport</th><th class="num">Venues</th><th>Share</th><th class="num">30d</th></tr></thead>
+<tbody>${SPORTS.map((sp) => {
+            const t = sportTotals[sp];
+            const p = pct(t.n, ds.board.total);
+            return `<tr><td>${esc(sportLabel(sp))}</td><td class="num">${fmt(t.n)}</td><td class="mcell"><span class="meter"><span class="fill" style="width:${p}%"></span></span> <span class="pct">${p}%</span></td><td class="num">${fmt(t.d30)}</td></tr>`;
+          }).join("")}</tbody></table>`
+        : "";
+    // The app's name used to live only in the tab bar. The dashboard hides that
+    // bar and shows the panels stacked, so without this heading two very
+    // different maps sit on one page with nothing saying which app each is.
+    // Sticky, together with the sport chips, so both stay answerable while you
+    // scroll a map that is taller than the screen.
+    return `<div class="apppanel" data-app-panel="${ds.id}" data-app-scope="${ds.historyKey}"${i === 0 ? "" : " hidden"}>
+<div class="appstrip">
+<div class="appname">${esc(ds.app)}</div>
+${sportBar}
+</div>
 <h2>${esc(ds.unit[0].toUpperCase() + ds.unit.slice(1))} by state</h2>
 <p class="note">Click (or press Enter on) a shaded state for its county drill-down, state debt table and regions.</p>
 <div class="maprow">
 <div>${nationalMap(ds)}</div>
 <div>${winTables}
-${offNote}${spillNote}${unNote}${ctyNote}</div>
+${offNote}${spillNote}${unNote}${ctyNote}${vpNote}</div>
 </div>
 ${drillPanels(ds)}
+${sportMix}
 <h2>Enrichment debt</h2>
 <p class="note">Debt is rows the script has not touched yet, app-wide; per-state debt lives in each drill panel.
 The &Delta; and trend columns read this lane's own daily snapshots (<code>data/enrich.json</code>) — debt moves
 when the script runs <em>or</em> when ingestion adds rows, and a rising line during an ingest is expected, not a
-regression. Hover a lane for the highest-value rows still missing it.</p>
+regression. Hover a lane for the highest-value rows still missing it.${ds.id === "p" ? " Debt counts all venues regardless of the sport filter." : ""}</p>
 ${winBoards}
 ${ds.id === "d" ? tileLedger : ""}
 </div>`;
@@ -881,6 +1272,18 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .appbtn{font:inherit;font-size:13.5px;padding:5px 16px;border-radius:20px;cursor:pointer;
   background:var(--surface);color:var(--ink-2);border:1px solid var(--border)}
 .appbtn[aria-selected="true"]{background:var(--bar);color:#fff;border-color:var(--bar);font-weight:600}
+/* --stick is 0 standalone; the dashboard sets it to its own bar height so this
+   strip parks under the window toggle instead of on top of it. */
+:root{--stick:0px}
+.appstrip{position:sticky;top:calc(var(--stick) + 40px);z-index:6;background:var(--page);
+  border-bottom:1px solid var(--border);padding:8px 0 7px;margin:14px 0 6px}
+.appname{font-size:17px;font-weight:700;letter-spacing:.01em}
+.sportbar{display:flex;gap:6px;margin:8px 0 0;flex-wrap:wrap;align-items:center}
+.sportbar .lbl{font-size:12px;color:var(--muted);margin-right:2px}
+.spbtn{font:inherit;font-size:12.5px;padding:3px 12px;border-radius:20px;cursor:pointer;
+  background:var(--surface);color:var(--ink-2);border:1px solid var(--border)}
+.spbtn[aria-pressed="true"]{background:var(--bar);color:#fff;border-color:var(--bar);font-weight:600}
+.spbtn .spn{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
 .legend{display:flex;gap:12px;margin:12px 0 4px;font-size:12px;color:var(--ink-2);flex-wrap:wrap;align-items:center}
 .legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px;border:1px solid var(--border)}
 .legend .lgnote{color:var(--muted);font-size:11px}
@@ -890,10 +1293,8 @@ h1{font-size:22px;margin:0 0 2px} h2{font-size:16px;margin:26px 0 6px} h3{font-s
 .stmap,.ctymap{width:100%;height:auto;display:block;margin:6px 0}
 .ctymap{max-width:560px}
 .stp{stroke:var(--page);stroke-width:0.75;vector-effect:non-scaling-stroke}
-.stp[data-drill],.stp[data-citylist]{cursor:pointer}
+.stp[data-drill],.stp[data-citylist],.stp[data-venues]{cursor:pointer}
 .stp:hover,.stp:focus{stroke:var(--ink);stroke-width:1.4;outline:none}
-.dot{stroke:var(--surface);stroke-width:1;vector-effect:non-scaling-stroke;pointer-events:none}
-.dot.bin0{fill:transparent;stroke:var(--muted);opacity:.45}
 .drill{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0}
 .dhead{display:flex;justify-content:space-between;align-items:baseline}
 .dclose{font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:16px;padding:2px 10px;cursor:pointer}
@@ -915,6 +1316,16 @@ details{margin-top:8px;font-size:12.5px} summary{cursor:pointer;color:var(--mute
 .mut{color:var(--muted)}
 .warntxt{color:var(--warn)}
 .dt{font-variant-numeric:tabular-nums;color:var(--muted)}
+.vpanel{margin:10px 0}
+.cmap{margin:8px 0 14px}
+.vmap{position:relative;overflow:hidden;border-radius:8px;border:1px solid var(--border);margin:8px 0;max-width:100%}
+.vmap img{position:absolute;width:256px;height:256px}
+.voverlay{position:absolute;left:0;top:0;display:block}
+.vfence{fill:rgba(42,104,192,.22);stroke:#1c4f9c;stroke-width:1.5}
+.vring{fill:rgba(42,104,192,.10);stroke:#1c4f9c;stroke-width:1.5;stroke-dasharray:4 3}
+.vdot{fill:#1c4f9c;fill-opacity:.85;stroke:#fff;stroke-width:1.2}
+.vhit{fill:transparent;stroke:none}
+.sp-hide{display:none}
 .empty{color:var(--muted);font-style:italic}
 code{font-family:ui-monospace,Menlo,monospace;font-size:12px}
 </style>
@@ -925,7 +1336,8 @@ enrichment script is — one tab per app. Hover (or tab to) a state for its pipe
 shaded one to drill into counties, city dots, its own debt table, and (where defined) named regions.
 <strong>A blank state means the pipeline has not run there</strong> — "we can't see it", not "nothing exists
 there". This page counts places and venues, not people, so account exclusions do not apply.
-Collected ${esc(collectedAt)}.</p>
+<strong>Pickleague is multi-sport</strong>: its default view combines all ${SPORTS.length} sports into one count, and the
+<em>sport chips</em> at the top of the Pickleague section split every map by sport. Collected ${esc(collectedAt)}.</p>
 
 ${windowBar(WINDOWS, DEFAULT_WIN, "re-colors the maps and scopes the debt Δ/trend; coverage %s are as of now")}
 ${tabBar}
@@ -939,10 +1351,57 @@ ${windowScript(WINDOWS, DEFAULT_WIN)}
 (function () {
   // Re-color every map from its precomputed per-window bins. Rides on the
   // window machinery: windowScript calls setHoverScope on every toggle, so
-  // wrapping it keeps ONE source of truth for the active window.
+  // wrapping it keeps ONE source of truth for the active window. Sport-aware
+  // marks (data-spb, Pickleague only) read their per-sport attribute instead
+  // when a sport is selected; a missing attribute is a 0.
+  var sport = 'all';
+  var lastWin = 'all';
+
+  // Venue-level marks and rows (real-map panels) carry their sports verbatim.
+  // Scoped to a root so it can be re-run on a panel cloned in later.
+  function applySport(root) {
+    root.querySelectorAll('[data-sports]').forEach(function (el) {
+      var on = sport === 'all' || (' ' + el.getAttribute('data-sports') + ' ').indexOf(' ' + sport + ' ') !== -1;
+      el.classList.toggle('sp-hide', !on);
+    });
+    // Panel headers must never read as "43 shrank to 10" — the other 33 are
+    // other sports, not dropped records, so the header names the sport and
+    // keeps the total in view. Runs per root so a panel cloned in later gets a
+    // correct header immediately rather than at the next toggle.
+    var chip = document.querySelector('.spbtn[data-sp="' + sport + '"]');
+    var lbl = (chip && chip.getAttribute('data-label')) || sport;
+    var panels = root.querySelectorAll ? root.querySelectorAll('.vpanel') : [];
+    (root.classList && root.classList.contains('vpanel') ? [root] : panels).forEach(function (p) {
+      var c = p.querySelector('.vcount');
+      if (!c) return;
+      var total = Number(c.getAttribute('data-n'));
+      if (sport === 'all') {
+        c.textContent = total + (total === 1 ? ' venue' : ' venues') + ' on a real map';
+      } else {
+        var shown = p.querySelectorAll('tbody tr:not(.sp-hide)').length;
+        c.textContent = shown + ' of ' + total + (total === 1 ? ' venue' : ' venues') + ' here list ' + lbl;
+      }
+    });
+    // Same rule for the county map, but it has no table to count — the visible
+    // dots are the population, so count those.
+    var cmaps = root.querySelectorAll ? root.querySelectorAll('.cmap') : [];
+    (root.classList && root.classList.contains('cmap') ? [root] : cmaps).forEach(function (p) {
+      var c = p.querySelector('.ccount');
+      if (!c) return;
+      var total = Number(c.getAttribute('data-n'));
+      if (sport === 'all') {
+        c.textContent = total + (total === 1 ? ' venue' : ' venues');
+      } else {
+        var shown = p.querySelectorAll('g[data-sports]:not(.sp-hide)').length;
+        c.textContent = shown + ' of ' + total + (total === 1 ? ' venue' : ' venues') + ' list ' + lbl;
+      }
+    });
+  }
   function recolor(w) {
+    lastWin = String(w);
     document.querySelectorAll('[data-b-all]').forEach(function (el) {
-      var b = el.getAttribute('data-b-' + w) || '0';
+      var key = 'data-b-' + (sport !== 'all' && el.hasAttribute('data-spb') ? sport + '-' : '') + lastWin;
+      var b = el.getAttribute(key) || '0';
       el.setAttribute('class', el.getAttribute('class').replace(/\\bbin\\d\\b/, 'bin' + b));
     });
   }
@@ -950,6 +1409,28 @@ ${windowScript(WINDOWS, DEFAULT_WIN)}
   window.setHoverScope = function (s) { if (prev) prev(s); recolor(String(s)); };
   var btn = document.querySelector('.winbtn[aria-pressed="true"]');
   recolor(btn ? btn.dataset.win : 'all');
+
+  // Sport filter (Pickleague tab): re-colors sport-aware marks, swaps hover
+  // keys (data-hovall is the all-sports base; sport keys append @<sport>),
+  // and shows the matching [data-sp] blocks. Persists like the window choice.
+  function selectSport(sp) {
+    sport = sp;
+    document.querySelectorAll('.spbtn').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.sp === sp)); });
+    document.querySelectorAll('[data-spblock]').forEach(function (el) { el.hidden = el.getAttribute('data-spblock') !== sp; });
+    document.querySelectorAll('[data-hovall]').forEach(function (el) {
+      var base = el.getAttribute('data-hovall');
+      el.setAttribute('data-hov', sp === 'all' ? base : base + '@' + sp);
+    });
+    applySport(document);
+    recolor(lastWin);
+    try { localStorage.setItem('studio-geo-sport', sp); } catch (e) {}
+  }
+  document.querySelectorAll('.spbtn').forEach(function (b) {
+    b.addEventListener('click', function () { selectSport(b.dataset.sp); });
+  });
+  var savedSport = null;
+  try { savedSport = localStorage.getItem('studio-geo-sport'); } catch (e) {}
+  if (savedSport && savedSport !== 'all' && document.querySelector('.spbtn[data-sp="' + savedSport + '"]')) selectSport(savedSport);
 
   // App tabs: one visible panel; the choice persists across visits.
   function selectApp(id) {
@@ -964,9 +1445,30 @@ ${windowScript(WINDOWS, DEFAULT_WIN)}
   try { savedApp = localStorage.getItem('studio-geo-app'); } catch (e) {}
   if (savedApp && document.querySelector('[data-app-panel="' + savedApp + '"]')) selectApp(savedApp);
 
+  // Everything the sidebar/sport/window controls stamp onto markup, applied to a
+  // subtree — so content cloned in later is styled exactly like content that was
+  // there at load, instead of being stuck at whatever the template froze.
+  function hydrate(root) {
+    if (sport !== 'all') {
+      root.querySelectorAll('[data-hovall]').forEach(function (el) {
+        el.setAttribute('data-hov', el.getAttribute('data-hovall') + '@' + sport);
+      });
+    }
+    applySport(root);
+    recolor(lastWin);
+  }
+
   // Drill-down: one open panel at a time; click again (or close) to dismiss.
+  // The panel is cloned out of its template the first time it is asked for.
   function toggle(id) {
     var was = document.getElementById(id);
+    if (!was) {
+      var tpl = document.querySelector('.dtpl[data-drill-tpl="' + id + '"]');
+      if (!tpl) return;
+      was = tpl.content.firstElementChild.cloneNode(true);
+      tpl.parentNode.insertBefore(was, tpl);
+      hydrate(was);
+    }
     var open = was && was.hidden;
     document.querySelectorAll('.drill').forEach(function (d) { d.hidden = true; });
     if (was && open) {
@@ -985,16 +1487,51 @@ ${windowScript(WINDOWS, DEFAULT_WIN)}
     var open = el.hidden;
     var panel = el.closest('.drill') || document;
     panel.querySelectorAll('.citylist').forEach(function (d) { d.hidden = true; });
+    // The county's own OSM map is templated too: built and its tiles fetched on
+    // the first open of this county, never on the open of the state above it.
+    var ctpl = el.querySelector('.ctpl');
+    if (open && ctpl) {
+      var cm = ctpl.content.firstElementChild.cloneNode(true);
+      ctpl.parentNode.insertBefore(cm, ctpl);
+      ctpl.remove();
+      hydrate(cm);
+      cm.querySelectorAll('img[data-src]').forEach(function (i) { i.src = i.getAttribute('data-src'); i.removeAttribute('data-src'); });
+    }
     if (open) {
       el.hidden = false;
       if (!quiet) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
+  // Subdivision click: open its venues-on-a-real-map panel. The panel lives in
+  // an inert <template> until now — cloned on first open, then reused. Tile imgs
+  // hold their URL in data-src until that same moment, so a page load builds no
+  // venue DOM and fetches no map tiles.
+  function toggleVenues(id) {
+    var el = document.getElementById(id);
+    if (!el) {
+      var tpl = document.querySelector('.vtpl[data-vp="' + id + '"]');
+      if (!tpl) return;
+      el = tpl.content.firstElementChild.cloneNode(true);
+      tpl.parentNode.insertBefore(el, tpl);
+      // Content that arrives after a sport was chosen must arrive already
+      // filtered, or the panel would show every sport until the next toggle.
+      hydrate(el);
+    }
+    var open = el.hidden;
+    var wrap = el.closest('.citylist') || document;
+    wrap.querySelectorAll('.vpanel').forEach(function (d) { d.hidden = true; });
+    if (open) {
+      el.querySelectorAll('img[data-src]').forEach(function (i) { i.src = i.getAttribute('data-src'); i.removeAttribute('data-src'); });
+      el.hidden = false;
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
   function act(target) {
-    var el = target && target.closest ? target.closest('[data-drill],[data-citylist],.dclose') : null;
+    var el = target && target.closest ? target.closest('[data-drill],[data-citylist],[data-venues],.dclose') : null;
     if (!el) return false;
     if (el.hasAttribute && el.hasAttribute('data-drill')) toggle(el.getAttribute('data-drill'));
     else if (el.hasAttribute && el.hasAttribute('data-citylist')) toggleCounty(el.getAttribute('data-citylist'));
+    else if (el.hasAttribute && el.hasAttribute('data-venues')) toggleVenues(el.getAttribute('data-venues'));
     else el.closest('.drill').hidden = true;
     return true;
   }
@@ -1017,6 +1554,7 @@ for (const ds of datasets) {
       `${Object.keys(meta.counties).length} counties · worst debt "${worst.l}" ${fmt(worst.debt)}`,
   );
 }
+console.log(`Geo Pickleague sports: ${SPORTS.length} (${SPORTS.map((s) => `${sportLabel(s)} ${fmt(sportTotals[s].n)}`).join(", ")})`);
 console.log(`Enrichment history: ${history.length} snapshot${history.length === 1 ? "" : "s"}`);
 console.log(`Wrote ${DATA_FILE} and ${ENRICH_FILE}`);
 console.log(`Wrote ${ROSTER_FILE} (gitignored - contains place/venue names)`);

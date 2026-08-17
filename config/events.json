@@ -1,70 +1,379 @@
 {
-  "_doc": "The events lane: how the studio reads public.analytics_sessions and public.analytics_events (instrumented by the tcgscan sister repo, migration 20260805100000_analytics_events.sql). Both michi-maker and tcgscan-app write to the same two tables on project piikwvntldytjejxmcla, discriminated by the `app` column. Nothing here is queried by the apps themselves; this is read-only interpretation.",
-
+  "_doc": "The events lane: how the studio reads public.analytics_sessions and public.analytics_events. Michi-maker and tcgscan-app share project piikwvntldytjejxmcla (migration 20260805100000_analytics_events.sql, authenticated-only RLS: guests are minted anon auth users). Doggle and pickleague each carry their OWN spine on their own project (doggle db/migrations/0377_analytics_events.sql, pickleague supabase/migration_add_analytics_events.sql) with nullable user_id + anon-role inserts, because their public pages are browsed signed-out: an identity-less visit is a real visit, grouped by device_id into a 'visitor'. Per-app projectRef below routes each app to its project; per-app `profile` maps that project's profiles name columns. Nothing here is queried by the apps themselves; this is read-only interpretation.",
   "projectRef": "piikwvntldytjejxmcla",
   "windowDays": 30,
-
+  "_campaignsDoc": "The print/QR lane (scripts/campaigns.mjs) reads the same two tables through the same app->project map, so its config lives here rather than in a second file that could disagree about which project an app is on. `registry` is the path, relative to the repo root, to marketing-studio's list of codes that physically exist on paper — the join that makes a zero mean 'printed but never scanned' instead of 'we printed nothing'. `verificationPrefixes` are OUR OWN end-to-end proof scans: excluded from every headline the way our accounts are, and stated inline rather than dropped silently.",
+  "campaigns": {
+    "registry": "../marketing-studio/assets/qr/campaigns.yaml",
+    "verificationPrefixes": [
+      "test_"
+    ]
+  },
   "_appsDoc": "Maps the `app` value the clients write to the studio's own app ids (config/apps.json), so exclusions and the DAU lane line up.",
   "apps": [
-    { "key": "michi", "id": "michi-maker", "name": "Michi-Maker" },
-    { "key": "tcgscan", "id": "tcgscan", "name": "TCGScan" }
+    {
+      "key": "michi",
+      "id": "michi-maker",
+      "name": "Michi-Maker",
+      "profile": {
+        "username": "username",
+        "displayName": "display_name"
+      }
+    },
+    {
+      "key": "tcgscan",
+      "id": "tcgscan",
+      "name": "TCGScan",
+      "profile": {
+        "username": "username",
+        "displayName": "display_name"
+      }
+    },
+    {
+      "key": "doggle",
+      "id": "doggle",
+      "name": "Doggle",
+      "projectRef": "repmpqbvexbqmocudvhz",
+      "profile": {
+        "username": null,
+        "displayName": "display_name"
+      }
+    },
+    {
+      "key": "pickleague",
+      "id": "pickleague",
+      "name": "Pickleague",
+      "projectRef": "qwsmhztzfgbtzieulkgu",
+      "profile": {
+        "username": "username",
+        "displayName": "full_name"
+      }
+    }
   ],
-
   "_taxonomyDoc": "Every event name the two apps can emit, with a plain-English label and a stage. `stage` places the event on the acquisition -> activation -> engagement -> monetization spine; `milestone: true` marks the ones worth calling out on a journey timeline. Names seen in the data but missing here are reported as unrecognised rather than silently dropped, so instrumentation added upstream shows up as a prompt to update this file.",
   "_plannedDoc": "`planned: true` marks names registered ahead of implementation, specced in ../tcgscan/ANALYTICS-TRACKING-GAPS.md. Declaring them now means they are recognised the moment they land instead of arriving as unrecognised, and the coverage panel names them as unexercised rather than staying silent about the hole. `failure: true` marks events that record something going wrong, so the report can separate a drop-off caused by disinterest from one caused by a break.",
   "taxonomy": {
-    "session.start":         { "label": "Session started",          "stage": "acquisition",  "apps": ["michi", "tcgscan"] },
-    "page.view":             { "label": "Viewed a page",            "stage": "engagement",   "apps": ["michi", "tcgscan"] },
-    "auth.login":            { "label": "Signed in",                "stage": "acquisition",  "apps": ["michi", "tcgscan"] },
-    "account.created":       { "label": "Account created",          "stage": "acquisition",  "apps": ["michi", "tcgscan"], "milestone": true },
-
-    "demo.tricolor_search":  { "label": "Tried tri-color search",   "stage": "activation",   "apps": ["michi"], "milestone": true },
-    "demo.csv_import":       { "label": "Tried the example import", "stage": "activation",   "apps": ["michi"], "milestone": true },
-    "demo.curation":         { "label": "Tried collection curation","stage": "activation",   "apps": ["michi"], "milestone": true },
-    "demo.print":            { "label": "Tried the print example",  "stage": "activation",   "apps": ["michi"], "milestone": true },
-
-    "binder.add":            { "label": "Created a binder",         "stage": "activation",   "apps": ["michi"], "milestone": true },
-    "csv.import":            { "label": "Imported a CSV",           "stage": "activation",   "apps": ["michi"], "milestone": true },
-    "card.search":           { "label": "Searched cards",           "stage": "engagement",   "apps": ["michi", "tcgscan"] },
-    "card.add":              { "label": "Added cards",              "stage": "engagement",   "apps": ["michi", "tcgscan"] },
-    "card.open":             { "label": "Opened a card",            "stage": "engagement",   "apps": ["tcgscan"] },
-
-    "scan.capture":          { "label": "Scanned a card",           "stage": "activation",   "apps": ["tcgscan"], "milestone": true },
-    "collection.create":     { "label": "Created a collection",     "stage": "activation",   "apps": ["tcgscan"], "milestone": true },
-    "collection.rename":     { "label": "Renamed a collection",     "stage": "engagement",   "apps": ["tcgscan"] },
-    "collection.delete":     { "label": "Deleted a collection",     "stage": "engagement",   "apps": ["tcgscan"] },
-    "collection.card_add":   { "label": "Added a card to a collection",     "stage": "engagement", "apps": ["tcgscan"] },
-    "collection.card_remove":{ "label": "Removed a card from a collection", "stage": "engagement", "apps": ["tcgscan"] },
-
-    "trial.start":           { "label": "Started a PRO trial",      "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true },
-
-    "pro.offer_shown":       { "label": "Saw the PRO offer",        "stage": "monetization", "apps": ["michi", "tcgscan"], "milestone": true },
+    "session.start": {
+      "label": "Session started",
+      "stage": "acquisition",
+      "apps": [
+        "michi",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ]
+    },
+    "page.view": {
+      "label": "Viewed a page",
+      "stage": "engagement",
+      "apps": [
+        "michi",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ]
+    },
+    "auth.login": {
+      "label": "Signed in",
+      "stage": "acquisition",
+      "apps": [
+        "michi",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ]
+    },
+    "account.created": {
+      "label": "Account created",
+      "stage": "acquisition",
+      "apps": [
+        "michi",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ],
+      "milestone": true
+    },
+    "demo.tricolor_search": {
+      "label": "Tried tri-color search",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "demo.csv_import": {
+      "label": "Tried the example import",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "demo.curation": {
+      "label": "Tried collection curation",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "demo.print": {
+      "label": "Tried the print example",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "binder.add": {
+      "label": "Created a binder",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "csv.import": {
+      "label": "Imported a CSV",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "card.search": {
+      "label": "Searched cards",
+      "stage": "engagement",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ]
+    },
+    "card.add": {
+      "label": "Added cards",
+      "stage": "engagement",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ]
+    },
+    "card.open": {
+      "label": "Opened a card",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "scan.capture": {
+      "label": "Scanned a card",
+      "stage": "activation",
+      "apps": [
+        "tcgscan"
+      ],
+      "milestone": true
+    },
+    "collection.create": {
+      "label": "Created a collection",
+      "stage": "activation",
+      "apps": [
+        "tcgscan"
+      ],
+      "milestone": true
+    },
+    "collection.rename": {
+      "label": "Renamed a collection",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "collection.delete": {
+      "label": "Deleted a collection",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "collection.card_add": {
+      "label": "Added a card to a collection",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "collection.card_remove": {
+      "label": "Removed a card from a collection",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "trial.start": {
+      "label": "Started a PRO trial",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
+      "milestone": true
+    },
+    "pro.offer_shown": {
+      "label": "Saw the PRO offer",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
+      "milestone": true
+    },
     "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook — tracked as gaps.tcgscan_search_blind, not as a missing call site.",
-    "pro.offer_declined":    { "label": "Dismissed the PRO offer",  "stage": "monetization", "apps": ["michi"] },
-    "trial.start_failed":    { "label": "PRO trial failed to start","stage": "monetization", "apps": ["michi", "tcgscan"], "failure": true },
-    "csv.import_failed":     { "label": "CSV import failed",        "stage": "activation",   "apps": ["michi"], "failure": true },
-    "scan.failed":           { "label": "Scan failed",              "stage": "activation",   "apps": ["tcgscan"], "failure": true },
-    "search.no_results":     { "label": "Search returned nothing",  "stage": "engagement",   "apps": ["michi"], "failure": true },
-
-    "share.link_created":    { "label": "Made a binder shareable",  "stage": "engagement",   "apps": ["michi"], "planned": true, "milestone": true },
-    "share.link_copied":     { "label": "Copied a share link",      "stage": "engagement",   "apps": ["michi"], "planned": true },
-    "share.link_opened":     { "label": "Opened a shared binder",   "stage": "acquisition",  "apps": ["michi"], "planned": true, "milestone": true },
-    "binder.reshare":        { "label": "Copied someone's binder",  "stage": "activation",   "apps": ["michi"], "planned": true, "milestone": true }
+    "pro.offer_declined": {
+      "label": "Dismissed the PRO offer",
+      "stage": "monetization",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_capGatesDoc": "A cap gate is the block a user hits when a tier limit stops them — 16 of 16 binder pages, 3 of 3 binders, the print gate. It is the moment upgrade intent is highest and, until these land, the one moment the stream cannot see. pro.offer_shown covers only the surfaces TrialCta itself renders; a gate that refuses an action without rendering that button emits nothing at all. `limit` MUST be the tier_caps limit_key verbatim so a gate joins to its cap without a lookup table.",
+    "cap.gate_shown": {
+      "label": "Hit a plan limit",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
+      "milestone": true
+    },
+    "cap.gate_dismissed": {
+      "label": "Backed out of a limit",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ]
+    },
+    "trial.start_failed": {
+      "label": "PRO trial failed to start",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
+      "failure": true
+    },
+    "csv.import_failed": {
+      "label": "CSV import failed",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "failure": true
+    },
+    "scan.failed": {
+      "label": "Scan failed",
+      "stage": "activation",
+      "apps": [
+        "tcgscan"
+      ],
+      "failure": true
+    },
+    "search.no_results": {
+      "label": "Search returned nothing",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ],
+      "failure": true
+    },
+    "share.link_created": {
+      "label": "Made a binder shareable",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ],
+      "planned": true,
+      "milestone": true
+    },
+    "share.link_copied": {
+      "label": "Copied a share link",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ],
+      "planned": true
+    },
+    "share.link_opened": {
+      "label": "Opened a shared binder",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ],
+      "planned": true,
+      "milestone": true
+    },
+    "binder.reshare": {
+      "label": "Copied someone's binder",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ],
+      "planned": true,
+      "milestone": true
+    }
   },
-
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness — the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
-    "/plans":     { "label": "Plans & pricing",   "intent": "pricing" },
-    "/purchases": { "label": "Purchases",         "intent": "pricing" },
-    "/michi-method": { "label": "The michi method" },
-    "/discover":  { "label": "Discover" },
-    "/learn":     { "label": "Learn" },
-    "/contest":   { "label": "Contest" },
-    "/scan":      { "label": "Scan" },
-    "/collection":{ "label": "Collection" },
-    "/":          { "label": "Home" }
+    "/plans": {
+      "label": "Plans & pricing",
+      "intent": "pricing"
+    },
+    "/purchases": {
+      "label": "Purchases",
+      "intent": "pricing"
+    },
+    "/michi-method": {
+      "label": "The michi method"
+    },
+    "/discover": {
+      "label": "Discover"
+    },
+    "/learn": {
+      "label": "Learn"
+    },
+    "/contest": {
+      "label": "Contest"
+    },
+    "/scan": {
+      "label": "Scan"
+    },
+    "/collection": {
+      "label": "Collection"
+    },
+    "/": {
+      "label": "Home"
+    },
+    "Landing": {
+      "label": "Doggle marketing landing",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "PlusUpgrade": {
+      "label": "Doggle+ upgrade",
+      "intent": "pricing",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "Shop": {
+      "label": "Pickleague shop",
+      "intent": "pricing",
+      "apps": [
+        "pickleague"
+      ]
+    }
   },
-
   "_funnelsDoc": "Ordered stages. A user counts at stage N only if they also reached every earlier stage, so the drop-off between rows is real. `match` is one of: event (any of `names`), route (a page.view whose route is in `routes`), or truth (a row in a ground-truth table — instrumentation-independent, so it also back-fills history from before tracking existed).",
   "_funnelsNote": "Shared-binder arrivals are deliberately NOT a funnel here. Answering it needs each binder's owner joined to the viewer, which this lane does not load - a route-only version would count owners opening their own binders as arrivals and quietly overstate the channel. The shares lane (scripts/shares.mjs, reports/shares.html) does it properly.",
   "funnels": [
@@ -72,51 +381,256 @@
       "id": "pro-trial",
       "title": "PRO trial: awareness to activation",
       "question": "How many users know the PRO trial exists, and how many start one?",
-      "apps": ["michi", "tcgscan"],
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
       "stages": [
-        { "id": "arrived",   "label": "Opened the app",              "match": "event", "names": ["session.start"] },
-        { "id": "engaged",   "label": "Did anything past the open",  "match": "event", "names": ["page.view", "card.search", "card.add", "scan.capture", "binder.add", "csv.import", "card.open", "collection.create"] },
-        { "id": "saw-offer", "label": "Was shown the PRO offer",     "match": "event", "names": ["pro.offer_shown"], "caveat": "trial_awareness" },
-        { "id": "started",   "label": "Started a PRO trial",         "match": "truth", "truth": "trial" }
+        {
+          "id": "arrived",
+          "label": "Opened the app",
+          "match": "event",
+          "names": [
+            "session.start"
+          ]
+        },
+        {
+          "id": "engaged",
+          "label": "Did anything past the open",
+          "match": "event",
+          "names": [
+            "page.view",
+            "card.search",
+            "card.add",
+            "scan.capture",
+            "binder.add",
+            "csv.import",
+            "card.open",
+            "collection.create"
+          ]
+        },
+        {
+          "id": "saw-offer",
+          "label": "Was shown the PRO offer",
+          "match": "event",
+          "names": [
+            "pro.offer_shown"
+          ],
+          "caveat": "trial_awareness"
+        },
+        {
+          "id": "started",
+          "label": "Started a PRO trial",
+          "match": "truth",
+          "truth": "trial"
+        }
       ]
     },
     {
       "id": "activation",
       "title": "First-session activation",
       "question": "Do people who open the app ever do the core thing it is for?",
-      "apps": ["michi", "tcgscan"],
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
       "stages": [
-        { "id": "arrived", "label": "Opened the app",     "match": "event", "names": ["session.start"] },
-        { "id": "looked",  "label": "Viewed a page",      "match": "event", "names": ["page.view"] },
-        { "id": "tried",   "label": "Tried a demo",       "match": "event", "names": ["demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
-        { "id": "created", "label": "Made something real","match": "event", "names": ["binder.add", "csv.import", "card.add", "scan.capture", "collection.create"] }
+        {
+          "id": "arrived",
+          "label": "Opened the app",
+          "match": "event",
+          "names": [
+            "session.start"
+          ]
+        },
+        {
+          "id": "looked",
+          "label": "Viewed a page",
+          "match": "event",
+          "names": [
+            "page.view"
+          ]
+        },
+        {
+          "id": "tried",
+          "label": "Tried a demo",
+          "match": "event",
+          "names": [
+            "demo.tricolor_search",
+            "demo.csv_import",
+            "demo.curation",
+            "demo.print"
+          ]
+        },
+        {
+          "id": "created",
+          "label": "Made something real",
+          "match": "event",
+          "names": [
+            "binder.add",
+            "csv.import",
+            "card.add",
+            "scan.capture",
+            "collection.create"
+          ]
+        }
       ]
     },
     {
       "id": "signup",
       "title": "Guest to account",
-      "question": "Do anonymous guests ever convert into real accounts?",
-      "apps": ["michi", "tcgscan"],
+      "question": "Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ],
       "stages": [
-        { "id": "guest",   "label": "Started as a guest",  "match": "guest" },
-        { "id": "engaged", "label": "Did anything at all", "match": "event", "names": ["page.view", "card.search", "card.add", "scan.capture", "demo.tricolor_search", "demo.csv_import", "demo.curation", "demo.print"] },
-        { "id": "signed",  "label": "Created an account",  "match": "event", "names": ["account.created"], "caveat": "guest_upgrade" }
+        {
+          "id": "guest",
+          "label": "Started as a guest",
+          "match": "guest",
+          "note": "Anyone whose session was stamped is_guest at the time. Not \"is anonymous now\" - that would drop everyone who converted out of the denominator of their own conversion funnel."
+        },
+        {
+          "id": "engaged",
+          "label": "Did anything at all",
+          "match": "event",
+          "names": [
+            "page.view",
+            "card.search",
+            "card.add",
+            "scan.capture",
+            "demo.tricolor_search",
+            "demo.csv_import",
+            "demo.curation",
+            "demo.print"
+          ]
+        },
+        {
+          "id": "signed",
+          "label": "Submitted the upgrade",
+          "match": "event",
+          "names": [
+            "account.created"
+          ],
+          "caveat": "upgrade_unconfirmed",
+          "note": "account.created fires when updateUser() returns, before the email is confirmed."
+        },
+        {
+          "id": "confirmed",
+          "label": "Completed it (ground truth)",
+          "match": "converted",
+          "note": "auth.users.is_anonymous is false and the session carries upgraded_at. An upgrade whose email is never confirmed stays anonymous forever, so this is the only honest conversion count."
+        }
+      ]
+    },
+    {
+      "id": "doggle-visitor-signup",
+      "title": "Visitor to account",
+      "question": "Do signed-out visitors (QR scans included) become Doggle accounts?",
+      "apps": [
+        "doggle"
+      ],
+      "stages": [
+        {
+          "id": "visitor",
+          "label": "Arrived signed out",
+          "match": "guest"
+        },
+        {
+          "id": "looked",
+          "label": "Viewed any screen",
+          "match": "names",
+          "names": [
+            "page.view"
+          ]
+        },
+        {
+          "id": "signed",
+          "label": "Created an account",
+          "match": "names",
+          "names": [
+            "account.created"
+          ],
+          "caveat": "doggle_oauth_signup_untracked"
+        },
+        {
+          "id": "claimed",
+          "label": "Signed in on that visit",
+          "match": "converted"
+        }
+      ]
+    },
+    {
+      "id": "pickleague-visitor-signup",
+      "title": "Visitor to account",
+      "question": "Do signed-out visitors (QR scans included) become Pickleague accounts?",
+      "apps": [
+        "pickleague"
+      ],
+      "stages": [
+        {
+          "id": "visitor",
+          "label": "Arrived signed out",
+          "match": "guest"
+        },
+        {
+          "id": "looked",
+          "label": "Viewed any screen",
+          "match": "names",
+          "names": [
+            "page.view"
+          ]
+        },
+        {
+          "id": "signed",
+          "label": "Created an account",
+          "match": "names",
+          "names": [
+            "account.created"
+          ]
+        },
+        {
+          "id": "claimed",
+          "label": "Signed in on that visit",
+          "match": "converted"
+        }
       ]
     }
   ],
-
   "_truthDoc": "Ground-truth tables read alongside the event stream. These predate instrumentation, so they answer 'did it actually happen' for the whole history, not just since tracking went live. Used to cross-check the event stream and to catch under-counting.",
   "truth": {
     "trial": [
-      { "app": "michi",   "table": "pro_trials",         "userCol": "user_id", "tsCol": "started_at" },
-      { "app": "tcgscan", "table": "tcgscan_pro_trials", "userCol": "user_id", "tsCol": "started_at" }
+      {
+        "app": "michi",
+        "table": "pro_trials",
+        "userCol": "user_id",
+        "tsCol": "started_at"
+      },
+      {
+        "app": "tcgscan",
+        "table": "tcgscan_pro_trials",
+        "userCol": "user_id",
+        "tsCol": "started_at"
+      }
     ],
     "entitlement": [
-      { "app": "michi",   "table": "entitlements", "userCol": "user_id", "tsCol": "granted_at", "filter": "product like 'tier_%'" },
-      { "app": "tcgscan", "table": "entitlements", "userCol": "user_id", "tsCol": "granted_at", "filter": "product like 'tcgscan_%'" }
+      {
+        "app": "michi",
+        "table": "entitlements",
+        "userCol": "user_id",
+        "tsCol": "granted_at",
+        "filter": "product like 'tier_%'"
+      },
+      {
+        "app": "tcgscan",
+        "table": "entitlements",
+        "userCol": "user_id",
+        "tsCol": "granted_at",
+        "filter": "product like 'tcgscan_%'"
+      }
     ]
   },
-
   "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation), landed (code is in the app repos but no event has been observed yet, so it is not proven), deferred (a decision was made not to do it, with the reason), fixed (observed firing). landed -> fixed is not a judgement call: the coverage panel detects a planned name appearing in the data and says so. Fixes land in the app repos, never here.",
   "gaps": {
     "share_attribution": {
@@ -145,13 +659,30 @@
     },
     "trial_awareness": {
       "severity": "blocking",
-      "status": "fixed",
+      "status": "landed",
       "title": "No impression event for the PRO trial offer",
       "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.",
       "direction": "understates awareness — currently makes it unmeasurable",
-      "_whyStillZero": "Verified 2026-08-06: the stage will keep reading zero even after pro.offer_shown ships, and that is a PRODUCT fact rather than an instrumentation one. useTrial returns early for guests (`if (!isSignedIn || !user) return`) and its state falls back to 'ineligible' when unresolved, so TrialCta renders null for every anonymous visitor. Guests are 3 of the 4 real users on michi. The one signed-in account (@ramicide) has only ever visited /my-binders and two binder pages — never /plans, never a print gate. So nobody has been eligible AND in the right place. Do not read a persistent zero here as the fix having failed.",
+      "_whyStillZero": "Verified 2026-08-06: the stage will keep reading zero even after pro.offer_shown ships, and that is a PRODUCT fact rather than an instrumentation one. useTrial returns early for guests (`if (!isSignedIn || !user) return`) and its state falls back to 'ineligible' when unresolved, so TrialCta renders null for every anonymous visitor. Guests are 3 of the 4 real users on michi. The one signed-in account (one michi account) has only ever visited /my-binders and two binder pages — never /plans, never a print gate. So nobody has been eligible AND in the right place. Do not read a persistent zero here as the fix having failed.",
       "fix": "track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.",
-      "_landed": "Verified 2026-08-07 17:25 UTC: pro.offer_shown fired twice on michi, once per surface — { surface: 'print_gate' } and { surface: 'plans' } — from a guest who had just converted in place. The awareness stage is measurable. It reads 1 impression / 0 starts, which is a rate with n=1, not yet a conversion rate."
+      "_landed": "Verified 2026-08-07 17:25 UTC: pro.offer_shown fired twice on michi, once per surface — { surface: 'print_gate' } and { surface: 'plans' } — from a guest who had just converted in place. The awareness stage is measurable. It reads 1 impression / 0 starts, which is a rate with n=1, not yet a conversion rate.",
+      "_downgradedFromFixed": "2026-08-10, on an owner question the stream could not answer: 'was one michi account ever shown the PRO trial offer?' The event works; the GAP it was opened for does not close, for two reasons, and 'fixed' was hiding both.",
+      "_limit1_blindBeforeAug8": "pro.offer_shown cannot be read as absent for anything before 2026-08-08. Until commit 0459e47 (2026-08-08 17:28 -0700) track() discarded every event fired before the auth store landed cachedUser — see trial_start_dropped, where a real entitlement-granting activation vanished that way. the account's whole visit (2026-08-05 23:23 to 2026-08-06 23:23 UTC) sits inside that window, and the emitter itself was only committed at 2026-08-05 23:13 UTC, ten minutes before their first session, with no verified deploy time. For that period, no impression is NOT no offer.",
+      "_limit2_wrongCorpus": "The claim below in _whyStillZero — that one michi account 'never [hit] a print gate' — is now known to be the wrong question rather than a wrong answer. They hit a DIFFERENT gate, twice: both of their binders sit at exactly 16 of 16 pages, the free pagesPerBinder cap, and the second is titled 'part 2', which is the cap being worked around in plain sight. TrialCta never renders there, so pro.offer_shown is silent by construction, not by absence of intent. Measuring offer awareness while the cap gates that CREATE the intent emit nothing is measuring the wrong end of the funnel — tracked separately as cap_gates_blind.",
+      "_toClose": "Ship cap_gates_blind, then re-verify awareness against a signed-in account that hits a cap AFTER 2026-08-08. Until an impression is observed for a user whose events were not droppable, this stays landed."
+    },
+    "cap_gates_blind": {
+      "severity": "blocking",
+      "status": "landed",
+      "title": "Cap gates emit nothing, so upgrade intent is invisible",
+      "detail": "Every tier limit in tier_caps can stop a user — binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection — and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.",
+      "direction": "understates upgrade intent to exactly zero — every cap hit ever is unrecorded",
+      "_evidence": "one michi account, a genuine external account (not excluded), created 2026-08-05 and active for one day. Ground truth: two binders, 'Ramochan binder idea' and 'part 2', BOTH at exactly 16 of 16 pages against the free pagesPerBinder cap of 16; 54 of 100 artworks; 2 of 3 binders. The stream for that account holds 11 page.view, 5 card.add, 4 session.start — and nothing about a limit. The workaround is legible in the title of the second binder and invisible in the events. Note the shape of the reasoning: the cap position came from product tables, the way trials do, which is why it survives the analytics drop window entirely.",
+      "fix": "Emit cap.gate_shown { limit, surface, tier, used, cap } once per gate impression, where `limit` is the tier_caps limit_key verbatim (pagesPerBinder, binders, artUploads, cardScansPerMonth, collections, cardsPerCollection) so it joins to the cap with no lookup table. Emit cap.gate_dismissed { limit, surface } when the user backs out without acting. Where a gate already renders TrialCta, pass the SAME surface string so cap.gate_shown, pro.offer_shown and trial.start share one attribution key and the gate-to-trial funnel is a join rather than a guess. Specced in ../tcgscan/ANALYTICS-CAP-GATES.md.",
+      "_denominatorNote": "cap.gate_shown counts impressions of the block, which is the honest denominator for 'intent that met a wall'. It is NOT the count of users at a cap — an account can sit at 16 of 16 for weeks without touching the binder again, and that account is at the cap while emitting nothing. Read the two together: tier_caps position from the product tables for who IS capped, cap.gate_shown for who FELT it.",
+      "_landed": "Shipped in BOTH apps on 2026-08-10, same day it was specced (michi commit 7e4f324). michi calls trackCapGate() directly at each gate; tcgscan routes them through lib/gate-prompt.ts. All six limit_keys are covered — binders (5 sites), pagesPerBinder (4), cardsPerCollection (3), collections (2), cardScansPerMonth (2), artUploads (1). The spec's two load-bearing details survived implementation: `limit` is the tier_caps limit_key verbatim, and `tier` is stamped at the gate rather than inferred later. The apps also added capCount() to normalise an unlimited cap, because JSON.stringify(Infinity) is null and would have landed indistinguishable from 'not captured' — a good catch that was not in the spec.",
+      "_whyNotFixed": "Status stays LANDED, not fixed: as of 2026-08-10 analytics_events holds zero cap.gate_shown and zero cap.gate_dismissed rows. Every call site is unexercised, so nothing has proven the props arrive shaped as promised. To close it, hit a real cap on a signed-in account and confirm one row per gate with limit/surface/tier/used/cap populated — the verification steps are in ../tcgscan/ANALYTICS-CAP-GATES.md. Do not mark this fixed on the strength of the code reading correctly; that is exactly the mistake trial_awareness made.",
+      "_blockedBy": "Verify AFTER the browse.tsx capacity bug is fixed (see the same work order). michi-maker/src/app/browse.tsx computes capacity as pagesPerBinder * 9, but a page is rows x cols and production holds 4x4, 3x4 and 2x2 pages — 15 of 330 are not 9 slots. Until that is corrected, `used` and `cap` on a gate emitted from browse inherit the error and would record the bug as if it were the user's behaviour."
     },
     "trial_start_dropped": {
       "severity": "high",
@@ -202,6 +733,65 @@
       "detail": "Nothing records how a session arrived — no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials. DEFERRED by Brian on 2026-08-06, for a real reason rather than as a backlog punt: michi-maker/src/app/legal/privacy.tsx promises first-party records of 'which pages you open and product actions', and referrer/UTM are neither. Capturing them means changing that disclosure first, in both apps.",
       "direction": "no attribution possible",
       "fix": "not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change."
+    },
+    "upgrade_unconfirmed": {
+      "severity": "medium",
+      "status": "open",
+      "title": "account.created counts submitted upgrades, not completed ones",
+      "detail": "Both apps fire account.created {via:'guest_upgrade'} the moment updateUser() returns, which is before the email is confirmed. An upgrade whose email is never confirmed leaves auth.users.is_anonymous = true forever - the person stays a guest and keeps their guest caps, while the stream says they made an account. On 2026-08-11, 4 users had fired the event and only 2 had confirmed: the event overstates completed conversion by 2x.",
+      "direction": "conversion is overstated; the guest population is understated by the same people",
+      "fix": "emit a second event on confirmation (auth.confirmed, or account.created {via:'guest_upgrade_confirmed'}) so submit and complete are separable in the stream. Until then the funnel reads completion from ground truth (auth.users.is_anonymous + analytics_sessions.upgraded_at), which is why that stage is labelled as such.",
+      "_workaround": "The signup funnel carries a fourth stage, match:\"converted\", read from ground truth rather than the stream. It is correct today but it cannot see WHEN someone confirmed, only that they have - so confirmation lag and confirm-after-window are both invisible.",
+      "_evidence": "Measured 2026-08-11: 4 users had fired account.created with via=guest_upgrade; 2 had confirmed (is_anonymous false), 2 had email null / email_confirmed_at null and were still anonymous. Names live in the gitignored roster, not here."
+    },
+    "guest_device_churn": {
+      "severity": "medium",
+      "status": "specced",
+      "title": "A guest who clears storage becomes a new person",
+      "detail": "analytics_sessions has no device column, so identity for an anonymous user is only as durable as the Supabase session in storage. A reload keeps the same anon uid (persistence works - 5 michi anon uids span multiple days, one has 10 sessions), but cleared site data, incognito, a second browser or a reinstall mints a fresh uid with no join key to the old one. Guest counts are therefore an upper bound on guest PEOPLE.",
+      "direction": "guest people are overstated; every rate with guests in the denominator is understated",
+      "fix": "add analytics_sessions.device_id - a random opaque UUID generated once at first launch, persisted in localStorage/AsyncStorage, never regenerated on sign-out or upgrade. Specced in ../tcgscan/ANALYTICS-GUEST-DEVICE-ID.md.",
+      "_notIpBased": "Deliberately NOT solved with IP + user agent. One IP+UA pair holds 330 distinct anonymous uids on this project, another 144, another 58 - behind NAT that key is a building, not a person. Stitching on it would merge strangers and would also put location data into a join.",
+      "_size": "Measured 2026-08-11: of 115 anon uids created since instrumentation, the two largest device clusters (52 and 7 uids) are both on EXCLUDED dev IPs - the churn is almost entirely ours. Among real external traffic the largest cluster is 2.",
+      "_forwardOnly": "Cannot recover recorded history. The 45 michi guests in the 30d window will always be 45 uids."
+    },
+    "qr_campaign_capture": {
+      "severity": "medium",
+      "status": "landed",
+      "title": "Campaign codes ride on landing_route and account.created",
+      "detail": "The emitters keep an allowlisted ?code/utm_* query on the first page.view (stored in landing_route) and merge the code into account.created props; all four apps landed the change 2026-08-13. Verified end-to-end against real rows in dev the same day: a fresh-context scan wrote landing_route='/welcome?code=...' plus device_id on michi, and 'Landing?code=...' plus the heartbeat/claim RPCs on doggle (the claim exercised as an authenticated JWT and reverted). Two bugs were found and fixed on the way: the fresh-visitor buffer wipe and the RLS select-gating no-op. What remains unproven is only production: the app code must deploy, and a printed code must be scanned for real.",
+      "direction": "until a real scan lands, a zero in the campaigns panel means 'not verified end-to-end', not 'the card show produced nothing'.",
+      "fix": "Deploy the app changes (migrations are already applied), then scan a printed code against production and confirm the session row carries code=<campaign>; then mark fixed."
+    },
+    "anon_visitor_exclusions": {
+      "severity": "medium",
+      "status": "open",
+      "title": "Signed-out visits cannot be excluded",
+      "detail": "Exclusions key on auth identity: email/uid always, IPs only for anonymous AUTH users. Doggle and pickleague visitor sessions have no auth user at all, so our own signed-out browsing counts as real traffic in their behavioural numbers. Signed-in dev traffic is still excluded normally, and michi/tcgscan are unaffected (their guests are anon auth users, IP exclusion applies).",
+      "direction": "doggle/pickleague visitor counts are overstated by however much we browse our own public pages signed out.",
+      "fix": "Either add a device_id exclusion list once dev devices are known, or browse the public pages signed in. Until then read visitor spikes next to the deploy/QA calendar."
+    },
+    "doggle_oauth_signup_untracked": {
+      "severity": "low",
+      "status": "open",
+      "title": "Doggle OAuth signups fire no account.created",
+      "detail": "account.created fires from the email/phone signUp wrappers in doggle's data/auth.ts. An OAuth (Google/Apple) signup never passes through them, so it emits only auth.login plus the session claim (upgraded_at). The doggle signup funnel stage carries this caveat.",
+      "direction": "doggle signups are undercounted by the OAuth share; the 'signed in on that visit' stage is the honest ceiling.",
+      "fix": "Fire account.created from the OAuth return path when the auth user was created moments before, mirroring michi's handling of the same ambiguity."
     }
+  },
+  "guestDepth": {
+    "_why": "Which events count as a guest having BUILT something rather than merely browsed. Kept here so the activation bar is a config question, not a code one.",
+    "makeEvents": [
+      "binder.add",
+      "card.add",
+      "csv.import",
+      "scan.capture",
+      "collection.create",
+      "demo.tricolor_search",
+      "demo.csv_import",
+      "demo.curation",
+      "demo.print"
+    ]
   }
 }

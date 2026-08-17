@@ -27,8 +27,96 @@ export function readConfig(name) {
 
 export const sqlStr = (s) => `'${String(s).replace(/'/g, "''")}'`;
 
-export function isoDate(d) {
-  return d.toISOString().slice(0, 10);
+// ---------- Days ----------
+//
+// THE reporting timezone. Every "day" in this studio - a DAU bucket, a chart column, a
+// digest's "yesterday" - is cut on midnight HERE, not on midnight UTC. Owner decision
+// 2026-08-16: the numbers describe Brian's day, so they should break where his day does.
+//
+// It is America/Los_Angeles rather than a fixed -08:00 on purpose. "PST" as spoken means
+// "my clock", and half the year that clock is PDT; a fixed offset would silently move every
+// boundary by an hour each spring. Set REPORT_TZ in .env to override - `Etc/GMT+8` is a
+// true, year-round PST if that is ever wanted (note the sign: POSIX zones are inverted).
+//
+// NOT changed by this: rolling windows (24h/7d/30d are durations, and a duration has no
+// timezone), and product-defined periods like the monthly scan-credit cycle, which resets
+// on a boundary the APP enforces - reporting it on a different one would misstate what a
+// user is actually allowed.
+export const REPORT_TZ = process.env.REPORT_TZ || "America/Los_Angeles";
+
+const DAY_FMT = new Intl.DateTimeFormat("en-CA", {
+  timeZone: REPORT_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** The zone's current abbreviation (PST/PDT), for labelling a report honestly. */
+export function tzLabel(at = new Date()) {
+  return (
+    new Intl.DateTimeFormat("en-US", { timeZone: REPORT_TZ, timeZoneName: "short" })
+      .formatToParts(at)
+      .find((p) => p.type === "timeZoneName")?.value ?? REPORT_TZ
+  );
+}
+
+/** Postgres hands back `2026-08-16 21:22:02.731476+00`; be strict about turning that into
+ *  an instant rather than trusting every runtime to guess the same way. */
+export function parseTs(ts) {
+  if (ts instanceof Date) return ts;
+  const raw = String(ts).trim();
+  const norm = raw.replace(" ", "T").replace(/([+-]\d{2})$/, "$1:00");
+  const d = new Date(norm);
+  return Number.isNaN(d.getTime()) ? new Date(raw) : d;
+}
+
+/** YYYY-MM-DD for an instant, in the reporting zone. */
+export function isoDate(d = new Date()) {
+  return DAY_FMT.format(d instanceof Date ? d : parseTs(d));
+}
+
+/** The reporting-zone day a timestamp falls in. Replaces `String(ts).slice(0, 10)`, which
+ *  silently answered in UTC and put 5pm Pacific on tomorrow. */
+export function dayOf(ts) {
+  return ts == null ? null : isoDate(parseTs(ts));
+}
+
+/** Epoch ms of midnight in the reporting zone on a given YYYY-MM-DD. Two passes so a DST
+ *  transition inside the day cannot land the answer an hour out. */
+export function startOfDay(dayStr) {
+  const naive = Date.parse(`${dayStr}T00:00:00Z`);
+  const offsetAt = (instant) => {
+    const parts = Object.fromEntries(
+      new Intl.DateTimeFormat("en-US", {
+        timeZone: REPORT_TZ,
+        hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+        .formatToParts(instant)
+        .filter((p) => p.type !== "literal")
+        .map((p) => [p.type, p.value]),
+    );
+    const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour % 24, +parts.minute, +parts.second);
+    return asUtc - instant.getTime();
+  };
+  let t = naive - offsetAt(new Date(naive));
+  return naive - offsetAt(new Date(t));
+}
+
+/** SQL: the reporting-zone date of a timestamptz column. `at time zone` converts to local
+ *  wall-clock first, so the ::date that follows is the day the user actually lived. */
+export function dayExpr(col) {
+  return `((${col}) at time zone ${sqlStr(REPORT_TZ)})::date`;
+}
+
+/** SQL: today in the reporting zone. Replaces `current_date`, which is the SERVER's day. */
+export function todayExpr() {
+  return `((now() at time zone ${sqlStr(REPORT_TZ)})::date)`;
 }
 
 // ---------- Management API SQL ----------

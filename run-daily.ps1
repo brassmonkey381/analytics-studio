@@ -23,6 +23,11 @@ $eventsExit = $LASTEXITCODE
 & node (Join-Path $root "scripts\events-report.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 $eventsReportExit = $LASTEXITCODE
 
+# Print/QR campaign lane: arrivals per printed code, joined to marketing-studio's
+# registry of what physically exists on paper. Also non-fatal.
+& node (Join-Path $root "scripts\campaigns.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+$campaignsExit = $LASTEXITCODE
+
 # Plans lane: distinct accounts per entitlement tier. Also non-fatal.
 & node (Join-Path $root "scripts\plans.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 $plansExit = $LASTEXITCODE
@@ -35,12 +40,26 @@ $sharesExit = $LASTEXITCODE
 & node (Join-Path $root "scripts\usage.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 $usageExit = $LASTEXITCODE
 
+# Economy lane: points/pickles balances and flows, plus tier-cap utilisation
+# across the four apps. Also non-fatal.
+& node (Join-Path $root "scripts\economy.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+$economyExit = $LASTEXITCODE
+
 # Geo lane: ingestion coverage maps AND per-script enrichment debt (it owns
 # data/enrich.json, one history row per day - a missed day is a hole in the
 # burn-down chart). Also non-fatal.
 & node (Join-Path $root "scripts\geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 
-"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit geo exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
+"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit campaigns exit=$campaignsExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit economy exit=$economyExit geo exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
+
+# Daily digest email: new accounts, plan/PRO/trial interactions, yesterday's DAU
+# and what those people did. Runs LAST because it reads the other lanes' output
+# rather than re-querying - one definition of DAU, not two. Sends only when
+# RESEND_API_KEY / DIGEST_FROM / DIGEST_TO are set in .env; otherwise it just
+# writes state\digest-latest.html. Also non-fatal.
+& node (Join-Path $root "scripts\digest.mjs") --send 2>&1 | Out-File $log -Append -Encoding utf8
+$digestExit = $LASTEXITCODE
+if ($digestExit -ne 0) { "digest: NOT SENT (exit $digestExit) - see the lines above" | Out-File $log -Append -Encoding utf8 }
 
 # ---------------------------------------------------------------------------
 # Auto-commit the day's data.
@@ -61,7 +80,7 @@ function Write-Log([string]$msg) { $msg | Out-File $log -Append -Encoding utf8 }
 if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
   Push-Location $root
   try {
-    git add -- "data/metrics.json" "data/events.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/geo.json" "data/enrich.json" "reports/events.md" 2>&1 | Out-Null
+    git add -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "reports/events.md" "reports/campaigns.md" 2>&1 | Out-Null
     $staged = @(git diff --cached --name-only)
 
     if ($staged.Count -eq 0) {
@@ -79,7 +98,7 @@ if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
       $hits = @($diff -split "`n" | Select-String -Pattern $pattern)
 
       if ($hits.Count -gt 0) {
-        git reset -q -- "data/metrics.json" "data/events.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/geo.json" "data/enrich.json" "reports/events.md" 2>&1 | Out-Null
+        git reset -q -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "reports/events.md" "reports/campaigns.md" 2>&1 | Out-Null
         Write-Log "auto-commit: ABORTED - staged diff matched $($hits.Count) sensitive pattern(s); nothing committed."
         foreach ($h in $hits | Select-Object -First 5) {
           $line = $h.Line.Trim()

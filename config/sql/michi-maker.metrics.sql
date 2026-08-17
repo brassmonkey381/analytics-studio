@@ -5,13 +5,13 @@
 -- carries no 'provider' key for anonymous sign-ins.
 with {{EXCLUDED_CTE}},
 days as (
-  select generate_series((current_date - ({{WINDOW}} - 1))::date, current_date, interval '1 day')::date as d
+  select generate_series(({{TODAY}} - ({{WINDOW}} - 1))::date, {{TODAY}}, interval '1 day')::date as d
 ),
 activity as (
 {{ACTIVITY_UNION}}
 ),
 cls as (
-  select a.uid, a.ts::date as d, coalesce(u.is_anonymous, false) as guest
+  select a.uid, {{DAY:a.ts}} as d, coalesce(u.is_anonymous, false) as guest
   from activity a left join auth.users u on u.id = a.uid
   where a.uid not in (select id from excluded_users)
 ),
@@ -38,7 +38,7 @@ first_touch as (
     and p.id not in (select id from excluded_users)
 ),
 newu as (
-  select created_at::date as d,
+  select {{DAY:created_at}} as d,
     count(*) filter (where not guest) as c,
     count(*) filter (where guest) as g
   from first_touch

@@ -1,54 +1,144 @@
 {
-  "_doc": "The dashboard's registry. Each entry becomes a card on the index and a route at /<id>. `scripts` is what a refresh runs, in order, from the repo root — omit it for a report that is written by hand or produced by something outside this repo, and it will be served without a refresh button rather than pretending it has one. `data` is the JSON whose collectedAt drives the age indicator; omit it and the report's own file mtime is used instead. Any reports/*.html not listed here still appears on the index as unregistered, so a new report is reachable the moment it exists — adding it here is what gives it a title, an order, and a refresh.",
-
+  "_doc": "The dashboard's registry. Each entry becomes an item in the left sidebar and a route at /<id>. `scripts` is what a refresh runs, in order, from the repo root — omit it for a report that is written by hand or produced by something outside this repo, and it will be served without a refresh button rather than pretending it has one. `data` is the JSON whose collectedAt drives the age indicator; omit it and the report's own file mtime is used instead. Any reports/*.html not listed here still appears in the sidebar as unregistered, so a new report is reachable the moment it exists — adding it here is what gives it a title, a group, and a refresh.",
+  "_groupsDoc": "`groups` orders the sidebar sections; a report names one via `group`. A report whose group is missing from this list still renders, under its own heading at the end — an unknown group must not hide a report.",
+  "groups": [
+    "Growth",
+    "Product",
+    "Economy",
+    "Coverage"
+  ],
+  "_appsDoc": "`apps` lists which apps a report can say anything about, using config/apps.json ids. The sidebar's app filter uses it two ways: it dims a report that covers none of the selected apps, and inside a report it shows only the [data-app-scope] blocks for selected apps. A report with no `apps` key is treated as covering all of them, so the filter can never silently hide a lane it does not understand.",
   "reports": [
-    {
-      "id": "events",
-      "title": "Event stream",
-      "blurb": "Per-session user journeys, funnels and tracking gaps for Michi-Maker and TCGScan.",
-      "file": "reports/events.html",
-      "data": "data/events.json",
-      "scripts": ["scripts/events.mjs", "scripts/events-report.mjs"]
-    },
     {
       "id": "metrics",
       "title": "DAU & new users",
+      "group": "Growth",
+      "apps": [
+        "doggle",
+        "pickleague",
+        "michi-maker",
+        "tcgscan"
+      ],
       "blurb": "Daily actives, new signups and active-vs-churned totals across all four apps.",
       "file": "reports/report.html",
       "data": "data/metrics.json",
-      "scripts": ["scripts/collect.mjs", "scripts/report.mjs"]
-    },
-    {
-      "id": "shares",
-      "title": "Shared binders",
-      "blurb": "Who opens a binder that is not theirs, and whether they stay. Derived from existing page.view routes.",
-      "file": "reports/shares.html",
-      "data": "data/shares.json",
-      "scripts": ["scripts/shares.mjs"]
-    },
-    {
-      "id": "usage",
-      "title": "Product usage",
-      "blurb": "Daily binders created, cards placed, scans and collection adds, plus scan/print credit consumption against tier caps.",
-      "file": "reports/usage.html",
-      "data": "data/usage.json",
-      "scripts": ["scripts/usage.mjs"]
-    },
-    {
-      "id": "geo",
-      "title": "Geographic coverage & enrichment",
-      "blurb": "US choropleths with app tabs (Doggle / Pickleague): ingestion coverage by state, county and city, plus each enrichment script's debt and burn-down, down to the drill panels.",
-      "file": "reports/geo.html",
-      "data": "data/geo.json",
-      "scripts": ["scripts/geo.mjs"]
+      "scripts": [
+        "scripts/collect.mjs",
+        "scripts/report.mjs"
+      ]
     },
     {
       "id": "plans",
       "title": "Plan tiers",
+      "group": "Growth",
+      "apps": [
+        "michi-maker",
+        "tcgscan"
+      ],
       "blurb": "Distinct accounts at each plan tier, read from the entitlements ledger.",
       "file": "reports/plans.html",
       "data": "data/plans.json",
-      "scripts": ["scripts/plans.mjs"]
+      "scripts": [
+        "scripts/plans.mjs"
+      ]
+    },
+    {
+      "id": "usage",
+      "title": "Product usage",
+      "group": "Product",
+      "apps": [
+        "doggle",
+        "pickleague",
+        "michi-maker",
+        "tcgscan"
+      ],
+      "blurb": "What people make and do, daily: binders, scans, walks, check-ins, matches, leagues and voting — plus scan/print credit consumption against tier caps.",
+      "file": "reports/usage.html",
+      "data": "data/usage.json",
+      "scripts": [
+        "scripts/usage.mjs"
+      ]
+    },
+    {
+      "id": "events",
+      "title": "Event stream",
+      "group": "Product",
+      "apps": [
+        "michi-maker",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ],
+      "blurb": "Per-session user journeys, funnels, print/QR campaign attribution and tracking gaps across all four apps.",
+      "file": "reports/events.html",
+      "data": "data/events.json",
+      "scripts": [
+        "scripts/events.mjs",
+        "scripts/events-report.mjs"
+      ]
+    },
+    {
+      "id": "campaigns",
+      "title": "Print & QR campaigns",
+      "group": "Growth",
+      "apps": [
+        "michi-maker",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ],
+      "blurb": "Did a printed piece produce members? Arrivals per QR code joined to marketing-studio's printed registry, followed through to signup and return — plus whether a scan can be seen at all.",
+      "file": "reports/campaigns.html",
+      "data": "data/campaigns.json",
+      "scripts": [
+        "scripts/campaigns.mjs"
+      ]
+    },
+    {
+      "id": "shares",
+      "title": "Shared binders",
+      "group": "Product",
+      "apps": [
+        "michi-maker"
+      ],
+      "blurb": "Who opens a binder that is not theirs, and whether they stay. Derived from existing page.view routes.",
+      "file": "reports/shares.html",
+      "data": "data/shares.json",
+      "scripts": [
+        "scripts/shares.mjs"
+      ]
+    },
+    {
+      "id": "economy",
+      "title": "Economy",
+      "group": "Economy",
+      "apps": [
+        "doggle",
+        "pickleague",
+        "michi-maker",
+        "tcgscan"
+      ],
+      "blurb": "Points and pickles — balances outstanding, what earns and spends them — plus every account's usage against its Michi-Maker and TCGScan tier caps. Distribution plots: hover a bar for who is in it, click it for their numbers.",
+      "file": "reports/economy.html",
+      "data": "data/economy.json",
+      "scripts": [
+        "scripts/economy.mjs"
+      ]
+    },
+    {
+      "id": "geo",
+      "title": "Coverage & enrichment",
+      "group": "Coverage",
+      "apps": [
+        "doggle",
+        "pickleague"
+      ],
+      "blurb": "US choropleths for Doggle and Pickleague: ingestion coverage by state, county, subdivision and city, venue geofences on a real map, plus each enrichment script's debt and burn-down.",
+      "file": "reports/geo.html",
+      "data": "data/geo.json",
+      "scripts": [
+        "scripts/geo.mjs"
+      ]
     }
   ]
 }

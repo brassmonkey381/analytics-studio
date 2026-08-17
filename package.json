@@ -9,9 +9,15 @@
     "report": "node scripts/report.mjs",
     "events": "node scripts/events.mjs",
     "events:report": "node scripts/events-report.mjs",
+    "campaigns": "node scripts/campaigns.mjs",
+    "digest": "node scripts/digest.mjs",
+    "digest:send": "node scripts/digest.mjs --send",
     "plans": "node scripts/plans.mjs",
     "shares": "node scripts/shares.mjs",
+    "usage": "node scripts/usage.mjs",
+    "economy": "node scripts/economy.mjs",
+    "geo": "node scripts/geo.mjs",
     "serve": "node scripts/serve.mjs",
-    "daily": "node scripts/collect.mjs && node scripts/report.mjs && node scripts/events.mjs && node scripts/events-report.mjs && node scripts/plans.mjs && node scripts/shares.mjs"
+    "daily": "node scripts/collect.mjs && node scripts/report.mjs && node scripts/events.mjs && node scripts/events-report.mjs && node scripts/campaigns.mjs && node scripts/plans.mjs && node scripts/shares.mjs"
   }
 }

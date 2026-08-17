@@ -7,6 +7,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { isoDate, dayOf, REPORT_TZ, tzLabel } from "./lib/studio.mjs";
 import {
   HOVER_MAX_NAMES,
   ROSTER_STORE_CAP,
@@ -26,7 +27,7 @@ const CONFIG = JSON.parse(readFileSync(join(ROOT, "config", "apps.json"), "utf8"
 
 const WINDOW = CONFIG.windowDays ?? 30;
 const dates = [];
-for (let i = WINDOW - 1; i >= 0; i--) dates.push(new Date(Date.now() - i * 86400_000).toISOString().slice(0, 10));
+for (let i = WINDOW - 1; i >= 0; i--) dates.push(isoDate(new Date(Date.now() - i * 86400_000)));
 
 // Series slots follow the palette's fixed categorical order (never cycled).
 const SLOTS = [
@@ -145,8 +146,8 @@ function lineChart(id, seriesKey, win) {
       const vals = series[a.id];
       const d = vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
       const endY = y(vals.at(-1));
-      return `<path d="${d}" class="line s${a.slot}"/>
-<circle cx="${x(d8.length - 1)}" cy="${endY}" r="4" class="dot s${a.slot}"/>`;
+      return `<g data-app-scope="${a.id}"><path d="${d}" class="line s${a.slot}"/>
+<circle cx="${x(d8.length - 1)}" cy="${endY}" r="4" class="dot s${a.slot}"/></g>`;
     })
     .join("\n");
 
@@ -157,7 +158,7 @@ function lineChart(id, seriesKey, win) {
     .sort((p, q) => p.ey - q.ey);
   const endLabels = ends
     .filter((p, i) => ends.every((q, j) => j === i || Math.abs(q.ey - p.ey) >= 15))
-    .map((p) => `<g><circle cx="${W - PAD.r + 10}" cy="${p.ey - 4}" r="4" class="dot s${p.a.slot}"/><text x="${W - PAD.r + 18}" y="${p.ey}" class="endlabel">${esc(p.a.name)} ${fmt(series[p.a.id].at(-1))}</text></g>`)
+    .map((p) => `<g data-app-scope="${p.a.id}"><circle cx="${W - PAD.r + 10}" cy="${p.ey - 4}" r="4" class="dot s${p.a.slot}"/><text x="${W - PAD.r + 18}" y="${p.ey}" class="endlabel">${esc(p.a.name)} ${fmt(series[p.a.id].at(-1))}</text></g>`)
     .join("\n");
 
   return `<div class="chart" data-chart="${id}" data-dates="${esc(JSON.stringify(d8))}">
@@ -195,7 +196,7 @@ function smallMultiples(win) {
 <text x="${pad.l - 6}" y="${y(t) + 4}" class="tick" text-anchor="end">${t.toLocaleString("en-US")}</text>`)
         .join("\n");
       const d = vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
-      return `<figure class="sm">
+      return `<figure class="sm" data-app-scope="${a.id}">
 <figcaption><span class="key s${a.slot}"></span>${esc(a.name)} <strong>${fmt(vals.at(-1))}</strong></figcaption>
 <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(a.name)} cumulative new users, last ${windowLabel(win)}">
 ${grid}
@@ -231,7 +232,7 @@ function retentionChart() {
     .map((a) => {
       const r = a.retention;
       if (!r.total) {
-        return `<figure class="sm">
+        return `<figure class="sm" data-app-scope="${a.id}">
 <figcaption>${esc(a.name)} <strong>0</strong></figcaption>
 <div class="empty">No signed-in users yet</div>
 </figure>`;
@@ -259,7 +260,7 @@ ${parts.join("")}
 <text x="${(padL + full + 6).toFixed(1)}" y="${y + 11}" class="barval">${active}<tspan class="barval-muted"> / ${churned}</tspan></text>
 </g>`;
       }).join("\n");
-      return `<figure class="sm ret-fig">
+      return `<figure class="sm ret-fig" data-app-scope="${a.id}">
 <figcaption><span class="key s${a.slot}"></span>${esc(a.name)} <strong>${fmt(r.total)}</strong></figcaption>
 <svg viewBox="0 0 ${w} ${h}" role="group" aria-label="${esc(a.name)} active versus churned users by window">
 ${rows}
@@ -303,7 +304,7 @@ function tiles(win) {
   <div class="row"><span>New users, ${label}</span><strong>${fmt(inWin)}</strong> <span class="delta ${delta >= 0 ? "up" : "down"}">${deltaTxt}</span></div>`
         : `<div class="value nodata">—</div>
   <div class="sub">not collected yet</div>`;
-      return `<div class="tile">
+      return `<div class="tile" data-app-scope="${a.id}">
   <div class="tile-head"><span class="key s${a.slot}"></span><span class="label">${esc(a.name)}</span></div>
   ${body}
   ${a.note ? `<div class="note">${esc(a.note)}</div>` : ""}
@@ -316,8 +317,10 @@ function tiles(win) {
 // ---------- Table view ----------
 
 function table() {
-  const head = plotted.map((a) => `<th colspan="3">${esc(a.name)}</th>`).join("");
-  const sub = plotted.map(() => `<th>DAU</th><th>Guest</th><th>New</th>`).join("");
+  const head = plotted.map((a) => `<th colspan="3" data-app-scope="${a.id}">${esc(a.name)}</th>`).join("");
+  const sub = plotted
+    .map((a) => `<th data-app-scope="${a.id}">DAU</th><th data-app-scope="${a.id}">Guest</th><th data-app-scope="${a.id}">New</th>`)
+    .join("");
   // Rendered ONCE and filtered by each row's own timestamp — the [data-since]
   // mechanism in lib/windows.mjs. Four copies of a 30-row table would be four
   // chances to disagree.
@@ -326,7 +329,12 @@ function table() {
     .reverse()
     .map((d, ri) => {
       const i = dates.length - 1 - ri;
-      const cells = plotted.map((a) => `<td>${fmt(a.dau[i])}</td><td class="muted">${fmt(a.dauGuest[i])}</td><td>${fmt(a.newDaily[i])}</td>`).join("");
+      const cells = plotted
+        .map(
+          (a) =>
+            `<td data-app-scope="${a.id}">${fmt(a.dau[i])}</td><td class="muted" data-app-scope="${a.id}">${fmt(a.dauGuest[i])}</td><td data-app-scope="${a.id}">${fmt(a.newDaily[i])}</td>`,
+        )
+        .join("");
       // End of that day, so a row is in the window whenever any of it is.
       const since = Date.parse(`${d}T23:59:59Z`);
       return `<tr data-since="${since}"><td>${d}</td>${cells}</tr>`;
@@ -338,7 +346,7 @@ function table() {
 // ---------- Page ----------
 
 const legend = plotted
-  .map((a) => `<span class="legend-item"><span class="key s${a.slot}"></span>${esc(a.name)}</span>`)
+  .map((a) => `<span class="legend-item" data-app-scope="${a.id}"><span class="key s${a.slot}"></span>${esc(a.name)}</span>`)
   .join("");
 
 // The full-length daily series, indexed by the full `dates` list. Each window's
@@ -374,7 +382,7 @@ function retentionNames(appId, win, kind) {
       // Flag activity-derived last-seen: a persisted session makes sign-in
       // alone understate activity, which is the point of the measure.
       const viaActivity = r.last_activity && (!r.last_sign_in_at || r.last_activity > r.last_sign_in_at);
-      return `${who} · ${String(r.last_seen).slice(0, 10)} (${viaActivity ? "activity" : "sign-in"})`;
+      return `${who} · ${dayOf(r.last_seen)} (${viaActivity ? "activity" : "sign-in"})`;
     });
 }
 
@@ -394,7 +402,7 @@ for (const a of apps) {
   }
 }
 
-const generated = new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC";
+const generated = new Date().toLocaleString("sv-SE", { timeZone: REPORT_TZ }).slice(0, 16) + " " + tzLabel();
 
 const html = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -610,7 +618,12 @@ for (const el of document.querySelectorAll(".chart")) {
     tip.replaceChildren();
     const dt = document.createElement("div"); dt.className = "tt-date";
     dt.textContent = day; tip.appendChild(dt);
+    // When the dashboard's app filter is narrowing the page, the multi-series
+    // readout must narrow with it — a tooltip listing an app whose line is
+    // hidden is the same bug as showing the line.
+    const picked = Array.isArray(window.studioApps) && window.studioApps.length ? window.studioApps : null;
     for (const a of DATA.apps) {
+      if (picked && picked.indexOf(a.id) === -1) continue;
       const row = document.createElement("div"); row.className = "tt-row";
       const key = document.createElement("span"); key.className = "key s" + a.slot;
       const name = document.createElement("span"); name.textContent = a.name;
