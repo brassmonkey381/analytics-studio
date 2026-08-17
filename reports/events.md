@@ -1,57 +1,57 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-17T05:46:09.253Z. Own/QA/automated accounts excluded.
+Collected 2026-08-17T15:07:31.544Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-117 sessions · 664 events · 9 accounts + 69 guests · median session 38s
+120 sessions · 679 events · 9 accounts + 72 guests · median session 43s
 Excluded: 118 sessions, 318 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 20 | 128 | 12 |
-| 7d | 71 | 404 | 48 |
-| 14d | 117 | 664 | 78 |
-| 30d | 117 | 664 | 78 |
+| 24h | 21 | 138 | 13 |
+| 7d | 69 | 403 | 48 |
+| 14d | 120 | 679 | 81 |
+| 30d | 120 | 679 | 81 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **78** Opened the app (100% of top)
-- **67** Did anything past the open (85.9% of top)
-- **2** Was shown the PRO offer (2.6% of top) — see gap `trial_awareness`
+- **81** Opened the app (100% of top)
+- **70** Did anything past the open (86.4% of top)
+- **2** Was shown the PRO offer (2.5% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **78** Opened the app (100% of top)
-- **67** Viewed a page (85.9% of top)
-- **2** Tried a demo (2.6% of top)
-- **2** Made something real (2.6% of top)
+- **81** Opened the app (100% of top)
+- **70** Viewed a page (86.4% of top)
+- **2** Tried a demo (2.5% of top)
+- **2** Made something real (2.5% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **73** Started as a guest (100% of top)
-- **62** Did anything at all (84.9% of top)
-- **7** Submitted the upgrade (9.6% of top) — see gap `upgrade_unconfirmed`
-- **4** Completed it (ground truth) (5.5% of top)
+- **76** Started as a guest (100% of top)
+- **65** Did anything at all (85.5% of top)
+- **7** Submitted the upgrade (9.2% of top) — see gap `upgrade_unconfirmed`
+- **4** Completed it (ground truth) (5.3% of top)
 
 ### What guests did past the open
 
-73 people opened as a guest across 96 sessions.
+76 people opened as a guest across 99 sessions.
 
-| How far they got | People | of 73 |
+| How far they got | People | of 76 |
 | --- | ---: | ---: |
-| Opened and left | 11 | 15.1% |
-| Looked at a page or two | 19 | 26% |
-| Wandered the site | 20 | 27.4% |
-| Built something | 23 | 31.5% |
+| Opened and left | 11 | 14.5% |
+| Looked at a page or two | 20 | 26.3% |
+| Wandered the site | 22 | 28.9% |
+| Built something | 23 | 30.3% |
 
 Of the 23 who built something, **4** created an account.
 
@@ -71,23 +71,23 @@ Of the 23 who built something, **4** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 48 | 106 |
-| `/welcome` | 45 | 49 |
+| `/` | 50 | 108 |
+| `/welcome` | 48 | 55 |
 | `/my-binders` | 24 | 60 |
 | `/binder/:id` | 24 | 57 |
 | `/michi-method` | 17 | 24 |
 | `/discover` | 14 | 21 |
-| `/browse` | 13 | 20 |
+| `/browse` | 14 | 21 |
 | `/plans` _(pricing)_ | 12 | 17 |
 | `/learn` | 11 | 18 |
 | `/contest` | 5 | 11 |
-| `/binder/ex-pitch-black-chase` | 4 | 4 |
+| `/binder/ex-pitch-black-chase` | 5 | 5 |
 | `/learn/slice-studio` | 3 | 4 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 442 | 67 |
-| Session started (`session.start`) | 117 | 78 |
+| Viewed a page (`page.view`) | 454 | 70 |
+| Session started (`session.start`) | 120 | 81 |
 | Added cards (`card.add`) | 52 | 10 |
 | Created a binder (`binder.add`) | 28 | 23 |
 | Account created (`account.created`) | 7 | 7 |
@@ -189,7 +189,7 @@ Works, but not yet from a real user: `auth.login`, `card.add`, `scan.capture`, `
 ## Doggle
 
 19 sessions · 59 events · 1 account + 28 guests · median session 1s
-Excluded: 24 sessions, 106 events (our own, QA and automated accounts).
+Excluded: 25 sessions, 113 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
@@ -249,7 +249,7 @@ Works, but not yet from a real user: `auth.login`
 ## Pickleague
 
 7 sessions · 18 events · 0 accounts + 7 guests · median session 13s
-Excluded: 25 sessions, 230 events (our own, QA and automated accounts).
+Excluded: 27 sessions, 245 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
