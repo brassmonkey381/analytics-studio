@@ -2,6 +2,7 @@
   "_doc": "Accounts excluded from all metrics: our own accounts, seeded/placeholder rows, QA and test accounts, and automated browser/HTTP clients. Every excluded account is still COUNTED and surfaced in the report so exclusions are never silent. Patterns are SQL ILIKE (use % as wildcard). userAgentRegex is a POSIX regex matched case-insensitively against auth.sessions.user_agent — a user is excluded if ANY of their sessions matches.",
 
   "global": {
+    "_emailPatternsDoc": "Shapes that can only be ours, matched with SQL ILIKE. bstockman1+%@% is the owner plus-addressed: a plus tag routes to the owner mailbox, so no external person can hold one, and every test signup made that way is excluded without another config change. It currently covers brassmonkey382 (bstockman1+1@hotmail.com, added 2026-08-25) and bstockman1+2@hotmail.com. The untagged owner addresses live in emailExact below.",
     "emailPatterns": [
       "%@example.com",
       "%@example.org",
@@ -14,7 +15,8 @@
       "%playwright%@%",
       "%e2e%@%",
       "%automation%@%",
-      "%claude-test%@%"
+      "%claude-test%@%",
+      "bstockman1+%@%"
     ],
     "_userAgentRegexDoc": "Four groups, in order. (1) Automation drivers and HTTP clients. (2) Self-declaring crawlers: `bot/` catches ClaudeBot/Googlebot/bingbot/AhrefsBot etc, and the `+http` / `+contact@` forms catch anything advertising a contact URL or address the way the robots convention asks. (3) Named agents that declare themselves but match neither of the above — Claude-User and Perplexity-User are USER-INITIATED fetchers with their own UA, distinct from ClaudeBot, and Dataprovider.com names itself with no marker at all. (4) Impossible UAs: a null header stringified to `None`, legacy EdgeHTML (Edge/12-18, retired 2020) bolted onto a modern Chrome token, a truncated `Safari/537.3` (real is 537.36), `Mac OS X 8_` (never existed; real is 10_x or 14_x+), and AppleWebKit/558 (real is 537.36 or 605.1.15). Each of group 4 was observed in this project's traffic on 2026-08-06 and none can be emitted by a real browser. Verified: this costs 0 real signed-in accounts.",
     "userAgentRegex": "playwright|headless|puppeteer|selenium|webdriver|cypress|^node$|^node/|^curl|python-requests|go-http-client|postmanruntime|insomnia|^axios|^deno|^java/|^wget|scrapy|bot/|crawler|spider|\\+https?://|\\+[a-z0-9._%-]+@|claude-user|anthropic|chatgpt-user|oai-searchbot|perplexity|google-extended|bytespider|meta-externalagent|dataprovider|semrush|yandex|slurp|facebookexternalhit|^none$|^null$|^undefined$|^-?$|edge/1[2-8]\\.|safari/537\\.3$|mac os x 8_|applewebkit/558",
