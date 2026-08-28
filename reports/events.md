@@ -1,46 +1,55 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-27T15:07:30.689Z. Own/QA/automated accounts excluded.
+Collected 2026-08-28T15:07:26.845Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-357 sessions · 2684 events · 28 accounts + 210 guests · median session 1m
-Excluded: 254 sessions, 2216 events (our own, QA and automated accounts).
+377 sessions · 2826 events · 29 accounts + 220 guests · median session 1m
+Excluded: 268 sessions, 2378 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 35 | 207 | 25 |
-| 7d | 176 | 1470 | 111 |
-| 14d | 280 | 2255 | 185 |
-| 30d | 357 | 2684 | 238 |
+| 24h | 20 | 142 | 17 |
+| 7d | 179 | 1505 | 113 |
+| 14d | 295 | 2365 | 192 |
+| 30d | 377 | 2826 | 249 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **235** Opened the app (98.7% of top)
-- **219** Did anything past the open (92% of top)
-- **11** Was shown the PRO offer (4.6% of top) — see gap `trial_awareness`
+- **246** Opened the app (98.8% of top)
+- **230** Did anything past the open (92.4% of top)
+- **11** Was shown the PRO offer (4.4% of top) — see gap `trial_awareness`
+- **0** Started a PRO trial (0% of top)
+
+### The wall: refusal to trial
+
+_When a plan limit actually stops someone, does the trial offer sitting there convert them?_
+
+- **10** Was stopped by a plan limit (4% of top)
+- **2** Was shown the PRO offer (0.8% of top) — see gap `trial_awareness`
+- **0** Pressed start (0% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **235** Opened the app (98.7% of top)
-- **219** Viewed a page (92% of top)
-- **4** Tried a demo (1.7% of top)
-- **4** Made something real (1.7% of top)
+- **246** Opened the app (98.8% of top)
+- **230** Viewed a page (92.4% of top)
+- **4** Tried a demo (1.6% of top)
+- **4** Made something real (1.6% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **224** Started as a guest (100% of top)
-- **205** Did anything at all (91.5% of top)
-- **25** Submitted the upgrade (11.2% of top) — see gap `upgrade_unconfirmed`
-- **12** Completed it (ground truth) (5.4% of top)
+- **235** Started as a guest (100% of top)
+- **216** Did anything at all (91.9% of top)
+- **27** Submitted the upgrade (11.5% of top) — see gap `upgrade_unconfirmed`
+- **13** Completed it (ground truth) (5.5% of top)
 
 ### Print & QR campaigns
 
@@ -50,85 +59,108 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 | `a6d172c4-e566-4b11-bf24-b26a652ba087` | 1 | 1 | 0 | 0 |
 | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 0 | 0 |
 
+### What we asked of people
+
+| Wall | Where | Shown | People | Guests | How | Offered | Backed out |
+| --- | --- | ---: | ---: | ---: | --- | --- | --- |
+| `binders` | my_binders | 5 | 4 | _not recorded_ | _not recorded 5_ | _not recorded 5_ | _none recorded_ |
+| `binders` | browse | 3 | 3 | _not recorded_ | _not recorded 3_ | _not recorded 3_ | _none recorded_ |
+| `pagesPerBinder` | binder_editor | 3 | 2 | _not recorded_ | _not recorded 3_ | _not recorded 3_ | _none recorded_ |
+| `pagesPerBinder` | browse | 1 | 1 | _not recorded_ | _not recorded 1_ | _not recorded 1_ | _none recorded_ |
+
+A row is one wall — the `limit_key` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing.
+
+The PRO offer: shown **26** times to **11** people, walked away from **2**, pressed **0**. A decline is recorded only where walking away is an act, never for leaving a page.
+
+| Prompt | Shown | People | What came back |
+| --- | ---: | ---: | --- |
+| The sharing attestation (`rights-attestation`) | 2 | 2 | accepted 1 _(1 unpaired — lost events, not unanswered)_ |
+
+**dismissed** is a closed dialog and **abandoned** is a screen left with it open — not the same no. Two of these are a privacy correction and a legal attestation: their numbers are a record of what was asked and answered, never a rate to drive up.
+
 ### What guests did past the open
 
-224 people opened as a guest across 283 sessions.
+235 people opened as a guest across 298 sessions.
 
-| How far they got | People | of 224 |
+| How far they got | People | of 235 |
 | --- | ---: | ---: |
-| Opened and left | 19 | 8.5% |
-| Looked at a page or two | 73 | 32.6% |
-| Wandered the site | 66 | 29.5% |
-| Built something | 66 | 29.5% |
+| Opened and left | 19 | 8.1% |
+| Looked at a page or two | 77 | 32.8% |
+| Wandered the site | 69 | 29.4% |
+| Built something | 70 | 29.8% |
 
-Of the 66 who built something, **14** created an account.
+Of the 70 who built something, **15** created an account.
 
-**34** guests walked to a pricing page; **7** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
+**36** guests walked to a pricing page; **7** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 66 | 79 |
-| Added cards (`card.add`) | 32 | 227 |
-| Account created (`account.created`) | 25 | 30 |
+| Created a binder (`binder.add`) | 70 | 85 |
+| Added cards (`card.add`) | 34 | 254 |
+| Account created (`account.created`) | 27 | 32 |
 | Hit a plan limit (`cap.gate_shown`) | 9 | 10 |
 | Saw the PRO offer (`pro.offer_shown`) | 7 | 13 |
 | Searched cards (`card.search`) | 7 | 9 |
 | Signed in (`auth.login`) | 6 | 6 |
 | Tried the print example (`demo.print`) | 2 | 2 |
+| Was shown a prompt (`prompt.shown`) | 2 | 2 |
 | Tried the example import (`demo.csv_import`) | 1 | 1 |
 | Tried tri-color search (`demo.tricolor_search`) | 1 | 1 |
 | Dismissed the PRO offer (`pro.offer_declined`) | 1 | 1 |
+| Answered a prompt (`prompt.answered`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/welcome` | 179 | 200 |
-| `/` | 150 | 333 |
-| `/binder/:id` | 81 | 212 |
-| `/my-binders` | 73 | 206 |
-| `/michi-method` | 40 | 57 |
-| `/discover` | 38 | 56 |
-| `/browse` | 34 | 51 |
-| `/learn` | 29 | 41 |
-| `/plans` _(pricing)_ | 27 | 36 |
-| `/contest` | 17 | 26 |
+| `/welcome` | 190 | 213 |
+| `/` | 162 | 358 |
+| `/binder/:id` | 86 | 226 |
+| `/my-binders` | 78 | 216 |
+| `/michi-method` | 42 | 60 |
+| `/discover` | 39 | 57 |
+| `/browse` | 35 | 53 |
+| `/learn` | 31 | 43 |
+| `/plans` _(pricing)_ | 29 | 38 |
+| `/contest` | 19 | 28 |
 | `/binder/ex-pitch-black-chase` | 12 | 12 |
 | `/purchases` _(pricing)_ | 10 | 13 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 1671 | 219 |
-| Added cards (`card.add`) | 459 | 39 |
-| Session started (`session.start`) | 354 | 235 |
-| Created a binder (`binder.add`) | 92 | 74 |
-| Account created (`account.created`) | 30 | 25 |
+| Viewed a page (`page.view`) | 1753 | 230 |
+| Added cards (`card.add`) | 488 | 41 |
+| Session started (`session.start`) | 374 | 246 |
+| Created a binder (`binder.add`) | 98 | 78 |
+| Account created (`account.created`) | 32 | 27 |
 | Saw the PRO offer (`pro.offer_shown`) | 26 | 11 |
 | Signed in (`auth.login`) | 23 | 18 |
 | Hit a plan limit (`cap.gate_shown`) | 12 | 10 |
 | Searched cards (`card.search`) | 11 | 9 |
 | Tried the print example (`demo.print`) | 2 | 2 |
 | Dismissed the PRO offer (`pro.offer_declined`) | 2 | 2 |
+| Was shown a prompt (`prompt.shown`) | 2 | 2 |
 | Tried the example import (`demo.csv_import`) | 1 | 1 |
 | Tried tri-color search (`demo.tricolor_search`) | 1 | 1 |
+| Answered a prompt (`prompt.answered`) | 1 | 1 |
 
-Instrumentation: 16/20 events verified firing (all traffic, all time).
+Instrumentation: 19/24 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `csv.import`, `cap.gate_dismissed`, `csv.import_failed`, `search.no_results`
+Never fired by anyone (unverified): `csv.import`, `cap.gate_dismissed`, `trial.start_click`, `csv.import_failed`, `search.no_results`
 
-Works, but not yet from a real user: `demo.curation`, `trial.start`, `trial.start_failed`
+Works, but not yet from a real user: `demo.curation`, `compose.pages_kept`, `trial.start`, `trial.start_failed`
 
 Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
-20 sessions · 56 events · 0 accounts + 13 guests · median session 3s
-Excluded: 384 sessions, 4931 events (our own, QA and automated accounts).
+21 sessions · 58 events · 0 accounts + 13 guests · median session 3s
+Excluded: 419 sessions, 5468 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 4 | 10 | 1 |
-| 7d | 4 | 10 | 1 |
-| 14d | 11 | 23 | 6 |
-| 30d | 20 | 56 | 13 |
+| 24h | 1 | 2 | 1 |
+| 7d | 5 | 12 | 1 |
+| 14d | 11 | 20 | 6 |
+| 30d | 21 | 58 | 13 |
 
 ### PRO trial: awareness to activation
 
@@ -159,7 +191,7 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 ### What guests did past the open
 
-13 people opened as a guest across 20 sessions.
+13 people opened as a guest across 21 sessions.
 
 | How far they got | People | of 13 |
 | --- | ---: | ---: |
@@ -179,7 +211,7 @@ Of the 1 who built something, **0** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/scan` | 4 | 8 |
+| `/scan` | 4 | 9 |
 | `/` | 4 | 5 |
 | `/browse` | 3 | 6 |
 | `/settings` | 3 | 5 |
@@ -189,8 +221,8 @@ Of the 1 who built something, **0** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 30 | 5 |
-| Session started (`session.start`) | 19 | 13 |
+| Viewed a page (`page.view`) | 31 | 5 |
+| Session started (`session.start`) | 20 | 13 |
 | Account created (`account.created`) | 4 | 1 |
 | Searched cards (`card.search`) | 1 | 1 |
 | Opened a card (`card.open`) | 1 | 1 |
@@ -204,23 +236,23 @@ Works, but not yet from a real user: `auth.login`, `scan.capture`, `collection.c
 
 ## Doggle
 
-45 sessions · 125 events · 1 account + 54 guests · median session 1s
-Excluded: 67 sessions, 325 events (our own, QA and automated accounts).
+47 sessions · 129 events · 1 account + 56 guests · median session 1s
+Excluded: 69 sessions, 355 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 2 | 6 | 3 |
-| 7d | 16 | 41 | 17 |
-| 14d | 45 | 125 | 55 |
-| 30d | 45 | 125 | 55 |
+| 24h | 2 | 4 | 2 |
+| 7d | 13 | 30 | 14 |
+| 14d | 45 | 124 | 54 |
+| 30d | 47 | 129 | 57 |
 
 ### Visitor to account
 
 _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
-- **54** Arrived signed out (100% of top)
-- **46** Viewed any screen (85.2% of top)
-- **1** Created an account (1.9% of top) — see gap `doggle_oauth_signup_untracked`
+- **56** Arrived signed out (100% of top)
+- **48** Viewed any screen (85.7% of top)
+- **1** Created an account (1.8% of top) — see gap `doggle_oauth_signup_untracked`
 - **0** Signed in on that visit (0% of top)
 
 ### Print & QR campaigns
@@ -231,24 +263,24 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 ### What guests did past the open
 
-54 people opened as a guest across 44 sessions.
+56 people opened as a guest across 46 sessions.
 
-| How far they got | People | of 54 |
+| How far they got | People | of 56 |
 | --- | ---: | ---: |
-| Opened and left | 5 | 9.3% |
-| Looked at a page or two | 47 | 87% |
-| Wandered the site | 2 | 3.7% |
+| Opened and left | 5 | 8.9% |
+| Looked at a page or two | 49 | 87.5% |
+| Wandered the site | 2 | 3.6% |
 | Built something | 0 | 0% |
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| session.check (`session.check`) | 19 | 19 |
+| session.check (`session.check`) | 20 | 20 |
 | Account created (`account.created`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `Landing` | 33 | 33 |
-| `Login` | 14 | 17 |
+| `Landing` | 34 | 34 |
+| `Login` | 15 | 18 |
 | `Walk` | 1 | 1 |
 | `DogProfile` | 1 | 1 |
 | `Profile` | 1 | 1 |
@@ -258,9 +290,9 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 58 | 47 |
-| Session started (`session.start`) | 47 | 41 |
-| session.check (`session.check`) | 19 | 19 |
+| Viewed a page (`page.view`) | 60 | 49 |
+| Session started (`session.start`) | 48 | 42 |
+| session.check (`session.check`) | 20 | 20 |
 | Account created (`account.created`) | 1 | 1 |
 
 Instrumentation: 4/4 events verified firing (all traffic, all time).
@@ -274,8 +306,8 @@ Excluded: 32 sessions, 260 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 7 | 1 |
-| 7d | 9 | 23 | 6 |
+| 24h | 0 | 0 | 0 |
+| 7d | 8 | 21 | 5 |
 | 14d | 21 | 53 | 14 |
 | 30d | 21 | 53 | 14 |
 
@@ -364,13 +396,13 @@ account.created fires from the email/phone signUp wrappers in doggle's data/auth
 
 **Fix:** Fire account.created from the OAuth return path when the auth user was created moments before, mirroring michi's handling of the same ambiguity.
 
-### A guest who clears storage becomes a new person `guest_device_churn` (medium, specced)
+### The two emitters have stopped being mirrors at the cap gates `tcgscan_cap_gate_parity` (medium, specced)
 
-analytics_sessions has no device column, so identity for an anonymous user is only as durable as the Supabase session in storage. A reload keeps the same anon uid (persistence works - 5 michi anon uids span multiple days, one has 10 sessions), but cleared site data, incognito, a second browser or a reinstall mints a fresh uid with no join key to the old one. Guest counts are therefore an upper bound on guest PEOPLE.
+AGENTS.md in ../tcgscan requires michi-maker/src/lib/analytics.ts and tcgscan-app/src/lib/analytics.ts to differ only in APP, the storage key and michi's Json cast, on the stated grounds that a gap closed in one app is worse than the gap. Since 2026-08-27 they differ in more: michi's cap.gate_shown carries `as` (dialog | toast | inline), `is_guest` and `offer` (trial | upgrade | signin | toast); its cap.gate_dismissed takes an object with `via` (not_now | close | navigate) rather than two positional args; and it emits trial.start_click plus a trial.start_failed that carries surface and a refused/rpc_error reason. tcgscan-app has none of it, and its cap gates still route through lib/gate-prompt.ts rather than a useCapGate.
 
-**Effect:** guest people are overstated; every rate with guests in the denominator is understated
+**Effect:** any cross-app cap or trial comparison silently compares a segmented michi against an unsegmented tcgscan; every michi-only prop reads as absent rather than as not-collected
 
-**Fix:** add analytics_sessions.device_id - a random opaque UUID generated once at first launch, persisted in localStorage/AsyncStorage, never regenerated on sign-out or upgrade. Specced in ../tcgscan/ANALYTICS-GUEST-DEVICE-ID.md.
+**Fix:** Port the emitter additions verbatim (they are typed optional precisely so the tcgscan copy stays a valid subset), then give tcgscan-app the useCapGate + CapGateDialog pair so its walls are paced and instrumented at one chokepoint instead of nine. Until then, read `as` / `offer` / `via` as michi-only and never as a fleet number.
 
 ### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
 
@@ -379,14 +411,6 @@ TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing unti
 **Effect:** understates awareness — currently makes it unmeasurable
 
 **Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
-
-### Cap gates emit nothing, so upgrade intent is invisible `cap_gates_blind` (blocking, landed)
-
-Every tier limit in tier_caps can stop a user — binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection — and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.
-
-**Effect:** understates upgrade intent to exactly zero — every cap hit ever is unrecorded
-
-**Fix:** Emit cap.gate_shown { limit, surface, tier, used, cap } once per gate impression, where `limit` is the tier_caps limit_key verbatim (pagesPerBinder, binders, artUploads, cardScansPerMonth, collections, cardsPerCollection) so it joins to the cap with no lookup table. Emit cap.gate_dismissed { limit, surface } when the user backs out without acting. Where a gate already renders TrialCta, pass the SAME surface string so cap.gate_shown, pro.offer_shown and trial.start share one attribution key and the gate-to-trial funnel is a join rather than a guess. Specced in ../tcgscan/ANALYTICS-CAP-GATES.md.
 
 ### Session length is a floor, not a duration `session_end` (medium, landed)
 
@@ -436,6 +460,14 @@ Nothing records how a session arrived — no referrer, no UTM capture. Marketing
 
 **Fix:** not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change.
 
+### Cap gates emit nothing, so upgrade intent is invisible `cap_gates_blind` (blocking, fixed)
+
+Every tier limit in tier_caps can stop a user — binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection — and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.
+
+**Effect:** understates upgrade intent to exactly zero — every cap hit ever is unrecorded
+
+**Fix:** Emit cap.gate_shown { limit, surface, tier, used, cap } once per gate impression, where `limit` is the tier_caps limit_key verbatim (pagesPerBinder, binders, artUploads, cardScansPerMonth, collections, cardsPerCollection) so it joins to the cap with no lookup table. Emit cap.gate_dismissed { limit, surface } when the user backs out without acting. Where a gate already renders TrialCta, pass the SAME surface string so cap.gate_shown, pro.offer_shown and trial.start share one attribution key and the gate-to-trial funnel is a join rather than a guess. Specced in ../tcgscan/ANALYTICS-CAP-GATES.md.
+
 ### landing_route was never written — the update was never sent `landing_route_broken` (high, fixed)
 
 Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.
@@ -451,3 +483,11 @@ The conversion event itself DOES exist: both apps emit account.created with prop
 **Effect:** guest-started sessions are undercounted; the conversion count itself is correct
 
 **Fix:** stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it.
+
+### A guest who clears storage becomes a new person `guest_device_churn` (medium, fixed)
+
+analytics_sessions has no device column, so identity for an anonymous user is only as durable as the Supabase session in storage. A reload keeps the same anon uid (persistence works - 5 michi anon uids span multiple days, one has 10 sessions), but cleared site data, incognito, a second browser or a reinstall mints a fresh uid with no join key to the old one. Guest counts are therefore an upper bound on guest PEOPLE.
+
+**Effect:** guest people are overstated; every rate with guests in the denominator is understated
+
+**Fix:** add analytics_sessions.device_id - a random opaque UUID generated once at first launch, persisted in localStorage/AsyncStorage, never regenerated on sign-out or upgrade. Specced in ../tcgscan/ANALYTICS-GUEST-DEVICE-ID.md.

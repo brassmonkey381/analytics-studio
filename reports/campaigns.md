@@ -1,6 +1,6 @@
 # Print & QR campaigns
 
-Collected 2026-08-27T15:07:35.825Z. All-time unless a window is named.
+Collected 2026-08-28T15:07:30.800Z. All-time unless a window is named.
 
 **4 campaign arrivals** across 4 apps.
 
@@ -9,14 +9,14 @@ Collected 2026-08-27T15:07:35.825Z. All-time unless a window is named.
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | (unregistered) | `299d297d-c1cb-43d6-be4a-cb5e2ce049e6` | 2 | 2 | 2 | 0 | 1 |
-| (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `a6d172c4-e566-4b11-bf24-b26a652ba087` | 1 | 1 | 1 | 0 | 1 |
 
-Excluded from the above: 2 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 4 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-No campaign-tagged arrival, all time. Landing routes are recorded (329 of 404 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Landing routes are recorded (362 of 440 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Doggle
 
@@ -48,8 +48,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 611 | 446 | 6 | 97 | a code was recorded 2026-08-13 |
-| TCGScan | 404 | 329 | 0 | 230 | routes yes, never a code — a zero cannot be told from an unshipped build |
-| Doggle | 112 | 111 | 1 | 112 | a code was recorded 2026-08-13 |
+| Michi-Maker | 645 | 479 | 8 | 131 | a code was recorded 2026-08-13 |
+| TCGScan | 440 | 362 | 0 | 266 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Doggle | 116 | 115 | 1 | 116 | a code was recorded 2026-08-13 |
 | Pickleague | 53 | 50 | 0 | 53 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
