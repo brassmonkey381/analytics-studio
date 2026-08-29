@@ -1,26 +1,26 @@
 # Event analytics — last 30 days
 
-Collected 2026-08-29T03:19:17.997Z. Own/QA/automated accounts excluded.
+Collected 2026-08-29T15:07:30.525Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-384 sessions · 2883 events · 30 accounts + 224 guests · median session 1m
-Excluded: 270 sessions, 2402 events (our own, QA and automated accounts).
+388 sessions · 2893 events · 30 accounts + 226 guests · median session 1m
+Excluded: 273 sessions, 2477 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 17 | 135 | 14 |
-| 7d | 176 | 1509 | 111 |
-| 14d | 300 | 2413 | 195 |
-| 30d | 384 | 2883 | 254 |
+| 24h | 11 | 67 | 10 |
+| 7d | 173 | 1477 | 111 |
+| 14d | 302 | 2399 | 197 |
+| 30d | 388 | 2893 | 256 |
 
 ### PRO trial: awareness to activation
 
 _How many users know the PRO trial exists, and how many start one?_
 
-- **251** Opened the app (98.8% of top)
-- **235** Did anything past the open (92.5% of top)
+- **253** Opened the app (98.8% of top)
+- **237** Did anything past the open (92.6% of top)
 - **12** Was shown the PRO offer (4.7% of top) — see gap `trial_awareness`
 - **0** Started a PRO trial (0% of top)
 
@@ -37,8 +37,8 @@ _When a plan limit actually stops someone, does the trial offer sitting there co
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **251** Opened the app (98.8% of top)
-- **235** Viewed a page (92.5% of top)
+- **253** Opened the app (98.8% of top)
+- **237** Viewed a page (92.6% of top)
 - **5** Tried a demo (2% of top)
 - **5** Made something real (2% of top)
 
@@ -46,9 +46,9 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **239** Started as a guest (100% of top)
-- **220** Did anything at all (92.1% of top)
-- **27** Submitted the upgrade (11.3% of top) — see gap `upgrade_unconfirmed`
+- **241** Started as a guest (100% of top)
+- **222** Did anything at all (92.1% of top)
+- **27** Submitted the upgrade (11.2% of top) — see gap `upgrade_unconfirmed`
 - **13** Completed it (ground truth) (5.4% of top)
 
 ### Print & QR campaigns
@@ -82,14 +82,14 @@ The PRO offer: shown **27** times to **12** people, walked away from **2**, pres
 
 ### What guests did past the open
 
-239 people opened as a guest across 302 sessions.
+241 people opened as a guest across 304 sessions.
 
-| How far they got | People | of 239 |
+| How far they got | People | of 241 |
 | --- | ---: | ---: |
 | Opened and left | 19 | 7.9% |
-| Looked at a page or two | 78 | 32.6% |
-| Wandered the site | 70 | 29.3% |
-| Built something | 72 | 30.1% |
+| Looked at a page or two | 80 | 33.2% |
+| Wandered the site | 70 | 29% |
+| Built something | 72 | 29.9% |
 
 Of the 72 who built something, **15** created an account.
 
@@ -113,9 +113,9 @@ Of the 72 who built something, **15** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/welcome` | 194 | 217 |
-| `/` | 166 | 366 |
-| `/binder/:id` | 89 | 232 |
+| `/welcome` | 196 | 219 |
+| `/` | 168 | 368 |
+| `/binder/:id` | 89 | 233 |
 | `/my-binders` | 80 | 219 |
 | `/michi-method` | 43 | 61 |
 | `/discover` | 40 | 59 |
@@ -128,9 +128,9 @@ Of the 72 who built something, **15** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 1785 | 235 |
+| Viewed a page (`page.view`) | 1791 | 237 |
 | Added cards (`card.add`) | 496 | 42 |
-| Session started (`session.start`) | 381 | 251 |
+| Session started (`session.start`) | 385 | 253 |
 | Created a binder (`binder.add`) | 101 | 81 |
 | Account created (`account.created`) | 32 | 27 |
 | Saw the PRO offer (`pro.offer_shown`) | 27 | 12 |
@@ -155,7 +155,7 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 21 sessions · 58 events · 0 accounts + 13 guests · median session 3s
-Excluded: 434 sessions, 5655 events (our own, QA and automated accounts).
+Excluded: 436 sessions, 5880 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
@@ -244,8 +244,8 @@ Excluded: 71 sessions, 361 events (our own, QA and automated accounts).
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 1 | 3 | 1 |
-| 7d | 13 | 30 | 14 |
-| 14d | 46 | 127 | 55 |
+| 7d | 11 | 24 | 12 |
+| 14d | 45 | 125 | 54 |
 | 30d | 48 | 132 | 58 |
 
 ### Visitor to account
@@ -310,7 +310,7 @@ Excluded: 32 sessions, 260 events (our own, QA and automated accounts).
 | --- | ---: | ---: | ---: |
 | 24h | 0 | 0 | 0 |
 | 7d | 6 | 17 | 5 |
-| 14d | 21 | 53 | 14 |
+| 14d | 20 | 50 | 13 |
 | 30d | 21 | 53 | 14 |
 
 ### Visitor to account
