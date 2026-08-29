@@ -134,6 +134,13 @@
       ],
       "milestone": true
     },
+    "compose.pages_kept": {
+      "label": "Kept pages from a compose",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
     "csv.import": {
       "label": "Imported a CSV",
       "stage": "activation",
@@ -227,7 +234,7 @@
       ],
       "milestone": true
     },
-    "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook — tracked as gaps.tcgscan_search_blind, not as a missing call site.",
+    "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook — tracked as gaps.tcgscan_search_blind, not as a missing call site. prompt.shown / prompt.answered / trial.start_click are michi-only as of 2026-08-27, and that one is NOT settled: the prompts genuinely do not exist in tcgscan (no uninvited dialogs), but trial.start_click and the cap.gate_shown props added with it (as, is_guest, offer) are a real divergence between two emitters AGENTS.md requires to stay near-identical mirrors. Tracked as gaps.tcgscan_cap_gate_parity.",
     "pro.offer_declined": {
       "label": "Dismissed the PRO offer",
       "stage": "monetization",
@@ -251,6 +258,29 @@
       "apps": [
         "michi",
         "tcgscan"
+      ]
+    },
+    "trial.start_click": {
+      "label": "Pressed the PRO trial button",
+      "stage": "monetization",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_promptsDoc": "prompt.shown / prompt.answered are the uninvited dialogs michi opens on its own (michi-maker/src/data/prompts.ts): the avatar-consent correction, the sharing attestation, and the one-shot PRO trial recovery. props: { prompt, surface, response }. `response` is the reason they exist - accepted | declined | dismissed | abandoned - because the profile stamps those dialogs write can only say seen and accepted, and a dialog closed with the X was indistinguishable from one left behind by navigating away. ALWAYS PAIRED: a prompt that opens emits both, an abandon included, so a shown with no answer means a lost event and not an unanswered question. A dismissal rate is taken over prompt.shown, never over sessions - the prompts are cohort-targeted and most people are never eligible for one.",
+    "prompt.shown": {
+      "label": "Was shown a prompt",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "prompt.answered": {
+      "label": "Answered a prompt",
+      "stage": "engagement",
+      "apps": [
+        "michi"
       ]
     },
     "trial.start_failed": {
@@ -417,6 +447,50 @@
             "pro.offer_shown"
           ],
           "caveat": "trial_awareness"
+        },
+        {
+          "id": "started",
+          "label": "Started a PRO trial",
+          "match": "truth",
+          "truth": "trial"
+        }
+      ]
+    },
+    {
+      "id": "cap-wall-trial",
+      "title": "The wall: refusal to trial",
+      "question": "When a plan limit actually stops someone, does the trial offer sitting there convert them?",
+      "_scope": "MICHI ONLY, deliberately. Moving the PRO offer out of /plans and onto the walls was a michi decision (owner call, 2026-08-27) and tcgscan has not adopted it - its TrialCta still renders on /plans alone, so a tcgscan user who hits a scan cap is shown no trial at all. Running this funnel for tcgscan would print a structural zero at `offered` that reads as a broken call site rather than a product that works differently. Add tcgscan when gaps.tcgscan_cap_gate_parity closes, not before.",
+      "_stagesAreUsers": "Stages carry USERS, not surfaces: `offered` means this person hit a wall and was shown the trial somewhere, not necessarily at that wall. The per-surface join is exact only once cap.gate_shown and pro.offer_shown are compared on their shared `surface` string, which needs a props rollup this lane does not do yet.",
+      "apps": [
+        "michi"
+      ],
+      "stages": [
+        {
+          "id": "wall",
+          "label": "Was stopped by a plan limit",
+          "match": "event",
+          "names": [
+            "cap.gate_shown"
+          ],
+          "caveat": "cap_gates_blind"
+        },
+        {
+          "id": "offered",
+          "label": "Was shown the PRO offer",
+          "match": "event",
+          "names": [
+            "pro.offer_shown"
+          ],
+          "caveat": "trial_awareness"
+        },
+        {
+          "id": "pressed",
+          "label": "Pressed start",
+          "match": "event",
+          "names": [
+            "trial.start_click"
+          ]
         },
         {
           "id": "started",
@@ -673,7 +747,7 @@
     },
     "cap_gates_blind": {
       "severity": "blocking",
-      "status": "landed",
+      "status": "fixed",
       "title": "Cap gates emit nothing, so upgrade intent is invisible",
       "detail": "Every tier limit in tier_caps can stop a user — binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection — and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.",
       "direction": "understates upgrade intent to exactly zero — every cap hit ever is unrecorded",
@@ -681,7 +755,9 @@
       "fix": "Emit cap.gate_shown { limit, surface, tier, used, cap } once per gate impression, where `limit` is the tier_caps limit_key verbatim (pagesPerBinder, binders, artUploads, cardScansPerMonth, collections, cardsPerCollection) so it joins to the cap with no lookup table. Emit cap.gate_dismissed { limit, surface } when the user backs out without acting. Where a gate already renders TrialCta, pass the SAME surface string so cap.gate_shown, pro.offer_shown and trial.start share one attribution key and the gate-to-trial funnel is a join rather than a guess. Specced in ../tcgscan/ANALYTICS-CAP-GATES.md.",
       "_denominatorNote": "cap.gate_shown counts impressions of the block, which is the honest denominator for 'intent that met a wall'. It is NOT the count of users at a cap — an account can sit at 16 of 16 for weeks without touching the binder again, and that account is at the cap while emitting nothing. Read the two together: tier_caps position from the product tables for who IS capped, cap.gate_shown for who FELT it.",
       "_landed": "Shipped in BOTH apps on 2026-08-10, same day it was specced (michi commit 7e4f324). michi calls trackCapGate() directly at each gate; tcgscan routes them through lib/gate-prompt.ts. All six limit_keys are covered — binders (5 sites), pagesPerBinder (4), cardsPerCollection (3), collections (2), cardScansPerMonth (2), artUploads (1). The spec's two load-bearing details survived implementation: `limit` is the tier_caps limit_key verbatim, and `tier` is stamped at the gate rather than inferred later. The apps also added capCount() to normalise an unlimited cap, because JSON.stringify(Infinity) is null and would have landed indistinguishable from 'not captured' — a good catch that was not in the spec.",
-      "_whyNotFixed": "Status stays LANDED, not fixed: as of 2026-08-10 analytics_events holds zero cap.gate_shown and zero cap.gate_dismissed rows. Every call site is unexercised, so nothing has proven the props arrive shaped as promised. To close it, hit a real cap on a signed-in account and confirm one row per gate with limit/surface/tier/used/cap populated — the verification steps are in ../tcgscan/ANALYTICS-CAP-GATES.md. Do not mark this fixed on the strength of the code reading correctly; that is exactly the mistake trial_awareness made.",
+      "_fixed": "Observed 2026-08-27: michi's 30d window holds 12 cap.gate_shown events across 10 REAL (non-excluded) users, with limit/surface/tier/used/cap populated. The `_whyNotFixed` note below was written on 2026-08-10 when the count was zero and is kept for the reasoning, not the number. The browse.tsx capacity bug in `_blockedBy` no longer touches these props either: both browse gates now send used = the binder's own pages.length and cap = limits.pagesPerBinder, and the pagesPerBinder * 9 expression survives only as a UX trim on how many cards seed a new binder.",
+      "_dismissalsStillZero": "cap.gate_dismissed remains at zero, and that zero was NOT a behavioural finding - it meant no call site. Until 2026-08-27 the only emitter was BuildBinderSheet; the nine walls behind useCapGate opened a dialog whose close path recorded nothing, and CapGateDialog handed the same onClose to its Not-now link and to the offer button, so a user who PRESSED the trial would have been counted as backing out had it fired at all. michi now emits it from useCapGate with via = not_now | close | navigate. Expect first rows once that build ships; a continued zero after that is a real finding.",
+      "_whyNotFixed": "Superseded by _fixed above; kept because the reasoning still binds. Written 2026-08-10, when analytics_events held zero cap.gate_shown and zero cap.gate_dismissed rows. Every call site is unexercised, so nothing has proven the props arrive shaped as promised. To close it, hit a real cap on a signed-in account and confirm one row per gate with limit/surface/tier/used/cap populated — the verification steps are in ../tcgscan/ANALYTICS-CAP-GATES.md. Do not mark this fixed on the strength of the code reading correctly; that is exactly the mistake trial_awareness made.",
       "_blockedBy": "Verify AFTER the browse.tsx capacity bug is fixed (see the same work order). michi-maker/src/app/browse.tsx computes capacity as pagesPerBinder * 9, but a page is rows x cols and production holds 4x4, 3x4 and 2x2 pages — 15 of 330 are not 9 slots. Until that is corrected, `used` and `cap` on a gate emitted from browse inherit the error and would record the bug as if it were the user's behaviour."
     },
     "trial_start_dropped": {
@@ -746,14 +822,15 @@
     },
     "guest_device_churn": {
       "severity": "medium",
-      "status": "specced",
+      "status": "fixed",
       "title": "A guest who clears storage becomes a new person",
       "detail": "analytics_sessions has no device column, so identity for an anonymous user is only as durable as the Supabase session in storage. A reload keeps the same anon uid (persistence works - 5 michi anon uids span multiple days, one has 10 sessions), but cleared site data, incognito, a second browser or a reinstall mints a fresh uid with no join key to the old one. Guest counts are therefore an upper bound on guest PEOPLE.",
       "direction": "guest people are overstated; every rate with guests in the denominator is understated",
       "fix": "add analytics_sessions.device_id - a random opaque UUID generated once at first launch, persisted in localStorage/AsyncStorage, never regenerated on sign-out or upgrade. Specced in ../tcgscan/ANALYTICS-GUEST-DEVICE-ID.md.",
       "_notIpBased": "Deliberately NOT solved with IP + user agent. One IP+UA pair holds 330 distinct anonymous uids on this project, another 144, another 58 - behind NAT that key is a building, not a person. Stitching on it would merge strangers and would also put location data into a join.",
       "_size": "Measured 2026-08-11: of 115 anon uids created since instrumentation, the two largest device clusters (52 and 7 uids) are both on EXCLUDED dev IPs - the churn is almost entirely ours. Among real external traffic the largest cluster is 2.",
-      "_forwardOnly": "Cannot recover recorded history. The 45 michi guests in the 30d window will always be 45 uids."
+      "_forwardOnly": "Cannot recover recorded history. The 45 michi guests in the 30d window will always be 45 uids.",
+      "_fixed": "Shipped and OBSERVED, so this is fixed rather than landed: michi-maker 41f5f36 and the mirroring tcgscan-app change added analytics_sessions.device_id, and data/campaigns.json for 2026-08-27 counts it populated on 230 tcgscan, 112 doggle, 97 michi and 50 pickleague sessions. The column is deliberately NOT backfilled, so every session before it is null and stays null - group by device_id only within the window where with_device is close to sessions, or the pre-column era reads as one enormous unknown device."
     },
     "qr_campaign_capture": {
       "severity": "medium",
@@ -778,6 +855,14 @@
       "detail": "account.created fires from the email/phone signUp wrappers in doggle's data/auth.ts. An OAuth (Google/Apple) signup never passes through them, so it emits only auth.login plus the session claim (upgraded_at). The doggle signup funnel stage carries this caveat.",
       "direction": "doggle signups are undercounted by the OAuth share; the 'signed in on that visit' stage is the honest ceiling.",
       "fix": "Fire account.created from the OAuth return path when the auth user was created moments before, mirroring michi's handling of the same ambiguity."
+    },
+    "tcgscan_cap_gate_parity": {
+      "severity": "medium",
+      "status": "specced",
+      "title": "The two emitters have stopped being mirrors at the cap gates",
+      "detail": "AGENTS.md in ../tcgscan requires michi-maker/src/lib/analytics.ts and tcgscan-app/src/lib/analytics.ts to differ only in APP, the storage key and michi's Json cast, on the stated grounds that a gap closed in one app is worse than the gap. Since 2026-08-27 they differ in more: michi's cap.gate_shown carries `as` (dialog | toast | inline), `is_guest` and `offer` (trial | upgrade | signin | toast); its cap.gate_dismissed takes an object with `via` (not_now | close | navigate) rather than two positional args; and it emits trial.start_click plus a trial.start_failed that carries surface and a refused/rpc_error reason. tcgscan-app has none of it, and its cap gates still route through lib/gate-prompt.ts rather than a useCapGate.",
+      "direction": "any cross-app cap or trial comparison silently compares a segmented michi against an unsegmented tcgscan; every michi-only prop reads as absent rather than as not-collected",
+      "fix": "Port the emitter additions verbatim (they are typed optional precisely so the tcgscan copy stays a valid subset), then give tcgscan-app the useCapGate + CapGateDialog pair so its walls are paced and instrumented at one chokepoint instead of nine. Until then, read `as` / `offer` / `via` as michi-only and never as a fleet number."
     }
   },
   "guestDepth": {

@@ -189,6 +189,119 @@ function routeTable(w, appId) {
   return `<h4>Pages</h4><table class="tbl"><thead><tr><th>Route</th><th class="num">Views</th><th class="num">People</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
+// ---------- what we asked of people ----------
+//
+// The interruptions: cap gates, the PRO offer, and the dialogs that open on
+// their own. Kept together because they are one question — what does this
+// product demand of a user, and what do they say — and split from "what people
+// did", which is the opposite question.
+//
+// The prompts get their own block below the monetization ones ON PURPOSE. Two
+// of the three are a privacy remediation and a legal attestation; a decline
+// rate on those is a record, not a conversion rate, and nobody should be able
+// to read this page as an invitation to optimise one.
+
+/** How a fixed-union prop breaks down, or an honest blank. `—` is the bucket for
+ *  a value the emitter did not carry, which is never the same as a zero. */
+function breakdown(map, appId, kindKey, order) {
+  const entries = Object.entries(map ?? {});
+  if (!entries.length) return '<span class="muted">—</span>';
+  const known = order.filter((k) => entries.some(([n]) => n === k));
+  const extra = entries.map(([n]) => n).filter((n) => n !== "—" && !order.includes(n));
+  const missing = map["—"];
+  const parts = [...known, ...extra].map((k) => {
+    const v = map[k];
+    const h = kindKey ? hov(appId, "asks", `${kindKey}|${k}`) : "";
+    // An unexpected value is a contract change upstream, not a rendering problem.
+    const flag = order.includes(k) ? "" : ' <span class="warn">new</span>';
+    return `<span class="hoverable"${h}>${esc(k)}${flag} <strong>${v.count}</strong></span>`;
+  });
+  if (missing) parts.push(`<span class="muted" title="Recorded before this prop existed">not recorded ${missing.count}</span>`);
+  return parts.join(' <span class="muted">·</span> ');
+}
+
+const AS_ORDER = ["dialog", "toast", "inline"];
+const OFFER_ORDER = ["trial", "upgrade", "signin", "toast"];
+const VIA_ORDER = ["not_now", "close", "navigate"];
+const RESPONSE_ORDER = ["accepted", "declined", "dismissed", "abandoned"];
+
+/** Prompts carry an id the studio does not otherwise know. Named here so the
+ *  page reads in English, and labelled with what the prompt is FOR, because
+ *  "avatar-consent" and "a photo we published without asking" are not the same
+ *  sentence to anyone reading a decline rate. */
+const PROMPT_LABELS = {
+  "avatar-consent": ["Their profile photo", "privacy remediation — a provider photo we published unasked, then withdrew"],
+  "rights-attestation": ["The sharing attestation", "legal — affirms they hold rights to what they publish"],
+  "pro-trial-offer": ["The PRO trial, second chance", "monetization — a one-shot offer to a fixed recovered cohort"],
+};
+
+function asksPanel(w, appId) {
+  const a = w.asks;
+  if (!a) return '<p class="empty">Not computed for this window.</p>';
+  const { gates, prompts, offer } = a;
+  const out = [];
+
+  // --- cap gates ---
+  if (!gates.length) {
+    out.push(
+      '<p class="empty">No plan limit stopped anyone in this window. Check instrumentation coverage below before reading that as "nobody hit a wall".</p>',
+    );
+  } else {
+    const rows = gates
+      .map((g) => {
+        const k = `${g.limit}|${g.surface}`;
+        // Three states, not two. A row whose gates never carried `is_guest` must
+        // NOT print 0 — the people behind several of these rows are anonymous,
+        // and a zero there would say the opposite of what the roster shows.
+        // Hoverable only when somebody is behind it: an empty tooltip on a zero
+        // reads as a broken roster rather than as nobody.
+        const guests = !g.guestKnown
+          ? `<td class="muted" title="Recorded before is_guest existed">not recorded</td>`
+          : g.guests
+            ? `<td class="num hoverable"${hov(appId, "asks", `gateGuests|${k}`)}>${g.guests}</td>`
+            : `<td class="num muted">0</td>`;
+        return `<tr class="hoverable"${hov(appId, "asks", `gate|${k}`)}><td><code>${esc(g.limit)}</code></td><td class="muted">${esc(g.surface)}</td><td class="num">${g.shown}</td><td class="num">${g.people}</td>${guests}<td>${breakdown(g.as, appId, null, AS_ORDER)}</td><td>${breakdown(g.offer, appId, `gateOffer|${k}`, OFFER_ORDER)}</td><td>${g.dismissed ? breakdown(g.via, appId, `gateVia|${k}`, VIA_ORDER) : '<span class="muted">none recorded</span>'}</td></tr>`;
+      })
+      .join("");
+    out.push(
+      `<table class="tbl"><thead><tr><th>Wall</th><th>Where</th><th class="num">Shown</th><th class="num">People</th><th class="num">Guests</th><th>How</th><th>Offered</th><th>Backed out</th></tr></thead><tbody>${rows}</tbody></table>`,
+      `<p class="note">A row is one wall — the <code>limit_key</code> and the surface it was met on, the pair that joins a gate to its offer. <strong>Shown</strong> counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. Read it next to the tier snapshot in the plans report, never instead of it.</p>`,
+    );
+  }
+
+  // --- the offer itself ---
+  const off = offer ?? {};
+  if (off.shown) {
+    const pcDecl = off.shown ? Math.round((off.declined / off.shown) * 1000) / 10 : 0;
+    out.push(
+      `<p class="note">The PRO offer: shown <strong class="hoverable"${hov(appId, "asks", "offerShown")}>${off.shown}</strong> time${off.shown === 1 ? "" : "s"} to <strong>${off.shownPeople}</strong> ${off.shownPeople === 1 ? "person" : "people"}, walked away from <strong class="hoverable"${hov(appId, "asks", "offerDeclined")}>${off.declined}</strong> time${off.declined === 1 ? "" : "s"} (${pcDecl}%), pressed <strong class="hoverable"${hov(appId, "asks", "offerClicked")}>${off.clicked}</strong>. A decline is only recorded where walking away is an ACT — a dismissible dialog — never for leaving a page, so the shown and declined counts are deliberately not two ends of one bar.</p>`,
+    );
+  }
+
+  // --- prompts, kept apart ---
+  out.push("<h4>Dialogs that open on their own</h4>");
+  if (!prompts.length) {
+    out.push(
+      '<p class="empty">No self-opening prompt was shown in this window.</p>',
+    );
+  } else {
+    const rows = prompts
+      .map((p) => {
+        const [label, why] = PROMPT_LABELS[p.prompt] ?? [p.prompt, null];
+        const unpaired = p.unpaired
+          ? ` <span class="warn" title="Shown, then the page closed before anything came back — a shut tab, not a lost event">${p.unpaired} left with it open</span>`
+          : "";
+        return `<tr class="hoverable"${hov(appId, "asks", `prompt|${p.prompt}`)}><td>${esc(label)}<div class="mono">${esc(p.prompt)}</div>${why ? `<div class="muted">${esc(why)}</div>` : ""}</td><td class="num">${p.shown}</td><td class="num">${p.people}</td><td>${breakdown(p.response, appId, `promptR|${p.prompt}`, RESPONSE_ORDER)}${unpaired}</td></tr>`;
+      })
+      .join("");
+    out.push(
+      `<table class="tbl"><thead><tr><th>Prompt</th><th class="num">Shown</th><th class="num">People</th><th>What came back</th></tr></thead><tbody>${rows}</tbody></table>`,
+      `<p class="note"><strong>dismissed</strong> is a closed dialog, <strong>abandoned</strong> is a screen left with it open, and <strong>left with it open</strong> is a tab shut before either — three different silences, which is the entire reason these events exist. The last one is counted separately because it cannot be emitted from the page that is going away in every case: michi beacons an <code>abandoned</code> on <code>pagehide</code>, but a mobile tab killed after the browser froze it stays here, and inventing an answer for it would mean also inventing one for everybody who merely switched tabs. Two of these prompts are a privacy correction and a legal attestation: their numbers are a record of what was asked and answered, and a low acceptance rate on either is a finding about the ask, never a rate to drive up.</p>`,
+    );
+  }
+  return out.join("\n");
+}
+
 // "Did anything past the open" is four different people wearing one number.
 // The ladder splits them, and the only rung that is an activation is the last.
 // Ordered worst-to-best so the eye travels toward the outcome that matters.
@@ -404,6 +517,8 @@ ${w.funnels.length ? w.funnels.map((f) => `<h4>${esc(f.title)}</h4>${funnel(f, i
 ${truthPanel(w)}
 <h3>Print &amp; QR campaigns</h3>
 ${campaignPanel(w, id)}
+<h3>What we asked of people</h3>
+${asksPanel(w, id)}
 <h3>What guests did past the open</h3>
 ${guestPanel(w, id)}
 <h3>What people did</h3>
@@ -627,6 +742,53 @@ const md = [
         lines.push(`| \`${r.code}\`${r.source ? ` (${[r.source, r.medium].filter(Boolean).join(" · ")})` : ""} | ${r.people} | ${r.sessions} | ${r.converted} | ${r.signups} |`);
       }
       lines.push(``);
+    }
+    const asks = w.asks;
+    if (asks && (asks.gates.length || asks.prompts.length || asks.offer?.shown)) {
+      lines.push(`### What we asked of people`, ``);
+      const mdBreak = (map, order) => {
+        const e = Object.entries(map ?? {});
+        if (!e.length) return "—";
+        const known = order.filter((k) => map[k]);
+        const extra = e.map(([k]) => k).filter((k) => k !== "—" && !order.includes(k));
+        const parts = [...known, ...extra].map((k) => `${k} ${map[k].count}`);
+        if (map["—"]) parts.push(`_not recorded ${map["—"].count}_`);
+        return parts.join(", ");
+      };
+      if (asks.gates.length) {
+        lines.push(`| Wall | Where | Shown | People | Guests | How | Offered | Backed out |`, `| --- | --- | ---: | ---: | ---: | --- | --- | --- |`);
+        for (const gt of asks.gates) {
+          const guests = !gt.guestKnown ? "_not recorded_" : String(gt.guests);
+          lines.push(
+            `| \`${gt.limit}\` | ${gt.surface} | ${gt.shown} | ${gt.people} | ${guests} | ${mdBreak(gt.as, AS_ORDER)} | ${mdBreak(gt.offer, OFFER_ORDER)} | ${gt.dismissed ? mdBreak(gt.via, VIA_ORDER) : "_none recorded_"} |`,
+          );
+        }
+        lines.push(
+          ``,
+          `A row is one wall — the \`limit_key\` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing.`,
+          ``,
+        );
+      }
+      const off = asks.offer ?? {};
+      if (off.shown) {
+        lines.push(
+          `The PRO offer: shown **${off.shown}** time${off.shown === 1 ? "" : "s"} to **${off.shownPeople}** ${off.shownPeople === 1 ? "person" : "people"}, walked away from **${off.declined}**, pressed **${off.clicked}**. A decline is recorded only where walking away is an act, never for leaving a page.`,
+          ``,
+        );
+      }
+      if (asks.prompts.length) {
+        lines.push(`| Prompt | Shown | People | What came back |`, `| --- | ---: | ---: | --- |`);
+        for (const pr of asks.prompts) {
+          const [label] = PROMPT_LABELS[pr.prompt] ?? [pr.prompt];
+          const unpaired = pr.unpaired ? ` _(+${pr.unpaired} left with it open — tab shut before an answer)_` : "";
+          lines.push(`| ${label} (\`${pr.prompt}\`) | ${pr.shown} | ${pr.people} | ${mdBreak(pr.response, RESPONSE_ORDER)}${unpaired} |`);
+        }
+        lines.push(
+          ``,
+          `**dismissed** is a closed dialog, **abandoned** is a screen left with it open, **left with it open** is a tab shut before either — three different silences. Two of these are a privacy correction and a legal attestation: their numbers are a record of what was asked and answered, never a rate to drive up.`,
+          ``,
+        );
+      }
     }
     const g = w.guests;
     if (g?.people) {

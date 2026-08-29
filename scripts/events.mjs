@@ -276,7 +276,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   const allEvents = allEventsIn.filter((e) => inWin(e.ts));
   const sessions = allSessions.filter((s) => !s.excluded);
   const events = allEvents.filter((e) => !e.excluded);
-  const rosters = { funnels: {}, events: {}, routes: {}, tiles: {} };
+  const rosters = { funnels: {}, events: {}, routes: {}, tiles: {}, asks: {} };
 
   // --- events per session, and the ordered journey ---
   const bySession = new Map();
@@ -414,6 +414,167 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
       return { ...b, users: b.users.size };
     })
     .sort((a, b) => b.count - a.count);
+
+  // --- what the product ASKED of people ---
+  // The interruptions: every moment the app stopped someone and wanted something
+  // back. Rolled up from props, which nothing else in this lane does — the name
+  // alone says a wall was hit, and the whole question is WHICH wall, shown HOW,
+  // offering WHAT, and what came back.
+  //
+  // Every bucket is keyed on a value the emitter declares as a fixed union, so an
+  // unexpected one is a contract change and must be visible rather than folded
+  // into an "other" that hides it. `null` is kept as its own bucket for the same
+  // reason: cap.gate_shown rows recorded before 2026-08-27 carry no `as`, and
+  // "not collected then" must not read as a fourth way of showing a gate.
+  const bucket = (m, k) => (m[k ?? "—"] ??= { count: 0, users: new Set() });
+  const countInto = (m, k, uid) => {
+    const b = bucket(m, k);
+    b.count++;
+    b.users.add(uid);
+  };
+  const flatten = (m) =>
+    Object.fromEntries(Object.entries(m).map(([k, v]) => [k, { count: v.count, users: v.users.size }]));
+
+  const gateRows = {};
+  const promptRows = {};
+  const offerRows = { shown: new Set(), declined: new Set(), clicked: new Set() };
+  let offerShownCount = 0;
+  let offerDeclinedCount = 0;
+  let offerClickedCount = 0;
+
+  for (const e of events) {
+    const p = e.props ?? {};
+    if (e.name === "cap.gate_shown" || e.name === "cap.gate_dismissed") {
+      // One row per WALL, which is (limit, surface) — the same pair the emitter is
+      // told to keep spelling-identical with pro.offer_shown so the two can join.
+      const key = `${p.limit ?? "—"}|${p.surface ?? "—"}`;
+      const g = (gateRows[key] ??= {
+        limit: String(p.limit ?? "—"),
+        surface: String(p.surface ?? "—"),
+        shown: 0,
+        people: new Set(),
+        as: {},
+        offer: {},
+        guests: new Set(),
+        guestKnown: 0,
+        dismissed: 0,
+        via: {},
+      });
+      if (e.name === "cap.gate_shown") {
+        g.shown++;
+        g.people.add(e.user_id);
+        countInto(g.as, p.as == null ? null : String(p.as), e.user_id);
+        countInto(g.offer, p.offer == null ? null : String(p.offer), e.user_id);
+        // Counted separately from the guests themselves, so the report can tell
+        // "no guest hit this wall" from "the gate did not say". Without it a row
+        // whose people are ALL anonymous still prints 0 guests, because is_guest
+        // did not exist before 2026-08-27 — a zero that means the opposite of
+        // what it reads as. Deliberately the PROP and not the analytics identity:
+        // this records what the product believed at the moment it drew the wall,
+        // which is what decided whether they were shown a plan or a free account.
+        if (typeof p.is_guest === "boolean") {
+          g.guestKnown++;
+          if (p.is_guest) g.guests.add(e.user_id);
+        }
+      } else {
+        g.dismissed++;
+        countInto(g.via, p.via == null ? null : String(p.via), e.user_id);
+      }
+    } else if (e.name === "prompt.shown" || e.name === "prompt.answered") {
+      const key = String(p.prompt ?? "—");
+      const r = (promptRows[key] ??= {
+        prompt: key,
+        shown: 0,
+        people: new Set(),
+        surfaces: {},
+        answered: 0,
+        response: {},
+      });
+      if (e.name === "prompt.shown") {
+        r.shown++;
+        r.people.add(e.user_id);
+        countInto(r.surfaces, p.surface == null ? null : String(p.surface), e.user_id);
+      } else {
+        r.answered++;
+        countInto(r.response, p.response == null ? null : String(p.response), e.user_id);
+      }
+    } else if (e.name === "pro.offer_shown") {
+      offerShownCount++;
+      offerRows.shown.add(e.user_id);
+    } else if (e.name === "pro.offer_declined") {
+      offerDeclinedCount++;
+      offerRows.declined.add(e.user_id);
+    } else if (e.name === "trial.start_click") {
+      offerClickedCount++;
+      offerRows.clicked.add(e.user_id);
+    }
+  }
+
+  const gates = Object.values(gateRows)
+    .map((g) => {
+      const k = `${g.limit}|${g.surface}`;
+      rosters.asks[`gate|${k}`] = roster(g.people, identity);
+      rosters.asks[`gateGuests|${k}`] = roster(g.guests, identity);
+      for (const [v, b] of Object.entries(g.via)) rosters.asks[`gateVia|${k}|${v}`] = roster(b.users, identity);
+      for (const [v, b] of Object.entries(g.offer)) rosters.asks[`gateOffer|${k}|${v}`] = roster(b.users, identity);
+      return {
+        limit: g.limit,
+        surface: g.surface,
+        shown: g.shown,
+        people: g.people.size,
+        guests: g.guests.size,
+        guestKnown: g.guestKnown,
+        as: flatten(g.as),
+        offer: flatten(g.offer),
+        dismissed: g.dismissed,
+        via: flatten(g.via),
+      };
+    })
+    .sort((a, b) => b.shown - a.shown || a.limit.localeCompare(b.limit));
+
+  const prompts = Object.values(promptRows)
+    .map((r) => {
+      rosters.asks[`prompt|${r.prompt}`] = roster(r.people, identity);
+      for (const [v, b] of Object.entries(r.response)) rosters.asks[`promptR|${r.prompt}|${v}`] = roster(b.users, identity);
+      return {
+        prompt: r.prompt,
+        shown: r.shown,
+        people: r.people.size,
+        surfaces: flatten(r.surfaces),
+        answered: r.answered,
+        response: flatten(r.response),
+        // Shown, then the page went away before anything came back. NOT a lost
+        // event and NOT an unanswered question — it is a CLOSED TAB, and it is a
+        // finding in its own right: they left rather than read it.
+        //
+        // The first one of these (2026-08-28, @xurdebr, one-second session) is
+        // what proved the abandon path was incomplete: it hung off a React
+        // unmount cleanup, which does not run when a tab closes. michi now fires
+        // a keepalive beacon on `pagehide`, so most of these become an explicit
+        // `abandoned` from here on. What stays unpaired is the residue that
+        // cannot be caught without inventing abandons for people who merely
+        // switched tabs: a mobile tab killed after the browser froze it.
+        unpaired: Math.max(0, r.shown - r.answered),
+      };
+    })
+    .sort((a, b) => b.shown - a.shown || a.prompt.localeCompare(b.prompt));
+
+  rosters.asks["offerShown"] = roster(offerRows.shown, identity);
+  rosters.asks["offerDeclined"] = roster(offerRows.declined, identity);
+  rosters.asks["offerClicked"] = roster(offerRows.clicked, identity);
+
+  const asks = {
+    gates,
+    prompts,
+    offer: {
+      shown: offerShownCount,
+      shownPeople: offerRows.shown.size,
+      declined: offerDeclinedCount,
+      declinedPeople: offerRows.declined.size,
+      clicked: offerClickedCount,
+      clickedPeople: offerRows.clicked.size,
+    },
+  };
 
   const byDay = {};
   for (let i = days - 1; i >= 0; i--) {
@@ -621,6 +782,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
       daily,
       eventsByName,
       routes,
+      asks,
       funnels,
       guests,
       campaigns,
