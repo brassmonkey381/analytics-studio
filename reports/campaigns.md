@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-08-29T15:07:35.305Z. All-time unless a window is named.
+Collected 2026-08-31T15:07:34.701Z. All-time unless a window is named.
 
-**5 campaign arrivals** across 4 apps.
+**6 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
@@ -12,12 +12,13 @@ Collected 2026-08-29T15:07:35.305Z. All-time unless a window is named.
 | (unregistered) | `49bb8d42-bb93-4b2f-9b83-b1d0e58d91eb` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `a6d172c4-e566-4b11-bf24-b26a652ba087` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `eacc07d3-89ad-4398-8673-5cecdfd710ce` | 1 | 1 | 1 | 0 | 0 |
 
 Excluded from the above: 4 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-No campaign-tagged arrival, all time. Landing routes are recorded (378 of 457 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Landing routes are recorded (396 of 475 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Doggle
 
@@ -49,8 +50,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 661 | 494 | 9 | 147 | a code was recorded 2026-08-13 |
-| TCGScan | 457 | 378 | 0 | 283 | routes yes, never a code — a zero cannot be told from an unshipped build |
-| Doggle | 119 | 118 | 1 | 119 | a code was recorded 2026-08-13 |
+| Michi-Maker | 709 | 538 | 10 | 195 | a code was recorded 2026-08-13 |
+| TCGScan | 475 | 396 | 0 | 301 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Doggle | 132 | 128 | 1 | 132 | a code was recorded 2026-08-13 |
 | Pickleague | 53 | 50 | 0 | 53 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
