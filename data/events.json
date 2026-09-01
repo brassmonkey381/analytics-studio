@@ -132,9 +132,14 @@
         "users": 15
       },
       "2026-08-31": {
-        "sessions": 4,
-        "events": 33,
-        "users": 3
+        "sessions": 39,
+        "events": 502,
+        "users": 26
+      },
+      "2026-09-01": {
+        "sessions": 2,
+        "events": 6,
+        "users": 2
       }
     },
     "tcgscan": {
@@ -284,6 +289,16 @@
         "sessions": 7,
         "events": 16,
         "users": 6
+      },
+      "2026-08-31": {
+        "sessions": 8,
+        "events": 21,
+        "users": 5
+      },
+      "2026-09-01": {
+        "sessions": 1,
+        "events": 12,
+        "users": 2
       }
     },
     "pickleague": {
@@ -326,10 +341,15 @@
         "sessions": 1,
         "events": 7,
         "users": 1
+      },
+      "2026-08-31": {
+        "sessions": 3,
+        "events": 18,
+        "users": 3
       }
     }
   },
-  "collectedAt": "2026-08-31T15:07:29.872Z",
+  "collectedAt": "2026-09-01T15:07:28.757Z",
   "windowDays": 30,
   "apps": {
     "michi-maker": {
@@ -339,31 +359,31 @@
         "1": {
           "windowDays": 1,
           "totals": {
-            "sessions": 14,
-            "events": 98,
-            "users": 12,
-            "realUsers": 2,
-            "guestUsers": 10,
-            "everGuestUsers": 10,
-            "convertedUsers": 0,
-            "guestSessions": 12,
-            "upgradeSessions": 0,
-            "excludedSessions": 12,
-            "excludedEvents": 238,
+            "sessions": 37,
+            "events": 475,
+            "users": 24,
+            "realUsers": 8,
+            "guestUsers": 16,
+            "everGuestUsers": 20,
+            "convertedUsers": 4,
+            "guestSessions": 28,
+            "upgradeSessions": 2,
+            "excludedSessions": 105,
+            "excludedEvents": 697,
             "orphanEvents": 0,
             "bouncedSessions": 1,
-            "medianSessionSecs": 76.265,
+            "medianSessionSecs": 37.038,
             "platforms": {
-              "web": 14
+              "web": 37
             },
-            "firstEventAt": "2026-08-30 16:17:38.479+00"
+            "firstEventAt": "2026-08-31 15:13:34.463+00"
           },
           "daily": [
             {
-              "day": "2026-08-31",
-              "sessions": 4,
-              "events": 33,
-              "users": 3
+              "day": "2026-09-01",
+              "sessions": 2,
+              "events": 6,
+              "users": 2
             }
           ],
           "eventsByName": [
@@ -371,61 +391,93 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 72,
-              "users": 12,
+              "count": 234,
+              "users": 24,
+              "known": true
+            },
+            {
+              "name": "card.add",
+              "label": "Added cards",
+              "stage": "engagement",
+              "count": 162,
+              "users": 4,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 13,
-              "users": 12,
-              "known": true
-            },
-            {
-              "name": "binder.add",
-              "label": "Created a binder",
-              "stage": "activation",
-              "count": 6,
-              "users": 6,
-              "known": true
-            },
-            {
-              "name": "prompt.shown",
-              "label": "Was shown a prompt",
-              "stage": "engagement",
-              "count": 2,
-              "users": 1,
+              "count": 37,
+              "users": 24,
               "known": true
             },
             {
               "name": "prompt.answered",
               "label": "Answered a prompt",
               "stage": "engagement",
-              "count": 2,
-              "users": 1,
+              "count": 16,
+              "users": 4,
+              "known": true
+            },
+            {
+              "name": "binder.add",
+              "label": "Created a binder",
+              "stage": "activation",
+              "count": 8,
+              "users": 8,
+              "known": true
+            },
+            {
+              "name": "prompt.shown",
+              "label": "Was shown a prompt",
+              "stage": "engagement",
+              "count": 4,
+              "users": 4,
               "known": true
             },
             {
               "name": "account.created",
               "label": "Account created",
               "stage": "acquisition",
-              "count": 1,
-              "users": 1,
+              "count": 4,
+              "users": 4,
               "known": true
             },
             {
               "name": "auth.login",
               "label": "Signed in",
               "stage": "acquisition",
-              "count": 1,
-              "users": 1,
+              "count": 3,
+              "users": 3,
+              "known": true
+            },
+            {
+              "name": "pro.offer_shown",
+              "label": "Saw the PRO offer",
+              "stage": "monetization",
+              "count": 3,
+              "users": 3,
               "known": true
             },
             {
               "name": "demo.csv_import",
               "label": "Tried the example import",
+              "stage": "activation",
+              "count": 2,
+              "users": 2,
+              "known": true
+            },
+            {
+              "name": "pro.offer_declined",
+              "label": "Dismissed the PRO offer",
+              "stage": "monetization",
+              "count": 1,
+              "users": 1,
+              "known": true
+            },
+            {
+              "name": "csv.import",
+              "label": "Imported a CSV",
               "stage": "activation",
               "count": 1,
               "users": 1,
@@ -437,62 +489,118 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 25,
-              "users": 10
+              "count": 64,
+              "users": 21
             },
             {
               "route": "/binder/:id",
               "label": null,
               "intent": null,
-              "count": 15,
-              "users": 9
+              "count": 46,
+              "users": 12
             },
             {
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 14,
-              "users": 6
+              "count": 44,
+              "users": 9
             },
             {
               "route": "/welcome",
               "label": null,
               "intent": null,
-              "count": 9,
-              "users": 9
-            },
-            {
-              "route": "/discover",
-              "label": "Discover",
-              "intent": null,
-              "count": 3,
-              "users": 2
+              "count": 18,
+              "users": 17
             },
             {
               "route": "/michi-method",
               "label": "The michi method",
               "intent": null,
+              "count": 11,
+              "users": 6
+            },
+            {
+              "route": "/discover",
+              "label": "Discover",
+              "intent": null,
+              "count": 10,
+              "users": 7
+            },
+            {
+              "route": "/purchases",
+              "label": "Purchases",
+              "intent": "pricing",
+              "count": 8,
+              "users": 3
+            },
+            {
+              "route": "/browse",
+              "label": null,
+              "intent": null,
+              "count": 6,
+              "users": 4
+            },
+            {
+              "route": "/plans",
+              "label": "Plans & pricing",
+              "intent": "pricing",
+              "count": 6,
+              "users": 4
+            },
+            {
+              "route": "/whats-new",
+              "label": null,
+              "intent": null,
+              "count": 5,
+              "users": 3
+            },
+            {
+              "route": "/learn",
+              "label": "Learn",
+              "intent": null,
+              "count": 4,
+              "users": 4
+            },
+            {
+              "route": "/auth-callback",
+              "label": null,
+              "intent": null,
               "count": 3,
               "users": 3
             },
             {
-              "route": "/auth-callback",
+              "route": "/u/michimaker",
+              "label": null,
+              "intent": null,
+              "count": 3,
+              "users": 2
+            },
+            {
+              "route": "/contest",
+              "label": "Contest",
+              "intent": null,
+              "count": 2,
+              "users": 2
+            },
+            {
+              "route": "/search-guide",
+              "label": null,
+              "intent": null,
+              "count": 2,
+              "users": 1
+            },
+            {
+              "route": "/learn/slice-studio",
               "label": null,
               "intent": null,
               "count": 1,
               "users": 1
             },
             {
-              "route": "/learn",
-              "label": "Learn",
+              "route": "/learn/first-binder",
+              "label": null,
               "intent": null,
-              "count": 1,
-              "users": 1
-            },
-            {
-              "route": "/plans",
-              "label": "Plans & pricing",
-              "intent": "pricing",
               "count": 1,
               "users": 1
             }
@@ -500,6 +608,29 @@
           "asks": {
             "gates": [],
             "prompts": [
+              {
+                "prompt": "rights-attestation",
+                "shown": 3,
+                "people": 3,
+                "surfaces": {
+                  "my-binders": {
+                    "count": 3,
+                    "users": 3
+                  }
+                },
+                "answered": 3,
+                "response": {
+                  "dismissed": {
+                    "count": 2,
+                    "users": 2
+                  },
+                  "accepted": {
+                    "count": 1,
+                    "users": 1
+                  }
+                },
+                "unpaired": 0
+              },
               {
                 "prompt": "avatar-consent",
                 "shown": 1,
@@ -510,29 +641,14 @@
                     "users": 1
                   }
                 },
-                "answered": 1,
+                "answered": 13,
                 "response": {
                   "accepted": {
                     "count": 1,
                     "users": 1
-                  }
-                },
-                "unpaired": 0
-              },
-              {
-                "prompt": "rights-attestation",
-                "shown": 1,
-                "people": 1,
-                "surfaces": {
-                  "my-binders": {
-                    "count": 1,
-                    "users": 1
-                  }
-                },
-                "answered": 1,
-                "response": {
-                  "accepted": {
-                    "count": 1,
+                  },
+                  "abandoned": {
+                    "count": 12,
                     "users": 1
                   }
                 },
@@ -540,10 +656,10 @@
               }
             ],
             "offer": {
-              "shown": 0,
-              "shownPeople": 0,
-              "declined": 0,
-              "declinedPeople": 0,
+              "shown": 3,
+              "shownPeople": 3,
+              "declined": 1,
+              "declinedPeople": 1,
               "clicked": 0,
               "clickedPeople": 0
             }
@@ -557,7 +673,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 12,
+                  "users": 24,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -565,7 +681,7 @@
                 {
                   "id": "engaged",
                   "label": "Did anything past the open",
-                  "users": 12,
+                  "users": 24,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -573,16 +689,16 @@
                 {
                   "id": "saw-offer",
                   "label": "Was shown the PRO offer",
-                  "users": 0,
-                  "ofPrev": 0,
-                  "ofTop": 0,
+                  "users": 3,
+                  "ofPrev": 12.5,
+                  "ofTop": 12.5,
                   "caveat": "trial_awareness"
                 },
                 {
                   "id": "started",
                   "label": "Started a PRO trial",
                   "users": 0,
-                  "ofPrev": null,
+                  "ofPrev": 0,
                   "ofTop": 0,
                   "caveat": null
                 }
@@ -635,7 +751,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 12,
+                  "users": 24,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -643,7 +759,7 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 12,
+                  "users": 24,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -651,7 +767,7 @@
                 {
                   "id": "tried",
                   "label": "Tried a demo",
-                  "users": 1,
+                  "users": 2,
                   "ofPrev": 8.3,
                   "ofTop": 8.3,
                   "caveat": null
@@ -659,7 +775,7 @@
                 {
                   "id": "created",
                   "label": "Made something real",
-                  "users": 1,
+                  "users": 2,
                   "ofPrev": 100,
                   "ofTop": 8.3,
                   "caveat": null
@@ -674,7 +790,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 10,
+                  "users": 20,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -682,7 +798,7 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 10,
+                  "users": 20,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -690,49 +806,97 @@
                 {
                   "id": "signed",
                   "label": "Submitted the upgrade",
-                  "users": 1,
-                  "ofPrev": 10,
-                  "ofTop": 10,
+                  "users": 4,
+                  "ofPrev": 20,
+                  "ofTop": 20,
                   "caveat": "upgrade_unconfirmed"
                 },
                 {
                   "id": "confirmed",
                   "label": "Completed it (ground truth)",
-                  "users": 0,
-                  "ofPrev": 0,
-                  "ofTop": 0,
+                  "users": 3,
+                  "ofPrev": 75,
+                  "ofTop": 15,
                   "caveat": null
                 }
               ]
             }
           ],
           "guests": {
-            "people": 10,
-            "sessions": 12,
+            "people": 20,
+            "sessions": 28,
             "depth": {
               "openOnly": 0,
               "looked": 3,
-              "explored": 2,
-              "made": 5
+              "explored": 10,
+              "made": 7
             },
-            "converted": 0,
-            "convertedOfMade": 0,
+            "converted": 4,
+            "convertedOfMade": 4,
             "actions": [
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 10,
-                "fires": 11
+                "people": 20,
+                "fires": 29
               },
               {
                 "name": "binder.add",
                 "label": "Created a binder",
-                "people": 5,
-                "fires": 5
+                "people": 7,
+                "fires": 7
               },
               {
                 "name": "account.created",
                 "label": "Account created",
+                "people": 4,
+                "fires": 4
+              },
+              {
+                "name": "card.add",
+                "label": "Added cards",
+                "people": 3,
+                "fires": 140
+              },
+              {
+                "name": "pro.offer_shown",
+                "label": "Saw the PRO offer",
+                "people": 3,
+                "fires": 3
+              },
+              {
+                "name": "prompt.shown",
+                "label": "Was shown a prompt",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "name": "prompt.answered",
+                "label": "Answered a prompt",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "name": "auth.login",
+                "label": "Signed in",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "demo.csv_import",
+                "label": "Tried the example import",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "pro.offer_declined",
+                "label": "Dismissed the PRO offer",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "csv.import",
+                "label": "Imported a CSV",
                 "people": 1,
                 "fires": 1
               }
@@ -740,53 +904,107 @@
             "routes": [
               {
                 "route": "/",
-                "people": 9,
-                "fires": 22
+                "people": 19,
+                "fires": 55
               },
               {
                 "route": "/welcome",
-                "people": 9,
-                "fires": 9
+                "people": 17,
+                "fires": 18
               },
               {
                 "route": "/binder/:id",
-                "people": 7,
-                "fires": 12
+                "people": 9,
+                "fires": 37
               },
               {
                 "route": "/my-binders",
-                "people": 5,
-                "fires": 10
+                "people": 7,
+                "fires": 31
               },
               {
                 "route": "/michi-method",
-                "people": 3,
-                "fires": 3
+                "people": 5,
+                "fires": 7
               },
               {
                 "route": "/discover",
+                "people": 5,
+                "fires": 6
+              },
+              {
+                "route": "/browse",
+                "people": 4,
+                "fires": 6
+              },
+              {
+                "route": "/plans",
+                "people": 4,
+                "fires": 6
+              },
+              {
+                "route": "/learn",
+                "people": 4,
+                "fires": 4
+              },
+              {
+                "route": "/purchases",
                 "people": 2,
                 "fires": 3
               },
               {
-                "route": "/learn",
+                "route": "/contest",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "route": "/whats-new",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "route": "/search-guide",
+                "people": 1,
+                "fires": 2
+              },
+              {
+                "route": "/learn/slice-studio",
                 "people": 1,
                 "fires": 1
               },
               {
-                "route": "/plans",
+                "route": "/u/michimaker",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "route": "/auth-callback",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "route": "/learn/first-binder",
                 "people": 1,
                 "fires": 1
               }
             ],
             "pricing": {
-              "asked": 1,
-              "offered": 0
+              "asked": 4,
+              "offered": 3
             }
           },
           "campaigns": [
             {
-              "code": "eacc07d3-89ad-4398-8673-5cecdfd710ce",
+              "code": "f22d26d7-64e6-4c5a-8d02-dc437d74b45e",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
+            },
+            {
+              "code": "faed5065-c1d1-45f8-8a78-3494094486ec",
               "source": null,
               "medium": null,
               "sessions": 1,
@@ -813,32 +1031,26 @@
         "7": {
           "windowDays": 7,
           "totals": {
-            "sessions": 154,
-            "events": 1292,
-            "users": 102,
-            "realUsers": 16,
-            "guestUsers": 86,
-            "everGuestUsers": 93,
-            "convertedUsers": 7,
-            "guestSessions": 115,
+            "sessions": 168,
+            "events": 1575,
+            "users": 110,
+            "realUsers": 20,
+            "guestUsers": 90,
+            "everGuestUsers": 99,
+            "convertedUsers": 9,
+            "guestSessions": 128,
             "upgradeSessions": 4,
-            "excludedSessions": 90,
-            "excludedEvents": 1697,
+            "excludedSessions": 188,
+            "excludedEvents": 2083,
             "orphanEvents": 0,
-            "bouncedSessions": 3,
-            "medianSessionSecs": 61.628,
+            "bouncedSessions": 4,
+            "medianSessionSecs": 42.523,
             "platforms": {
-              "web": 154
+              "web": 168
             },
-            "firstEventAt": "2026-08-24 18:10:42.722+00"
+            "firstEventAt": "2026-08-25 15:23:02.481+00"
           },
           "daily": [
-            {
-              "day": "2026-08-25",
-              "sessions": 29,
-              "events": 356,
-              "users": 20
-            },
             {
               "day": "2026-08-26",
               "sessions": 29,
@@ -871,9 +1083,15 @@
             },
             {
               "day": "2026-08-31",
-              "sessions": 4,
-              "events": 33,
-              "users": 3
+              "sessions": 39,
+              "events": 502,
+              "users": 26
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 2,
+              "events": 6,
+              "users": 2
             }
           ],
           "eventsByName": [
@@ -881,48 +1099,64 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 754,
-              "users": 100,
+              "count": 873,
+              "users": 108,
               "known": true
             },
             {
               "name": "card.add",
               "label": "Added cards",
               "stage": "engagement",
-              "count": 279,
-              "users": 18,
+              "count": 401,
+              "users": 19,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 153,
-              "users": 102,
+              "count": 167,
+              "users": 110,
               "known": true
             },
             {
               "name": "binder.add",
               "label": "Created a binder",
               "stage": "activation",
-              "count": 40,
-              "users": 37,
+              "count": 42,
+              "users": 38,
+              "known": true
+            },
+            {
+              "name": "prompt.answered",
+              "label": "Answered a prompt",
+              "stage": "engagement",
+              "count": 25,
+              "users": 11,
               "known": true
             },
             {
               "name": "account.created",
               "label": "Account created",
               "stage": "acquisition",
-              "count": 14,
-              "users": 12,
+              "count": 16,
+              "users": 14,
               "known": true
             },
             {
               "name": "auth.login",
               "label": "Signed in",
               "stage": "acquisition",
-              "count": 11,
-              "users": 9,
+              "count": 13,
+              "users": 11,
+              "known": true
+            },
+            {
+              "name": "prompt.shown",
+              "label": "Was shown a prompt",
+              "stage": "engagement",
+              "count": 13,
+              "users": 11,
               "known": true
             },
             {
@@ -930,23 +1164,7 @@
               "label": "Saw the PRO offer",
               "stage": "monetization",
               "count": 11,
-              "users": 4,
-              "known": true
-            },
-            {
-              "name": "prompt.shown",
-              "label": "Was shown a prompt",
-              "stage": "engagement",
-              "count": 9,
-              "users": 7,
-              "known": true
-            },
-            {
-              "name": "prompt.answered",
-              "label": "Answered a prompt",
-              "stage": "engagement",
-              "count": 9,
-              "users": 7,
+              "users": 6,
               "known": true
             },
             {
@@ -955,6 +1173,14 @@
               "stage": "monetization",
               "count": 4,
               "users": 3,
+              "known": true
+            },
+            {
+              "name": "demo.csv_import",
+              "label": "Tried the example import",
+              "stage": "activation",
+              "count": 4,
+              "users": 4,
               "known": true
             },
             {
@@ -974,16 +1200,8 @@
               "known": true
             },
             {
-              "name": "demo.csv_import",
-              "label": "Tried the example import",
-              "stage": "activation",
-              "count": 2,
-              "users": 2,
-              "known": true
-            },
-            {
-              "name": "demo.print",
-              "label": "Tried the print example",
+              "name": "csv.import",
+              "label": "Imported a CSV",
               "stage": "activation",
               "count": 1,
               "users": 1,
@@ -995,137 +1213,130 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 210,
-              "users": 88
+              "count": 244,
+              "users": 95
             },
             {
               "route": "/binder/:id",
               "label": null,
               "intent": null,
-              "count": 164,
-              "users": 52
+              "count": 187,
+              "users": 55
             },
             {
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 124,
+              "count": 151,
               "users": 47
             },
             {
               "route": "/welcome",
               "label": null,
               "intent": null,
-              "count": 88,
-              "users": 79
+              "count": 91,
+              "users": 84
             },
             {
               "route": "/discover",
               "label": "Discover",
               "intent": null,
-              "count": 30,
-              "users": 12
+              "count": 36,
+              "users": 17
             },
             {
               "route": "/michi-method",
               "label": "The michi method",
               "intent": null,
-              "count": 23,
-              "users": 16
-            },
-            {
-              "route": "/learn",
-              "label": "Learn",
-              "intent": null,
-              "count": 20,
-              "users": 14
+              "count": 31,
+              "users": 21
             },
             {
               "route": "/browse",
               "label": null,
               "intent": null,
-              "count": 17,
-              "users": 10
+              "count": 20,
+              "users": 12
+            },
+            {
+              "route": "/learn",
+              "label": "Learn",
+              "intent": null,
+              "count": 19,
+              "users": 15
             },
             {
               "route": "/plans",
               "label": "Plans & pricing",
               "intent": "pricing",
-              "count": 13,
+              "count": 17,
+              "users": 10
+            },
+            {
+              "route": "/purchases",
+              "label": "Purchases",
+              "intent": "pricing",
+              "count": 15,
               "users": 8
             },
             {
               "route": "/auth-callback",
               "label": null,
               "intent": null,
-              "count": 11,
-              "users": 9
+              "count": 13,
+              "users": 11
             },
             {
               "route": "/contest",
               "label": "Contest",
               "intent": null,
-              "count": 11,
-              "users": 6
-            },
-            {
-              "route": "/purchases",
-              "label": "Purchases",
-              "intent": "pricing",
-              "count": 9,
-              "users": 7
-            },
-            {
-              "route": "/learn/slice-studio",
-              "label": null,
-              "intent": null,
-              "count": 4,
-              "users": 4
-            },
-            {
-              "route": "/learn/print-binder",
-              "label": null,
-              "intent": null,
-              "count": 4,
-              "users": 4
+              "count": 13,
+              "users": 8
             },
             {
               "route": "/whats-new",
               "label": null,
               "intent": null,
-              "count": 4,
-              "users": 3
-            },
-            {
-              "route": "/binder/rel-pitch-black-showcase",
-              "label": null,
-              "intent": null,
-              "count": 3,
-              "users": 2
-            },
-            {
-              "route": "/binder/ex-pitch-black-chase",
-              "label": null,
-              "intent": null,
-              "count": 3,
-              "users": 3
-            },
-            {
-              "route": "/binder/ex-color-play",
-              "label": null,
-              "intent": null,
-              "count": 3,
-              "users": 3
+              "count": 9,
+              "users": 6
             },
             {
               "route": "/learn/first-binder",
               "label": null,
               "intent": null,
+              "count": 4,
+              "users": 3
+            },
+            {
+              "route": "/learn/slice-studio",
+              "label": null,
+              "intent": null,
+              "count": 3,
+              "users": 3
+            },
+            {
+              "route": "/search-guide",
+              "label": null,
+              "intent": null,
               "count": 3,
               "users": 2
             },
             {
-              "route": "/binder/rel-pitch-black-chase",
+              "route": "/u/michimaker",
+              "label": null,
+              "intent": null,
+              "count": 3,
+              "users": 2
+            },
+            {
+              "route": "/binder/ex-color-play",
+              "label": null,
+              "intent": null,
+              "count": 2,
+              "users": 2
+            },
+            {
+              "route": "/learn/print-binder",
               "label": null,
               "intent": null,
               "count": 2,
@@ -1139,21 +1350,14 @@
               "users": 2
             },
             {
-              "route": "/binder/example-fill-sheet",
+              "route": "/binder/rel-pitch-black-showcase",
               "label": null,
               "intent": null,
-              "count": 1,
+              "count": 2,
               "users": 1
             },
             {
               "route": "/binder/rel-30th-celebration-showcase",
-              "label": null,
-              "intent": null,
-              "count": 1,
-              "users": 1
-            },
-            {
-              "route": "/search-guide",
               "label": null,
               "intent": null,
               "count": 1,
@@ -1174,7 +1378,21 @@
               "users": 1
             },
             {
+              "route": "/binder/ex-pitch-black-chase",
+              "label": null,
+              "intent": null,
+              "count": 1,
+              "users": 1
+            },
+            {
               "route": "/binder/ex-ideas-in-flight",
+              "label": null,
+              "intent": null,
+              "count": 1,
+              "users": 1
+            },
+            {
+              "route": "/binder/rel-pitch-black-chase",
               "label": null,
               "intent": null,
               "count": 1,
@@ -1231,50 +1449,50 @@
             "prompts": [
               {
                 "prompt": "rights-attestation",
-                "shown": 7,
-                "people": 7,
+                "shown": 10,
+                "people": 10,
                 "surfaces": {
                   "binder": {
                     "count": 1,
                     "users": 1
                   },
                   "my-binders": {
-                    "count": 6,
-                    "users": 6
+                    "count": 9,
+                    "users": 9
                   }
                 },
-                "answered": 6,
+                "answered": 9,
                 "response": {
                   "accepted": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   },
                   "dismissed": {
-                    "count": 4,
-                    "users": 4
+                    "count": 6,
+                    "users": 6
                   }
                 },
                 "unpaired": 1
               },
               {
                 "prompt": "avatar-consent",
-                "shown": 2,
-                "people": 2,
+                "shown": 3,
+                "people": 3,
                 "surfaces": {
                   "app": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   }
                 },
-                "answered": 3,
+                "answered": 16,
                 "response": {
                   "accepted": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   },
                   "abandoned": {
-                    "count": 1,
-                    "users": 1
+                    "count": 13,
+                    "users": 2
                   }
                 },
                 "unpaired": 0
@@ -1282,7 +1500,7 @@
             ],
             "offer": {
               "shown": 11,
-              "shownPeople": 4,
+              "shownPeople": 6,
               "declined": 2,
               "declinedPeople": 2,
               "clicked": 0,
@@ -1298,7 +1516,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 102,
+                  "users": 110,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -1306,17 +1524,17 @@
                 {
                   "id": "engaged",
                   "label": "Did anything past the open",
-                  "users": 100,
-                  "ofPrev": 98,
-                  "ofTop": 98,
+                  "users": 108,
+                  "ofPrev": 98.2,
+                  "ofTop": 98.2,
                   "caveat": null
                 },
                 {
                   "id": "saw-offer",
                   "label": "Was shown the PRO offer",
-                  "users": 4,
-                  "ofPrev": 4,
-                  "ofTop": 3.9,
+                  "users": 6,
+                  "ofPrev": 5.6,
+                  "ofTop": 5.5,
                   "caveat": "trial_awareness"
                 },
                 {
@@ -1338,8 +1556,8 @@
                   "id": "wall",
                   "label": "Was stopped by a plan limit",
                   "users": 3,
-                  "ofPrev": 2.9,
-                  "ofTop": 2.9,
+                  "ofPrev": 2.7,
+                  "ofTop": 2.7,
                   "caveat": "cap_gates_blind"
                 },
                 {
@@ -1376,7 +1594,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 102,
+                  "users": 110,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -1384,25 +1602,25 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 100,
-                  "ofPrev": 98,
-                  "ofTop": 98,
+                  "users": 108,
+                  "ofPrev": 98.2,
+                  "ofTop": 98.2,
                   "caveat": null
                 },
                 {
                   "id": "tried",
                   "label": "Tried a demo",
-                  "users": 3,
-                  "ofPrev": 3,
-                  "ofTop": 2.9,
+                  "users": 4,
+                  "ofPrev": 3.7,
+                  "ofTop": 3.6,
                   "caveat": null
                 },
                 {
                   "id": "created",
                   "label": "Made something real",
-                  "users": 3,
+                  "users": 4,
                   "ofPrev": 100,
-                  "ofTop": 2.9,
+                  "ofTop": 3.6,
                   "caveat": null
                 }
               ]
@@ -1415,7 +1633,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 93,
+                  "users": 99,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -1423,95 +1641,89 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 91,
-                  "ofPrev": 97.8,
-                  "ofTop": 97.8,
+                  "users": 97,
+                  "ofPrev": 98,
+                  "ofTop": 98,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Submitted the upgrade",
-                  "users": 12,
-                  "ofPrev": 13.2,
-                  "ofTop": 12.9,
+                  "users": 14,
+                  "ofPrev": 14.4,
+                  "ofTop": 14.1,
                   "caveat": "upgrade_unconfirmed"
                 },
                 {
                   "id": "confirmed",
                   "label": "Completed it (ground truth)",
-                  "users": 5,
-                  "ofPrev": 41.7,
-                  "ofTop": 5.4,
+                  "users": 7,
+                  "ofPrev": 50,
+                  "ofTop": 7.1,
                   "caveat": null
                 }
               ]
             }
           ],
           "guests": {
-            "people": 93,
-            "sessions": 115,
+            "people": 99,
+            "sessions": 128,
             "depth": {
               "openOnly": 2,
-              "looked": 31,
-              "explored": 28,
+              "looked": 30,
+              "explored": 35,
               "made": 32
             },
-            "converted": 7,
-            "convertedOfMade": 6,
+            "converted": 9,
+            "convertedOfMade": 8,
             "actions": [
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 93,
-                "fires": 128
+                "people": 99,
+                "fires": 142
               },
               {
                 "name": "binder.add",
                 "label": "Created a binder",
                 "people": 32,
-                "fires": 34
+                "fires": 35
               },
               {
                 "name": "card.add",
                 "label": "Added cards",
                 "people": 14,
-                "fires": 98
+                "fires": 231
               },
               {
                 "name": "account.created",
                 "label": "Account created",
-                "people": 12,
-                "fires": 14
+                "people": 14,
+                "fires": 16
               },
               {
                 "name": "prompt.shown",
                 "label": "Was shown a prompt",
-                "people": 5,
-                "fires": 5
+                "people": 7,
+                "fires": 7
               },
               {
                 "name": "prompt.answered",
                 "label": "Answered a prompt",
-                "people": 4,
-                "fires": 4
+                "people": 6,
+                "fires": 6
               },
               {
                 "name": "auth.login",
                 "label": "Signed in",
-                "people": 3,
-                "fires": 3
+                "people": 4,
+                "fires": 4
               },
               {
                 "name": "pro.offer_shown",
                 "label": "Saw the PRO offer",
-                "people": 2,
+                "people": 4,
                 "fires": 4
-              },
-              {
-                "name": "pro.offer_declined",
-                "label": "Dismissed the PRO offer",
-                "people": 2,
-                "fires": 2
               },
               {
                 "name": "cap.gate_shown",
@@ -1526,8 +1738,20 @@
                 "fires": 2
               },
               {
-                "name": "demo.print",
-                "label": "Tried the print example",
+                "name": "pro.offer_declined",
+                "label": "Dismissed the PRO offer",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "name": "demo.csv_import",
+                "label": "Tried the example import",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "csv.import",
+                "label": "Imported a CSV",
                 "people": 1,
                 "fires": 1
               }
@@ -1535,108 +1759,108 @@
             "routes": [
               {
                 "route": "/",
-                "people": 80,
-                "fires": 183
+                "people": 87,
+                "fires": 212
               },
               {
                 "route": "/welcome",
-                "people": 79,
-                "fires": 88
+                "people": 84,
+                "fires": 91
               },
               {
                 "route": "/binder/:id",
-                "people": 44,
-                "fires": 95
+                "people": 45,
+                "fires": 121
               },
               {
                 "route": "/my-binders",
                 "people": 39,
-                "fires": 78
+                "fires": 95
               },
               {
                 "route": "/michi-method",
-                "people": 14,
-                "fires": 19
-              },
-              {
-                "route": "/learn",
-                "people": 12,
-                "fires": 15
-              },
-              {
-                "route": "/discover",
-                "people": 11,
+                "people": 18,
                 "fires": 23
               },
               {
+                "route": "/discover",
+                "people": 14,
+                "fires": 25
+              },
+              {
+                "route": "/learn",
+                "people": 13,
+                "fires": 14
+              },
+              {
                 "route": "/browse",
+                "people": 11,
+                "fires": 16
+              },
+              {
+                "route": "/plans",
                 "people": 8,
-                "fires": 12
+                "fires": 10
+              },
+              {
+                "route": "/contest",
+                "people": 7,
+                "fires": 8
               },
               {
                 "route": "/purchases",
                 "people": 6,
-                "fires": 8
+                "fires": 9
               },
               {
-                "route": "/plans",
-                "people": 6,
-                "fires": 6
-              },
-              {
-                "route": "/contest",
+                "route": "/whats-new",
                 "people": 5,
                 "fires": 6
               },
               {
-                "route": "/learn/print-binder",
+                "route": "/auth-callback",
                 "people": 4,
                 "fires": 4
               },
               {
-                "route": "/whats-new",
+                "route": "/learn/first-binder",
                 "people": 3,
                 "fires": 4
               },
               {
-                "route": "/learn/slice-studio",
-                "people": 3,
-                "fires": 3
-              },
-              {
-                "route": "/binder/ex-pitch-black-chase",
-                "people": 3,
+                "route": "/search-guide",
+                "people": 2,
                 "fires": 3
               },
               {
                 "route": "/binder/ex-color-play",
-                "people": 3,
-                "fires": 3
+                "people": 2,
+                "fires": 2
               },
               {
-                "route": "/auth-callback",
-                "people": 3,
-                "fires": 3
+                "route": "/learn/print-binder",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "route": "/u/rileyuy",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "route": "/learn/slice-studio",
+                "people": 2,
+                "fires": 2
               },
               {
                 "route": "/binder/rel-pitch-black-showcase",
-                "people": 2,
-                "fires": 3
-              },
-              {
-                "route": "/learn/first-binder",
-                "people": 2,
-                "fires": 3
-              },
-              {
-                "route": "/binder/rel-pitch-black-chase",
-                "people": 2,
+                "people": 1,
                 "fires": 2
               }
             ],
             "pricing": {
               "asked": 11,
-              "offered": 2
+              "offered": 4
             }
           },
           "campaigns": [
@@ -1684,6 +1908,24 @@
               "people": 1,
               "converted": 0,
               "signups": 0
+            },
+            {
+              "code": "f22d26d7-64e6-4c5a-8d02-dc437d74b45e",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
+            },
+            {
+              "code": "faed5065-c1d1-45f8-8a78-3494094486ec",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
             }
           ],
           "truth": {
@@ -1704,32 +1946,26 @@
         "14": {
           "windowDays": 14,
           "totals": {
-            "sessions": 299,
-            "events": 2516,
+            "sessions": 313,
+            "events": 2869,
             "users": 201,
-            "realUsers": 25,
-            "guestUsers": 176,
-            "everGuestUsers": 189,
-            "convertedUsers": 13,
-            "guestSessions": 231,
-            "upgradeSessions": 9,
-            "excludedSessions": 172,
-            "excludedEvents": 2421,
+            "realUsers": 30,
+            "guestUsers": 171,
+            "everGuestUsers": 187,
+            "convertedUsers": 16,
+            "guestSessions": 237,
+            "upgradeSessions": 10,
+            "excludedSessions": 273,
+            "excludedEvents": 3104,
             "orphanEvents": 0,
-            "bouncedSessions": 9,
-            "medianSessionSecs": 68.809,
+            "bouncedSessions": 6,
+            "medianSessionSecs": 81.857,
             "platforms": {
-              "web": 299
+              "web": 313
             },
-            "firstEventAt": "2026-08-17 16:28:01.271+00"
+            "firstEventAt": "2026-08-18 15:18:46.321+00"
           },
           "daily": [
-            {
-              "day": "2026-08-18",
-              "sessions": 11,
-              "events": 156,
-              "users": 11
-            },
             {
               "day": "2026-08-19",
               "sessions": 27,
@@ -1804,9 +2040,15 @@
             },
             {
               "day": "2026-08-31",
-              "sessions": 4,
-              "events": 33,
-              "users": 3
+              "sessions": 39,
+              "events": 502,
+              "users": 26
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 2,
+              "events": 6,
+              "users": 2
             }
           ],
           "eventsByName": [
@@ -1814,46 +2056,54 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 1533,
-              "users": 193,
+              "count": 1692,
+              "users": 197,
               "known": true
             },
             {
               "name": "card.add",
               "label": "Added cards",
               "stage": "engagement",
-              "count": 488,
-              "users": 36,
+              "count": 630,
+              "users": 37,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 295,
-              "users": 198,
+              "count": 312,
+              "users": 201,
               "known": true
             },
             {
               "name": "binder.add",
               "label": "Created a binder",
               "stage": "activation",
-              "count": 85,
-              "users": 69,
+              "count": 90,
+              "users": 74,
               "known": true
             },
             {
               "name": "account.created",
               "label": "Account created",
               "stage": "acquisition",
-              "count": 28,
-              "users": 23,
+              "count": 30,
+              "users": 25,
               "known": true
             },
             {
               "name": "pro.offer_shown",
               "label": "Saw the PRO offer",
               "stage": "monetization",
+              "count": 28,
+              "users": 14,
+              "known": true
+            },
+            {
+              "name": "prompt.answered",
+              "label": "Answered a prompt",
+              "stage": "engagement",
               "count": 25,
               "users": 11,
               "known": true
@@ -1862,8 +2112,16 @@
               "name": "auth.login",
               "label": "Signed in",
               "stage": "acquisition",
-              "count": 20,
-              "users": 16,
+              "count": 22,
+              "users": 18,
+              "known": true
+            },
+            {
+              "name": "prompt.shown",
+              "label": "Was shown a prompt",
+              "stage": "engagement",
+              "count": 13,
+              "users": 11,
               "known": true
             },
             {
@@ -1875,43 +2133,27 @@
               "known": true
             },
             {
-              "name": "prompt.shown",
-              "label": "Was shown a prompt",
-              "stage": "engagement",
-              "count": 9,
-              "users": 7,
-              "known": true
-            },
-            {
-              "name": "prompt.answered",
-              "label": "Answered a prompt",
-              "stage": "engagement",
-              "count": 9,
-              "users": 7,
-              "known": true
-            },
-            {
               "name": "card.search",
               "label": "Searched cards",
               "stage": "engagement",
-              "count": 8,
-              "users": 7,
+              "count": 7,
+              "users": 6,
               "known": true
             },
             {
               "name": "pro.offer_declined",
               "label": "Dismissed the PRO offer",
               "stage": "monetization",
-              "count": 3,
-              "users": 3,
+              "count": 4,
+              "users": 4,
               "known": true
             },
             {
               "name": "demo.csv_import",
               "label": "Tried the example import",
               "stage": "activation",
-              "count": 2,
-              "users": 2,
+              "count": 4,
+              "users": 4,
               "known": true
             },
             {
@@ -1929,6 +2171,14 @@
               "count": 1,
               "users": 1,
               "known": true
+            },
+            {
+              "name": "csv.import",
+              "label": "Imported a CSV",
+              "stage": "activation",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
@@ -1936,22 +2186,22 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 376,
-              "users": 153
+              "count": 428,
+              "users": 166
             },
             {
               "route": "/binder/:id",
               "label": null,
               "intent": null,
-              "count": 327,
-              "users": 87
+              "count": 364,
+              "users": 94
             },
             {
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 276,
-              "users": 79
+              "count": 304,
+              "users": 84
             },
             {
               "route": "/welcome",
@@ -1964,78 +2214,92 @@
               "route": "/discover",
               "label": "Discover",
               "intent": null,
-              "count": 61,
-              "users": 34
+              "count": 70,
+              "users": 40
             },
             {
               "route": "/michi-method",
               "label": "The michi method",
               "intent": null,
-              "count": 55,
-              "users": 35
+              "count": 64,
+              "users": 39
             },
             {
               "route": "/browse",
               "label": null,
               "intent": null,
-              "count": 52,
-              "users": 27
+              "count": 51,
+              "users": 28
             },
             {
               "route": "/plans",
               "label": "Plans & pricing",
               "intent": "pricing",
-              "count": 36,
-              "users": 24
+              "count": 41,
+              "users": 27
             },
             {
               "route": "/learn",
               "label": "Learn",
               "intent": null,
-              "count": 36,
-              "users": 27
+              "count": 39,
+              "users": 30
             },
             {
               "route": "/contest",
               "label": "Contest",
               "intent": null,
-              "count": 25,
-              "users": 18
-            },
-            {
-              "route": "/auth-callback",
-              "label": null,
-              "intent": null,
-              "count": 21,
-              "users": 17
+              "count": 26,
+              "users": 19
             },
             {
               "route": "/purchases",
               "label": "Purchases",
               "intent": "pricing",
-              "count": 19,
-              "users": 13
+              "count": 24,
+              "users": 14
+            },
+            {
+              "route": "/auth-callback",
+              "label": null,
+              "intent": null,
+              "count": 23,
+              "users": 19
+            },
+            {
+              "route": "/whats-new",
+              "label": null,
+              "intent": null,
+              "count": 9,
+              "users": 6
             },
             {
               "route": "/binder/ex-pitch-black-chase",
               "label": null,
               "intent": null,
-              "count": 8,
-              "users": 8
-            },
-            {
-              "route": "/binder/ex-color-play",
-              "label": null,
-              "intent": null,
-              "count": 6,
-              "users": 6
+              "count": 7,
+              "users": 7
             },
             {
               "route": "/learn/slice-studio",
               "label": null,
               "intent": null,
+              "count": 7,
+              "users": 7
+            },
+            {
+              "route": "/learn/first-binder",
+              "label": null,
+              "intent": null,
               "count": 6,
-              "users": 6
+              "users": 5
+            },
+            {
+              "route": "/search-guide",
+              "label": null,
+              "intent": null,
+              "count": 6,
+              "users": 3
             },
             {
               "route": "/learn/print-binder",
@@ -2045,32 +2309,11 @@
               "users": 5
             },
             {
-              "route": "/learn/first-binder",
+              "route": "/binder/ex-color-play",
               "label": null,
               "intent": null,
               "count": 5,
-              "users": 4
-            },
-            {
-              "route": "/binder/rel-pitch-black-showcase",
-              "label": null,
-              "intent": null,
-              "count": 4,
-              "users": 3
-            },
-            {
-              "route": "/search-guide",
-              "label": null,
-              "intent": null,
-              "count": 4,
-              "users": 2
-            },
-            {
-              "route": "/whats-new",
-              "label": null,
-              "intent": null,
-              "count": 4,
-              "users": 3
+              "users": 5
             },
             {
               "route": "/binder/rel-pitch-black-chase",
@@ -2078,6 +2321,20 @@
               "intent": null,
               "count": 3,
               "users": 3
+            },
+            {
+              "route": "/binder/rel-pitch-black-showcase",
+              "label": null,
+              "intent": null,
+              "count": 3,
+              "users": 2
+            },
+            {
+              "route": "/u/michimaker",
+              "label": null,
+              "intent": null,
+              "count": 3,
+              "users": 2
             },
             {
               "route": "/binder/rel-pitch-black-bulk",
@@ -2251,60 +2508,60 @@
             "prompts": [
               {
                 "prompt": "rights-attestation",
-                "shown": 7,
-                "people": 7,
+                "shown": 10,
+                "people": 10,
                 "surfaces": {
                   "binder": {
                     "count": 1,
                     "users": 1
                   },
                   "my-binders": {
-                    "count": 6,
-                    "users": 6
+                    "count": 9,
+                    "users": 9
                   }
                 },
-                "answered": 6,
+                "answered": 9,
                 "response": {
                   "accepted": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   },
                   "dismissed": {
-                    "count": 4,
-                    "users": 4
+                    "count": 6,
+                    "users": 6
                   }
                 },
                 "unpaired": 1
               },
               {
                 "prompt": "avatar-consent",
-                "shown": 2,
-                "people": 2,
+                "shown": 3,
+                "people": 3,
                 "surfaces": {
                   "app": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   }
                 },
-                "answered": 3,
+                "answered": 16,
                 "response": {
                   "accepted": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   },
                   "abandoned": {
-                    "count": 1,
-                    "users": 1
+                    "count": 13,
+                    "users": 2
                   }
                 },
                 "unpaired": 0
               }
             ],
             "offer": {
-              "shown": 25,
-              "shownPeople": 11,
-              "declined": 3,
-              "declinedPeople": 3,
+              "shown": 28,
+              "shownPeople": 14,
+              "declined": 4,
+              "declinedPeople": 4,
               "clicked": 0,
               "clickedPeople": 0
             }
@@ -2318,25 +2575,25 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 198,
-                  "ofPrev": 98.5,
-                  "ofTop": 98.5,
+                  "users": 201,
+                  "ofPrev": 100,
+                  "ofTop": 100,
                   "caveat": null
                 },
                 {
                   "id": "engaged",
                   "label": "Did anything past the open",
-                  "users": 193,
-                  "ofPrev": 97.5,
-                  "ofTop": 96,
+                  "users": 197,
+                  "ofPrev": 98,
+                  "ofTop": 98,
                   "caveat": null
                 },
                 {
                   "id": "saw-offer",
                   "label": "Was shown the PRO offer",
-                  "users": 11,
-                  "ofPrev": 5.7,
-                  "ofTop": 5.5,
+                  "users": 14,
+                  "ofPrev": 7.1,
+                  "ofTop": 7,
                   "caveat": "trial_awareness"
                 },
                 {
@@ -2396,33 +2653,33 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 198,
-                  "ofPrev": 98.5,
-                  "ofTop": 98.5,
+                  "users": 201,
+                  "ofPrev": 100,
+                  "ofTop": 100,
                   "caveat": null
                 },
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 193,
-                  "ofPrev": 97.5,
-                  "ofTop": 96,
+                  "users": 197,
+                  "ofPrev": 98,
+                  "ofTop": 98,
                   "caveat": null
                 },
                 {
                   "id": "tried",
                   "label": "Tried a demo",
-                  "users": 4,
-                  "ofPrev": 2.1,
-                  "ofTop": 2,
+                  "users": 6,
+                  "ofPrev": 3,
+                  "ofTop": 3,
                   "caveat": null
                 },
                 {
                   "id": "created",
                   "label": "Made something real",
-                  "users": 4,
+                  "users": 6,
                   "ofPrev": 100,
-                  "ofTop": 2,
+                  "ofTop": 3,
                   "caveat": null
                 }
               ]
@@ -2435,7 +2692,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 189,
+                  "users": 187,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -2443,71 +2700,77 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 181,
-                  "ofPrev": 95.8,
-                  "ofTop": 95.8,
+                  "users": 183,
+                  "ofPrev": 97.9,
+                  "ofTop": 97.9,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Submitted the upgrade",
-                  "users": 23,
-                  "ofPrev": 12.7,
-                  "ofTop": 12.2,
+                  "users": 25,
+                  "ofPrev": 13.7,
+                  "ofTop": 13.4,
                   "caveat": "upgrade_unconfirmed"
                 },
                 {
                   "id": "confirmed",
                   "label": "Completed it (ground truth)",
-                  "users": 11,
-                  "ofPrev": 47.8,
-                  "ofTop": 5.8,
+                  "users": 13,
+                  "ofPrev": 52,
+                  "ofTop": 7,
                   "caveat": null
                 }
               ]
             }
           ],
           "guests": {
-            "people": 189,
-            "sessions": 231,
+            "people": 187,
+            "sessions": 237,
             "depth": {
-              "openOnly": 8,
-              "looked": 68,
-              "explored": 54,
-              "made": 59
+              "openOnly": 4,
+              "looked": 57,
+              "explored": 62,
+              "made": 64
             },
-            "converted": 13,
-            "convertedOfMade": 13,
+            "converted": 16,
+            "convertedOfMade": 16,
             "actions": [
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 186,
-                "fires": 242
+                "people": 187,
+                "fires": 252
               },
               {
                 "name": "binder.add",
                 "label": "Created a binder",
-                "people": 59,
-                "fires": 69
+                "people": 64,
+                "fires": 74
               },
               {
                 "name": "card.add",
                 "label": "Added cards",
-                "people": 29,
-                "fires": 222
+                "people": 30,
+                "fires": 347
               },
               {
                 "name": "account.created",
                 "label": "Account created",
-                "people": 23,
-                "fires": 28
+                "people": 25,
+                "fires": 30
               },
               {
                 "name": "pro.offer_shown",
                 "label": "Saw the PRO offer",
-                "people": 6,
-                "fires": 11
+                "people": 9,
+                "fires": 14
+              },
+              {
+                "name": "prompt.shown",
+                "label": "Was shown a prompt",
+                "people": 7,
+                "fires": 7
               },
               {
                 "name": "cap.gate_shown",
@@ -2516,34 +2779,28 @@
                 "fires": 7
               },
               {
-                "name": "card.search",
-                "label": "Searched cards",
-                "people": 5,
-                "fires": 6
-              },
-              {
                 "name": "auth.login",
                 "label": "Signed in",
-                "people": 5,
-                "fires": 5
-              },
-              {
-                "name": "prompt.shown",
-                "label": "Was shown a prompt",
-                "people": 5,
-                "fires": 5
+                "people": 6,
+                "fires": 6
               },
               {
                 "name": "prompt.answered",
                 "label": "Answered a prompt",
+                "people": 6,
+                "fires": 6
+              },
+              {
+                "name": "card.search",
+                "label": "Searched cards",
                 "people": 4,
-                "fires": 4
+                "fires": 5
               },
               {
                 "name": "pro.offer_declined",
                 "label": "Dismissed the PRO offer",
-                "people": 2,
-                "fires": 2
+                "people": 3,
+                "fires": 3
               },
               {
                 "name": "demo.tricolor_search",
@@ -2556,6 +2813,18 @@
                 "label": "Tried the print example",
                 "people": 1,
                 "fires": 1
+              },
+              {
+                "name": "demo.csv_import",
+                "label": "Tried the example import",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "csv.import",
+                "label": "Imported a CSV",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
@@ -2566,67 +2835,77 @@
               },
               {
                 "route": "/",
-                "people": 141,
-                "fires": 314
+                "people": 153,
+                "fires": 359
               },
               {
                 "route": "/binder/:id",
-                "people": 76,
-                "fires": 195
+                "people": 81,
+                "fires": 225
               },
               {
                 "route": "/my-binders",
-                "people": 68,
-                "fires": 182
+                "people": 73,
+                "fires": 203
               },
               {
                 "route": "/michi-method",
-                "people": 32,
-                "fires": 44
+                "people": 35,
+                "fires": 49
               },
               {
                 "route": "/discover",
-                "people": 30,
-                "fires": 47
+                "people": 34,
+                "fires": 52
               },
               {
                 "route": "/learn",
-                "people": 24,
-                "fires": 29
+                "people": 27,
+                "fires": 32
               },
               {
                 "route": "/browse",
-                "people": 22,
-                "fires": 34
+                "people": 23,
+                "fires": 33
               },
               {
                 "route": "/plans",
-                "people": 19,
-                "fires": 23
+                "people": 22,
+                "fires": 28
               },
               {
                 "route": "/contest",
-                "people": 16,
-                "fires": 19
+                "people": 17,
+                "fires": 20
               },
               {
                 "route": "/purchases",
-                "people": 10,
-                "fires": 14
+                "people": 11,
+                "fires": 16
               },
               {
                 "route": "/binder/ex-pitch-black-chase",
-                "people": 8,
-                "fires": 8
+                "people": 7,
+                "fires": 7
               },
               {
-                "route": "/binder/ex-color-play",
+                "route": "/auth-callback",
+                "people": 7,
+                "fires": 7
+              },
+              {
+                "route": "/learn/slice-studio",
                 "people": 6,
                 "fires": 6
               },
               {
-                "route": "/auth-callback",
-                "people": 6,
+                "route": "/learn/first-binder",
+                "people": 5,
+                "fires": 6
+              },
+              {
+                "route": "/whats-new",
+                "people": 5,
                 "fires": 6
               },
               {
@@ -2635,34 +2914,24 @@
                 "fires": 5
               },
               {
-                "route": "/learn/slice-studio",
+                "route": "/binder/ex-color-play",
                 "people": 5,
                 "fires": 5
-              },
-              {
-                "route": "/learn/first-binder",
-                "people": 4,
-                "fires": 5
-              },
-              {
-                "route": "/binder/rel-pitch-black-showcase",
-                "people": 3,
-                "fires": 4
-              },
-              {
-                "route": "/whats-new",
-                "people": 3,
-                "fires": 4
               },
               {
                 "route": "/binder/rel-pitch-black-chase",
                 "people": 3,
                 "fires": 3
+              },
+              {
+                "route": "/binder/rel-pitch-black-showcase",
+                "people": 2,
+                "fires": 3
               }
             ],
             "pricing": {
-              "asked": 26,
-              "offered": 6
+              "asked": 28,
+              "offered": 9
             }
           },
           "campaigns": [
@@ -2710,6 +2979,24 @@
               "people": 1,
               "converted": 0,
               "signups": 0
+            },
+            {
+              "code": "f22d26d7-64e6-4c5a-8d02-dc437d74b45e",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
+            },
+            {
+              "code": "faed5065-c1d1-45f8-8a78-3494094486ec",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
             }
           ],
           "truth": {
@@ -2730,32 +3017,26 @@
         "30": {
           "windowDays": 30,
           "totals": {
-            "sessions": 419,
-            "events": 3195,
-            "users": 280,
-            "realUsers": 33,
-            "guestUsers": 247,
-            "everGuestUsers": 264,
-            "convertedUsers": 17,
-            "guestSessions": 330,
-            "upgradeSessions": 12,
-            "excludedSessions": 290,
-            "excludedEvents": 2739,
+            "sessions": 456,
+            "events": 3670,
+            "users": 300,
+            "realUsers": 38,
+            "guestUsers": 262,
+            "everGuestUsers": 282,
+            "convertedUsers": 20,
+            "guestSessions": 358,
+            "upgradeSessions": 14,
+            "excludedSessions": 395,
+            "excludedEvents": 3436,
             "orphanEvents": 5,
-            "bouncedSessions": 36,
-            "medianSessionSecs": 64.732,
+            "bouncedSessions": 37,
+            "medianSessionSecs": 64.141,
             "platforms": {
-              "web": 419
+              "web": 456
             },
             "firstEventAt": "2026-08-05 17:58:28.814278+00"
           },
           "daily": [
-            {
-              "day": "2026-08-02",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-03",
               "sessions": 0,
@@ -2926,9 +3207,15 @@
             },
             {
               "day": "2026-08-31",
-              "sessions": 4,
-              "events": 33,
-              "users": 3
+              "sessions": 39,
+              "events": 502,
+              "users": 26
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 2,
+              "events": 6,
+              "users": 2
             }
           ],
           "eventsByName": [
@@ -2936,56 +3223,72 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 1987,
-              "users": 261,
+              "count": 2221,
+              "users": 281,
               "known": true
             },
             {
               "name": "card.add",
               "label": "Added cards",
               "stage": "engagement",
-              "count": 540,
-              "users": 45,
+              "count": 702,
+              "users": 48,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 415,
-              "users": 277,
+              "count": 452,
+              "users": 297,
               "known": true
             },
             {
               "name": "binder.add",
               "label": "Created a binder",
               "stage": "activation",
-              "count": 113,
-              "users": 92,
+              "count": 121,
+              "users": 99,
               "known": true
             },
             {
               "name": "account.created",
               "label": "Account created",
               "stage": "acquisition",
-              "count": 35,
-              "users": 30,
+              "count": 39,
+              "users": 34,
               "known": true
             },
             {
               "name": "pro.offer_shown",
               "label": "Saw the PRO offer",
               "stage": "monetization",
-              "count": 28,
-              "users": 13,
+              "count": 31,
+              "users": 16,
               "known": true
             },
             {
               "name": "auth.login",
               "label": "Signed in",
               "stage": "acquisition",
-              "count": 26,
-              "users": 21,
+              "count": 29,
+              "users": 24,
+              "known": true
+            },
+            {
+              "name": "prompt.answered",
+              "label": "Answered a prompt",
+              "stage": "engagement",
+              "count": 25,
+              "users": 11,
+              "known": true
+            },
+            {
+              "name": "prompt.shown",
+              "label": "Was shown a prompt",
+              "stage": "engagement",
+              "count": 13,
+              "users": 11,
               "known": true
             },
             {
@@ -3005,35 +3308,19 @@
               "known": true
             },
             {
-              "name": "prompt.shown",
-              "label": "Was shown a prompt",
-              "stage": "engagement",
-              "count": 9,
-              "users": 7,
-              "known": true
-            },
-            {
-              "name": "prompt.answered",
-              "label": "Answered a prompt",
-              "stage": "engagement",
-              "count": 9,
-              "users": 7,
-              "known": true
-            },
-            {
               "name": "demo.csv_import",
               "label": "Tried the example import",
               "stage": "activation",
-              "count": 3,
-              "users": 3,
+              "count": 5,
+              "users": 5,
               "known": true
             },
             {
               "name": "pro.offer_declined",
               "label": "Dismissed the PRO offer",
               "stage": "monetization",
-              "count": 3,
-              "users": 3,
+              "count": 4,
+              "users": 4,
               "known": true
             },
             {
@@ -3051,6 +3338,14 @@
               "count": 1,
               "users": 1,
               "known": true
+            },
+            {
+              "name": "csv.import",
+              "label": "Imported a CSV",
+              "stage": "activation",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
@@ -3058,85 +3353,85 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 491,
-              "users": 206
+              "count": 555,
+              "users": 226
             },
             {
               "route": "/binder/:id",
               "label": null,
               "intent": null,
-              "count": 393,
-              "users": 111
+              "count": 439,
+              "users": 120
             },
             {
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 344,
-              "users": 104
+              "count": 388,
+              "users": 111
             },
             {
               "route": "/welcome",
               "label": null,
               "intent": null,
-              "count": 244,
-              "users": 218
+              "count": 262,
+              "users": 235
             },
             {
               "route": "/discover",
               "label": "Discover",
               "intent": null,
-              "count": 83,
-              "users": 49
+              "count": 93,
+              "users": 56
             },
             {
               "route": "/michi-method",
               "label": "The michi method",
               "intent": null,
-              "count": 80,
-              "users": 53
+              "count": 91,
+              "users": 59
             },
             {
               "route": "/browse",
               "label": null,
               "intent": null,
-              "count": 73,
-              "users": 41
-            },
-            {
-              "route": "/learn",
-              "label": "Learn",
-              "intent": null,
-              "count": 54,
-              "users": 38
+              "count": 79,
+              "users": 45
             },
             {
               "route": "/plans",
               "label": "Plans & pricing",
               "intent": "pricing",
-              "count": 53,
-              "users": 36
+              "count": 59,
+              "users": 40
+            },
+            {
+              "route": "/learn",
+              "label": "Learn",
+              "intent": null,
+              "count": 58,
+              "users": 42
             },
             {
               "route": "/contest",
               "label": "Contest",
               "intent": null,
-              "count": 36,
-              "users": 23
-            },
-            {
-              "route": "/auth-callback",
-              "label": null,
-              "intent": null,
-              "count": 27,
-              "users": 23
+              "count": 38,
+              "users": 25
             },
             {
               "route": "/purchases",
               "label": "Purchases",
               "intent": "pricing",
-              "count": 23,
-              "users": 16
+              "count": 31,
+              "users": 19
+            },
+            {
+              "route": "/auth-callback",
+              "label": null,
+              "intent": null,
+              "count": 30,
+              "users": 26
             },
             {
               "route": "/binder/ex-pitch-black-chase",
@@ -3149,15 +3444,15 @@
               "route": "/learn/slice-studio",
               "label": null,
               "intent": null,
-              "count": 10,
-              "users": 9
+              "count": 11,
+              "users": 10
             },
             {
               "route": "/learn/first-binder",
               "label": null,
               "intent": null,
-              "count": 9,
-              "users": 7
+              "count": 10,
+              "users": 8
             },
             {
               "route": "/binder/ex-color-play",
@@ -3165,6 +3460,13 @@
               "intent": null,
               "count": 9,
               "users": 9
+            },
+            {
+              "route": "/whats-new",
+              "label": null,
+              "intent": null,
+              "count": 9,
+              "users": 6
             },
             {
               "route": "/learn/print-binder",
@@ -3177,8 +3479,8 @@
               "route": "/search-guide",
               "label": null,
               "intent": null,
-              "count": 5,
-              "users": 3
+              "count": 7,
+              "users": 4
             },
             {
               "route": "/binder/rel-pitch-black-chase",
@@ -3189,13 +3491,6 @@
             },
             {
               "route": "/binder/rel-pitch-black-showcase",
-              "label": null,
-              "intent": null,
-              "count": 4,
-              "users": 3
-            },
-            {
-              "route": "/whats-new",
               "label": null,
               "intent": null,
               "count": 4,
@@ -3214,6 +3509,13 @@
               "intent": null,
               "count": 3,
               "users": 3
+            },
+            {
+              "route": "/u/michimaker",
+              "label": null,
+              "intent": null,
+              "count": 3,
+              "users": 2
             },
             {
               "route": "/binder/rel-30th-celebration-bulk",
@@ -3380,60 +3682,60 @@
             "prompts": [
               {
                 "prompt": "rights-attestation",
-                "shown": 7,
-                "people": 7,
+                "shown": 10,
+                "people": 10,
                 "surfaces": {
                   "binder": {
                     "count": 1,
                     "users": 1
                   },
                   "my-binders": {
-                    "count": 6,
-                    "users": 6
+                    "count": 9,
+                    "users": 9
                   }
                 },
-                "answered": 6,
+                "answered": 9,
                 "response": {
                   "accepted": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   },
                   "dismissed": {
-                    "count": 4,
-                    "users": 4
+                    "count": 6,
+                    "users": 6
                   }
                 },
                 "unpaired": 1
               },
               {
                 "prompt": "avatar-consent",
-                "shown": 2,
-                "people": 2,
+                "shown": 3,
+                "people": 3,
                 "surfaces": {
                   "app": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   }
                 },
-                "answered": 3,
+                "answered": 16,
                 "response": {
                   "accepted": {
-                    "count": 2,
-                    "users": 2
+                    "count": 3,
+                    "users": 3
                   },
                   "abandoned": {
-                    "count": 1,
-                    "users": 1
+                    "count": 13,
+                    "users": 2
                   }
                 },
                 "unpaired": 0
               }
             ],
             "offer": {
-              "shown": 28,
-              "shownPeople": 13,
-              "declined": 3,
-              "declinedPeople": 3,
+              "shown": 31,
+              "shownPeople": 16,
+              "declined": 4,
+              "declinedPeople": 4,
               "clicked": 0,
               "clickedPeople": 0
             }
@@ -3447,25 +3749,25 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 277,
-                  "ofPrev": 98.9,
-                  "ofTop": 98.9,
+                  "users": 297,
+                  "ofPrev": 99,
+                  "ofTop": 99,
                   "caveat": null
                 },
                 {
                   "id": "engaged",
                   "label": "Did anything past the open",
-                  "users": 261,
-                  "ofPrev": 94.2,
-                  "ofTop": 93.2,
+                  "users": 281,
+                  "ofPrev": 94.6,
+                  "ofTop": 93.7,
                   "caveat": null
                 },
                 {
                   "id": "saw-offer",
                   "label": "Was shown the PRO offer",
-                  "users": 13,
-                  "ofPrev": 5,
-                  "ofTop": 4.6,
+                  "users": 16,
+                  "ofPrev": 5.7,
+                  "ofTop": 5.3,
                   "caveat": "trial_awareness"
                 },
                 {
@@ -3487,8 +3789,8 @@
                   "id": "wall",
                   "label": "Was stopped by a plan limit",
                   "users": 10,
-                  "ofPrev": 3.6,
-                  "ofTop": 3.6,
+                  "ofPrev": 3.3,
+                  "ofTop": 3.3,
                   "caveat": "cap_gates_blind"
                 },
                 {
@@ -3525,33 +3827,33 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 277,
-                  "ofPrev": 98.9,
-                  "ofTop": 98.9,
+                  "users": 297,
+                  "ofPrev": 99,
+                  "ofTop": 99,
                   "caveat": null
                 },
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 261,
-                  "ofPrev": 94.2,
-                  "ofTop": 93.2,
+                  "users": 281,
+                  "ofPrev": 94.6,
+                  "ofTop": 93.7,
                   "caveat": null
                 },
                 {
                   "id": "tried",
                   "label": "Tried a demo",
-                  "users": 6,
-                  "ofPrev": 2.3,
-                  "ofTop": 2.1,
+                  "users": 8,
+                  "ofPrev": 2.8,
+                  "ofTop": 2.7,
                   "caveat": null
                 },
                 {
                   "id": "created",
                   "label": "Made something real",
-                  "users": 6,
+                  "users": 8,
                   "ofPrev": 100,
-                  "ofTop": 2.1,
+                  "ofTop": 2.7,
                   "caveat": null
                 }
               ]
@@ -3564,7 +3866,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 264,
+                  "users": 282,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -3572,77 +3874,77 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 245,
-                  "ofPrev": 92.8,
-                  "ofTop": 92.8,
+                  "users": 263,
+                  "ofPrev": 93.3,
+                  "ofTop": 93.3,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Submitted the upgrade",
-                  "users": 30,
-                  "ofPrev": 12.2,
-                  "ofTop": 11.4,
+                  "users": 34,
+                  "ofPrev": 12.9,
+                  "ofTop": 12.1,
                   "caveat": "upgrade_unconfirmed"
                 },
                 {
                   "id": "confirmed",
                   "label": "Completed it (ground truth)",
-                  "users": 15,
-                  "ofPrev": 50,
-                  "ofTop": 5.7,
+                  "users": 18,
+                  "ofPrev": 52.9,
+                  "ofTop": 6.4,
                   "caveat": null
                 }
               ]
             }
           ],
           "guests": {
-            "people": 264,
-            "sessions": 330,
+            "people": 282,
+            "sessions": 358,
             "depth": {
               "openOnly": 19,
-              "looked": 86,
-              "explored": 77,
-              "made": 82
+              "looked": 88,
+              "explored": 87,
+              "made": 88
             },
-            "converted": 17,
-            "convertedOfMade": 17,
+            "converted": 20,
+            "convertedOfMade": 20,
             "actions": [
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 261,
-                "fires": 353
+                "people": 279,
+                "fires": 382
               },
               {
                 "name": "binder.add",
                 "label": "Created a binder",
-                "people": 82,
-                "fires": 97
+                "people": 88,
+                "fires": 104
               },
               {
                 "name": "card.add",
                 "label": "Added cards",
-                "people": 38,
-                "fires": 266
+                "people": 40,
+                "fires": 406
               },
               {
                 "name": "account.created",
                 "label": "Account created",
-                "people": 30,
-                "fires": 35
+                "people": 34,
+                "fires": 39
+              },
+              {
+                "name": "pro.offer_shown",
+                "label": "Saw the PRO offer",
+                "people": 11,
+                "fires": 17
               },
               {
                 "name": "cap.gate_shown",
                 "label": "Hit a plan limit",
                 "people": 9,
                 "fires": 10
-              },
-              {
-                "name": "pro.offer_shown",
-                "label": "Saw the PRO offer",
-                "people": 8,
-                "fires": 14
               },
               {
                 "name": "card.search",
@@ -3653,20 +3955,26 @@
               {
                 "name": "auth.login",
                 "label": "Signed in",
-                "people": 7,
-                "fires": 7
+                "people": 8,
+                "fires": 8
               },
               {
                 "name": "prompt.shown",
                 "label": "Was shown a prompt",
-                "people": 5,
-                "fires": 5
+                "people": 7,
+                "fires": 7
               },
               {
                 "name": "prompt.answered",
                 "label": "Answered a prompt",
-                "people": 4,
-                "fires": 4
+                "people": 6,
+                "fires": 6
+              },
+              {
+                "name": "pro.offer_declined",
+                "label": "Dismissed the PRO offer",
+                "people": 3,
+                "fires": 3
               },
               {
                 "name": "demo.print",
@@ -3675,20 +3983,20 @@
                 "fires": 2
               },
               {
-                "name": "pro.offer_declined",
-                "label": "Dismissed the PRO offer",
+                "name": "demo.csv_import",
+                "label": "Tried the example import",
                 "people": 2,
                 "fires": 2
               },
               {
-                "name": "demo.csv_import",
-                "label": "Tried the example import",
+                "name": "demo.tricolor_search",
+                "label": "Tried tri-color search",
                 "people": 1,
                 "fires": 1
               },
               {
-                "name": "demo.tricolor_search",
-                "label": "Tried tri-color search",
+                "name": "csv.import",
+                "label": "Imported a CSV",
                 "people": 1,
                 "fires": 1
               }
@@ -3696,53 +4004,58 @@
             "routes": [
               {
                 "route": "/welcome",
-                "people": 218,
-                "fires": 244
+                "people": 235,
+                "fires": 262
               },
               {
                 "route": "/",
-                "people": 190,
-                "fires": 422
+                "people": 208,
+                "fires": 477
               },
               {
                 "route": "/binder/:id",
-                "people": 100,
-                "fires": 252
+                "people": 107,
+                "fires": 289
               },
               {
                 "route": "/my-binders",
-                "people": 92,
-                "fires": 242
+                "people": 98,
+                "fires": 273
               },
               {
                 "route": "/michi-method",
-                "people": 49,
-                "fires": 68
+                "people": 54,
+                "fires": 75
               },
               {
                 "route": "/discover",
-                "people": 44,
-                "fires": 68
+                "people": 49,
+                "fires": 74
               },
               {
                 "route": "/browse",
-                "people": 36,
-                "fires": 55
+                "people": 40,
+                "fires": 61
               },
               {
                 "route": "/learn",
-                "people": 35,
-                "fires": 47
+                "people": 39,
+                "fires": 51
               },
               {
                 "route": "/plans",
-                "people": 31,
-                "fires": 40
+                "people": 35,
+                "fires": 46
               },
               {
                 "route": "/contest",
-                "people": 21,
-                "fires": 30
+                "people": 23,
+                "fires": 32
+              },
+              {
+                "route": "/purchases",
+                "people": 14,
+                "fires": 20
               },
               {
                 "route": "/binder/ex-pitch-black-chase",
@@ -3750,9 +4063,9 @@
                 "fires": 13
               },
               {
-                "route": "/purchases",
-                "people": 12,
-                "fires": 17
+                "route": "/learn/slice-studio",
+                "people": 9,
+                "fires": 10
               },
               {
                 "route": "/binder/ex-color-play",
@@ -3760,14 +4073,14 @@
                 "fires": 9
               },
               {
-                "route": "/learn/slice-studio",
+                "route": "/learn/first-binder",
                 "people": 8,
-                "fires": 9
+                "fires": 10
               },
               {
-                "route": "/learn/first-binder",
-                "people": 7,
-                "fires": 9
+                "route": "/auth-callback",
+                "people": 8,
+                "fires": 8
               },
               {
                 "route": "/learn/print-binder",
@@ -3775,9 +4088,9 @@
                 "fires": 8
               },
               {
-                "route": "/auth-callback",
-                "people": 7,
-                "fires": 7
+                "route": "/whats-new",
+                "people": 5,
+                "fires": 6
               },
               {
                 "route": "/binder/rel-pitch-black-chase",
@@ -3785,19 +4098,14 @@
                 "fires": 5
               },
               {
-                "route": "/binder/rel-pitch-black-showcase",
-                "people": 3,
-                "fires": 4
-              },
-              {
-                "route": "/whats-new",
+                "route": "/search-guide",
                 "people": 3,
                 "fires": 4
               }
             ],
             "pricing": {
-              "asked": 39,
-              "offered": 8
+              "asked": 43,
+              "offered": 11
             }
           },
           "campaigns": [
@@ -3845,6 +4153,24 @@
               "people": 1,
               "converted": 0,
               "signups": 0
+            },
+            {
+              "code": "f22d26d7-64e6-4c5a-8d02-dc437d74b45e",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
+            },
+            {
+              "code": "faed5065-c1d1-45f8-8a78-3494094486ec",
+              "source": null,
+              "medium": null,
+              "sessions": 1,
+              "people": 1,
+              "converted": 0,
+              "signups": 0
             }
           ],
           "truth": {
@@ -3865,10 +4191,8 @@
       },
       "coverage": {
         "declared": 24,
-        "fired": 19,
+        "fired": 21,
         "neverFired": [
-          "csv.import",
-          "cap.gate_dismissed",
           "trial.start_click",
           "csv.import_failed",
           "search.no_results"
@@ -3877,6 +4201,7 @@
           "demo.curation",
           "compose.pages_kept",
           "trial.start",
+          "cap.gate_dismissed",
           "trial.start_failed"
         ],
         "planned": [
@@ -3907,8 +4232,8 @@
             "convertedUsers": 0,
             "guestSessions": 0,
             "upgradeSessions": 0,
-            "excludedSessions": 15,
-            "excludedEvents": 232,
+            "excludedSessions": 100,
+            "excludedEvents": 896,
             "orphanEvents": 0,
             "bouncedSessions": 0,
             "medianSessionSecs": null,
@@ -3917,7 +4242,7 @@
           },
           "daily": [
             {
-              "day": "2026-08-31",
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
@@ -4102,8 +4427,8 @@
             "convertedUsers": 0,
             "guestSessions": 5,
             "upgradeSessions": 0,
-            "excludedSessions": 174,
-            "excludedEvents": 3203,
+            "excludedSessions": 247,
+            "excludedEvents": 3570,
             "orphanEvents": 0,
             "bouncedSessions": 0,
             "medianSessionSecs": 0.796,
@@ -4113,12 +4438,6 @@
             "firstEventAt": "2026-08-27 00:39:01.237+00"
           },
           "daily": [
-            {
-              "day": "2026-08-25",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-26",
               "sessions": 4,
@@ -4151,6 +4470,12 @@
             },
             {
               "day": "2026-08-31",
+              "sessions": 0,
+              "events": 0,
+              "users": 0
+            },
+            {
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
@@ -4390,32 +4715,26 @@
         "14": {
           "windowDays": 14,
           "totals": {
-            "sessions": 9,
-            "events": 17,
-            "users": 5,
+            "sessions": 8,
+            "events": 15,
+            "users": 4,
             "realUsers": 0,
-            "guestUsers": 5,
-            "everGuestUsers": 5,
+            "guestUsers": 4,
+            "everGuestUsers": 4,
             "convertedUsers": 0,
-            "guestSessions": 9,
+            "guestSessions": 8,
             "upgradeSessions": 0,
-            "excludedSessions": 247,
-            "excludedEvents": 4439,
+            "excludedSessions": 346,
+            "excludedEvents": 5334,
             "orphanEvents": 0,
             "bouncedSessions": 3,
             "medianSessionSecs": 0.471,
             "platforms": {
-              "web": 9
+              "web": 8
             },
-            "firstEventAt": "2026-08-17 19:06:37.169+00"
+            "firstEventAt": "2026-08-20 00:45:43.932876+00"
           },
           "daily": [
-            {
-              "day": "2026-08-18",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-19",
               "sessions": 3,
@@ -4493,6 +4812,12 @@
               "sessions": 0,
               "events": 0,
               "users": 0
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 0,
+              "events": 0,
+              "users": 0
             }
           ],
           "eventsByName": [
@@ -4500,16 +4825,16 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 9,
-              "users": 5,
+              "count": 8,
+              "users": 4,
               "known": true
             },
             {
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 7,
-              "users": 2,
+              "count": 6,
+              "users": 1,
               "known": true
             },
             {
@@ -4533,8 +4858,8 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 2,
-              "users": 2
+              "count": 1,
+              "users": 1
             }
           ],
           "asks": {
@@ -4558,7 +4883,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 5,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -4566,9 +4891,9 @@
                 {
                   "id": "engaged",
                   "label": "Did anything past the open",
-                  "users": 2,
-                  "ofPrev": 40,
-                  "ofTop": 40,
+                  "users": 1,
+                  "ofPrev": 25,
+                  "ofTop": 25,
                   "caveat": null
                 },
                 {
@@ -4597,7 +4922,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 5,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -4605,9 +4930,9 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 2,
-                  "ofPrev": 40,
-                  "ofTop": 40,
+                  "users": 1,
+                  "ofPrev": 25,
+                  "ofTop": 25,
                   "caveat": null
                 },
                 {
@@ -4636,7 +4961,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 5,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -4644,9 +4969,9 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 2,
-                  "ofPrev": 40,
-                  "ofTop": 40,
+                  "users": 1,
+                  "ofPrev": 25,
+                  "ofTop": 25,
                   "caveat": null
                 },
                 {
@@ -4669,11 +4994,11 @@
             }
           ],
           "guests": {
-            "people": 5,
-            "sessions": 9,
+            "people": 4,
+            "sessions": 8,
             "depth": {
               "openOnly": 3,
-              "looked": 1,
+              "looked": 0,
               "explored": 0,
               "made": 1
             },
@@ -4683,8 +5008,8 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 5,
-                "fires": 9
+                "people": 4,
+                "fires": 8
               },
               {
                 "name": "card.add",
@@ -4695,14 +5020,14 @@
             ],
             "routes": [
               {
-                "route": "/",
-                "people": 2,
-                "fires": 2
-              },
-              {
                 "route": "/scan",
                 "people": 1,
                 "fires": 5
+              },
+              {
+                "route": "/",
+                "people": 1,
+                "fires": 1
               }
             ],
             "pricing": {
@@ -4738,8 +5063,8 @@
             "convertedUsers": 0,
             "guestSessions": 21,
             "upgradeSessions": 0,
-            "excludedSessions": 454,
-            "excludedEvents": 6118,
+            "excludedSessions": 554,
+            "excludedEvents": 7014,
             "orphanEvents": 0,
             "bouncedSessions": 10,
             "medianSessionSecs": 2.582,
@@ -4750,12 +5075,6 @@
             "firstEventAt": "2026-08-06 02:52:21.219627+00"
           },
           "daily": [
-            {
-              "day": "2026-08-02",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-03",
               "sessions": 0,
@@ -4926,6 +5245,12 @@
             },
             {
               "day": "2026-08-31",
+              "sessions": 0,
+              "events": 0,
+              "users": 0
+            },
+            {
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
@@ -5300,39 +5625,48 @@
         "1": {
           "windowDays": 1,
           "totals": {
-            "sessions": 6,
-            "events": 16,
+            "sessions": 9,
+            "events": 33,
             "users": 6,
             "realUsers": 0,
             "guestUsers": 6,
             "everGuestUsers": 6,
             "convertedUsers": 0,
-            "guestSessions": 6,
+            "guestSessions": 9,
             "upgradeSessions": 0,
-            "excludedSessions": 1,
-            "excludedEvents": 18,
+            "excludedSessions": 20,
+            "excludedEvents": 115,
             "orphanEvents": 0,
-            "bouncedSessions": 1,
-            "medianSessionSecs": 0.806,
+            "bouncedSessions": 2,
+            "medianSessionSecs": 0.856,
             "platforms": {
-              "web": 6
+              "web": 7,
+              "ios": 2
             },
-            "firstEventAt": "2026-08-31 01:22:42.680743+00"
+            "firstEventAt": "2026-08-31 20:28:50.256205+00"
           },
           "daily": [
             {
-              "day": "2026-08-31",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "day": "2026-09-01",
+              "sessions": 1,
+              "events": 12,
+              "users": 2
             }
           ],
           "eventsByName": [
             {
+              "name": "session.check",
+              "label": "session.check",
+              "stage": null,
+              "count": 16,
+              "users": 6,
+              "known": false
+            },
+            {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 6,
+              "count": 8,
               "users": 6,
               "known": true
             },
@@ -5340,26 +5674,41 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 5,
-              "users": 5,
+              "count": 7,
+              "users": 6,
               "known": true
             },
             {
-              "name": "session.check",
-              "label": "session.check",
+              "name": "auth.signout_decision",
+              "label": "auth.signout_decision",
               "stage": null,
-              "count": 5,
-              "users": 5,
+              "count": 1,
+              "users": 1,
               "known": false
+            },
+            {
+              "name": "account.created",
+              "label": "Account created",
+              "stage": "acquisition",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
             {
+              "route": "Login",
+              "label": null,
+              "intent": null,
+              "count": 6,
+              "users": 5
+            },
+            {
               "route": "Landing",
               "label": "Doggle marketing landing",
               "intent": null,
-              "count": 5,
-              "users": 5
+              "count": 1,
+              "users": 1
             }
           ],
           "asks": {
@@ -5391,24 +5740,24 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 5,
-                  "ofPrev": 83.3,
-                  "ofTop": 83.3,
+                  "users": 6,
+                  "ofPrev": 100,
+                  "ofTop": 100,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Created an account",
-                  "users": 0,
-                  "ofPrev": 0,
-                  "ofTop": 0,
+                  "users": 1,
+                  "ofPrev": 16.7,
+                  "ofTop": 16.7,
                   "caveat": "doggle_oauth_signup_untracked"
                 },
                 {
                   "id": "claimed",
                   "label": "Signed in on that visit",
                   "users": 0,
-                  "ofPrev": null,
+                  "ofPrev": 0,
                   "ofTop": 0,
                   "caveat": null
                 }
@@ -5417,10 +5766,10 @@
           ],
           "guests": {
             "people": 6,
-            "sessions": 6,
+            "sessions": 9,
             "depth": {
-              "openOnly": 1,
-              "looked": 5,
+              "openOnly": 0,
+              "looked": 6,
               "explored": 0,
               "made": 0
             },
@@ -5428,23 +5777,40 @@
             "convertedOfMade": 0,
             "actions": [
               {
+                "name": "session.check",
+                "label": "session.check",
+                "people": 6,
+                "fires": 16
+              },
+              {
                 "name": "session.start",
                 "label": "Session started",
                 "people": 6,
-                "fires": 6
+                "fires": 8
               },
               {
-                "name": "session.check",
-                "label": "session.check",
-                "people": 5,
-                "fires": 5
+                "name": "auth.signout_decision",
+                "label": "auth.signout_decision",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "account.created",
+                "label": "Account created",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
               {
-                "route": "Landing",
+                "route": "Login",
                 "people": 5,
-                "fires": 5
+                "fires": 6
+              },
+              {
+                "route": "Landing",
+                "people": 1,
+                "fires": 1
               }
             ],
             "pricing": {
@@ -5471,33 +5837,27 @@
         "7": {
           "windowDays": 7,
           "totals": {
-            "sessions": 16,
-            "events": 37,
-            "users": 17,
+            "sessions": 22,
+            "events": 65,
+            "users": 20,
             "realUsers": 0,
-            "guestUsers": 17,
-            "everGuestUsers": 17,
+            "guestUsers": 20,
+            "everGuestUsers": 20,
             "convertedUsers": 0,
-            "guestSessions": 16,
+            "guestSessions": 22,
             "upgradeSessions": 0,
-            "excludedSessions": 18,
-            "excludedEvents": 125,
+            "excludedSessions": 36,
+            "excludedEvents": 216,
             "orphanEvents": 1,
-            "bouncedSessions": 2,
-            "medianSessionSecs": 1.856,
+            "bouncedSessions": 4,
+            "medianSessionSecs": 0.856,
             "platforms": {
-              "web": 15,
-              "ios": 1
+              "web": 19,
+              "ios": 3
             },
-            "firstEventAt": "2026-08-25 13:16:54.540398+00"
+            "firstEventAt": "2026-08-27 06:58:16.89513+00"
           },
           "daily": [
-            {
-              "day": "2026-08-25",
-              "sessions": 3,
-              "events": 5,
-              "users": 3
-            },
             {
               "day": "2026-08-26",
               "sessions": 1,
@@ -5530,9 +5890,15 @@
             },
             {
               "day": "2026-08-31",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 8,
+              "events": 21,
+              "users": 5
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 1,
+              "events": 12,
+              "users": 2
             }
           ],
           "eventsByName": [
@@ -5540,24 +5906,40 @@
               "name": "session.check",
               "label": "session.check",
               "stage": null,
-              "count": 13,
-              "users": 13,
+              "count": 26,
+              "users": 16,
               "known": false
-            },
-            {
-              "name": "page.view",
-              "label": "Viewed a page",
-              "stage": "engagement",
-              "count": 12,
-              "users": 12,
-              "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 12,
-              "users": 12,
+              "count": 19,
+              "users": 17,
+              "known": true
+            },
+            {
+              "name": "page.view",
+              "label": "Viewed a page",
+              "stage": "engagement",
+              "count": 18,
+              "users": 17,
+              "known": true
+            },
+            {
+              "name": "auth.signout_decision",
+              "label": "auth.signout_decision",
+              "stage": null,
+              "count": 1,
+              "users": 1,
+              "known": false
+            },
+            {
+              "name": "account.created",
+              "label": "Account created",
+              "stage": "acquisition",
+              "count": 1,
+              "users": 1,
               "known": true
             }
           ],
@@ -5573,8 +5955,8 @@
               "route": "Login",
               "label": null,
               "intent": null,
-              "count": 1,
-              "users": 1
+              "count": 7,
+              "users": 6
             }
           ],
           "asks": {
@@ -5598,7 +5980,7 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 17,
+                  "users": 20,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -5606,24 +5988,24 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 12,
-                  "ofPrev": 70.6,
-                  "ofTop": 70.6,
+                  "users": 17,
+                  "ofPrev": 85,
+                  "ofTop": 85,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Created an account",
-                  "users": 0,
-                  "ofPrev": 0,
-                  "ofTop": 0,
+                  "users": 1,
+                  "ofPrev": 5.9,
+                  "ofTop": 5,
                   "caveat": "doggle_oauth_signup_untracked"
                 },
                 {
                   "id": "claimed",
                   "label": "Signed in on that visit",
                   "users": 0,
-                  "ofPrev": null,
+                  "ofPrev": 0,
                   "ofTop": 0,
                   "caveat": null
                 }
@@ -5631,11 +6013,11 @@
             }
           ],
           "guests": {
-            "people": 17,
-            "sessions": 16,
+            "people": 20,
+            "sessions": 22,
             "depth": {
               "openOnly": 2,
-              "looked": 15,
+              "looked": 18,
               "explored": 0,
               "made": 0
             },
@@ -5643,16 +6025,28 @@
             "convertedOfMade": 0,
             "actions": [
               {
-                "name": "session.check",
-                "label": "session.check",
-                "people": 13,
-                "fires": 13
-              },
-              {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 12,
-                "fires": 12
+                "people": 17,
+                "fires": 19
+              },
+              {
+                "name": "session.check",
+                "label": "session.check",
+                "people": 16,
+                "fires": 26
+              },
+              {
+                "name": "auth.signout_decision",
+                "label": "auth.signout_decision",
+                "people": 1,
+                "fires": 1
+              },
+              {
+                "name": "account.created",
+                "label": "Account created",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
@@ -5663,8 +6057,8 @@
               },
               {
                 "route": "Login",
-                "people": 1,
-                "fires": 1
+                "people": 6,
+                "fires": 7
               }
             ],
             "pricing": {
@@ -5691,33 +6085,27 @@
         "14": {
           "windowDays": 14,
           "totals": {
-            "sessions": 37,
-            "events": 92,
-            "users": 38,
+            "sessions": 42,
+            "events": 116,
+            "users": 40,
             "realUsers": 0,
-            "guestUsers": 38,
-            "everGuestUsers": 38,
+            "guestUsers": 40,
+            "everGuestUsers": 40,
             "convertedUsers": 0,
-            "guestSessions": 37,
+            "guestSessions": 42,
             "upgradeSessions": 0,
-            "excludedSessions": 51,
-            "excludedEvents": 281,
+            "excludedSessions": 71,
+            "excludedEvents": 396,
             "orphanEvents": 1,
-            "bouncedSessions": 3,
-            "medianSessionSecs": 1.276,
+            "bouncedSessions": 5,
+            "medianSessionSecs": 1.244,
             "platforms": {
-              "web": 33,
-              "ios": 4
+              "web": 37,
+              "ios": 5
             },
-            "firstEventAt": "2026-08-17 19:07:05.706209+00"
+            "firstEventAt": "2026-08-18 15:56:12.480038+00"
           },
           "daily": [
-            {
-              "day": "2026-08-18",
-              "sessions": 4,
-              "events": 8,
-              "users": 4
-            },
             {
               "day": "2026-08-19",
               "sessions": 3,
@@ -5792,34 +6180,48 @@
             },
             {
               "day": "2026-08-31",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 8,
+              "events": 21,
+              "users": 5
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 1,
+              "events": 12,
+              "users": 2
             }
           ],
           "eventsByName": [
             {
+              "name": "session.check",
+              "label": "session.check",
+              "stage": null,
+              "count": 43,
+              "users": 33,
+              "known": false
+            },
+            {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 32,
-              "users": 32,
+              "count": 36,
+              "users": 34,
               "known": true
             },
             {
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 32,
-              "users": 32,
+              "count": 35,
+              "users": 34,
               "known": true
             },
             {
-              "name": "session.check",
-              "label": "session.check",
+              "name": "auth.signout_decision",
+              "label": "auth.signout_decision",
               "stage": null,
-              "count": 27,
-              "users": 27,
+              "count": 1,
+              "users": 1,
               "known": false
             },
             {
@@ -5836,15 +6238,15 @@
               "route": "Landing",
               "label": "Doggle marketing landing",
               "intent": null,
-              "count": 29,
-              "users": 29
+              "count": 27,
+              "users": 27
             },
             {
               "route": "Login",
               "label": null,
               "intent": null,
-              "count": 3,
-              "users": 3
+              "count": 8,
+              "users": 7
             }
           ],
           "asks": {
@@ -5868,7 +6270,7 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 38,
+                  "users": 40,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -5876,17 +6278,17 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 32,
-                  "ofPrev": 84.2,
-                  "ofTop": 84.2,
+                  "users": 34,
+                  "ofPrev": 85,
+                  "ofTop": 85,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Created an account",
                   "users": 1,
-                  "ofPrev": 3.1,
-                  "ofTop": 2.6,
+                  "ofPrev": 2.9,
+                  "ofTop": 2.5,
                   "caveat": "doggle_oauth_signup_untracked"
                 },
                 {
@@ -5901,11 +6303,11 @@
             }
           ],
           "guests": {
-            "people": 38,
-            "sessions": 37,
+            "people": 40,
+            "sessions": 42,
             "depth": {
               "openOnly": 3,
-              "looked": 35,
+              "looked": 37,
               "explored": 0,
               "made": 0
             },
@@ -5915,14 +6317,20 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 32,
-                "fires": 32
+                "people": 34,
+                "fires": 36
               },
               {
                 "name": "session.check",
                 "label": "session.check",
-                "people": 27,
-                "fires": 27
+                "people": 33,
+                "fires": 43
+              },
+              {
+                "name": "auth.signout_decision",
+                "label": "auth.signout_decision",
+                "people": 1,
+                "fires": 1
               },
               {
                 "name": "account.created",
@@ -5934,13 +6342,13 @@
             "routes": [
               {
                 "route": "Landing",
-                "people": 29,
-                "fires": 29
+                "people": 27,
+                "fires": 27
               },
               {
                 "route": "Login",
-                "people": 3,
-                "fires": 3
+                "people": 7,
+                "fires": 8
               }
             ],
             "pricing": {
@@ -5967,33 +6375,27 @@
         "30": {
           "windowDays": 30,
           "totals": {
-            "sessions": 56,
-            "events": 151,
-            "users": 66,
+            "sessions": 65,
+            "events": 184,
+            "users": 72,
             "realUsers": 1,
-            "guestUsers": 65,
-            "everGuestUsers": 65,
+            "guestUsers": 71,
+            "everGuestUsers": 71,
             "convertedUsers": 0,
-            "guestSessions": 55,
+            "guestSessions": 64,
             "upgradeSessions": 0,
-            "excludedSessions": 76,
-            "excludedEvents": 394,
+            "excludedSessions": 96,
+            "excludedEvents": 509,
             "orphanEvents": 17,
-            "bouncedSessions": 3,
-            "medianSessionSecs": 0.979,
+            "bouncedSessions": 5,
+            "medianSessionSecs": 0.97,
             "platforms": {
-              "web": 46,
-              "ios": 10
+              "web": 53,
+              "ios": 12
             },
             "firstEventAt": "2026-08-14 06:28:48.968728+00"
           },
           "daily": [
-            {
-              "day": "2026-08-02",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-03",
               "sessions": 0,
@@ -6164,9 +6566,15 @@
             },
             {
               "day": "2026-08-31",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
+              "sessions": 8,
+              "events": 21,
+              "users": 5
+            },
+            {
+              "day": "2026-09-01",
+              "sessions": 1,
+              "events": 12,
+              "users": 2
             }
           ],
           "eventsByName": [
@@ -6174,33 +6582,41 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 67,
-              "users": 56,
+              "count": 74,
+              "users": 62,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 56,
-              "users": 50,
+              "count": 64,
+              "users": 56,
               "known": true
             },
             {
               "name": "session.check",
               "label": "session.check",
               "stage": null,
-              "count": 27,
-              "users": 27,
+              "count": 43,
+              "users": 33,
               "known": false
             },
             {
               "name": "account.created",
               "label": "Account created",
               "stage": "acquisition",
+              "count": 2,
+              "users": 2,
+              "known": true
+            },
+            {
+              "name": "auth.signout_decision",
+              "label": "auth.signout_decision",
+              "stage": null,
               "count": 1,
               "users": 1,
-              "known": true
+              "known": false
             }
           ],
           "routes": [
@@ -6208,15 +6624,15 @@
               "route": "Landing",
               "label": "Doggle marketing landing",
               "intent": null,
-              "count": 41,
-              "users": 41
+              "count": 42,
+              "users": 42
             },
             {
               "route": "Login",
               "label": null,
               "intent": null,
-              "count": 18,
-              "users": 15
+              "count": 24,
+              "users": 20
             },
             {
               "route": "Home",
@@ -6289,7 +6705,7 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 65,
+                  "users": 71,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -6297,17 +6713,17 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 55,
-                  "ofPrev": 84.6,
-                  "ofTop": 84.6,
+                  "users": 61,
+                  "ofPrev": 85.9,
+                  "ofTop": 85.9,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Created an account",
-                  "users": 1,
-                  "ofPrev": 1.8,
-                  "ofTop": 1.5,
+                  "users": 2,
+                  "ofPrev": 3.3,
+                  "ofTop": 2.8,
                   "caveat": "doggle_oauth_signup_untracked"
                 },
                 {
@@ -6322,11 +6738,11 @@
             }
           ],
           "guests": {
-            "people": 65,
-            "sessions": 55,
+            "people": 71,
+            "sessions": 64,
             "depth": {
               "openOnly": 7,
-              "looked": 56,
+              "looked": 62,
               "explored": 2,
               "made": 0
             },
@@ -6336,18 +6752,24 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 49,
-                "fires": 55
+                "people": 55,
+                "fires": 63
               },
               {
                 "name": "session.check",
                 "label": "session.check",
-                "people": 27,
-                "fires": 27
+                "people": 33,
+                "fires": 43
               },
               {
                 "name": "account.created",
                 "label": "Account created",
+                "people": 2,
+                "fires": 2
+              },
+              {
+                "name": "auth.signout_decision",
+                "label": "auth.signout_decision",
                 "people": 1,
                 "fires": 1
               }
@@ -6355,13 +6777,13 @@
             "routes": [
               {
                 "route": "Landing",
-                "people": 41,
-                "fires": 41
+                "people": 42,
+                "fires": 42
               },
               {
                 "route": "Login",
-                "people": 15,
-                "fires": 18
+                "people": 20,
+                "fires": 24
               },
               {
                 "route": "Walk",
@@ -6450,33 +6872,68 @@
         "1": {
           "windowDays": 1,
           "totals": {
-            "sessions": 0,
-            "events": 0,
-            "users": 0,
+            "sessions": 3,
+            "events": 18,
+            "users": 3,
             "realUsers": 0,
-            "guestUsers": 0,
-            "everGuestUsers": 0,
+            "guestUsers": 3,
+            "everGuestUsers": 3,
             "convertedUsers": 0,
-            "guestSessions": 0,
+            "guestSessions": 3,
             "upgradeSessions": 0,
-            "excludedSessions": 0,
-            "excludedEvents": 0,
+            "excludedSessions": 22,
+            "excludedEvents": 120,
             "orphanEvents": 0,
             "bouncedSessions": 0,
-            "medianSessionSecs": null,
-            "platforms": {},
-            "firstEventAt": null
+            "medianSessionSecs": 142.646,
+            "platforms": {
+              "web": 2,
+              "ios": 1
+            },
+            "firstEventAt": "2026-08-31 20:22:33.974+00"
           },
           "daily": [
             {
-              "day": "2026-08-31",
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
             }
           ],
-          "eventsByName": [],
-          "routes": [],
+          "eventsByName": [
+            {
+              "name": "page.view",
+              "label": "Viewed a page",
+              "stage": "engagement",
+              "count": 15,
+              "users": 3,
+              "known": true
+            },
+            {
+              "name": "session.start",
+              "label": "Session started",
+              "stage": "acquisition",
+              "count": 3,
+              "users": 3,
+              "known": true
+            }
+          ],
+          "routes": [
+            {
+              "route": "Login",
+              "label": null,
+              "intent": null,
+              "count": 9,
+              "users": 3
+            },
+            {
+              "route": "Register",
+              "label": null,
+              "intent": null,
+              "count": 6,
+              "users": 1
+            }
+          ],
           "asks": {
             "gates": [],
             "prompts": [],
@@ -6498,25 +6955,25 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 0,
-                  "ofPrev": null,
-                  "ofTop": null,
+                  "users": 3,
+                  "ofPrev": 100,
+                  "ofTop": 100,
                   "caveat": null
                 },
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 0,
-                  "ofPrev": null,
-                  "ofTop": null,
+                  "users": 3,
+                  "ofPrev": 100,
+                  "ofTop": 100,
                   "caveat": null
                 },
                 {
                   "id": "signed",
                   "label": "Created an account",
                   "users": 0,
-                  "ofPrev": null,
-                  "ofTop": null,
+                  "ofPrev": 0,
+                  "ofTop": 0,
                   "caveat": null
                 },
                 {
@@ -6524,25 +6981,43 @@
                   "label": "Signed in on that visit",
                   "users": 0,
                   "ofPrev": null,
-                  "ofTop": null,
+                  "ofTop": 0,
                   "caveat": null
                 }
               ]
             }
           ],
           "guests": {
-            "people": 0,
-            "sessions": 0,
+            "people": 3,
+            "sessions": 3,
             "depth": {
               "openOnly": 0,
-              "looked": 0,
-              "explored": 0,
+              "looked": 2,
+              "explored": 1,
               "made": 0
             },
             "converted": 0,
             "convertedOfMade": 0,
-            "actions": [],
-            "routes": [],
+            "actions": [
+              {
+                "name": "session.start",
+                "label": "Session started",
+                "people": 3,
+                "fires": 3
+              }
+            ],
+            "routes": [
+              {
+                "route": "Login",
+                "people": 3,
+                "fires": 9
+              },
+              {
+                "route": "Register",
+                "people": 1,
+                "fires": 6
+              }
+            ],
             "pricing": {
               "asked": 0,
               "offered": 0
@@ -6567,32 +7042,27 @@
         "7": {
           "windowDays": 7,
           "totals": {
-            "sessions": 2,
-            "events": 9,
-            "users": 2,
+            "sessions": 4,
+            "events": 25,
+            "users": 4,
             "realUsers": 0,
-            "guestUsers": 2,
-            "everGuestUsers": 2,
+            "guestUsers": 4,
+            "everGuestUsers": 4,
             "convertedUsers": 0,
-            "guestSessions": 2,
+            "guestSessions": 4,
             "upgradeSessions": 0,
-            "excludedSessions": 1,
-            "excludedEvents": 2,
+            "excludedSessions": 23,
+            "excludedEvents": 122,
             "orphanEvents": 0,
             "bouncedSessions": 0,
-            "medianSessionSecs": 62.982,
+            "medianSessionSecs": 142.646,
             "platforms": {
-              "web": 2
+              "web": 3,
+              "ios": 1
             },
-            "firstEventAt": "2026-08-25 02:11:51.642+00"
+            "firstEventAt": "2026-08-27 04:37:33.907+00"
           },
           "daily": [
-            {
-              "day": "2026-08-25",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-26",
               "sessions": 1,
@@ -6625,6 +7095,12 @@
             },
             {
               "day": "2026-08-31",
+              "sessions": 3,
+              "events": 18,
+              "users": 3
+            },
+            {
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
@@ -6635,16 +7111,16 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 7,
-              "users": 2,
+              "count": 21,
+              "users": 4,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 2,
-              "users": 2,
+              "count": 4,
+              "users": 4,
               "known": true
             }
           ],
@@ -6653,15 +7129,15 @@
               "route": "Login",
               "label": null,
               "intent": null,
-              "count": 5,
-              "users": 2
+              "count": 13,
+              "users": 4
             },
             {
               "route": "Register",
               "label": null,
               "intent": null,
-              "count": 2,
-              "users": 1
+              "count": 8,
+              "users": 2
             }
           ],
           "asks": {
@@ -6685,7 +7161,7 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 2,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -6693,7 +7169,7 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 2,
+                  "users": 4,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -6718,12 +7194,12 @@
             }
           ],
           "guests": {
-            "people": 2,
-            "sessions": 2,
+            "people": 4,
+            "sessions": 4,
             "depth": {
               "openOnly": 0,
-              "looked": 1,
-              "explored": 1,
+              "looked": 2,
+              "explored": 2,
               "made": 0
             },
             "converted": 0,
@@ -6732,20 +7208,20 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 2,
-                "fires": 2
+                "people": 4,
+                "fires": 4
               }
             ],
             "routes": [
               {
                 "route": "Login",
-                "people": 2,
-                "fires": 5
+                "people": 4,
+                "fires": 13
               },
               {
                 "route": "Register",
-                "people": 1,
-                "fires": 2
+                "people": 2,
+                "fires": 8
               }
             ],
             "pricing": {
@@ -6772,32 +7248,27 @@
         "14": {
           "windowDays": 14,
           "totals": {
-            "sessions": 14,
-            "events": 35,
-            "users": 7,
+            "sessions": 13,
+            "events": 43,
+            "users": 10,
             "realUsers": 0,
-            "guestUsers": 7,
-            "everGuestUsers": 7,
+            "guestUsers": 10,
+            "everGuestUsers": 10,
             "convertedUsers": 0,
-            "guestSessions": 8,
-            "upgradeSessions": 1,
-            "excludedSessions": 6,
-            "excludedEvents": 17,
+            "guestSessions": 10,
+            "upgradeSessions": 0,
+            "excludedSessions": 28,
+            "excludedEvents": 137,
             "orphanEvents": 1,
             "bouncedSessions": 1,
             "medianSessionSecs": 0.966,
             "platforms": {
-              "web": 14
+              "web": 12,
+              "ios": 1
             },
-            "firstEventAt": "2026-08-17 15:35:30.080772+00"
+            "firstEventAt": "2026-08-19 02:34:58.259+00"
           },
           "daily": [
-            {
-              "day": "2026-08-18",
-              "sessions": 1,
-              "events": 2,
-              "users": 1
-            },
             {
               "day": "2026-08-19",
               "sessions": 0,
@@ -6872,6 +7343,12 @@
             },
             {
               "day": "2026-08-31",
+              "sessions": 3,
+              "events": 18,
+              "users": 3
+            },
+            {
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
@@ -6882,24 +7359,16 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 20,
-              "users": 7,
+              "count": 30,
+              "users": 10,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 14,
-              "users": 6,
-              "known": true
-            },
-            {
-              "name": "auth.login",
-              "label": "Signed in",
-              "stage": "acquisition",
-              "count": 1,
-              "users": 1,
+              "count": 13,
+              "users": 9,
               "known": true
             }
           ],
@@ -6908,29 +7377,22 @@
               "route": "Login",
               "label": null,
               "intent": null,
-              "count": 10,
-              "users": 5
-            },
-            {
-              "route": "EventDetail",
-              "label": null,
-              "intent": null,
-              "count": 7,
-              "users": 2
+              "count": 19,
+              "users": 8
             },
             {
               "route": "Register",
               "label": null,
               "intent": null,
-              "count": 2,
-              "users": 1
+              "count": 8,
+              "users": 2
             },
             {
-              "route": "GuestJoin",
+              "route": "EventDetail",
               "label": null,
               "intent": null,
-              "count": 1,
-              "users": 1
+              "count": 3,
+              "users": 2
             }
           ],
           "asks": {
@@ -6954,7 +7416,7 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 7,
+                  "users": 10,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -6962,7 +7424,7 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 7,
+                  "users": 10,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -6987,11 +7449,11 @@
             }
           ],
           "guests": {
-            "people": 7,
-            "sessions": 8,
+            "people": 10,
+            "sessions": 10,
             "depth": {
               "openOnly": 0,
-              "looked": 4,
+              "looked": 7,
               "explored": 3,
               "made": 0
             },
@@ -7001,36 +7463,25 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 6,
-                "fires": 14
-              },
-              {
-                "name": "auth.login",
-                "label": "Signed in",
-                "people": 1,
-                "fires": 1
+                "people": 9,
+                "fires": 13
               }
             ],
             "routes": [
               {
                 "route": "Login",
-                "people": 5,
-                "fires": 10
+                "people": 8,
+                "fires": 19
+              },
+              {
+                "route": "Register",
+                "people": 2,
+                "fires": 8
               },
               {
                 "route": "EventDetail",
                 "people": 2,
-                "fires": 7
-              },
-              {
-                "route": "Register",
-                "people": 1,
-                "fires": 2
-              },
-              {
-                "route": "GuestJoin",
-                "people": 1,
-                "fires": 1
+                "fires": 3
               }
             ],
             "pricing": {
@@ -7057,32 +7508,27 @@
         "30": {
           "windowDays": 30,
           "totals": {
-            "sessions": 20,
-            "events": 50,
-            "users": 13,
+            "sessions": 23,
+            "events": 68,
+            "users": 15,
             "realUsers": 0,
-            "guestUsers": 13,
-            "everGuestUsers": 13,
+            "guestUsers": 15,
+            "everGuestUsers": 15,
             "convertedUsers": 0,
-            "guestSessions": 14,
+            "guestSessions": 17,
             "upgradeSessions": 1,
-            "excludedSessions": 33,
-            "excludedEvents": 262,
+            "excludedSessions": 55,
+            "excludedEvents": 382,
             "orphanEvents": 4,
             "bouncedSessions": 1,
             "medianSessionSecs": 1.013,
             "platforms": {
-              "web": 20
+              "web": 22,
+              "ios": 1
             },
             "firstEventAt": "2026-08-15 19:51:43.716887+00"
           },
           "daily": [
-            {
-              "day": "2026-08-02",
-              "sessions": 0,
-              "events": 0,
-              "users": 0
-            },
             {
               "day": "2026-08-03",
               "sessions": 0,
@@ -7253,6 +7699,12 @@
             },
             {
               "day": "2026-08-31",
+              "sessions": 3,
+              "events": 18,
+              "users": 3
+            },
+            {
+              "day": "2026-09-01",
               "sessions": 0,
               "events": 0,
               "users": 0
@@ -7263,16 +7715,16 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 28,
-              "users": 12,
+              "count": 43,
+              "users": 14,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 21,
-              "users": 10,
+              "count": 24,
+              "users": 12,
               "known": true
             },
             {
@@ -7289,8 +7741,15 @@
               "route": "Login",
               "label": null,
               "intent": null,
-              "count": 18,
-              "users": 10
+              "count": 27,
+              "users": 12
+            },
+            {
+              "route": "Register",
+              "label": null,
+              "intent": null,
+              "count": 8,
+              "users": 2
             },
             {
               "route": "EventDetail",
@@ -7298,13 +7757,6 @@
               "intent": null,
               "count": 7,
               "users": 2
-            },
-            {
-              "route": "Register",
-              "label": null,
-              "intent": null,
-              "count": 2,
-              "users": 1
             },
             {
               "route": "GuestJoin",
@@ -7335,7 +7787,7 @@
                 {
                   "id": "visitor",
                   "label": "Arrived signed out",
-                  "users": 13,
+                  "users": 15,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -7343,9 +7795,9 @@
                 {
                   "id": "looked",
                   "label": "Viewed any screen",
-                  "users": 12,
-                  "ofPrev": 92.3,
-                  "ofTop": 92.3,
+                  "users": 14,
+                  "ofPrev": 93.3,
+                  "ofTop": 93.3,
                   "caveat": null
                 },
                 {
@@ -7368,12 +7820,12 @@
             }
           ],
           "guests": {
-            "people": 13,
-            "sessions": 14,
+            "people": 15,
+            "sessions": 17,
             "depth": {
               "openOnly": 1,
-              "looked": 8,
-              "explored": 4,
+              "looked": 9,
+              "explored": 5,
               "made": 0
             },
             "converted": 0,
@@ -7382,8 +7834,8 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 10,
-                "fires": 21
+                "people": 12,
+                "fires": 24
               },
               {
                 "name": "auth.login",
@@ -7395,18 +7847,18 @@
             "routes": [
               {
                 "route": "Login",
-                "people": 10,
-                "fires": 18
+                "people": 12,
+                "fires": 27
+              },
+              {
+                "route": "Register",
+                "people": 2,
+                "fires": 8
               },
               {
                 "route": "EventDetail",
                 "people": 2,
                 "fires": 7
-              },
-              {
-                "route": "Register",
-                "people": 1,
-                "fires": 2
               },
               {
                 "route": "GuestJoin",

@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-08-31T15:07:39.903Z",
+  "collectedAt": "2026-09-01T15:07:40.400Z",
   "windows": [
     "all",
     1,
@@ -64,15 +64,15 @@
           "earners": 0
         },
         "14": {
-          "earned": 45,
+          "earned": 0,
           "spent": 0,
-          "rows": 2,
-          "earners": 1
+          "rows": 0,
+          "earners": 0
         },
         "30": {
-          "earned": 449,
+          "earned": 139,
           "spent": 0,
-          "rows": 14,
+          "rows": 9,
           "earners": 4
         },
         "all": {
@@ -101,13 +101,13 @@
           ],
           "14": [
             0,
-            1,
+            0,
             0
           ],
           "30": [
             0,
-            3,
-            1
+            4,
+            0
           ],
           "all": [
             0,
@@ -119,44 +119,19 @@
       "byReason": {
         "1": [],
         "7": [],
-        "14": [
+        "14": [],
+        "30": [
+          {
+            "category": "Login bonus",
+            "points": 99,
+            "rows": 6,
+            "users": 4
+          },
           {
             "category": "Onboarding",
             "points": 30,
             "rows": 1,
             "users": 1
-          },
-          {
-            "category": "Login bonus",
-            "points": 15,
-            "rows": 1,
-            "users": 1
-          }
-        ],
-        "30": [
-          {
-            "category": "Referral welcome",
-            "points": 150,
-            "rows": 1,
-            "users": 1
-          },
-          {
-            "category": "Login bonus",
-            "points": 129,
-            "rows": 8,
-            "users": 4
-          },
-          {
-            "category": "Referral",
-            "points": 100,
-            "rows": 1,
-            "users": 1
-          },
-          {
-            "category": "Onboarding",
-            "points": 60,
-            "rows": 2,
-            "users": 2
           },
           {
             "category": "Checked in at a dog place",
@@ -216,7 +191,7 @@
           }
         ]
       },
-      "excludedLedgerRows": 667
+      "excludedLedgerRows": 693
     },
     "pickleague": {
       "currency": "pickles",
@@ -339,7 +314,7 @@
           ]
         }
       },
-      "excludedFlowRows": 712
+      "excludedFlowRows": 714
     },
     "caps": {
       "binders": {
@@ -353,14 +328,14 @@
         ],
         "counts": [
           0,
-          20,
-          4,
+          23,
+          5,
           0,
-          79
+          82
         ],
-        "users": 103,
+        "users": 110,
         "uncapped": 0,
-        "atCap": 79
+        "atCap": 82
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -372,15 +347,15 @@
           "at / over cap"
         ],
         "counts": [
-          84,
-          3,
-          5,
-          3,
-          8
+          87,
+          4,
+          6,
+          4,
+          9
         ],
-        "users": 103,
+        "users": 110,
         "uncapped": 0,
-        "atCap": 8
+        "atCap": 9
       },
       "artUploads": {
         "app": "michi",
@@ -392,15 +367,15 @@
           "at / over cap"
         ],
         "counts": [
-          11,
-          5,
+          13,
+          6,
           9,
           9,
-          0
+          1
         ],
-        "users": 34,
+        "users": 38,
         "uncapped": 0,
-        "atCap": 0
+        "atCap": 1
       },
       "includedPrintsPerMonth": {
         "app": "michi",
@@ -439,7 +414,7 @@
           0
         ],
         "users": 0,
-        "uncapped": 1,
+        "uncapped": 0,
         "atCap": 0
       },
       "collections": {
@@ -453,12 +428,12 @@
         ],
         "counts": [
           0,
-          2,
+          3,
           0,
           0,
           2
         ],
-        "users": 4,
+        "users": 5,
         "uncapped": 0,
         "atCap": 2
       },
@@ -473,20 +448,20 @@
         ],
         "counts": [
           1,
-          0,
+          1,
           0,
           2,
           0
         ],
-        "users": 3,
+        "users": 4,
         "uncapped": 0,
         "atCap": 0
       },
       "_accounts": {
-        "total": 1300,
-        "guests": 1252,
-        "excluded": 821,
-        "excludedUsageRows": 101
+        "total": 1392,
+        "guests": 1338,
+        "excluded": 893,
+        "excludedUsageRows": 134
       }
     }
   }
