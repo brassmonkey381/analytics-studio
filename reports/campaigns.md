@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-09-03T15:07:33.257Z. All-time unless a window is named.
+Collected 2026-09-04T15:07:39.561Z. All-time unless a window is named.
 
-**11 campaign arrivals** across 4 apps.
+**14 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
@@ -13,17 +13,20 @@ Collected 2026-09-03T15:07:33.257Z. All-time unless a window is named.
 | (unregistered) | `381a0346-5be3-4c17-94f2-5f770338bda2` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `49bb8d42-bb93-4b2f-9b83-b1d0e58d91eb` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `9151b121-450c-4ec0-ae33-a8ff7b194dbd` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `9731ea95-392d-4c73-b355-bc481a6d3dd1` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `a6d172c4-e566-4b11-bf24-b26a652ba087` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `cc2788e0-8635-4111-91f1-812e9470b1b8` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `de4df162-8cc0-4fb6-af5f-5b4fe2dfd71d` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `eacc07d3-89ad-4398-8673-5cecdfd710ce` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `f22d26d7-64e6-4c5a-8d02-dc437d74b45e` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `faed5065-c1d1-45f8-8a78-3494094486ec` | 1 | 1 | 1 | 0 | 1 |
 
-Excluded from the above: 8 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 14 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-No campaign-tagged arrival, all time. Landing routes are recorded (498 of 584 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Landing routes are recorded (501 of 587 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Doggle
 
@@ -31,7 +34,7 @@ No campaign-tagged arrival, all time. Excluded from that zero: 0 arrival(s) from
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Landing routes are recorded (80 of 84 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (111 of 116 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -55,8 +58,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 1265 | 1084 | 19 | 751 | a code was recorded 2026-08-13 |
-| TCGScan | 584 | 498 | 0 | 410 | routes yes, never a code — a zero cannot be told from an unshipped build |
-| Doggle | 171 | 166 | 1 | 171 | a code was recorded 2026-08-13 |
-| Pickleague | 84 | 80 | 0 | 84 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 1326 | 1145 | 28 | 812 | a code was recorded 2026-08-13 |
+| TCGScan | 587 | 501 | 0 | 413 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Doggle | 219 | 209 | 1 | 219 | a code was recorded 2026-08-13 |
+| Pickleague | 116 | 111 | 0 | 116 | routes yes, never a code — a zero cannot be told from an unshipped build |
 

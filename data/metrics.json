@@ -358,22 +358,28 @@
           "new_guest": 0
         },
         "2026-09-03": {
-          "dau": 1,
+          "dau": 2,
           "new_users": 1,
+          "dau_guest": 0,
+          "new_guest": 0
+        },
+        "2026-09-04": {
+          "dau": 0,
+          "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
         }
       },
       "totalUsers": 12,
       "guestUsers": 0,
-      "excludedUsers": 36,
+      "excludedUsers": 39,
       "coverage": null,
-      "lastCollected": "2026-09-03T15:07:07.490Z",
+      "lastCollected": "2026-09-04T15:07:08.143Z",
       "lastSource": "sql",
       "retention": {
         "total": 12,
-        "active_7": 1,
-        "active_14": 1,
+        "active_7": 2,
+        "active_14": 2,
         "active_30": 5
       },
       "lastError": {
@@ -743,19 +749,25 @@
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
+        },
+        "2026-09-04": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 10,
       "guestUsers": 2,
       "excludedUsers": 512,
       "coverage": null,
-      "lastCollected": "2026-09-03T15:07:12.655Z",
+      "lastCollected": "2026-09-04T15:07:12.583Z",
       "lastSource": "sql",
       "retention": {
         "total": 4,
-        "active_7": 0,
-        "active_14": 0,
-        "active_30": 1
+        "active_7": 1,
+        "active_14": 1,
+        "active_30": 2
       }
     },
     "michi-maker": {
@@ -1110,34 +1122,40 @@
           "new_guest": 1
         },
         "2026-09-02": {
-          "dau": 4,
+          "dau": 3,
           "new_users": 1,
           "dau_guest": 5,
           "new_guest": 5
         },
         "2026-09-03": {
-          "dau": 2,
+          "dau": 4,
+          "new_users": 2,
+          "dau_guest": 6,
+          "new_guest": 6
+        },
+        "2026-09-04": {
+          "dau": 1,
           "new_users": 1,
           "dau_guest": 2,
           "new_guest": 2
         }
       },
-      "totalUsers": 35,
-      "guestUsers": 87,
+      "totalUsers": 37,
+      "guestUsers": 93,
       "excludedUsers": 42,
       "coverage": {
-        "registered": 43,
-        "guest_sessions": 489,
-        "excluded": 929,
+        "registered": 45,
+        "guest_sessions": 508,
+        "excluded": 941,
         "no_activity": 8
       },
-      "lastCollected": "2026-09-03T15:07:17.529Z",
+      "lastCollected": "2026-09-04T15:07:19.459Z",
       "lastSource": "sql",
       "retention": {
-        "total": 35,
-        "active_7": 16,
-        "active_14": 35,
-        "active_30": 35
+        "total": 37,
+        "active_7": 17,
+        "active_14": 37,
+        "active_30": 37
       }
     },
     "tcgscan": {
@@ -1502,18 +1520,24 @@
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
+        },
+        "2026-09-04": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 3,
       "guestUsers": 3,
       "excludedUsers": 62,
       "coverage": {
-        "registered": 43,
-        "guest_sessions": 489,
-        "excluded": 929,
+        "registered": 45,
+        "guest_sessions": 508,
+        "excluded": 941,
         "no_activity": 8
       },
-      "lastCollected": "2026-09-03T15:07:23.016Z",
+      "lastCollected": "2026-09-04T15:07:27.130Z",
       "lastSource": "sql",
       "retention": {
         "total": 3,
