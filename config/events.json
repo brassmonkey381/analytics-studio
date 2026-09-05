@@ -2,7 +2,7 @@
   "_doc": "The events lane: how the studio reads public.analytics_sessions and public.analytics_events. Michi-maker and tcgscan-app share project piikwvntldytjejxmcla (migration 20260805100000_analytics_events.sql, authenticated-only RLS: guests are minted anon auth users). Doggle and pickleague each carry their OWN spine on their own project (doggle db/migrations/0377_analytics_events.sql, pickleague supabase/migration_add_analytics_events.sql) with nullable user_id + anon-role inserts, because their public pages are browsed signed-out: an identity-less visit is a real visit, grouped by device_id into a 'visitor'. Per-app projectRef below routes each app to its project; per-app `profile` maps that project's profiles name columns. Nothing here is queried by the apps themselves; this is read-only interpretation.",
   "projectRef": "piikwvntldytjejxmcla",
   "windowDays": 30,
-  "_campaignsDoc": "The print/QR lane (scripts/campaigns.mjs) reads the same two tables through the same app->project map, so its config lives here rather than in a second file that could disagree about which project an app is on. `registry` is the path, relative to the repo root, to marketing-studio's list of codes that physically exist on paper — the join that makes a zero mean 'printed but never scanned' instead of 'we printed nothing'. `verificationPrefixes` are OUR OWN end-to-end proof scans: excluded from every headline the way our accounts are, and stated inline rather than dropped silently.",
+  "_campaignsDoc": "The print/QR lane (scripts/campaigns.mjs) reads the same two tables through the same app->project map, so its config lives here rather than in a second file that could disagree about which project an app is on. `registry` is the path, relative to the repo root, to marketing-studio's list of codes that physically exist on paper \u2014 the join that makes a zero mean 'printed but never scanned' instead of 'we printed nothing'. `verificationPrefixes` are OUR OWN end-to-end proof scans: excluded from every headline the way our accounts are, and stated inline rather than dropped silently.",
   "campaigns": {
     "registry": "../marketing-studio/assets/qr/campaigns.yaml",
     "verificationPrefixes": [
@@ -234,7 +234,7 @@
       ],
       "milestone": true
     },
-    "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook — tracked as gaps.tcgscan_search_blind, not as a missing call site. prompt.shown / prompt.answered / trial.start_click are michi-only as of 2026-08-27, and that one is NOT settled: the prompts genuinely do not exist in tcgscan (no uninvited dialogs), but trial.start_click and the cap.gate_shown props added with it (as, is_guest, offer) are a real divergence between two emitters AGENTS.md requires to stay near-identical mirrors. Tracked as gaps.tcgscan_cap_gate_parity.",
+    "_asymmetryDoc": "pro.offer_declined and search.no_results are michi-only, and that is correct rather than a half-done job. tcgscan's TrialCta renders on /plans alone, which has no dismissal, so there is no decline to record. tcgscan's search box lives inside the shared tcgscan-browse package and cannot report a result count without a package-level onEvent hook \u2014 tracked as gaps.tcgscan_search_blind, not as a missing call site. prompt.shown / prompt.answered / trial.start_click are michi-only as of 2026-08-27, and that one is NOT settled: the prompts genuinely do not exist in tcgscan (no uninvited dialogs), but trial.start_click and the cap.gate_shown props added with it (as, is_guest, offer) are a real divergence between two emitters AGENTS.md requires to stay near-identical mirrors. Tracked as gaps.tcgscan_cap_gate_parity.",
     "pro.offer_declined": {
       "label": "Dismissed the PRO offer",
       "stage": "monetization",
@@ -242,7 +242,7 @@
         "michi"
       ]
     },
-    "_capGatesDoc": "A cap gate is the block a user hits when a tier limit stops them — 16 of 16 binder pages, 3 of 3 binders, the print gate. It is the moment upgrade intent is highest and, until these land, the one moment the stream cannot see. pro.offer_shown covers only the surfaces TrialCta itself renders; a gate that refuses an action without rendering that button emits nothing at all. `limit` MUST be the tier_caps limit_key verbatim so a gate joins to its cap without a lookup table.",
+    "_capGatesDoc": "A cap gate is the block a user hits when a tier limit stops them \u2014 16 of 16 binder pages, 3 of 3 binders, the print gate. It is the moment upgrade intent is highest and, until these land, the one moment the stream cannot see. pro.offer_shown covers only the surfaces TrialCta itself renders; a gate that refuses an action without rendering that button emits nothing at all. `limit` MUST be the tier_caps limit_key verbatim so a gate joins to its cap without a lookup table.",
     "cap.gate_shown": {
       "label": "Hit a plan limit",
       "stage": "monetization",
@@ -267,11 +267,12 @@
         "michi"
       ]
     },
-    "_promptsDoc": "prompt.shown / prompt.answered are the uninvited dialogs michi opens on its own (michi-maker/src/data/prompts.ts): the avatar-consent correction, the sharing attestation, and the one-shot PRO trial recovery. props: { prompt, surface, response }. `response` is the reason they exist - accepted | declined | dismissed | abandoned - because the profile stamps those dialogs write can only say seen and accepted, and a dialog closed with the X was indistinguishable from one left behind by navigating away. ALWAYS PAIRED: a prompt that opens emits both, an abandon included, so a shown with no answer means a lost event and not an unanswered question. A dismissal rate is taken over prompt.shown, never over sessions - the prompts are cohort-targeted and most people are never eligible for one.",
+    "_promptsDoc": "prompt.shown / prompt.answered are the dialogs an app opens on its own: michi's avatar-consent correction, sharing attestation and one-shot PRO trial recovery (michi-maker/src/data/prompts.ts), and doggle's explainer pop-ups plus its walk check-in nudge. props: { prompt, surface, response }. `response` is the reason they exist - accepted | declined | dismissed | abandoned - because the profile stamps those dialogs write can only say seen and accepted, and a dialog closed with the X was indistinguishable from one left behind by navigating away. A dismissal rate is taken over prompt.shown, never over sessions: the prompts are cohort-targeted and most people are never eligible for one. NOT ALWAYS PAIRED, and the earlier claim here that they were is what a real orphan disproved (2026-08-28, @xurdebr, a one-second session: page.view, session.start, prompt.shown, nothing). The abandon path hung off a React unmount cleanup, which does not run when a tab closes. michi now beacons on `pagehide` and doggle emits on AppState background, so most closures do come back as an explicit `abandoned` - but a mobile tab killed after the browser froze it still cannot, and inventing an answer for it would mean inventing one for everybody who merely switched tabs. So a shown with no answer is a CLOSED APP, reported separately as 'left with it open'. It is a finding about the person, not a lost event.",
     "prompt.shown": {
       "label": "Was shown a prompt",
       "stage": "engagement",
       "apps": [
+        "doggle",
         "michi"
       ],
       "milestone": true
@@ -280,6 +281,7 @@
       "label": "Answered a prompt",
       "stage": "engagement",
       "apps": [
+        "doggle",
         "michi"
       ]
     },
@@ -350,9 +352,152 @@
       ],
       "planned": true,
       "milestone": true
-    }
+    },
+    "push.permission_requested": {
+      "label": "Asked for push permission",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "push.permission_result": {
+      "label": "Push permission answered",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "push.token_registered": {
+      "label": "Device reachable by push",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "push.opened": {
+      "label": "Tapped a notification",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "location.permission_requested": {
+      "label": "Asked for location permission",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "location.permission_result": {
+      "label": "Location permission answered",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "walk.start": {
+      "label": "Started a walk",
+      "stage": "activation",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "walk.end": {
+      "label": "Finished a walk",
+      "stage": "activation",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "walk.cancel": {
+      "label": "Abandoned a walk",
+      "stage": "activation",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "checkin.create": {
+      "label": "Checked in at a place",
+      "stage": "activation",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "checkin.out": {
+      "label": "Checked out",
+      "stage": "activation",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "checkin.failed": {
+      "label": "Check-in refused",
+      "stage": "activation",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "discover.tab": {
+      "label": "Opened a Discover panel",
+      "stage": "engagement",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "session.check": {
+      "label": "Session revalidated (plumbing)",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "session.recovered": {
+      "label": "Session recovered after a failure",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "session.unreachable": {
+      "label": "Session check could not reach the server",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "session.expired": {
+      "label": "Session expired",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "auth.signout_decision": {
+      "label": "Answered the sign-out prompt",
+      "apps": [
+        "doggle"
+      ]
+    },
+    "demo.theme_search": {
+      "label": "Tried the theme search demo",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.rebuild_from_tcgscan": {
+      "label": "Rebuilt a binder from a TCGScan collection",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "tcgscan.pairing_click": {
+      "label": "Followed the TCGScan pairing pitch",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_pairingDoc": "binder.rebuild_from_tcgscan and tcgscan.pairing_click are the CROSS-APP seam, and they are michi-only for a reason that is not asymmetry: both fire in michi about tcgscan. binder.rebuild_from_tcgscan { pages, placed, unplaced } is the payoff of the pairing - a scanned collection becoming a real binder - and `unplaced` is the honest half: cards that came across and did not fit anywhere. tcgscan.pairing_click { surface } is the pitch being followed OUT of michi, so it has no landing event on the other side; TCGScan's own session.start is the nearest thing and it cannot be joined (a browser hop, no shared session id). Read the click as intent, never as an arrival - and see gaps.share_attribution for the same shape of problem."
   },
-  "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness — the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
+  "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness \u2014 the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
     "/plans": {
       "label": "Plans & pricing",
@@ -404,25 +549,22 @@
       ]
     }
   },
-  "_funnelsDoc": "Ordered stages. A user counts at stage N only if they also reached every earlier stage, so the drop-off between rows is real. `match` is one of: event (any of `names`), route (a page.view whose route is in `routes`), or truth (a row in a ground-truth table — instrumentation-independent, so it also back-fills history from before tracking existed).",
+  "_funnelsDoc": "Ordered stages. A user counts at stage N only if they also reached every earlier stage, so the drop-off between rows is real. `match` is one of: event (any of `names`), route (a page.view whose route is in `routes`), or truth (a row in a ground-truth table \u2014 instrumentation-independent, so it also back-fills history from before tracking existed).",
   "_funnelsNote": "Shared-binder arrivals are deliberately NOT a funnel here. Answering it needs each binder's owner joined to the viewer, which this lane does not load - a route-only version would count owners opening their own binders as arrivals and quietly overstate the channel. The shares lane (scripts/shares.mjs, reports/shares.html) does it properly.",
   "funnels": [
     {
       "id": "pro-trial",
       "title": "PRO trial: awareness to activation",
-      "question": "How many users know the PRO trial exists, and how many start one?",
+      "question": "Of the people a trial can even be offered to, how many see it, and how many start one?",
       "apps": [
         "michi",
         "tcgscan"
       ],
       "stages": [
         {
-          "id": "arrived",
-          "label": "Opened the app",
-          "match": "event",
-          "names": [
-            "session.start"
-          ]
+          "id": "account",
+          "label": "Signed-in account",
+          "match": "account"
         },
         {
           "id": "engaged",
@@ -454,7 +596,9 @@
           "match": "truth",
           "truth": "trial"
         }
-      ]
+      ],
+      "scopeNote": "Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.",
+      "_denominatorNote": "The top stage is a POPULATION, not an action, so 'of top' is a share of signed-in accounts active in the window. It is deliberately not 'everyone who opened the app' - that number belongs to the signup funnel, which asks the question it actually answers."
     },
     {
       "id": "cap-wall-trial",
@@ -490,7 +634,8 @@
           "match": "event",
           "names": [
             "trial.start_click"
-          ]
+          ],
+          "caveat": "trial_click_unproven"
         },
         {
           "id": "started",
@@ -711,17 +856,17 @@
       "severity": "low",
       "status": "deferred",
       "title": "A binder open does not say what carried the visitor there",
-      "detail": "CORRECTED 2026-08-06. This was first written up as blocking, on the reasoning that a shared-link arrival was unrecordable. That was wrong, and Brian caught it: page.view already carries props.route = /binder/<uuid>, so the binder id is in the data, and joining it to binders.owner_id separates a visitor from the owner reading their own binder. The whole channel is measurable from rows that already exist — see the shares lane, which needed no app change. What genuinely remains is narrower: the route cannot say HOW someone arrived, so a link from a friend and a click from /discover are identical. 'Arrived cold' (a binder open as the account's first ever action) is the proxy, since in-app browsing does not produce that.",
+      "detail": "CORRECTED 2026-08-06. This was first written up as blocking, on the reasoning that a shared-link arrival was unrecordable. That was wrong, and Brian caught it: page.view already carries props.route = /binder/<uuid>, so the binder id is in the data, and joining it to binders.owner_id separates a visitor from the owner reading their own binder. The whole channel is measurable from rows that already exist \u2014 see the shares lane, which needed no app change. What genuinely remains is narrower: the route cannot say HOW someone arrived, so a link from a friend and a click from /discover are identical. 'Arrived cold' (a binder open as the account's first ever action) is the proxy, since in-app browsing does not produce that.",
       "direction": "channel volume is measurable; only the referring surface is unknown",
-      "fix": "not scheduled — deliberately. Distinguishing the two would need either a share token in the URL, which puts a tracking parameter in a link people paste to friends, or referrer capture, which is deferred for the privacy-copy reason under `referrer`. The share.* events registered in the taxonomy stay planned rather than specced: they would add sharer-side intent (made public, copied the link), which is a different question from arrivals and is not blocking anything."
+      "fix": "not scheduled \u2014 deliberately. Distinguishing the two would need either a share token in the URL, which puts a tracking parameter in a link people paste to friends, or referrer capture, which is deferred for the privacy-copy reason under `referrer`. The share.* events registered in the taxonomy stay planned rather than specced: they would add sharer-side intent (made public, copied the link), which is a different question from arrivals and is not blocking anything."
     },
     "landing_route_broken": {
       "severity": "high",
       "status": "fixed",
-      "title": "landing_route was never written — the update was never sent",
-      "detail": "Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it — no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.",
+      "title": "landing_route was never written \u2014 the update was never sent",
+      "detail": "Root cause found and fixed 2026-08-06 (michi-maker e07d2e1, tcgscan-app 7a979a8). Both apps wrote it through a bare `void supabase.from(...).update(...)`. supabase-js returns a PostgrestFilterBuilder, which is a LAZY thenable: it only issues its HTTP request when something calls .then(). `void builder` builds the query and drops it \u2014 no request, no error, nothing to catch. The sites that work (touchSession, and the guest-upgrade branch of resetSessionUser) all await, which is exactly why last_seen_at advanced normally while landing_route stayed null on all 91 sessions: same table, same policy, same session, different call shape. flushLastSeen had the identical defect, so the session_end fix was also silently doing nothing on the visibilitychange path. Not permissions: RLS grants authenticated UPDATE on auth.uid() = user_id, column-level UPDATE covers landing_route, and the guard trigger does not touch it.",
       "direction": "was: entry point unknown for every session, and session tails understated on tab-hide",
-      "fix": "FIXED — verified in production 2026-08-08: 30 of the 58 sessions started in the preceding 48h carry a non-null landing_route, where every one of the 91 sessions before the fix was null. The remainder are sessions that never recorded a page.view (landing_route is backfilled from the first one), not a residual failure."
+      "fix": "FIXED \u2014 verified in production 2026-08-08: 30 of the 58 sessions started in the preceding 48h carry a non-null landing_route, where every one of the 91 sessions before the fix was null. The remainder are sessions that never recorded a page.view (landing_route is backfilled from the first one), not a residual failure."
     },
     "tcgscan_search_blind": {
       "severity": "medium",
@@ -729,45 +874,45 @@
       "title": "TCGScan cannot see its own search queries",
       "detail": "Free-typed search on tcgscan runs inside the shared tcgscan-browse package, which exposes no onEvent callback, so the app cannot observe a query or its result count. What it emits are proxies from outside the kit: card.search { kind: 'similar' } when find-similar is pressed, and card.open when a detail opens (documented at tcgscan-app/src/app/(tabs)/browse/index.tsx:169). michi has no such boundary and does emit search.no_results. Discovered 2026-08-06 while verifying the gap fixes; it is why search.no_results is registered for michi only rather than pending forever on tcgscan.",
       "direction": "tcgscan search volume and zero-result rate are both unmeasurable; card.search understates real searching",
-      "fix": "add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app — not a local interception, which the code comment there explicitly warns against."
+      "fix": "add an onEvent callback to the tcgscan-browse package (search ran, result count), then consume it in tcgscan-app. Per tcgscan/AGENTS.md rule 3 that is a package release plus a commit-pin bump in each app \u2014 not a local interception, which the code comment there explicitly warns against."
     },
     "trial_awareness": {
       "severity": "blocking",
       "status": "landed",
       "title": "No impression event for the PRO trial offer",
-      "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.",
-      "direction": "understates awareness — currently makes it unmeasurable",
-      "_whyStillZero": "Verified 2026-08-06: the stage will keep reading zero even after pro.offer_shown ships, and that is a PRODUCT fact rather than an instrumentation one. useTrial returns early for guests (`if (!isSignedIn || !user) return`) and its state falls back to 'ineligible' when unresolved, so TrialCta renders null for every anonymous visitor. Guests are 3 of the 4 real users on michi. The one signed-in account (one michi account) has only ever visited /my-binders and two binder pages — never /plans, never a print gate. So nobody has been eligible AND in the right place. Do not read a persistent zero here as the fix having failed.",
+      "detail": "TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero \u2014 that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.",
+      "direction": "understates awareness \u2014 currently makes it unmeasurable",
+      "_whyStillZero": "Verified 2026-08-06: the stage will keep reading zero even after pro.offer_shown ships, and that is a PRODUCT fact rather than an instrumentation one. useTrial returns early for guests (`if (!isSignedIn || !user) return`) and its state falls back to 'ineligible' when unresolved, so TrialCta renders null for every anonymous visitor. Guests are 3 of the 4 real users on michi. The one signed-in account (one michi account) has only ever visited /my-binders and two binder pages \u2014 never /plans, never a print gate. So nobody has been eligible AND in the right place. Do not read a persistent zero here as the fix having failed.",
       "fix": "track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.",
-      "_landed": "Verified 2026-08-07 17:25 UTC: pro.offer_shown fired twice on michi, once per surface — { surface: 'print_gate' } and { surface: 'plans' } — from a guest who had just converted in place. The awareness stage is measurable. It reads 1 impression / 0 starts, which is a rate with n=1, not yet a conversion rate.",
+      "_landed": "Verified 2026-08-07 17:25 UTC: pro.offer_shown fired twice on michi, once per surface \u2014 { surface: 'print_gate' } and { surface: 'plans' } \u2014 from a guest who had just converted in place. The awareness stage is measurable. It reads 1 impression / 0 starts, which is a rate with n=1, not yet a conversion rate.",
       "_downgradedFromFixed": "2026-08-10, on an owner question the stream could not answer: 'was one michi account ever shown the PRO trial offer?' The event works; the GAP it was opened for does not close, for two reasons, and 'fixed' was hiding both.",
-      "_limit1_blindBeforeAug8": "pro.offer_shown cannot be read as absent for anything before 2026-08-08. Until commit 0459e47 (2026-08-08 17:28 -0700) track() discarded every event fired before the auth store landed cachedUser — see trial_start_dropped, where a real entitlement-granting activation vanished that way. the account's whole visit (2026-08-05 23:23 to 2026-08-06 23:23 UTC) sits inside that window, and the emitter itself was only committed at 2026-08-05 23:13 UTC, ten minutes before their first session, with no verified deploy time. For that period, no impression is NOT no offer.",
-      "_limit2_wrongCorpus": "The claim below in _whyStillZero — that one michi account 'never [hit] a print gate' — is now known to be the wrong question rather than a wrong answer. They hit a DIFFERENT gate, twice: both of their binders sit at exactly 16 of 16 pages, the free pagesPerBinder cap, and the second is titled 'part 2', which is the cap being worked around in plain sight. TrialCta never renders there, so pro.offer_shown is silent by construction, not by absence of intent. Measuring offer awareness while the cap gates that CREATE the intent emit nothing is measuring the wrong end of the funnel — tracked separately as cap_gates_blind.",
+      "_limit1_blindBeforeAug8": "pro.offer_shown cannot be read as absent for anything before 2026-08-08. Until commit 0459e47 (2026-08-08 17:28 -0700) track() discarded every event fired before the auth store landed cachedUser \u2014 see trial_start_dropped, where a real entitlement-granting activation vanished that way. the account's whole visit (2026-08-05 23:23 to 2026-08-06 23:23 UTC) sits inside that window, and the emitter itself was only committed at 2026-08-05 23:13 UTC, ten minutes before their first session, with no verified deploy time. For that period, no impression is NOT no offer.",
+      "_limit2_wrongCorpus": "The claim below in _whyStillZero \u2014 that one michi account 'never [hit] a print gate' \u2014 is now known to be the wrong question rather than a wrong answer. They hit a DIFFERENT gate, twice: both of their binders sit at exactly 16 of 16 pages, the free pagesPerBinder cap, and the second is titled 'part 2', which is the cap being worked around in plain sight. TrialCta never renders there, so pro.offer_shown is silent by construction, not by absence of intent. Measuring offer awareness while the cap gates that CREATE the intent emit nothing is measuring the wrong end of the funnel \u2014 tracked separately as cap_gates_blind.",
       "_toClose": "Ship cap_gates_blind, then re-verify awareness against a signed-in account that hits a cap AFTER 2026-08-08. Until an impression is observed for a user whose events were not droppable, this stays landed."
     },
     "cap_gates_blind": {
       "severity": "blocking",
       "status": "fixed",
       "title": "Cap gates emit nothing, so upgrade intent is invisible",
-      "detail": "Every tier limit in tier_caps can stop a user — binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection — and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.",
-      "direction": "understates upgrade intent to exactly zero — every cap hit ever is unrecorded",
-      "_evidence": "one michi account, a genuine external account (not excluded), created 2026-08-05 and active for one day. Ground truth: two binders, 'Ramochan binder idea' and 'part 2', BOTH at exactly 16 of 16 pages against the free pagesPerBinder cap of 16; 54 of 100 artworks; 2 of 3 binders. The stream for that account holds 11 page.view, 5 card.add, 4 session.start — and nothing about a limit. The workaround is legible in the title of the second binder and invisible in the events. Note the shape of the reasoning: the cap position came from product tables, the way trials do, which is why it survives the analytics drop window entirely.",
+      "detail": "Every tier limit in tier_caps can stop a user \u2014 binders, pagesPerBinder, artUploads, cardScansPerMonth, collections, cardsPerCollection \u2014 and none of them emit an event when they do. The only monetization impression the stream has is pro.offer_shown, which fires from TrialCta; a gate that refuses an action without rendering that button is invisible. Hitting a cap is the highest-intent moment the product has, and it is the one moment the stream cannot see.",
+      "direction": "understates upgrade intent to exactly zero \u2014 every cap hit ever is unrecorded",
+      "_evidence": "one michi account, a genuine external account (not excluded), created 2026-08-05 and active for one day. Ground truth: two binders, 'Ramochan binder idea' and 'part 2', BOTH at exactly 16 of 16 pages against the free pagesPerBinder cap of 16; 54 of 100 artworks; 2 of 3 binders. The stream for that account holds 11 page.view, 5 card.add, 4 session.start \u2014 and nothing about a limit. The workaround is legible in the title of the second binder and invisible in the events. Note the shape of the reasoning: the cap position came from product tables, the way trials do, which is why it survives the analytics drop window entirely.",
       "fix": "Emit cap.gate_shown { limit, surface, tier, used, cap } once per gate impression, where `limit` is the tier_caps limit_key verbatim (pagesPerBinder, binders, artUploads, cardScansPerMonth, collections, cardsPerCollection) so it joins to the cap with no lookup table. Emit cap.gate_dismissed { limit, surface } when the user backs out without acting. Where a gate already renders TrialCta, pass the SAME surface string so cap.gate_shown, pro.offer_shown and trial.start share one attribution key and the gate-to-trial funnel is a join rather than a guess. Specced in ../tcgscan/ANALYTICS-CAP-GATES.md.",
-      "_denominatorNote": "cap.gate_shown counts impressions of the block, which is the honest denominator for 'intent that met a wall'. It is NOT the count of users at a cap — an account can sit at 16 of 16 for weeks without touching the binder again, and that account is at the cap while emitting nothing. Read the two together: tier_caps position from the product tables for who IS capped, cap.gate_shown for who FELT it.",
-      "_landed": "Shipped in BOTH apps on 2026-08-10, same day it was specced (michi commit 7e4f324). michi calls trackCapGate() directly at each gate; tcgscan routes them through lib/gate-prompt.ts. All six limit_keys are covered — binders (5 sites), pagesPerBinder (4), cardsPerCollection (3), collections (2), cardScansPerMonth (2), artUploads (1). The spec's two load-bearing details survived implementation: `limit` is the tier_caps limit_key verbatim, and `tier` is stamped at the gate rather than inferred later. The apps also added capCount() to normalise an unlimited cap, because JSON.stringify(Infinity) is null and would have landed indistinguishable from 'not captured' — a good catch that was not in the spec.",
+      "_denominatorNote": "cap.gate_shown counts impressions of the block, which is the honest denominator for 'intent that met a wall'. It is NOT the count of users at a cap \u2014 an account can sit at 16 of 16 for weeks without touching the binder again, and that account is at the cap while emitting nothing. Read the two together: tier_caps position from the product tables for who IS capped, cap.gate_shown for who FELT it.",
+      "_landed": "Shipped in BOTH apps on 2026-08-10, same day it was specced (michi commit 7e4f324). michi calls trackCapGate() directly at each gate; tcgscan routes them through lib/gate-prompt.ts. All six limit_keys are covered \u2014 binders (5 sites), pagesPerBinder (4), cardsPerCollection (3), collections (2), cardScansPerMonth (2), artUploads (1). The spec's two load-bearing details survived implementation: `limit` is the tier_caps limit_key verbatim, and `tier` is stamped at the gate rather than inferred later. The apps also added capCount() to normalise an unlimited cap, because JSON.stringify(Infinity) is null and would have landed indistinguishable from 'not captured' \u2014 a good catch that was not in the spec.",
       "_fixed": "Observed 2026-08-27: michi's 30d window holds 12 cap.gate_shown events across 10 REAL (non-excluded) users, with limit/surface/tier/used/cap populated. The `_whyNotFixed` note below was written on 2026-08-10 when the count was zero and is kept for the reasoning, not the number. The browse.tsx capacity bug in `_blockedBy` no longer touches these props either: both browse gates now send used = the binder's own pages.length and cap = limits.pagesPerBinder, and the pagesPerBinder * 9 expression survives only as a UX trim on how many cards seed a new binder.",
       "_dismissalsStillZero": "cap.gate_dismissed remains at zero, and that zero was NOT a behavioural finding - it meant no call site. Until 2026-08-27 the only emitter was BuildBinderSheet; the nine walls behind useCapGate opened a dialog whose close path recorded nothing, and CapGateDialog handed the same onClose to its Not-now link and to the offer button, so a user who PRESSED the trial would have been counted as backing out had it fired at all. michi now emits it from useCapGate with via = not_now | close | navigate. Expect first rows once that build ships; a continued zero after that is a real finding.",
-      "_whyNotFixed": "Superseded by _fixed above; kept because the reasoning still binds. Written 2026-08-10, when analytics_events held zero cap.gate_shown and zero cap.gate_dismissed rows. Every call site is unexercised, so nothing has proven the props arrive shaped as promised. To close it, hit a real cap on a signed-in account and confirm one row per gate with limit/surface/tier/used/cap populated — the verification steps are in ../tcgscan/ANALYTICS-CAP-GATES.md. Do not mark this fixed on the strength of the code reading correctly; that is exactly the mistake trial_awareness made.",
-      "_blockedBy": "Verify AFTER the browse.tsx capacity bug is fixed (see the same work order). michi-maker/src/app/browse.tsx computes capacity as pagesPerBinder * 9, but a page is rows x cols and production holds 4x4, 3x4 and 2x2 pages — 15 of 330 are not 9 slots. Until that is corrected, `used` and `cap` on a gate emitted from browse inherit the error and would record the bug as if it were the user's behaviour."
+      "_whyNotFixed": "Superseded by _fixed above; kept because the reasoning still binds. Written 2026-08-10, when analytics_events held zero cap.gate_shown and zero cap.gate_dismissed rows. Every call site is unexercised, so nothing has proven the props arrive shaped as promised. To close it, hit a real cap on a signed-in account and confirm one row per gate with limit/surface/tier/used/cap populated \u2014 the verification steps are in ../tcgscan/ANALYTICS-CAP-GATES.md. Do not mark this fixed on the strength of the code reading correctly; that is exactly the mistake trial_awareness made.",
+      "_blockedBy": "Verify AFTER the browse.tsx capacity bug is fixed (see the same work order). michi-maker/src/app/browse.tsx computes capacity as pagesPerBinder * 9, but a page is rows x cols and production holds 4x4, 3x4 and 2x2 pages \u2014 15 of 330 are not 9 slots. Until that is corrected, `used` and `cap` on a gate emitted from browse inherit the error and would record the bug as if it were the user's behaviour."
     },
     "trial_start_dropped": {
       "severity": "high",
       "status": "open",
       "title": "A real trial activation produced no trial.start event",
-      "detail": "Found 2026-08-08 by activating a trial by hand on an owner account. Ground truth recorded it — public.pro_trials gained a row and entitlements a 14-day tier_pro grant, both stamped 23:33:09.484Z — but analytics_events has no trial.start, and has never had one. The call site is not missing: michi-maker/src/components/monetization/TrialCta.tsx:61 calls track('trial.start', { surface }) immediately after the RPC resolves, and its catch would have emitted trial.start_failed had the RPC thrown. Neither appeared. The cause is the guard at michi-maker/src/lib/analytics.ts:385 — `if (!supabase || !cachedUser) return;` — which discards an event when the analytics module has not yet been handed the auth identity by resetSessionUser(). Corroborated by the clock: michi's analytics_sessions row for that user was not created until 23:33:31.262Z, 21.8 seconds AFTER the grant, so no session and no cachedUser existed at the moment of the click. Every event emitted in that window is lost with no error and no counter.",
-      "direction": "understates trial starts, and silently — the surface attribution just added by trial_awareness cannot be joined to an activation, so offer-to-start conversion stays unmeasurable even though both ends now exist",
+      "detail": "Found 2026-08-08 by activating a trial by hand on an owner account. Ground truth recorded it \u2014 public.pro_trials gained a row and entitlements a 14-day tier_pro grant, both stamped 23:33:09.484Z \u2014 but analytics_events has no trial.start, and has never had one. The call site is not missing: michi-maker/src/components/monetization/TrialCta.tsx:61 calls track('trial.start', { surface }) immediately after the RPC resolves, and its catch would have emitted trial.start_failed had the RPC thrown. Neither appeared. The cause is the guard at michi-maker/src/lib/analytics.ts:385 \u2014 `if (!supabase || !cachedUser) return;` \u2014 which discards an event when the analytics module has not yet been handed the auth identity by resetSessionUser(). Corroborated by the clock: michi's analytics_sessions row for that user was not created until 23:33:31.262Z, 21.8 seconds AFTER the grant, so no session and no cachedUser existed at the moment of the click. Every event emitted in that window is lost with no error and no counter.",
+      "direction": "understates trial starts, and silently \u2014 the surface attribution just added by trial_awareness cannot be joined to an activation, so offer-to-start conversion stays unmeasurable even though both ends now exist",
       "_whyItMatters": "This is the exact failure the house rule about ground truth is for. The trial is not missing from the studio, because trials are read from pro_trials rather than the stream. Any metric that had trusted the event stream alone would have reported zero trials on a day one was actually started.",
-      "fix": "Preferred: emit from the start_pro_trial RPC server-side, which cannot be lost to a bootstrap race, a crash, or a blocked request — the comment at TrialCta.tsx:59 already names this as the more authoritative option. Cheaper alternative: buffer events emitted while cachedUser is null and flush on resetSessionUser(), rather than dropping them. Either way the drop should stop being silent — a swallowed analytics failure is correct, an unrecorded one that nothing counts is not. Specced in ../tcgscan/ANALYTICS-TRIAL-START-DROPPED.md."
+      "fix": "Preferred: emit from the start_pro_trial RPC server-side, which cannot be lost to a bootstrap race, a crash, or a blocked request \u2014 the comment at TrialCta.tsx:59 already names this as the more authoritative option. Cheaper alternative: buffer events emitted while cachedUser is null and flush on resetSessionUser(), rather than dropping them. Either way the drop should stop being silent \u2014 a swallowed analytics failure is correct, an unrecorded one that nothing counts is not. Specced in ../tcgscan/ANALYTICS-TRIAL-START-DROPPED.md."
     },
     "guest_upgrade": {
       "severity": "medium",
@@ -775,8 +920,8 @@
       "title": "A guest session is rewritten to look like it never was one",
       "detail": "The conversion event itself DOES exist: both apps emit account.created with props.via = 'guest_upgrade' (michi store/auth.tsx:309,348; tcgscan store/auth.tsx:198,266,283). What is lost is the session. resetSessionUser() patches analytics_sessions.is_guest in place when a guest signs up mid-session, so the row retroactively claims it was always an account. Sessions cannot be split into 'started as guest' and 'started signed in', and the session-level conversion rate is unrecoverable.",
       "direction": "guest-started sessions are undercounted; the conversion count itself is correct",
-      "fix": "stop mutating is_guest — make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it.",
-      "_fixed": "Proven by the first real conversion, 2026-08-07 17:24:58.845Z on michi — the only one that has ever happened, so this went from unexercised to verified on a sample of one. The session kept is_guest = true AND carries upgraded_at, and across all 181 sessions there are zero rows where upgraded_at is set but is_guest is false, which is the contradiction the old in-place rewrite produced. account.created followed 229ms later with via = 'guest_upgrade'. The whole pre-signup journey — /plans, /learn, a binder created while still a guest — stayed joined to the same uid."
+      "fix": "stop mutating is_guest \u2014 make it mean 'started as a guest' and add an upgraded_at column set at the transition, guarded by a trigger so a future client cannot regress it.",
+      "_fixed": "Proven by the first real conversion, 2026-08-07 17:24:58.845Z on michi \u2014 the only one that has ever happened, so this went from unexercised to verified on a sample of one. The session kept is_guest = true AND carries upgraded_at, and across all 181 sessions there are zero rows where upgraded_at is set but is_guest is false, which is the contradiction the old in-place rewrite produced. account.created followed 229ms later with via = 'guest_upgrade'. The whole pre-signup journey \u2014 /plans, /learn, a binder created while still a guest \u2014 stayed joined to the same uid."
     },
     "session_end": {
       "severity": "medium",
@@ -798,7 +943,7 @@
       "severity": "low",
       "status": "landed",
       "title": "A handful of events carry no props",
-      "detail": "Assessed against the code, not the recorded rows — the sample in the database is small enough to be misleading. Most call sites are already well instrumented: card.search carries kind, scan.capture carries mode and cards, csv.import carries cards, card.add carries source and count, account.created carries via, binder.add carries isDemo. The bare ones are demo.print, demo.tricolor_search, demo.csv_import, card.open, trial.start and the four collection.* events, so 'which demo precedes a signup' and 'which surface sold the trial' cannot be segmented.",
+      "detail": "Assessed against the code, not the recorded rows \u2014 the sample in the database is small enough to be misleading. Most call sites are already well instrumented: card.search carries kind, scan.capture carries mode and cards, csv.import carries cards, card.add carries source and count, account.created carries via, binder.add carries isDemo. The bare ones are demo.print, demo.tricolor_search, demo.csv_import, card.open, trial.start and the four collection.* events, so 'which demo precedes a signup' and 'which surface sold the trial' cannot be segmented.",
       "direction": "limits segmentation on those events only; biases no count",
       "fix": "add a small props object at those call sites; ids and counts only, per the no-PII rule in lib/analytics.ts."
     },
@@ -806,9 +951,9 @@
       "severity": "low",
       "status": "deferred",
       "title": "No acquisition source",
-      "detail": "Nothing records how a session arrived — no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials. DEFERRED by Brian on 2026-08-06, for a real reason rather than as a backlog punt: michi-maker/src/app/legal/privacy.tsx promises first-party records of 'which pages you open and product actions', and referrer/UTM are neither. Capturing them means changing that disclosure first, in both apps.",
+      "detail": "Nothing records how a session arrived \u2014 no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials. DEFERRED by Brian on 2026-08-06, for a real reason rather than as a backlog punt: michi-maker/src/app/legal/privacy.tsx promises first-party records of 'which pages you open and product actions', and referrer/UTM are neither. Capturing them means changing that disclosure first, in both apps.",
       "direction": "no attribution possible",
-      "fix": "not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change."
+      "fix": "not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database \u2014 and the privacy copy updated in the same change."
     },
     "upgrade_unconfirmed": {
       "severity": "medium",
@@ -863,6 +1008,27 @@
       "detail": "AGENTS.md in ../tcgscan requires michi-maker/src/lib/analytics.ts and tcgscan-app/src/lib/analytics.ts to differ only in APP, the storage key and michi's Json cast, on the stated grounds that a gap closed in one app is worse than the gap. Since 2026-08-27 they differ in more: michi's cap.gate_shown carries `as` (dialog | toast | inline), `is_guest` and `offer` (trial | upgrade | signin | toast); its cap.gate_dismissed takes an object with `via` (not_now | close | navigate) rather than two positional args; and it emits trial.start_click plus a trial.start_failed that carries surface and a refused/rpc_error reason. tcgscan-app has none of it, and its cap gates still route through lib/gate-prompt.ts rather than a useCapGate.",
       "direction": "any cross-app cap or trial comparison silently compares a segmented michi against an unsegmented tcgscan; every michi-only prop reads as absent rather than as not-collected",
       "fix": "Port the emitter additions verbatim (they are typed optional precisely so the tcgscan copy stays a valid subset), then give tcgscan-app the useCapGate + CapGateDialog pair so its walls are paced and instrumented at one chokepoint instead of nine. Until then, read `as` / `offer` / `via` as michi-only and never as a fleet number."
+    },
+    "trial_click_unproven": {
+      "severity": "important",
+      "status": "landed",
+      "title": "trial.start_click is shipped but has never fired",
+      "detail": "Until 2026-08-31 a press of the trial button left nothing behind unless the RPC answered: 'they never pressed' and 'they pressed and it did not come back' were the same silence (the failure class trial_start_dropped was written about). trackTrialStartClick now fires before the RPC in both TrialCta call paths, but the build carrying it reached production on 2026-08-31 19:23 UTC - dated by the first cap.gate_shown row carrying the `offer` prop, which shipped in the same change. So the 'Pressed start' stage has about a day of coverage and has never recorded a row.",
+      "direction": "the stage cannot yet distinguish 'nobody pressed' from 'we were not watching'. Read the OUTCOME from ground truth instead, which does not have this hole",
+      "fix": "Nothing to build - wait for traffic. Promote to fixed on the first observed trial.start_click. A continued zero once the stage has a few weeks behind it IS a finding, and a strong one, because the outcome it would explain is already established below.",
+      "_outcomeIsNotBlind": "The zero at 'Started a PRO trial' is NOT affected by this gap and must not be discounted along with it. start_pro_trial emits trial.start server-side inside the grant transaction, and pro_trials is the ledger; both cover all time and neither can be dropped by a client. Across both apps, all time, trial.start holds exactly one row (2026-08-24) and pro_trials holds two - every one of them an excluded owner account. Zero real users have ever started a trial, and that number is solid.",
+      "_whatIsBlind": "Only the press itself, and only before 2026-08-31. A real user who pressed and hit a refusal before that date would have emitted trial.start_failed; that event holds 2 rows, both ours, same day. So the evidence still points at 'never pressed' rather than 'pressed and broke' - it is just no longer the only reading the data admits."
+    },
+    "doggle_product_blind": {
+      "severity": "blocking",
+      "status": "landed",
+      "title": "Doggle and Pickleague emitted nothing about the product",
+      "detail": "Both native apps declared exactly four event names - session.start, page.view, auth.login, account.created - which is auth and navigation plumbing and no product at all. Over the 30 days to 2026-09-04 doggle's own tables recorded 132 points_ledger rows across 16 people, 31 dog_place_checkins across 5, 17 walks across 5, 6 badges and 4 dogs; the stream saw three accounts and no actions. Every 'why did they stop' question was unanswerable, and the coverage panel read 100% throughout because coverage is fired/declared and almost nothing was declared.",
+      "direction": "understated every behavioural question about doggle to nothing - the app looked fully instrumented while reporting no behaviour",
+      "fix": "Landed 2026-09-04 in doggle/app: prompt.shown / prompt.answered (the michi vocabulary verbatim, so the existing asks rollup reads them), push permission + token + open, location permission by scope, walk start/end/cancel, checkin create/out/failed, and discover.tab. Promote to fixed on the first observed row of each family, not on the code reading correctly - that is the mistake trial_awareness made.",
+      "_coverageRatioIsTheTrap": "Fixing the emitters is only half of it. Instrumentation coverage is fired/declared, so an app that declares four names and fires four scores 100% while michi's 22 of 24 scores 92% - the panel ranked the least instrumented app in the fleet above the most. The report needs the declared COUNT beside the ratio before either number is quoted.",
+      "_whatIsStillNotSeen": "Push SENDS. The client can only honestly record an open, because a delivered-and-ignored push is indistinguishable from one that never arrived. Sends live in doggle's alert_notification_outbox and the two are read together or not at all. Also unseen: app foreground/background lifecycle, and which build a stranded user is on - app_version is already on every session row, so that last one is a report nobody has written rather than an emitter anybody needs to add.",
+      "_explainPromptsAreWrapped": "doggle's ~10 explainer pop-ups run through expo-foundation's explain engine, which owns the modal and resolves a single boolean. So a cancel, a navigation-away and a confirmed action that threw all arrive as one value and land as `dismissed` rather than being split. An `onEvent` observer reporting all four endings is written and typechecking in the expo-foundation repo but unreleased; doggle is pinned to 1.25.0. Until that publishes, read doggle's prompt `declined` rate as absent, not as zero."
     }
   },
   "guestDepth": {

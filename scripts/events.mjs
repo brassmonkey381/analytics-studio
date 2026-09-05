@@ -342,8 +342,21 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   const funnels = [];
   for (const f of (CFG.funnels ?? []).filter((f) => (f.apps ?? []).includes(key))) {
     let carried = new Set(byUser.keys());
+    // A funnel whose first stage names a POPULATION scopes the denominator to it
+    // rather than counting the rest as a drop-off. "Was shown the PRO offer"
+    // falling from 299 to 16 read as a 95% leak when 284 of those 299 were
+    // guests, for whom the offer does not exist: useTrial returns 'ineligible'
+    // when there is no session, so TrialCta renders null and can never emit.
+    // Printing a structural impossibility as a funnel step is the same error as
+    // printing an unmeasured zero — see `scope` below, which states the size of
+    // what was set aside so the population is never silently narrowed.
+    let scope = null;
     if (f.stages[0]?.match === "guest") {
       carried = new Set([...byUser.values()].filter((u) => u.wasGuest).map((u) => u.id));
+    } else if (f.stages[0]?.match === "account") {
+      const all = byUser.size;
+      carried = new Set([...byUser.values()].filter((u) => !u.anon).map((u) => u.id));
+      scope = { setAside: all - carried.size, of: all, note: f.scopeNote ?? null };
     }
     const stages = [];
     const denom = carried.size;
@@ -355,6 +368,12 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
         // of the very funnel that measures conversion, so the stage that counts
         // signups could only ever count the ones that did NOT complete.
         next = new Set([...carried].filter((id) => byUser.get(id).wasGuest));
+      } else if (st.match === "account") {
+        // "is a signed-in account NOW" — the opposite tense to `guest` above,
+        // and the only population an entitlement, a tier or a trial can attach
+        // to. A guest who converted mid-window belongs here, which is why this
+        // reads `anon` (what they are) and not `wasGuest` (what they were).
+        next = new Set([...carried].filter((id) => !byUser.get(id).anon));
       } else if (st.match === "converted") {
         // Ground truth for the upgrade, and it disagrees with the event on
         // purpose. account.created fires the moment updateUser() returns, but
@@ -383,7 +402,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
       rosters.funnels[`${f.id}|${st.id}`] = roster(next, identity);
       carried = next;
     }
-    funnels.push({ id: f.id, title: f.title, question: f.question, stages });
+    funnels.push({ id: f.id, title: f.title, question: f.question, stages, scope });
   }
 
   // --- event / route / day rollups ---
@@ -438,9 +457,69 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   const gateRows = {};
   const promptRows = {};
   const offerRows = { shown: new Set(), declined: new Set(), clicked: new Set() };
+  const offerSurfaces = {};
   let offerShownCount = 0;
   let offerDeclinedCount = 0;
   let offerClickedCount = 0;
+
+  // Two indexes over the same ts-ordered stream, both needed to say WHERE an
+  // offer appeared rather than merely that it did.
+  //
+  //   viewsBySession — every page.view, so an offer can name the page under it.
+  //     `surface` is a fixed enum chosen at the call site and a sheet surface
+  //     like print_gate can open over several routes, so the route is the half
+  //     of the answer the enum cannot carry.
+  //   offersBySurface — offers keyed (session, surface), so a cap gate can be
+  //     asked whether the offer it is supposed to render actually rendered.
+  //     The emitter is under instruction to spell `surface` identically on
+  //     cap.gate_shown and pro.offer_shown precisely so this is a join and not
+  //     a guess (see CapSurface in michi-maker/src/lib/analytics.ts).
+  const viewsBySession = new Map();
+  const offersBySurface = new Map();
+  for (const e of events) {
+    if (e.name === "page.view") {
+      const r = normalizeRoute(e.props?.route);
+      if (!r) continue;
+      const arr = viewsBySession.get(e.session_id) ?? [];
+      arr.push({ t: Date.parse(e.ts), route: r });
+      viewsBySession.set(e.session_id, arr);
+    } else if (e.name === "pro.offer_shown") {
+      const k = `${e.session_id}|${e.props?.surface ?? "—"}`;
+      const arr = offersBySurface.get(k) ?? [];
+      arr.push(Date.parse(e.ts));
+      offersBySurface.set(k, arr);
+    }
+  }
+
+  // The NEAREST page.view either side, not the most recent one before. An offer
+  // fires from a mount effect and can beat its own screen's page.view to the
+  // wire: two of michi's plans impressions landed 0.04s BEFORE the /plans view
+  // and would otherwise be attributed to whatever page the user came from. Real
+  // dwell is never that short — the observed races are ≤0.05s to the next view
+  // while genuine reads sit ≥0.35s away — so proximity separates them cleanly
+  // where recency does not.
+  const routeAt = (sessionId, ts) => {
+    const arr = viewsBySession.get(sessionId);
+    if (!arr?.length) return null;
+    const t = Date.parse(ts);
+    let best = null;
+    let bestGap = Infinity;
+    for (const v of arr) {
+      const gap = Math.abs(v.t - t);
+      if (gap < bestGap) ((bestGap = gap), (best = v.route));
+    }
+    return best;
+  };
+
+  // Did the offer this wall is meant to carry actually render on it? Same
+  // session, same surface string, within a minute of the gate.
+  const OFFER_JOIN_MS = 60_000;
+  const offerFollowed = (sessionId, surface, ts) => {
+    const arr = offersBySurface.get(`${sessionId}|${surface ?? "—"}`);
+    if (!arr?.length) return false;
+    const t = Date.parse(ts);
+    return arr.some((o) => o >= t && o - t <= OFFER_JOIN_MS);
+  };
 
   for (const e of events) {
     const p = e.props ?? {};
@@ -459,10 +538,16 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
         guestKnown: 0,
         dismissed: 0,
         via: {},
+        offerHere: 0,
+        offered: new Set(),
       });
       if (e.name === "cap.gate_shown") {
         g.shown++;
         g.people.add(e.user_id);
+        if (offerFollowed(e.session_id, p.surface, e.ts)) {
+          g.offerHere++;
+          g.offered.add(e.user_id);
+        }
         countInto(g.as, p.as == null ? null : String(p.as), e.user_id);
         countInto(g.offer, p.offer == null ? null : String(p.offer), e.user_id);
         // Counted separately from the guests themselves, so the report can tell
@@ -498,15 +583,39 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
         r.answered++;
         countInto(r.response, p.response == null ? null : String(p.response), e.user_id);
       }
-    } else if (e.name === "pro.offer_shown") {
-      offerShownCount++;
-      offerRows.shown.add(e.user_id);
-    } else if (e.name === "pro.offer_declined") {
-      offerDeclinedCount++;
-      offerRows.declined.add(e.user_id);
-    } else if (e.name === "trial.start_click") {
-      offerClickedCount++;
-      offerRows.clicked.add(e.user_id);
+    } else if (e.name === "pro.offer_shown" || e.name === "pro.offer_declined" || e.name === "trial.start_click") {
+      // One row per SURFACE, the attribution key the emitter is built around.
+      // A decline or a press carries the same string as the impression it
+      // answers, so the three columns of a row are the same offer's lifecycle
+      // rather than three unrelated populations printed side by side.
+      const key = String(p.surface ?? "—");
+      const s = (offerSurfaces[key] ??= {
+        surface: key,
+        shown: 0,
+        people: new Set(),
+        routes: {},
+        declined: 0,
+        declinedPeople: new Set(),
+        clicked: 0,
+        clickedPeople: new Set(),
+      });
+      if (e.name === "pro.offer_shown") {
+        offerShownCount++;
+        offerRows.shown.add(e.user_id);
+        s.shown++;
+        s.people.add(e.user_id);
+        countInto(s.routes, routeAt(e.session_id, e.ts), e.user_id);
+      } else if (e.name === "pro.offer_declined") {
+        offerDeclinedCount++;
+        offerRows.declined.add(e.user_id);
+        s.declined++;
+        s.declinedPeople.add(e.user_id);
+      } else {
+        offerClickedCount++;
+        offerRows.clicked.add(e.user_id);
+        s.clicked++;
+        s.clickedPeople.add(e.user_id);
+      }
     }
   }
 
@@ -515,6 +624,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
       const k = `${g.limit}|${g.surface}`;
       rosters.asks[`gate|${k}`] = roster(g.people, identity);
       rosters.asks[`gateGuests|${k}`] = roster(g.guests, identity);
+      rosters.asks[`gateOffered|${k}`] = roster(g.offered, identity);
       for (const [v, b] of Object.entries(g.via)) rosters.asks[`gateVia|${k}|${v}`] = roster(b.users, identity);
       for (const [v, b] of Object.entries(g.offer)) rosters.asks[`gateOffer|${k}|${v}`] = roster(b.users, identity);
       return {
@@ -528,6 +638,11 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
         offer: flatten(g.offer),
         dismissed: g.dismissed,
         via: flatten(g.via),
+        // Gate impressions that were actually followed by the trial offer on
+        // this same surface. `offer` above is what the wall SAID it would draw;
+        // this is what the stream saw render.
+        offerHere: g.offerHere,
+        offeredPeople: g.offered.size,
       };
     })
     .sort((a, b) => b.shown - a.shown || a.limit.localeCompare(b.limit));
@@ -563,6 +678,27 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   rosters.asks["offerDeclined"] = roster(offerRows.declined, identity);
   rosters.asks["offerClicked"] = roster(offerRows.clicked, identity);
 
+  const offerBySurface = Object.values(offerSurfaces)
+    .map((s) => {
+      rosters.asks[`offerSurface|${s.surface}`] = roster(s.people, identity);
+      rosters.asks[`offerSurfaceDeclined|${s.surface}`] = roster(s.declinedPeople, identity);
+      rosters.asks[`offerSurfaceClicked|${s.surface}`] = roster(s.clickedPeople, identity);
+      for (const [r, b] of Object.entries(s.routes)) {
+        rosters.asks[`offerRoute|${s.surface}|${r}`] = roster(b.users, identity);
+      }
+      return {
+        surface: s.surface,
+        shown: s.shown,
+        people: s.people.size,
+        routes: flatten(s.routes),
+        declined: s.declined,
+        declinedPeople: s.declinedPeople.size,
+        clicked: s.clicked,
+        clickedPeople: s.clickedPeople.size,
+      };
+    })
+    .sort((a, b) => b.shown - a.shown || a.surface.localeCompare(b.surface));
+
   const asks = {
     gates,
     prompts,
@@ -573,6 +709,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
       declinedPeople: offerRows.declined.size,
       clicked: offerClickedCount,
       clickedPeople: offerRows.clicked.size,
+      bySurface: offerBySurface,
     },
   };
 

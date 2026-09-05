@@ -141,9 +141,17 @@ function funnel(f, appId) {
 </tr>`;
     })
     .join("\n");
+  // A scoped funnel says so, and says how big the set-aside was. Narrowing a
+  // population silently is the same sin as dropping exclusions silently: the
+  // reader cannot tell a denominator that was chosen from one that was assumed.
+  const scope = f.scope
+    ? `<div class="scope"><strong>${f.scope.setAside}</strong> of ${f.scope.of} people in this window are guests and are not counted here.${
+        f.scope.note ? ` ${esc(f.scope.note)}` : ""
+      }</div>`
+    : "";
   return `<div class="funnel">
   <div class="q">${esc(f.question)}</div>
-  <table class="ftab">${rows}</table>
+  ${scope}<table class="ftab">${rows}</table>
 </div>`;
 }
 
@@ -225,6 +233,20 @@ const OFFER_ORDER = ["trial", "upgrade", "signin", "toast"];
 const VIA_ORDER = ["not_now", "close", "navigate"];
 const RESPONSE_ORDER = ["accepted", "declined", "dismissed", "abandoned"];
 
+// Routes have no fixed vocabulary, so `breakdown`'s order list would flag every
+// one of them as new. Sorted by weight instead, and never flagged.
+function routes(map, appId, kindKey) {
+  const entries = Object.entries(map ?? {}).sort((a, b) => b[1].count - a[1].count);
+  if (!entries.length) return '<span class="muted">—</span>';
+  return entries
+    .map(([r, v]) =>
+      r === "—"
+        ? `<span class="muted" title="No page.view in the session to place it against">unplaced ${v.count}</span>`
+        : `<span class="hoverable"${hov(appId, "asks", `${kindKey}|${r}`)}><code>${esc(r)}</code> <strong>${v.count}</strong></span>`,
+    )
+    .join(' <span class="muted">·</span> ');
+}
+
 /** Prompts carry an id the studio does not otherwise know. Named here so the
  *  page reads in English, and labelled with what the prompt is FOR, because
  *  "avatar-consent" and "a photo we published without asking" are not the same
@@ -260,11 +282,16 @@ function asksPanel(w, appId) {
           : g.guests
             ? `<td class="num hoverable"${hov(appId, "asks", `gateGuests|${k}`)}>${g.guests}</td>`
             : `<td class="num muted">0</td>`;
-        return `<tr class="hoverable"${hov(appId, "asks", `gate|${k}`)}><td><code>${esc(g.limit)}</code></td><td class="muted">${esc(g.surface)}</td><td class="num">${g.shown}</td><td class="num">${g.people}</td>${guests}<td>${breakdown(g.as, appId, null, AS_ORDER)}</td><td>${breakdown(g.offer, appId, `gateOffer|${k}`, OFFER_ORDER)}</td><td>${g.dismissed ? breakdown(g.via, appId, `gateVia|${k}`, VIA_ORDER) : '<span class="muted">none recorded</span>'}</td></tr>`;
+        return `<tr class="hoverable"${hov(appId, "asks", `gate|${k}`)}><td><code>${esc(g.limit)}</code></td><td class="muted">${esc(g.surface)}</td><td class="num">${g.shown}</td><td class="num">${g.people}</td>${guests}<td>${breakdown(g.as, appId, null, AS_ORDER)}</td><td>${breakdown(g.offer, appId, `gateOffer|${k}`, OFFER_ORDER)}<div class="seen">${
+          g.offerHere
+            ? `<span class="hoverable"${hov(appId, "asks", `gateOffered|${k}`)}>trial rendered on <strong>${g.offerHere}</strong> of ${g.shown}</span>`
+            : `trial rendered on <strong>0</strong> of ${g.shown}`
+        }</div></td><td>${g.dismissed ? breakdown(g.via, appId, `gateVia|${k}`, VIA_ORDER) : '<span class="muted">none recorded</span>'}</td></tr>`;
       })
       .join("");
     out.push(
-      `<table class="tbl"><thead><tr><th>Wall</th><th>Where</th><th class="num">Shown</th><th class="num">People</th><th class="num">Guests</th><th>How</th><th>Offered</th><th>Backed out</th></tr></thead><tbody>${rows}</tbody></table>`,
+      `<table class="tbl"><thead><tr><th>Wall</th><th>Where</th><th class="num">Shown</th><th class="num">People</th><th class="num">Guests</th><th>How</th><th>Offer</th><th>Backed out</th></tr></thead><tbody>${rows}</tbody></table>`,
+      `<p class="note">The <strong>Offer</strong> column is two different things on purpose. The top line is what the wall SAID it was about to draw, stamped on <code>cap.gate_shown</code> at the moment it opened. The line under it is what the stream actually saw render — a <code>pro.offer_shown</code> in the same session carrying the same <code>surface</code> string, within a minute. They are allowed to disagree, and where they do the second one is the truth.</p>`,
       `<p class="note">A row is one wall — the <code>limit_key</code> and the surface it was met on, the pair that joins a gate to its offer. <strong>Shown</strong> counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. Read it next to the tier snapshot in the plans report, never instead of it.</p>`,
     );
   }
@@ -274,8 +301,21 @@ function asksPanel(w, appId) {
   if (off.shown) {
     const pcDecl = off.shown ? Math.round((off.declined / off.shown) * 1000) / 10 : 0;
     out.push(
-      `<p class="note">The PRO offer: shown <strong class="hoverable"${hov(appId, "asks", "offerShown")}>${off.shown}</strong> time${off.shown === 1 ? "" : "s"} to <strong>${off.shownPeople}</strong> ${off.shownPeople === 1 ? "person" : "people"}, walked away from <strong class="hoverable"${hov(appId, "asks", "offerDeclined")}>${off.declined}</strong> time${off.declined === 1 ? "" : "s"} (${pcDecl}%), pressed <strong class="hoverable"${hov(appId, "asks", "offerClicked")}>${off.clicked}</strong>. A decline is only recorded where walking away is an ACT — a dismissible dialog — never for leaving a page, so the shown and declined counts are deliberately not two ends of one bar.</p>`,
+      "<h4>Where the PRO offer was shown</h4>",
+      `<p class="note">Shown <strong class="hoverable"${hov(appId, "asks", "offerShown")}>${off.shown}</strong> time${off.shown === 1 ? "" : "s"} to <strong>${off.shownPeople}</strong> ${off.shownPeople === 1 ? "person" : "people"}, walked away from <strong class="hoverable"${hov(appId, "asks", "offerDeclined")}>${off.declined}</strong> time${off.declined === 1 ? "" : "s"} (${pcDecl}%), pressed <strong class="hoverable"${hov(appId, "asks", "offerClicked")}>${off.clicked}</strong>. A decline is only recorded where walking away is an ACT — a dismissible dialog — never for leaving a page, so the shown and declined counts are deliberately not two ends of one bar.</p>`,
     );
+    const rows = (off.bySurface ?? [])
+      .map(
+        (s) =>
+          `<tr><td class="hoverable"${hov(appId, "asks", `offerSurface|${s.surface}`)}><code>${esc(s.surface)}</code></td><td>${routes(s.routes, appId, `offerRoute|${s.surface}`)}</td><td class="num">${s.shown}</td><td class="num">${s.people}</td><td class="num${s.declined ? " hoverable" : " muted"}"${s.declined ? hov(appId, "asks", `offerSurfaceDeclined|${s.surface}`) : ""}>${s.declined}</td><td class="num${s.clicked ? " hoverable" : " muted"}"${s.clicked ? hov(appId, "asks", `offerSurfaceClicked|${s.surface}`) : ""}>${s.clicked}</td></tr>`,
+      )
+      .join("");
+    if (rows) {
+      out.push(
+        `<table class="tbl"><thead><tr><th>Surface</th><th>On which page</th><th class="num">Shown</th><th class="num">People</th><th class="num">Declined</th><th class="num">Pressed</th></tr></thead><tbody>${rows}</tbody></table>`,
+        `<p class="note"><strong>Surface</strong> is the fixed string the call site passes — the same vocabulary the walls above use, so a row here and a row up there are the same place when they share a name. <strong>On which page</strong> is the route the offer actually appeared over, which is the half the enum cannot carry: <code>print_gate</code> is a sheet and opens from more than one page. It is matched to the nearest <code>page.view</code> in the session rather than the most recent one, because the offer fires from a mount effect and can beat its own screen's view to the wire by a few hundredths of a second.</p>`,
+      );
+    }
   }
 
   // --- prompts, kept apart ---
@@ -616,11 +656,15 @@ h4 { font-size: 13px; margin: 18px 0 4px; color: var(--ink-2); font-weight: 600;
 .note { color: var(--muted); font-size: 12.5px; margin: 8px 0; }
 .empty { color: var(--muted); font-size: 13px; font-style: italic; margin: 10px 0; }
 .warn { color: var(--warn); }
+.seen { color: var(--muted); font-size: 11.5px; margin-top: 2px; }
 code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--muted); }
 
 
 .funnel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin: 8px 0 4px; }
 .funnel .q { color: var(--ink-2); font-size: 13px; margin-bottom: 8px; }
+.funnel .scope { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0 0 8px;
+  padding-left: 8px; border-left: 2px solid var(--border); }
+.funnel .scope strong { color: var(--ink-2); }
 .ftab { width: 100%; border-collapse: collapse; font-size: 13px; }
 .ftab td { padding: 3px 0; vertical-align: middle; }
 .ftab .fl { width: 34%; padding-right: 10px; }
@@ -729,6 +773,12 @@ const md = [
     ];
     for (const f of w.funnels) {
       lines.push(`### ${f.title}`, ``, `_${f.question}_`, ``);
+      if (f.scope) {
+        lines.push(
+          `> **${f.scope.setAside}** of ${f.scope.of} people in this window are guests and are not counted here.${f.scope.note ? ` ${f.scope.note}` : ""}`,
+          ``,
+        );
+      }
       for (const s of f.stages) {
         // Same rule as the HTML: a fixed gap no longer caveats its number.
         const caveat = s.caveat && GAPS[s.caveat]?.status !== "fixed" ? ` — see gap \`${s.caveat}\`` : "";
@@ -756,16 +806,16 @@ const md = [
         return parts.join(", ");
       };
       if (asks.gates.length) {
-        lines.push(`| Wall | Where | Shown | People | Guests | How | Offered | Backed out |`, `| --- | --- | ---: | ---: | ---: | --- | --- | --- |`);
+        lines.push(`| Wall | Where | Shown | People | Guests | How | Offer | Backed out |`, `| --- | --- | ---: | ---: | ---: | --- | --- | --- |`);
         for (const gt of asks.gates) {
           const guests = !gt.guestKnown ? "_not recorded_" : String(gt.guests);
           lines.push(
-            `| \`${gt.limit}\` | ${gt.surface} | ${gt.shown} | ${gt.people} | ${guests} | ${mdBreak(gt.as, AS_ORDER)} | ${mdBreak(gt.offer, OFFER_ORDER)} | ${gt.dismissed ? mdBreak(gt.via, VIA_ORDER) : "_none recorded_"} |`,
+            `| \`${gt.limit}\` | ${gt.surface} | ${gt.shown} | ${gt.people} | ${guests} | ${mdBreak(gt.as, AS_ORDER)} | ${mdBreak(gt.offer, OFFER_ORDER)}<br>_trial rendered on ${gt.offerHere} of ${gt.shown}_ | ${gt.dismissed ? mdBreak(gt.via, VIA_ORDER) : "_none recorded_"} |`,
           );
         }
         lines.push(
           ``,
-          `A row is one wall — the \`limit_key\` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing.`,
+          `A row is one wall — the \`limit_key\` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. The **Offer** column is two things: what the wall said it was about to draw, then what the stream saw render (a \`pro.offer_shown\` in the same session on the same \`surface\`, within a minute). Where they disagree, the second is the truth.`,
           ``,
         );
       }
@@ -775,6 +825,22 @@ const md = [
           `The PRO offer: shown **${off.shown}** time${off.shown === 1 ? "" : "s"} to **${off.shownPeople}** ${off.shownPeople === 1 ? "person" : "people"}, walked away from **${off.declined}**, pressed **${off.clicked}**. A decline is recorded only where walking away is an act, never for leaving a page.`,
           ``,
         );
+        const mdRoutes = (m) =>
+          Object.entries(m ?? {})
+            .sort((a, b) => b[1].count - a[1].count)
+            .map(([r, v]) => (r === "—" ? `_unplaced ${v.count}_` : `\`${r}\` ${v.count}`))
+            .join(", ") || "—";
+        if ((off.bySurface ?? []).length) {
+          lines.push(`| Surface | On which page | Shown | People | Declined | Pressed |`, `| --- | --- | ---: | ---: | ---: | ---: |`);
+          for (const s of off.bySurface) {
+            lines.push(`| \`${s.surface}\` | ${mdRoutes(s.routes)} | ${s.shown} | ${s.people} | ${s.declined} | ${s.clicked} |`);
+          }
+          lines.push(
+            ``,
+            `**Surface** is the fixed string the call site passes — the same vocabulary the walls above use. **On which page** is the route the offer appeared over, matched to the nearest \`page.view\` in the session rather than the most recent: the offer fires from a mount effect and can beat its own screen's view to the wire.`,
+            ``,
+          );
+        }
       }
       if (asks.prompts.length) {
         lines.push(`| Prompt | Shown | People | What came back |`, `| --- | ---: | ---: | --- |`);
