@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-09-08T18:26:51.473Z",
+  "collectedAt": "2026-09-09T18:05:27.051Z",
   "windows": [
     "all",
     1,
@@ -12,8 +12,8 @@
     "doggle": {
       "currency": "points",
       "balances": {
-        "accounts": 10,
-        "outstanding": 1790,
+        "accounts": 11,
+        "outstanding": 1875,
         "excludedAccounts": 39,
         "distribution": {
           "buckets": [
@@ -24,27 +24,27 @@
           "byWindow": {
             "1": [
               0,
-              6,
+              7,
               4
             ],
             "7": [
               0,
-              6,
+              7,
               4
             ],
             "14": [
               0,
-              6,
+              7,
               4
             ],
             "30": [
               0,
-              6,
+              7,
               4
             ],
             "all": [
               0,
-              6,
+              7,
               4
             ]
           }
@@ -52,34 +52,34 @@
       },
       "flows": {
         "1": {
-          "earned": 0,
+          "earned": 85,
           "spent": 0,
-          "rows": 0,
-          "earners": 0
+          "rows": 5,
+          "earners": 2
         },
         "7": {
-          "earned": 30,
+          "earned": 115,
           "spent": 0,
-          "rows": 2,
-          "earners": 2
+          "rows": 7,
+          "earners": 4
         },
         "14": {
-          "earned": 30,
+          "earned": 115,
           "spent": 0,
-          "rows": 2,
-          "earners": 2
+          "rows": 7,
+          "earners": 4
         },
         "30": {
-          "earned": 130,
+          "earned": 215,
           "spent": 0,
-          "rows": 9,
-          "earners": 5
+          "rows": 14,
+          "earners": 6
         },
         "all": {
-          "earned": 1815,
+          "earned": 1900,
           "spent": 25,
-          "rows": 82,
-          "earners": 10
+          "rows": 87,
+          "earners": 11
         }
       },
       "earnedDistribution": {
@@ -91,81 +91,124 @@
         "byWindow": {
           "1": [
             0,
-            0,
+            2,
             0
           ],
           "7": [
             0,
-            2,
+            4,
             0
           ],
           "14": [
             0,
-            2,
+            4,
             0
           ],
           "30": [
             0,
-            5,
+            6,
             0
           ],
           "all": [
             0,
-            6,
+            7,
             4
           ]
         }
       },
       "byReason": {
-        "1": [],
-        "7": [
+        "1": [
+          {
+            "category": "Onboarding",
+            "points": 50,
+            "rows": 2,
+            "users": 1
+          },
           {
             "category": "Login bonus",
             "points": 30,
             "rows": 2,
             "users": 2
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 5,
+            "rows": 1,
+            "users": 1
+          }
+        ],
+        "7": [
+          {
+            "category": "Login bonus",
+            "points": 60,
+            "rows": 4,
+            "users": 4
+          },
+          {
+            "category": "Onboarding",
+            "points": 50,
+            "rows": 2,
+            "users": 1
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 5,
+            "rows": 1,
+            "users": 1
           }
         ],
         "14": [
           {
             "category": "Login bonus",
-            "points": 30,
+            "points": 60,
+            "rows": 4,
+            "users": 4
+          },
+          {
+            "category": "Onboarding",
+            "points": 50,
             "rows": 2,
-            "users": 2
+            "users": 1
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 5,
+            "rows": 1,
+            "users": 1
           }
         ],
         "30": [
           {
             "category": "Login bonus",
-            "points": 90,
-            "rows": 6,
-            "users": 5
+            "points": 120,
+            "rows": 8,
+            "users": 6
           },
           {
             "category": "Onboarding",
-            "points": 30,
-            "rows": 1,
-            "users": 1
+            "points": 80,
+            "rows": 3,
+            "users": 2
           },
           {
             "category": "Checked in at a dog place",
-            "points": 10,
-            "rows": 2,
+            "points": 15,
+            "rows": 3,
             "users": 1
           }
         ],
         "all": [
           {
             "category": "Login bonus",
-            "points": 891,
-            "rows": 42,
-            "users": 10
+            "points": 921,
+            "rows": 44,
+            "users": 11
           },
           {
             "category": "Onboarding",
-            "points": 320,
-            "rows": 17,
-            "users": 7
+            "points": 370,
+            "rows": 19,
+            "users": 8
           },
           {
             "category": "Referral welcome",
@@ -181,8 +224,8 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 70,
-            "rows": 14,
+            "points": 75,
+            "rows": 15,
             "users": 2
           },
           {
@@ -210,8 +253,8 @@
     "pickleague": {
       "currency": "pickles",
       "balances": {
-        "accounts": 8,
-        "outstanding": 8822820,
+        "accounts": 9,
+        "outstanding": 8822970,
         "excludedAccounts": 512,
         "topShare": 99.8,
         "distribution": {
@@ -228,7 +271,7 @@
             "1": [
               0,
               0,
-              2,
+              3,
               5,
               0,
               0,
@@ -237,7 +280,7 @@
             "7": [
               0,
               0,
-              2,
+              3,
               5,
               0,
               0,
@@ -246,7 +289,7 @@
             "14": [
               0,
               0,
-              2,
+              3,
               5,
               0,
               0,
@@ -255,7 +298,7 @@
             "30": [
               0,
               0,
-              2,
+              3,
               5,
               0,
               0,
@@ -264,7 +307,7 @@
             "all": [
               0,
               0,
-              2,
+              3,
               5,
               0,
               0,
@@ -292,7 +335,7 @@
         "30": {
           "earnedMeasured": 0,
           "spent": 0,
-          "grantEventsWithoutAmount": 10
+          "grantEventsWithoutAmount": 2
         },
         "all": {
           "earnedMeasured": 400,
@@ -328,7 +371,7 @@
           ]
         }
       },
-      "excludedFlowRows": 730
+      "excludedFlowRows": 745
     },
     "caps": {
       "binders": {
@@ -342,14 +385,14 @@
         ],
         "counts": [
           0,
-          33,
-          5,
+          36,
+          6,
           0,
-          113
+          116
         ],
-        "users": 151,
+        "users": 158,
         "uncapped": 0,
-        "atCap": 113
+        "atCap": 116
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -361,13 +404,13 @@
           "at / over cap"
         ],
         "counts": [
-          115,
-          10,
+          121,
+          11,
           11,
           4,
           11
         ],
-        "users": 151,
+        "users": 158,
         "uncapped": 0,
         "atCap": 11
       },
@@ -381,13 +424,13 @@
           "at / over cap"
         ],
         "counts": [
-          15,
-          8,
+          16,
+          9,
           11,
           9,
           3
         ],
-        "users": 46,
+        "users": 48,
         "uncapped": 0,
         "atCap": 3
       },
@@ -472,10 +515,10 @@
         "atCap": 0
       },
       "_accounts": {
-        "total": 1756,
-        "guests": 1680,
-        "excluded": 1113,
-        "excludedUsageRows": 181
+        "total": 1812,
+        "guests": 1729,
+        "excluded": 1144,
+        "excludedUsageRows": 182
       }
     }
   }
