@@ -495,7 +495,38 @@
         "michi"
       ]
     },
-    "_pairingDoc": "binder.rebuild_from_tcgscan and tcgscan.pairing_click are the CROSS-APP seam, and they are michi-only for a reason that is not asymmetry: both fire in michi about tcgscan. binder.rebuild_from_tcgscan { pages, placed, unplaced } is the payoff of the pairing - a scanned collection becoming a real binder - and `unplaced` is the honest half: cards that came across and did not fit anywhere. tcgscan.pairing_click { surface } is the pitch being followed OUT of michi, so it has no landing event on the other side; TCGScan's own session.start is the nearest thing and it cannot be joined (a browser hop, no shared session id). Read the click as intent, never as an arrival - and see gaps.share_attribution for the same shape of problem."
+    "_pairingDoc": "binder.rebuild_from_tcgscan and tcgscan.pairing_click are the CROSS-APP seam, and they are michi-only for a reason that is not asymmetry: both fire in michi about tcgscan. binder.rebuild_from_tcgscan { pages, placed, unplaced } is the payoff of the pairing - a scanned collection becoming a real binder - and `unplaced` is the honest half: cards that came across and did not fit anywhere. tcgscan.pairing_click { surface } is the pitch being followed OUT of michi, so it has no landing event on the other side; TCGScan's own session.start is the nearest thing and it cannot be joined (a browser hop, no shared session id). Read the click as intent, never as an arrival - and see gaps.share_attribution for the same shape of problem.",
+    "walkthrough.shown": {
+      "label": "Was shown the binder walkthrough",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "walkthrough.step": {
+      "label": "Reached a walkthrough step",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "walkthrough.done": {
+      "label": "Finished or dismissed the walkthrough",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_walkthroughDoc": "walkthrough.shown { walkthrough, width, tier } / .step { walkthrough, step } / .done { walkthrough, via, last_step } are the first-pocket walkthrough shipped 2026-09-10 against the binder->card cliff: of 142 people who made a binder in the 30 days before it, 69 (49%) never put a card in one, and 85% of those who did managed it within five minutes - a comprehension wall, not a difficulty curve. Steps observed so far: ring -> card -> placed. `via` on .done separates finishing from dismissing, so a walkthrough people close is never counted as one that worked. READ .shown AS A DENOMINATOR, NOT A REACH: it fires once ever per person by design, so it counts first-time editors and nothing else; comparing it to binder.add across a window that straddles the deploy compares two different populations. `width` is the viewport in CSS pixels and is the FIRST device signal in the michi stream - analytics_sessions has platform ('web' for everyone here) and no viewport, so before this the only way to tell desktop from mobile web was a join to auth.sessions.user_agent, outside this lane. It is only present for people who saw the walkthrough.",
+    "_themeButtonSeam": "demo.theme_search CHANGED MEANING AT 2026-09-10 08:38 UTC and the two sides must never be pooled. Before: one fixed query (theme:forest) every press, no `theme` prop. A second or third press returned the identical grid, and that repeat was a FAILURE signal - 8 of 17 people who pressed it pressed again within a minute, 16 rapid repeats in all, and it was the last event of the first session for 7 people. After: the button rotates 30 measured themes (data/demoThemes.ts, each with a >=40-match floor), stamps which one as `theme`, and the THIRD press opens the PRO offer instead of repeating. So a repeat press now means EXPLORING, and a rising repeat count after the seam is the fix working rather than the problem worsening. Rows before the seam carry no `theme` - that null is 'the prop did not exist', not 'no theme'. Split on the timestamp, always.",
+    "story.build": {
+      "label": "Built a binder from a story template",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_storyBuildDoc": "story.build { template, pages, art, source, rarity } fires from StoryBinderSheet when someone builds a binder from a template rather than filling one pocket at a time. It is the OTHER route past the binder->card cliff and belongs beside the walkthrough when that fix is scored: a template build lands cards without the user ever pressing a pocket, so a rising story.build and a flat binder.slot_press would both be a success and would look like nothing changed in the editor. `pages` and `art` are counts of what the plan asked for, not what survived - the art jobs can fail per-card, and nothing yet records that they did."
   },
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness \u2014 the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
@@ -1029,6 +1060,16 @@
       "_coverageRatioIsTheTrap": "Fixing the emitters is only half of it. Instrumentation coverage is fired/declared, so an app that declares four names and fires four scores 100% while michi's 22 of 24 scores 92% - the panel ranked the least instrumented app in the fleet above the most. The report needs the declared COUNT beside the ratio before either number is quoted.",
       "_whatIsStillNotSeen": "Push SENDS. The client can only honestly record an open, because a delivered-and-ignored push is indistinguishable from one that never arrived. Sends live in doggle's alert_notification_outbox and the two are read together or not at all. Also unseen: app foreground/background lifecycle, and which build a stranded user is on - app_version is already on every session row, so that last one is a report nobody has written rather than an emitter anybody needs to add.",
       "_explainPromptsAreWrapped": "doggle's ~10 explainer pop-ups run through expo-foundation's explain engine, which owns the modal and resolves a single boolean. So a cancel, a navigation-away and a confirmed action that threw all arrive as one value and land as `dismissed` rather than being split. An `onEvent` observer reporting all four endings is written and typechecking in the expo-foundation repo but unreleased; doggle is pinned to 1.25.0. Until that publishes, read doggle's prompt `declined` rate as absent, not as zero."
+    },
+    "binder_editor_blind": {
+      "severity": "blocking",
+      "status": "open",
+      "title": "The binder editor emits nothing about editing",
+      "detail": "src/components/binder/ has exactly two track() calls - demo.print and demo.tricolor_search, both upsells. There is no event for entering edit mode, pressing a pocket, opening or closing the cards dock, typing in its search box, or starting a drag that never lands. The workbench is the product and the stream cannot see any of it. Measured cost: 136 single-sitting sessions in which a binder was created averaged 15 minutes long with 6 minutes of silence at the end, and 56 of them (41%) went over a minute with the session alive and nothing recorded.",
+      "direction": "makes every 'why did they stop' question unanswerable from the stream - the 69 people who made a binder and never added a card have an event history of page.view, session.start and binder.add, and nothing else",
+      "fix": "Emit binder.slot_press { filled }, dock.open / dock.close { tab, fit }, card.search from the dock's own box (michi's only search event is search.no_results, and it fires from ColorSearchSheet, not the main box - see tcgscan_search_blind), and a drag that starts without landing. The walkthrough shipped 2026-09-10 covers the teaching half of this; it does not make the editor observable.",
+      "_whyItMattersMoreNow": "The 2026-09-10 changes are a bet that people stalled because nothing told them what to do. Without editor events the only way to score that bet is the binder->card rate, which says whether it worked and never why. A walkthrough that is shown, stepped through and followed by no card is a different failure from one that is dismissed at the ring, and today only the second is visible.",
+      "_howWeFoundIt": "Not from the stream. @scorbuns (2026-09-09) was reconstructed from the tcgscan-data project's edge logs - catalog.enc 1.6MB HTTP 200, 272 requests all 200, CDN 137 HIT / 76 MISS, 16 result images 335ms after the search and 3 more 11 seconds later, which is how we know they scrolled. Those logs retain for days, not months, so that method answers questions about this week and never about last month."
     }
   },
   "guestDepth": {

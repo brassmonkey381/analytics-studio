@@ -1,25 +1,25 @@
 # Event analytics — last 30 days
 
-Collected 2026-09-10T17:39:39.880Z. Own/QA/automated accounts excluded.
+Collected 2026-09-10T23:07:51.604Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-671 sessions · 6484 events · 53 accounts + 379 guests · median session 1m
-Excluded: 955 sessions, 8484 events (our own, QA and automated accounts).
+673 sessions · 6496 events · 53 accounts + 382 guests · median session 1m
+Excluded: 963 sessions, 8670 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 26 | 218 | 19 |
-| 7d | 229 | 2744 | 153 |
-| 14d | 374 | 4152 | 248 |
-| 30d | 671 | 6484 | 432 |
+| 24h | 23 | 206 | 19 |
+| 7d | 226 | 2599 | 151 |
+| 14d | 376 | 4159 | 251 |
+| 30d | 673 | 6496 | 435 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **379** of 432 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **382** of 435 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
 - **53** Signed-in account (100% of top)
 - **53** Did anything past the open (100% of top)
@@ -31,7 +31,7 @@ _Of the people a trial can even be offered to, how many see it, and how many sta
 _When a plan limit actually stops someone, does the trial offer sitting there convert them?_
 
 - **20** Was stopped by a plan limit (4.6% of top)
-- **8** Was shown the PRO offer (1.9% of top) — see gap `trial_awareness`
+- **8** Was shown the PRO offer (1.8% of top) — see gap `trial_awareness`
 - **1** Pressed start (0.2% of top) — see gap `trial_click_unproven`
 - **1** Started a PRO trial (0.2% of top)
 
@@ -39,8 +39,8 @@ _When a plan limit actually stops someone, does the trial offer sitting there co
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **426** Opened the app (98.6% of top)
-- **417** Viewed a page (96.5% of top)
+- **429** Opened the app (98.6% of top)
+- **420** Viewed a page (96.6% of top)
 - **12** Tried a demo (2.8% of top)
 - **12** Made something real (2.8% of top)
 
@@ -48,9 +48,9 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **402** Started as a guest (100% of top)
-- **387** Did anything at all (96.3% of top)
-- **54** Submitted the upgrade (13.4% of top) — see gap `upgrade_unconfirmed`
+- **405** Started as a guest (100% of top)
+- **390** Did anything at all (96.3% of top)
+- **54** Submitted the upgrade (13.3% of top) — see gap `upgrade_unconfirmed`
 - **21** Completed it (ground truth) (5.2% of top)
 
 ### Print & QR campaigns
@@ -125,22 +125,22 @@ The PRO offer: shown **86** times to **27** people, walked away from **22**, pre
 
 ### What guests did past the open
 
-402 people opened as a guest across 503 sessions.
+405 people opened as a guest across 505 sessions.
 
-| How far they got | People | of 402 |
+| How far they got | People | of 405 |
 | --- | ---: | ---: |
 | Opened and left | 15 | 3.7% |
-| Looked at a page or two | 134 | 33.3% |
-| Wandered the site | 134 | 33.3% |
-| Built something | 119 | 29.6% |
+| Looked at a page or two | 136 | 33.6% |
+| Wandered the site | 136 | 33.6% |
+| Built something | 118 | 29.1% |
 
-Of the 119 who built something, **23** created an account.
+Of the 118 who built something, **23** created an account.
 
 **46** guests walked to a pricing page; **14** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 119 | 141 |
+| Created a binder (`binder.add`) | 118 | 140 |
 | Added cards (`card.add`) | 59 | 791 |
 | Account created (`account.created`) | 54 | 60 |
 | Hit a plan limit (`cap.gate_shown`) | 16 | 23 |
@@ -154,34 +154,34 @@ Of the 119 who built something, **23** created an account.
 | Dismissed the PRO offer (`pro.offer_declined`) | 6 | 7 |
 | Tried the example import (`demo.csv_import`) | 3 | 5 |
 | Followed the TCGScan pairing pitch (`tcgscan.pairing_click`) | 2 | 10 |
-| walkthrough.step (`walkthrough.step`) | 2 | 4 |
+| Reached a walkthrough step (`walkthrough.step`) | 2 | 4 |
 | Tried tri-color search (`demo.tricolor_search`) | 2 | 2 |
-| walkthrough.shown (`walkthrough.shown`) | 2 | 2 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
-| walkthrough.done (`walkthrough.done`) | 1 | 1 |
+| Finished or dismissed the walkthrough (`walkthrough.done`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/welcome` | 356 | 407 |
-| `/` | 319 | 788 |
-| `/binder/:id` | 162 | 441 |
-| `/my-binders` | 140 | 393 |
-| `/michi-method` | 72 | 103 |
+| `/welcome` | 359 | 410 |
+| `/` | 322 | 795 |
+| `/binder/:id` | 161 | 440 |
+| `/my-binders` | 139 | 392 |
+| `/michi-method` | 73 | 104 |
 | `/discover` | 57 | 90 |
 | `/browse` | 51 | 70 |
-| `/learn` | 43 | 52 |
-| `/plans` _(pricing)_ | 37 | 45 |
+| `/learn` | 44 | 53 |
+| `/plans` _(pricing)_ | 38 | 47 |
 | `/contest` | 26 | 31 |
 | `/binder/ex-pitch-black-chase` | 16 | 16 |
-| `/purchases` _(pricing)_ | 14 | 20 |
+| `/binder/ex-color-play` | 14 | 15 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 3288 | 417 |
+| Viewed a page (`page.view`) | 3299 | 420 |
 | Added cards (`card.add`) | 1902 | 74 |
-| Session started (`session.start`) | 665 | 426 |
-| Created a binder (`binder.add`) | 177 | 141 |
+| Session started (`session.start`) | 667 | 429 |
+| Created a binder (`binder.add`) | 176 | 140 |
 | Saw the PRO offer (`pro.offer_shown`) | 86 | 27 |
 | Account created (`account.created`) | 60 | 54 |
 | Signed in (`auth.login`) | 52 | 38 |
@@ -194,27 +194,27 @@ Of the 119 who built something, **23** created an account.
 | Backed out of a limit (`cap.gate_dismissed`) | 12 | 10 |
 | Searched cards (`card.search`) | 10 | 8 |
 | Tried the example import (`demo.csv_import`) | 10 | 8 |
-| walkthrough.step (`walkthrough.step`) | 4 | 2 |
+| Reached a walkthrough step (`walkthrough.step`) | 4 | 2 |
 | Tried tri-color search (`demo.tricolor_search`) | 3 | 3 |
 | Pressed the PRO trial button (`trial.start_click`) | 2 | 2 |
 | Started a PRO trial (`trial.start`) | 2 | 2 |
-| walkthrough.shown (`walkthrough.shown`) | 2 | 2 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
-| walkthrough.done (`walkthrough.done`) | 1 | 1 |
+| Finished or dismissed the walkthrough (`walkthrough.done`) | 1 | 1 |
 
-Instrumentation: 25/27 events verified firing (all traffic, all time).
+Instrumentation: 29/31 events verified firing (all traffic, all time).
 
 Never fired by anyone (unverified): `csv.import_failed`, `search.no_results`
 
-Works, but not yet from a real user: `demo.curation`, `compose.pages_kept`, `trial.start_failed`, `binder.rebuild_from_tcgscan`
+Works, but not yet from a real user: `demo.curation`, `compose.pages_kept`, `trial.start_failed`, `binder.rebuild_from_tcgscan`, `story.build`
 
 Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
 26 sessions · 137 events · 2 accounts + 13 guests · median session 5s
-Excluded: 677 sessions, 9365 events (our own, QA and automated accounts).
+Excluded: 714 sessions, 9907 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
@@ -311,13 +311,13 @@ Works, but not yet from a real user: `card.search`, `scan.capture`, `collection.
 ## Doggle
 
 107 sessions · 402 events · 4 accounts + 103 guests · median session 1s
-Excluded: 164 sessions, 949 events (our own, QA and automated accounts).
+Excluded: 165 sessions, 963 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 3 | 10 | 3 |
-| 7d | 38 | 166 | 34 |
-| 14d | 61 | 274 | 52 |
+| 7d | 26 | 114 | 32 |
+| 14d | 60 | 273 | 51 |
 | 30d | 107 | 402 | 107 |
 
 ### Visitor to account
@@ -387,12 +387,12 @@ Works, but not yet from a real user: `auth.login`, `session.recovered`, `session
 ## Pickleague
 
 31 sessions · 79 events · 0 accounts + 25 guests · median session 4s
-Excluded: 86 sessions, 539 events (our own, QA and automated accounts).
+Excluded: 90 sessions, 594 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 1 | 0 | 1 |
-| 7d | 10 | 14 | 4 |
+| 7d | 9 | 12 | 3 |
 | 14d | 18 | 41 | 11 |
 | 30d | 31 | 79 | 25 |
 
@@ -435,6 +435,14 @@ Never fired by anyone (unverified): `account.created`
 Works, but not yet from a real user: `auth.login`
 
 ## Tracking gaps
+
+### The binder editor emits nothing about editing `binder_editor_blind` (blocking, open)
+
+src/components/binder/ has exactly two track() calls - demo.print and demo.tricolor_search, both upsells. There is no event for entering edit mode, pressing a pocket, opening or closing the cards dock, typing in its search box, or starting a drag that never lands. The workbench is the product and the stream cannot see any of it. Measured cost: 136 single-sitting sessions in which a binder was created averaged 15 minutes long with 6 minutes of silence at the end, and 56 of them (41%) went over a minute with the session alive and nothing recorded.
+
+**Effect:** makes every 'why did they stop' question unanswerable from the stream - the 69 people who made a binder and never added a card have an event history of page.view, session.start and binder.add, and nothing else
+
+**Fix:** Emit binder.slot_press { filled }, dock.open / dock.close { tab, fit }, card.search from the dock's own box (michi's only search event is search.no_results, and it fires from ColorSearchSheet, not the main box - see tcgscan_search_blind), and a drag that starts without landing. The walkthrough shipped 2026-09-10 covers the teaching half of this; it does not make the editor observable.
 
 ### A real trial activation produced no trial.start event `trial_start_dropped` (high, open)
 
