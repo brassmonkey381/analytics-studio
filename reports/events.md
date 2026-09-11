@@ -1,19 +1,19 @@
 # Event analytics — last 30 days
 
-Collected 2026-09-10T23:07:51.604Z. Own/QA/automated accounts excluded.
+Collected 2026-09-11T06:42:30.292Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-673 sessions · 6496 events · 53 accounts + 382 guests · median session 1m
-Excluded: 963 sessions, 8670 events (our own, QA and automated accounts).
+677 sessions · 6526 events · 53 accounts + 382 guests · median session 1m
+Excluded: 964 sessions, 8703 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 23 | 206 | 19 |
-| 7d | 226 | 2599 | 151 |
-| 14d | 376 | 4159 | 251 |
-| 30d | 673 | 6496 | 435 |
+| 24h | 24 | 159 | 17 |
+| 7d | 218 | 2552 | 144 |
+| 14d | 374 | 4155 | 245 |
+| 30d | 677 | 6526 | 435 |
 
 ### PRO trial: awareness to activation
 
@@ -23,7 +23,7 @@ _Of the people a trial can even be offered to, how many see it, and how many sta
 
 - **53** Signed-in account (100% of top)
 - **53** Did anything past the open (100% of top)
-- **27** Was shown the PRO offer (50.9% of top) — see gap `trial_awareness`
+- **27** Was shown the PRO offer (50.9% of top)
 - **2** Started a PRO trial (3.8% of top)
 
 ### The wall: refusal to trial
@@ -31,8 +31,8 @@ _Of the people a trial can even be offered to, how many see it, and how many sta
 _When a plan limit actually stops someone, does the trial offer sitting there convert them?_
 
 - **20** Was stopped by a plan limit (4.6% of top)
-- **8** Was shown the PRO offer (1.8% of top) — see gap `trial_awareness`
-- **1** Pressed start (0.2% of top) — see gap `trial_click_unproven`
+- **8** Was shown the PRO offer (1.8% of top)
+- **1** Pressed start (0.2% of top)
 - **1** Started a PRO trial (0.2% of top)
 
 ### First-session activation
@@ -40,7 +40,7 @@ _When a plan limit actually stops someone, does the trial offer sitting there co
 _Do people who open the app ever do the core thing it is for?_
 
 - **429** Opened the app (98.6% of top)
-- **420** Viewed a page (96.6% of top)
+- **421** Viewed a page (96.8% of top)
 - **12** Tried a demo (2.8% of top)
 - **12** Made something real (2.8% of top)
 
@@ -49,7 +49,7 @@ _Do people who open the app ever do the core thing it is for?_
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
 - **405** Started as a guest (100% of top)
-- **390** Did anything at all (96.3% of top)
+- **391** Did anything at all (96.5% of top)
 - **54** Submitted the upgrade (13.3% of top) — see gap `upgrade_unconfirmed`
 - **21** Completed it (ground truth) (5.2% of top)
 
@@ -125,23 +125,23 @@ The PRO offer: shown **86** times to **27** people, walked away from **22**, pre
 
 ### What guests did past the open
 
-405 people opened as a guest across 505 sessions.
+405 people opened as a guest across 508 sessions.
 
 | How far they got | People | of 405 |
 | --- | ---: | ---: |
-| Opened and left | 15 | 3.7% |
-| Looked at a page or two | 136 | 33.6% |
-| Wandered the site | 136 | 33.6% |
-| Built something | 118 | 29.1% |
+| Opened and left | 14 | 3.5% |
+| Looked at a page or two | 134 | 33.1% |
+| Wandered the site | 138 | 34.1% |
+| Built something | 119 | 29.4% |
 
-Of the 118 who built something, **23** created an account.
+Of the 119 who built something, **23** created an account.
 
 **46** guests walked to a pricing page; **14** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 118 | 140 |
-| Added cards (`card.add`) | 59 | 791 |
+| Created a binder (`binder.add`) | 119 | 141 |
+| Added cards (`card.add`) | 60 | 797 |
 | Account created (`account.created`) | 54 | 60 |
 | Hit a plan limit (`cap.gate_shown`) | 16 | 23 |
 | Saw the PRO offer (`pro.offer_shown`) | 14 | 43 |
@@ -152,21 +152,21 @@ Of the 118 who built something, **23** created an account.
 | Backed out of a limit (`cap.gate_dismissed`) | 7 | 7 |
 | Searched cards (`card.search`) | 6 | 8 |
 | Dismissed the PRO offer (`pro.offer_declined`) | 6 | 7 |
+| Reached a walkthrough step (`walkthrough.step`) | 3 | 7 |
 | Tried the example import (`demo.csv_import`) | 3 | 5 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 3 | 4 |
 | Followed the TCGScan pairing pitch (`tcgscan.pairing_click`) | 2 | 10 |
-| Reached a walkthrough step (`walkthrough.step`) | 2 | 4 |
 | Tried tri-color search (`demo.tricolor_search`) | 2 | 2 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 2 | 2 |
+| Finished or dismissed the walkthrough (`walkthrough.done`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
-| Finished or dismissed the walkthrough (`walkthrough.done`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/welcome` | 359 | 410 |
-| `/` | 322 | 795 |
-| `/binder/:id` | 161 | 440 |
-| `/my-binders` | 139 | 392 |
+| `/welcome` | 360 | 411 |
+| `/` | 324 | 801 |
+| `/binder/:id` | 163 | 444 |
+| `/my-binders` | 140 | 393 |
 | `/michi-method` | 73 | 104 |
 | `/discover` | 57 | 90 |
 | `/browse` | 51 | 70 |
@@ -178,10 +178,10 @@ Of the 118 who built something, **23** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 3299 | 420 |
-| Added cards (`card.add`) | 1902 | 74 |
-| Session started (`session.start`) | 667 | 429 |
-| Created a binder (`binder.add`) | 176 | 140 |
+| Viewed a page (`page.view`) | 3312 | 421 |
+| Added cards (`card.add`) | 1908 | 75 |
+| Session started (`session.start`) | 671 | 429 |
+| Created a binder (`binder.add`) | 177 | 141 |
 | Saw the PRO offer (`pro.offer_shown`) | 86 | 27 |
 | Account created (`account.created`) | 60 | 54 |
 | Signed in (`auth.login`) | 52 | 38 |
@@ -194,14 +194,14 @@ Of the 118 who built something, **23** created an account.
 | Backed out of a limit (`cap.gate_dismissed`) | 12 | 10 |
 | Searched cards (`card.search`) | 10 | 8 |
 | Tried the example import (`demo.csv_import`) | 10 | 8 |
-| Reached a walkthrough step (`walkthrough.step`) | 4 | 2 |
+| Reached a walkthrough step (`walkthrough.step`) | 7 | 3 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 4 | 3 |
 | Tried tri-color search (`demo.tricolor_search`) | 3 | 3 |
 | Pressed the PRO trial button (`trial.start_click`) | 2 | 2 |
 | Started a PRO trial (`trial.start`) | 2 | 2 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 2 | 2 |
+| Finished or dismissed the walkthrough (`walkthrough.done`) | 2 | 2 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
-| Finished or dismissed the walkthrough (`walkthrough.done`) | 1 | 1 |
 
 Instrumentation: 29/31 events verified firing (all traffic, all time).
 
@@ -214,13 +214,13 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 26 sessions · 137 events · 2 accounts + 13 guests · median session 5s
-Excluded: 714 sessions, 9907 events (our own, QA and automated accounts).
+Excluded: 746 sessions, 11332 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 0 | 0 | 0 |
 | 7d | 13 | 106 | 8 |
-| 14d | 15 | 114 | 10 |
+| 14d | 14 | 112 | 9 |
 | 30d | 26 | 137 | 15 |
 
 ### PRO trial: awareness to activation
@@ -231,7 +231,7 @@ _Of the people a trial can even be offered to, how many see it, and how many sta
 
 - **2** Signed-in account (100% of top)
 - **2** Did anything past the open (100% of top)
-- **0** Was shown the PRO offer (0% of top) — see gap `trial_awareness`
+- **0** Was shown the PRO offer (0% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
@@ -315,8 +315,8 @@ Excluded: 165 sessions, 963 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 3 | 10 | 3 |
-| 7d | 26 | 114 | 32 |
+| 24h | 2 | 7 | 2 |
+| 7d | 22 | 99 | 24 |
 | 14d | 60 | 273 | 51 |
 | 30d | 107 | 402 | 107 |
 
@@ -387,12 +387,12 @@ Works, but not yet from a real user: `auth.login`, `session.recovered`, `session
 ## Pickleague
 
 31 sessions · 79 events · 0 accounts + 25 guests · median session 4s
-Excluded: 90 sessions, 594 events (our own, QA and automated accounts).
+Excluded: 92 sessions, 606 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 0 | 1 |
-| 7d | 9 | 12 | 3 |
+| 24h | 0 | 0 | 0 |
+| 7d | 2 | 0 | 2 |
 | 14d | 18 | 41 | 11 |
 | 30d | 31 | 79 | 25 |
 
@@ -492,14 +492,6 @@ AGENTS.md in ../tcgscan requires michi-maker/src/lib/analytics.ts and tcgscan-ap
 
 **Fix:** Port the emitter additions verbatim (they are typed optional precisely so the tcgscan copy stays a valid subset), then give tcgscan-app the useCapGate + CapGateDialog pair so its walls are paced and instrumented at one chokepoint instead of nine. Until then, read `as` / `offer` / `via` as michi-only and never as a fleet number.
 
-### No impression event for the PRO trial offer `trial_awareness` (blocking, landed)
-
-TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
-
-**Effect:** understates awareness — currently makes it unmeasurable
-
-**Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
-
 ### Doggle and Pickleague emitted nothing about the product `doggle_product_blind` (blocking, landed)
 
 Both native apps declared exactly four event names - session.start, page.view, auth.login, account.created - which is auth and navigation plumbing and no product at all. Over the 30 days to 2026-09-04 doggle's own tables recorded 132 points_ledger rows across 16 people, 31 dog_place_checkins across 5, 17 walks across 5, 6 badges and 4 dogs; the stream saw three accounts and no actions. Every 'why did they stop' question was unanswerable, and the coverage panel read 100% throughout because coverage is fired/declared and almost nothing was declared.
@@ -540,14 +532,6 @@ Assessed against the code, not the recorded rows — the sample in the database 
 
 **Fix:** add a small props object at those call sites; ids and counts only, per the no-PII rule in lib/analytics.ts.
 
-### trial.start_click is shipped but has never fired `trial_click_unproven` (important, landed)
-
-Until 2026-08-31 a press of the trial button left nothing behind unless the RPC answered: 'they never pressed' and 'they pressed and it did not come back' were the same silence (the failure class trial_start_dropped was written about). trackTrialStartClick now fires before the RPC in both TrialCta call paths, but the build carrying it reached production on 2026-08-31 19:23 UTC - dated by the first cap.gate_shown row carrying the `offer` prop, which shipped in the same change. So the 'Pressed start' stage has about a day of coverage and has never recorded a row.
-
-**Effect:** the stage cannot yet distinguish 'nobody pressed' from 'we were not watching'. Read the OUTCOME from ground truth instead, which does not have this hole
-
-**Fix:** Nothing to build - wait for traffic. Promote to fixed on the first observed trial.start_click. A continued zero once the stage has a few weeks behind it IS a finding, and a strong one, because the outcome it would explain is already established below.
-
 ### A binder open does not say what carried the visitor there `share_attribution` (low, deferred)
 
 CORRECTED 2026-08-06. This was first written up as blocking, on the reasoning that a shared-link arrival was unrecordable. That was wrong, and Brian caught it: page.view already carries props.route = /binder/<uuid>, so the binder id is in the data, and joining it to binders.owner_id separates a visitor from the owner reading their own binder. The whole channel is measurable from rows that already exist — see the shares lane, which needed no app change. What genuinely remains is narrower: the route cannot say HOW someone arrived, so a link from a friend and a click from /discover are identical. 'Arrived cold' (a binder open as the account's first ever action) is the proxy, since in-app browsing does not produce that.
@@ -563,6 +547,14 @@ Nothing records how a session arrived — no referrer, no UTM capture. Marketing
 **Effect:** no attribution possible
 
 **Fix:** not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database — and the privacy copy updated in the same change.
+
+### No impression event for the PRO trial offer `trial_awareness` (blocking, fixed)
+
+TrialCta renders the 'Start free 14-day PRO trial' button but emits nothing until it is pressed, and it returns null for anyone not eligible. The offer also appears outside /plans (michi's PrintPlaceholdersSheet), so a pricing page view neither implies nor is required for seeing it. Awareness is not measured, so the funnel's awareness stage reads zero — that zero is the gap, not a finding. Pricing-page views in the Pages table are the interim proxy, and they are a different and smaller set.
+
+**Effect:** understates awareness — currently makes it unmeasurable
+
+**Fix:** track('pro.offer_shown', { surface }) once per mount on the rendering path only (never the return-null path), plus pro.offer_declined on dismissal and a surface prop on trial.start. Both apps' components/monetization/TrialCta.tsx. Note this counts ELIGIBLE impressions only, which is the right denominator for offer conversion and the wrong one for audience awareness.
 
 ### Cap gates emit nothing, so upgrade intent is invisible `cap_gates_blind` (blocking, fixed)
 
@@ -595,3 +587,11 @@ analytics_sessions has no device column, so identity for an anonymous user is on
 **Effect:** guest people are overstated; every rate with guests in the denominator is understated
 
 **Fix:** add analytics_sessions.device_id - a random opaque UUID generated once at first launch, persisted in localStorage/AsyncStorage, never regenerated on sign-out or upgrade. Specced in ../tcgscan/ANALYTICS-GUEST-DEVICE-ID.md.
+
+### trial.start_click is shipped but has never fired `trial_click_unproven` (important, fixed)
+
+Until 2026-08-31 a press of the trial button left nothing behind unless the RPC answered: 'they never pressed' and 'they pressed and it did not come back' were the same silence (the failure class trial_start_dropped was written about). trackTrialStartClick now fires before the RPC in both TrialCta call paths, but the build carrying it reached production on 2026-08-31 19:23 UTC - dated by the first cap.gate_shown row carrying the `offer` prop, which shipped in the same change. So the 'Pressed start' stage has about a day of coverage and has never recorded a row.
+
+**Effect:** the stage cannot yet distinguish 'nobody pressed' from 'we were not watching'. Read the OUTCOME from ground truth instead, which does not have this hole
+
+**Fix:** Nothing to build - wait for traffic. Promote to fixed on the first observed trial.start_click. A continued zero once the stage has a few weeks behind it IS a finding, and a strong one, because the outcome it would explain is already established below.
