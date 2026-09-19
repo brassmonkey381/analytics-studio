@@ -1,57 +1,57 @@
 # Event analytics — last 30 days
 
-Collected 2026-09-17T19:41:30.595Z. Own/QA/automated accounts excluded.
+Collected 2026-09-19T19:20:52.896Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-818 sessions · 8937 events · 67 accounts + 431 guests · median session 1m
-Excluded: 1175 sessions, 10745 events (our own, QA and automated accounts).
+859 sessions · 10837 events · 66 accounts + 436 guests · median session 1m
+Excluded: 1193 sessions, 11251 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 44 | 1007 | 24 |
-| 7d | 227 | 2890 | 136 |
-| 14d | 457 | 5525 | 277 |
-| 30d | 818 | 8937 | 498 |
+| 24h | 45 | 1139 | 23 |
+| 7d | 256 | 4596 | 144 |
+| 14d | 465 | 7014 | 266 |
+| 30d | 859 | 10837 | 502 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **431** of 498 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **436** of 502 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
-- **67** Signed-in account (100% of top)
-- **67** Did anything past the open (100% of top)
-- **40** Was shown the PRO offer (59.7% of top)
-- **6** Started a PRO trial (9% of top)
+- **66** Signed-in account (100% of top)
+- **66** Did anything past the open (100% of top)
+- **38** Was shown the PRO offer (57.6% of top)
+- **7** Started a PRO trial (10.6% of top)
 
 ### The wall: refusal to trial
 
 _When a plan limit actually stops someone, does the trial offer sitting there convert them?_
 
-- **32** Was stopped by a plan limit (6.4% of top)
-- **15** Was shown the PRO offer (3% of top)
-- **2** Pressed start (0.4% of top)
-- **2** Started a PRO trial (0.4% of top)
+- **31** Was stopped by a plan limit (6.2% of top)
+- **16** Was shown the PRO offer (3.2% of top)
+- **3** Pressed start (0.6% of top)
+- **3** Started a PRO trial (0.6% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **492** Opened the app (98.8% of top)
-- **487** Viewed a page (97.8% of top)
-- **17** Tried a demo (3.4% of top)
-- **17** Made something real (3.4% of top)
+- **496** Opened the app (98.8% of top)
+- **492** Viewed a page (98% of top)
+- **18** Tried a demo (3.6% of top)
+- **18** Made something real (3.6% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **460** Started as a guest (100% of top)
-- **450** Did anything at all (97.8% of top)
+- **462** Started as a guest (100% of top)
+- **453** Did anything at all (98.1% of top)
 - **70** Submitted the upgrade (15.2% of top) — see gap `upgrade_unconfirmed`
-- **27** Completed it (ground truth) (5.9% of top)
+- **24** Completed it (ground truth) (5.2% of top)
 
 ### Print & QR campaigns
 
@@ -102,31 +102,37 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 | `711ff702-6ba9-46d1-8d8d-70babd0ad530` | 1 | 1 | 0 | 0 |
 | `f30d2164-efc9-4219-81e1-5960c0ca9a4f` | 1 | 1 | 0 | 0 |
 | `eabd4da3-9dc6-467b-b527-c3f1d05f3e4f` | 1 | 1 | 0 | 0 |
+| `c9df78b1-3c4c-4480-b677-b8fc5c0713ee` | 1 | 1 | 1 | 0 |
+| `335bd3c4-5e96-43f3-b915-26007fff0cb6` | 1 | 1 | 0 | 0 |
+| `32faff15-7b09-4fa0-9263-36c2f8b4a93a` | 1 | 1 | 0 | 0 |
+| `14bf021b-045c-4575-8d38-272b85a79922` | 1 | 1 | 0 | 0 |
+| `d89c1090-73e8-4bf6-ae28-7d686ff7a4b3` | 1 | 1 | 0 | 0 |
+| `5ecba5d1-8e35-4c7d-9a6e-e17c2831c41d` | 1 | 1 | 0 | 0 |
+| `2a8d0348-ac35-4420-b0c8-9a27f7f90590` | 1 | 1 | 0 | 0 |
 | `7b7772d0-25e9-4543-88a7-17f5b2b8fb5b` | 1 | 0 | 0 | 1 |
 
 ### What we asked of people
 
 | Wall | Where | Shown | People | Guests | How | Offer | Backed out |
 | --- | --- | ---: | ---: | ---: | --- | --- | --- |
-| `findSimilar` | binder_editor | 40 | 17 | 6 | dialog 23, toast 17 | trial 17, signin 6, toast 17<br>_trial rendered on 15 of 40_ | not_now 9, close 13 |
-| `themeSearch` | binder_editor | 17 | 9 | 3 | dialog 17 | trial 12, signin 5<br>_trial rendered on 11 of 17_ | not_now 3, close 14 |
+| `findSimilar` | binder_editor | 43 | 17 | 6 | dialog 25, toast 18 | trial 19, signin 6, toast 18<br>_trial rendered on 16 of 43_ | not_now 10, close 14 |
+| `themeSearch` | binder_editor | 19 | 9 | 3 | dialog 19 | trial 14, signin 5<br>_trial rendered on 13 of 19_ | not_now 3, close 16 |
 | `binders` | my_binders | 6 | 5 | 1 | dialog 2, _not recorded 4_ | trial 1, signin 1, _not recorded 4_<br>_trial rendered on 1 of 6_ | close 2 |
 | `pagesPerBinder` | binder_editor | 4 | 3 | 1 | dialog 1, _not recorded 3_ | signin 1, _not recorded 3_<br>_trial rendered on 0 of 4_ | _none recorded_ |
 | `findSimilar` | browse | 2 | 2 | 1 | dialog 2 | trial 1, signin 1<br>_trial rendered on 1 of 2_ | close 2 |
 | `binders` | browse | 1 | 1 | _not recorded_ | _not recorded 1_ | _not recorded 1_<br>_trial rendered on 0 of 1_ | _none recorded_ |
-| `pagesPerBinder` | browse | 1 | 1 | _not recorded_ | _not recorded 1_ | _not recorded 1_<br>_trial rendered on 0 of 1_ | _none recorded_ |
 
 A row is one wall — the `limit_key` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. The **Offer** column is two things: what the wall said it was about to draw, then what the stream saw render (a `pro.offer_shown` in the same session on the same `surface`, within a minute). Where they disagree, the second is the truth.
 
-The PRO offer: shown **146** times to **40** people, walked away from **54**, pressed **6**. A decline is recorded only where walking away is an act, never for leaving a page.
+The PRO offer: shown **368** times to **38** people, walked away from **60**, pressed **7**. A decline is recorded only where walking away is an act, never for leaving a page.
 
 | Surface | On which page | Shown | People | Declined | Pressed |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `my_binders` | `/my-binders` 38, `/binder/:id` 3 | 41 | 6 | 1 | 0 |
-| `plans` | `/plans` 36, `/michi-method` 1 | 37 | 23 | 0 | 0 |
-| `print_gate` | `/my-binders` 14, `/binder/:id` 11, `/binder/example-fill-sheet` 4, `/auth-callback` 1, `/` 1 | 31 | 18 | 22 | 3 |
-| `binder_editor` | `/binder/:id` 21, `/my-binders` 5 | 26 | 13 | 28 | 1 |
-| `slice_studio` | `/binder/:id` 4, `/my-binders` 4 | 8 | 2 | 0 | 2 |
+| `my_binders` | `/my-binders` 160, `/binder/:id` 37, `/purchases` 1 | 198 | 6 | 1 | 0 |
+| `slice_studio` | `/binder/:id` 33, `/my-binders` 21, `/` 7, `/browse` 6 | 67 | 5 | 0 | 3 |
+| `plans` | `/plans` 33, `/browse` 2, `/michi-method` 1 | 36 | 19 | 0 | 0 |
+| `print_gate` | `/my-binders` 14, `/binder/:id` 13, `/binder/example-fill-sheet` 6, `/auth-callback` 1, `/` 1 | 35 | 20 | 24 | 3 |
+| `binder_editor` | `/binder/:id` 24, `/my-binders` 5 | 29 | 13 | 32 | 1 |
 | `trial_recovery` | `/` 2 | 2 | 2 | 2 | 0 |
 | `browse` | `/browse` 1 | 1 | 1 | 1 | 0 |
 
@@ -134,92 +140,92 @@ The PRO offer: shown **146** times to **40** people, walked away from **54**, pr
 
 | Prompt | Shown | People | What came back |
 | --- | ---: | ---: | --- |
-| The sharing attestation (`rights-attestation`) | 55 | 48 | accepted 12, dismissed 39 _(+4 left with it open — tab shut before an answer)_ |
-| Their profile photo (`avatar-consent`) | 16 | 16 | accepted 14, declined 1, dismissed 1, abandoned 19 |
+| The sharing attestation (`rights-attestation`) | 59 | 51 | accepted 14, dismissed 41 _(+4 left with it open — tab shut before an answer)_ |
+| Their profile photo (`avatar-consent`) | 18 | 18 | accepted 14, declined 2, dismissed 2, abandoned 28 |
 | The PRO trial, second chance (`pro-trial-offer`) | 2 | 2 | dismissed 2 |
 
 **dismissed** is a closed dialog, **abandoned** is a screen left with it open, **left with it open** is a tab shut before either — three different silences. Two of these are a privacy correction and a legal attestation: their numbers are a record of what was asked and answered, never a rate to drive up.
 
 ### What guests did past the open
 
-460 people opened as a guest across 588 sessions.
+462 people opened as a guest across 591 sessions.
 
-| How far they got | People | of 460 |
+| How far they got | People | of 462 |
 | --- | ---: | ---: |
-| Opened and left | 10 | 2.2% |
-| Looked at a page or two | 142 | 30.9% |
-| Wandered the site | 169 | 36.7% |
-| Built something | 139 | 30.2% |
+| Opened and left | 9 | 1.9% |
+| Looked at a page or two | 151 | 32.7% |
+| Wandered the site | 169 | 36.6% |
+| Built something | 133 | 28.8% |
 
-Of the 139 who built something, **28** created an account.
+Of the 133 who built something, **25** created an account.
 
-**55** guests walked to a pricing page; **19** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
+**49** guests walked to a pricing page; **18** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 139 | 159 |
-| Added cards (`card.add`) | 73 | 885 |
-| Account created (`account.created`) | 70 | 76 |
-| Reached a walkthrough step (`walkthrough.step`) | 35 | 83 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 35 | 43 |
-| Tried the theme search demo (`demo.theme_search`) | 27 | 72 |
-| Hit a plan limit (`cap.gate_shown`) | 24 | 35 |
-| Finished or dismissed the walkthrough (`walkthrough.done`) | 23 | 26 |
-| Was shown a prompt (`prompt.shown`) | 21 | 24 |
-| Answered a prompt (`prompt.answered`) | 20 | 23 |
-| Saw the PRO offer (`pro.offer_shown`) | 19 | 46 |
+| Created a binder (`binder.add`) | 133 | 155 |
+| Account created (`account.created`) | 70 | 75 |
+| Added cards (`card.add`) | 67 | 1093 |
+| Reached a walkthrough step (`walkthrough.step`) | 41 | 95 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 41 | 49 |
+| Tried the theme search demo (`demo.theme_search`) | 29 | 76 |
+| Finished or dismissed the walkthrough (`walkthrough.done`) | 25 | 28 |
+| Hit a plan limit (`cap.gate_shown`) | 23 | 34 |
+| Was shown a prompt (`prompt.shown`) | 22 | 25 |
+| Answered a prompt (`prompt.answered`) | 21 | 24 |
+| Saw the PRO offer (`pro.offer_shown`) | 18 | 53 |
 | Backed out of a limit (`cap.gate_dismissed`) | 17 | 20 |
-| Signed in (`auth.login`) | 14 | 14 |
-| Dismissed the PRO offer (`pro.offer_declined`) | 11 | 12 |
+| Signed in (`auth.login`) | 14 | 15 |
+| Dismissed the PRO offer (`pro.offer_declined`) | 12 | 13 |
 | Followed the TCGScan pairing pitch (`tcgscan.pairing_click`) | 8 | 18 |
-| Searched cards (`card.search`) | 8 | 9 |
+| Searched cards (`card.search`) | 6 | 6 |
+| Pressed the PRO trial button (`trial.start_click`) | 3 | 3 |
+| Started a PRO trial (`trial.start`) | 3 | 3 |
 | Tried the example import (`demo.csv_import`) | 2 | 4 |
-| Tried tri-color search (`demo.tricolor_search`) | 2 | 2 |
-| Pressed the PRO trial button (`trial.start_click`) | 2 | 2 |
-| Started a PRO trial (`trial.start`) | 2 | 2 |
-| Tried the print example (`demo.print`) | 1 | 1 |
+| Tried the print example (`demo.print`) | 2 | 2 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
+| Tried tri-color search (`demo.tricolor_search`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/welcome` | 410 | 466 |
-| `/` | 392 | 1016 |
-| `/binder/:id` | 193 | 486 |
-| `/my-binders` | 164 | 421 |
-| `/michi-method` | 89 | 135 |
-| `/discover` | 72 | 120 |
-| `/browse` | 59 | 88 |
-| `/learn` | 52 | 62 |
-| `/plans` _(pricing)_ | 44 | 53 |
-| `/contest` | 29 | 35 |
-| `/purchases` _(pricing)_ | 18 | 25 |
-| `/binder/ex-pitch-black-chase` | 15 | 15 |
+| `/welcome` | 407 | 463 |
+| `/` | 394 | 1029 |
+| `/binder/:id` | 194 | 509 |
+| `/my-binders` | 162 | 428 |
+| `/michi-method` | 84 | 125 |
+| `/discover` | 68 | 115 |
+| `/browse` | 52 | 78 |
+| `/learn` | 48 | 56 |
+| `/plans` _(pricing)_ | 38 | 43 |
+| `/contest` | 23 | 27 |
+| `/purchases` _(pricing)_ | 16 | 22 |
+| `/binder/ex-pitch-black-chase` | 15 | 16 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 4307 | 488 |
-| Added cards (`card.add`) | 2549 | 96 |
-| Session started (`session.start`) | 813 | 492 |
-| Created a binder (`binder.add`) | 221 | 172 |
-| Tried the theme search demo (`demo.theme_search`) | 152 | 40 |
-| Saw the PRO offer (`pro.offer_shown`) | 146 | 40 |
-| Reached a walkthrough step (`walkthrough.step`) | 108 | 45 |
-| Answered a prompt (`prompt.answered`) | 88 | 50 |
-| Account created (`account.created`) | 76 | 70 |
-| Was shown a prompt (`prompt.shown`) | 73 | 50 |
-| Hit a plan limit (`cap.gate_shown`) | 71 | 32 |
-| Signed in (`auth.login`) | 67 | 48 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 59 | 45 |
-| Dismissed the PRO offer (`pro.offer_declined`) | 54 | 25 |
-| Backed out of a limit (`cap.gate_dismissed`) | 43 | 24 |
-| Finished or dismissed the walkthrough (`walkthrough.done`) | 37 | 33 |
-| Followed the TCGScan pairing pitch (`tcgscan.pairing_click`) | 25 | 11 |
-| Searched cards (`card.search`) | 14 | 12 |
+| Viewed a page (`page.view`) | 4881 | 493 |
+| Added cards (`card.add`) | 3530 | 90 |
+| Session started (`session.start`) | 853 | 496 |
+| Saw the PRO offer (`pro.offer_shown`) | 368 | 38 |
+| Created a binder (`binder.add`) | 223 | 165 |
+| Tried the theme search demo (`demo.theme_search`) | 163 | 42 |
+| Reached a walkthrough step (`walkthrough.step`) | 124 | 53 |
+| Answered a prompt (`prompt.answered`) | 103 | 54 |
+| Was shown a prompt (`prompt.shown`) | 79 | 54 |
+| Account created (`account.created`) | 75 | 70 |
+| Hit a plan limit (`cap.gate_shown`) | 75 | 31 |
+| Signed in (`auth.login`) | 72 | 50 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 68 | 53 |
+| Dismissed the PRO offer (`pro.offer_declined`) | 60 | 27 |
+| Backed out of a limit (`cap.gate_dismissed`) | 47 | 24 |
+| Finished or dismissed the walkthrough (`walkthrough.done`) | 40 | 36 |
+| Followed the TCGScan pairing pitch (`tcgscan.pairing_click`) | 26 | 12 |
+| Searched cards (`card.search`) | 12 | 9 |
 | Tried the example import (`demo.csv_import`) | 9 | 7 |
-| Tried tri-color search (`demo.tricolor_search`) | 6 | 6 |
-| Pressed the PRO trial button (`trial.start_click`) | 6 | 6 |
-| Started a PRO trial (`trial.start`) | 6 | 6 |
-| Tried the print example (`demo.print`) | 5 | 4 |
+| Tried the print example (`demo.print`) | 8 | 6 |
+| Pressed the PRO trial button (`trial.start_click`) | 7 | 7 |
+| Started a PRO trial (`trial.start`) | 7 | 7 |
+| Tried tri-color search (`demo.tricolor_search`) | 5 | 5 |
 | Imported a CSV (`csv.import`) | 2 | 2 |
 
 Instrumentation: 29/31 events verified firing (all traffic, all time).
@@ -232,33 +238,33 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 
 ## TCGScan
 
-57 sessions · 288 events · 8 accounts + 31 guests · median session 3s
-Excluded: 850 sessions, 12209 events (our own, QA and automated accounts).
+66 sessions · 355 events · 12 accounts + 32 guests · median session 5s
+Excluded: 884 sessions, 12813 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 4 | 40 | 3 |
-| 7d | 35 | 161 | 26 |
-| 14d | 48 | 267 | 34 |
-| 30d | 57 | 288 | 39 |
+| 24h | 7 | 45 | 6 |
+| 7d | 41 | 215 | 30 |
+| 14d | 59 | 328 | 41 |
+| 30d | 66 | 355 | 44 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **31** of 39 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **32** of 44 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
-- **8** Signed-in account (100% of top)
-- **5** Did anything past the open (62.5% of top)
-- **0** Was shown the PRO offer (0% of top)
+- **12** Signed-in account (100% of top)
+- **8** Did anything past the open (66.7% of top)
+- **1** Was shown the PRO offer (8.3% of top)
 - **0** Started a PRO trial (0% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **35** Opened the app (89.7% of top)
-- **32** Viewed a page (82.1% of top)
+- **39** Opened the app (88.6% of top)
+- **38** Viewed a page (86.4% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -266,10 +272,10 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **34** Started as a guest (100% of top)
-- **31** Did anything at all (91.2% of top)
-- **3** Submitted the upgrade (8.8% of top) — see gap `upgrade_unconfirmed`
-- **3** Completed it (ground truth) (8.8% of top)
+- **37** Started as a guest (100% of top)
+- **36** Did anything at all (97.3% of top)
+- **5** Submitted the upgrade (13.5% of top) — see gap `upgrade_unconfirmed`
+- **5** Completed it (ground truth) (13.5% of top)
 
 ### What we asked of people
 
@@ -279,78 +285,95 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 A row is one wall — the `limit_key` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. The **Offer** column is two things: what the wall said it was about to draw, then what the stream saw render (a `pro.offer_shown` in the same session on the same `surface`, within a minute). Where they disagree, the second is the truth.
 
+The PRO offer: shown **4** times to **1** person, walked away from **0**, pressed **0**. A decline is recorded only where walking away is an act, never for leaving a page.
+
+| Surface | On which page | Shown | People | Declined | Pressed |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `plans` | `/plans` 4 | 4 | 1 | 0 | 0 |
+
+**Surface** is the fixed string the call site passes — the same vocabulary the walls above use. **On which page** is the route the offer appeared over, matched to the nearest `page.view` in the session rather than the most recent: the offer fires from a mount effect and can beat its own screen's view to the wire.
+
 ### What guests did past the open
 
-34 people opened as a guest across 49 sessions.
+37 people opened as a guest across 52 sessions.
 
-| How far they got | People | of 34 |
+| How far they got | People | of 37 |
 | --- | ---: | ---: |
-| Opened and left | 3 | 8.8% |
-| Looked at a page or two | 15 | 44.1% |
-| Wandered the site | 13 | 38.2% |
-| Built something | 3 | 8.8% |
+| Opened and left | 1 | 2.7% |
+| Looked at a page or two | 17 | 45.9% |
+| Wandered the site | 15 | 40.5% |
+| Built something | 4 | 10.8% |
 
-Of the 3 who built something, **0** created an account.
+Of the 4 who built something, **0** created an account.
+
+**1** guests walked to a pricing page; **1** saw the PRO offer.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Signed in (`auth.login`) | 4 | 4 |
-| Account created (`account.created`) | 3 | 5 |
+| Account created (`account.created`) | 5 | 7 |
+| Signed in (`auth.login`) | 5 | 5 |
 | Added cards (`card.add`) | 3 | 3 |
+| Created a collection (`collection.create`) | 2 | 2 |
+| Added a card to a collection (`collection.card_add`) | 1 | 8 |
+| Saw the PRO offer (`pro.offer_shown`) | 1 | 4 |
 | Opened a card (`card.open`) | 1 | 2 |
-| Created a collection (`collection.create`) | 1 | 1 |
 | Hit a plan limit (`cap.gate_shown`) | 1 | 1 |
+| Removed a card from a collection (`collection.card_remove`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 21 | 48 |
-| `/welcome` | 21 | 48 |
-| `/settings` | 8 | 8 |
-| `/scan` | 6 | 17 |
-| `/browse` | 6 | 8 |
-| `/collection` | 4 | 8 |
-| `/sealed/:n` | 2 | 7 |
+| `/` | 26 | 59 |
+| `/welcome` | 24 | 52 |
+| `/settings` | 11 | 13 |
+| `/scan` | 8 | 22 |
+| `/browse` | 7 | 12 |
+| `/collection` | 5 | 11 |
+| `/sealed/:n` | 3 | 8 |
+| `/collection/col-mu7vyqii-1` | 1 | 3 |
 | `/collection/col-mu5nxzh0-0` | 1 | 2 |
+| `/plans` _(pricing)_ | 1 | 2 |
 | `/collection/col-mu5nvds7-0` | 1 | 1 |
 | `/card/:n` | 1 | 1 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 179 | 33 |
-| Session started (`session.start`) | 56 | 35 |
-| Added a card to a collection (`collection.card_add`) | 31 | 1 |
-| Signed in (`auth.login`) | 6 | 6 |
-| Account created (`account.created`) | 5 | 3 |
+| Viewed a page (`page.view`) | 218 | 39 |
+| Session started (`session.start`) | 65 | 39 |
+| Added a card to a collection (`collection.card_add`) | 39 | 2 |
+| Signed in (`auth.login`) | 9 | 9 |
+| Account created (`account.created`) | 7 | 5 |
+| Created a collection (`collection.create`) | 4 | 3 |
+| Saw the PRO offer (`pro.offer_shown`) | 4 | 1 |
 | Added cards (`card.add`) | 3 | 3 |
-| Created a collection (`collection.create`) | 3 | 2 |
 | Opened a card (`card.open`) | 3 | 2 |
 | Hit a plan limit (`cap.gate_shown`) | 1 | 1 |
 | Renamed a collection (`collection.rename`) | 1 | 1 |
+| Removed a card from a collection (`collection.card_remove`) | 1 | 1 |
 
 Instrumentation: 17/19 events verified firing (all traffic, all time).
 
 Never fired by anyone (unverified): `cap.gate_dismissed`, `trial.start_failed`
 
-Works, but not yet from a real user: `card.search`, `scan.capture`, `collection.delete`, `collection.card_remove`, `trial.start`, `pro.offer_shown`, `scan.failed`
+Works, but not yet from a real user: `card.search`, `scan.capture`, `collection.delete`, `trial.start`, `scan.failed`
 
 ## Doggle
 
-104 sessions · 423 events · 5 accounts + 90 guests · median session 2s
-Excluded: 159 sessions, 924 events (our own, QA and automated accounts).
+102 sessions · 420 events · 5 accounts + 92 guests · median session 2s
+Excluded: 154 sessions, 921 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 2 | 6 | 2 |
-| 7d | 21 | 91 | 21 |
-| 14d | 53 | 226 | 53 |
-| 30d | 104 | 423 | 95 |
+| 24h | 2 | 8 | 6 |
+| 7d | 16 | 52 | 23 |
+| 14d | 42 | 189 | 48 |
+| 30d | 102 | 420 | 97 |
 
 ### Visitor to account
 
 _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
-- **94** Arrived signed out (100% of top)
-- **77** Viewed any screen (81.9% of top)
+- **96** Arrived signed out (100% of top)
+- **74** Viewed any screen (77.1% of top)
 - **2** Created an account (2.1% of top) — see gap `doggle_oauth_signup_untracked`
 - **0** Signed in on that visit (0% of top)
 
@@ -362,26 +385,26 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 ### What guests did past the open
 
-94 people opened as a guest across 101 sessions.
+96 people opened as a guest across 99 sessions.
 
-| How far they got | People | of 94 |
+| How far they got | People | of 96 |
 | --- | ---: | ---: |
-| Opened and left | 7 | 7.4% |
-| Looked at a page or two | 79 | 84% |
-| Wandered the site | 8 | 8.5% |
+| Opened and left | 8 | 8.3% |
+| Looked at a page or two | 80 | 83.3% |
+| Wandered the site | 8 | 8.3% |
 | Built something | 0 | 0% |
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Session revalidated (plumbing) (`session.check`) | 79 | 158 |
+| Session revalidated (plumbing) (`session.check`) | 80 | 160 |
 | Answered the sign-out prompt (`auth.signout_decision`) | 2 | 3 |
 | Account created (`account.created`) | 2 | 3 |
 | Session expired (`session.expired`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `Landing` | 62 | 64 |
-| `Login` | 16 | 30 |
+| `Landing` | 59 | 61 |
+| `Login` | 16 | 31 |
 | `Home` | 4 | 27 |
 | `Onboarding` | 4 | 4 |
 | `PetHome` | 3 | 5 |
@@ -395,9 +418,9 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 162 | 78 |
-| Session revalidated (plumbing) (`session.check`) | 160 | 80 |
-| Session started (`session.start`) | 94 | 75 |
+| Session revalidated (plumbing) (`session.check`) | 162 | 81 |
+| Viewed a page (`page.view`) | 160 | 75 |
+| Session started (`session.start`) | 91 | 71 |
 | Answered the sign-out prompt (`auth.signout_decision`) | 3 | 2 |
 | Account created (`account.created`) | 3 | 2 |
 | Session expired (`session.expired`) | 1 | 1 |
@@ -410,46 +433,46 @@ Works, but not yet from a real user: `auth.login`, `session.recovered`, `session
 
 ## Pickleague
 
-33 sessions · 75 events · 0 accounts + 26 guests · median session 2s
+32 sessions · 73 events · 0 accounts + 25 guests · median session 3s
 Excluded: 69 sessions, 386 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 1 | 0 | 1 |
-| 7d | 8 | 13 | 8 |
-| 14d | 17 | 25 | 11 |
-| 30d | 33 | 75 | 26 |
+| 24h | 0 | 0 | 0 |
+| 7d | 6 | 11 | 6 |
+| 14d | 10 | 13 | 10 |
+| 30d | 32 | 73 | 25 |
 
 ### Visitor to account
 
 _Do signed-out visitors (QR scans included) become Pickleague accounts?_
 
-- **26** Arrived signed out (100% of top)
-- **20** Viewed any screen (76.9% of top)
+- **25** Arrived signed out (100% of top)
+- **19** Viewed any screen (76% of top)
 - **0** Created an account (0% of top)
 - **0** Signed in on that visit (0% of top)
 
 ### What guests did past the open
 
-26 people opened as a guest across 33 sessions.
+25 people opened as a guest across 32 sessions.
 
-| How far they got | People | of 26 |
+| How far they got | People | of 25 |
 | --- | ---: | ---: |
-| Opened and left | 6 | 23.1% |
-| Looked at a page or two | 16 | 61.5% |
-| Wandered the site | 4 | 15.4% |
+| Opened and left | 6 | 24% |
+| Looked at a page or two | 15 | 60% |
+| Wandered the site | 4 | 16% |
 | Built something | 0 | 0% |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `Login` | 19 | 37 |
+| `Login` | 18 | 36 |
 | `Register` | 3 | 9 |
 | `EventDetail` | 1 | 1 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 47 | 20 |
-| Session started (`session.start`) | 28 | 20 |
+| Viewed a page (`page.view`) | 46 | 19 |
+| Session started (`session.start`) | 27 | 19 |
 
 Instrumentation: 3/4 events verified firing (all traffic, all time).
 
