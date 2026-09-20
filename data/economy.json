@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-09-19T19:21:06.640Z",
+  "collectedAt": "2026-09-20T19:42:27.651Z",
   "windows": [
     "all",
     1,
@@ -13,7 +13,7 @@
       "currency": "points",
       "balances": {
         "accounts": 12,
-        "outstanding": 1960,
+        "outstanding": 1975,
         "excludedAccounts": 39,
         "distribution": {
           "buckets": [
@@ -52,33 +52,33 @@
       },
       "flows": {
         "1": {
-          "earned": 0,
+          "earned": 15,
           "spent": 0,
-          "rows": 0,
-          "earners": 0
+          "rows": 1,
+          "earners": 1
         },
         "7": {
-          "earned": 20,
+          "earned": 15,
           "spent": 0,
-          "rows": 2,
+          "rows": 1,
           "earners": 1
         },
         "14": {
-          "earned": 170,
+          "earned": 185,
           "spent": 0,
-          "rows": 10,
+          "rows": 11,
           "earners": 3
         },
         "30": {
-          "earned": 200,
+          "earned": 215,
           "spent": 0,
-          "rows": 12,
+          "rows": 13,
           "earners": 5
         },
         "all": {
-          "earned": 1985,
+          "earned": 2000,
           "spent": 25,
-          "rows": 92,
+          "rows": 93,
           "earners": 12
         }
       },
@@ -91,7 +91,7 @@
         "byWindow": {
           "1": [
             0,
-            0,
+            1,
             0
           ],
           "7": [
@@ -117,17 +117,18 @@
         }
       },
       "byReason": {
-        "1": [],
-        "7": [
+        "1": [
           {
             "category": "Login bonus",
             "points": 15,
             "rows": 1,
             "users": 1
-          },
+          }
+        ],
+        "7": [
           {
-            "category": "Checked in at a dog place",
-            "points": 5,
+            "category": "Login bonus",
+            "points": 15,
             "rows": 1,
             "users": 1
           }
@@ -141,8 +142,8 @@
           },
           {
             "category": "Login bonus",
-            "points": 60,
-            "rows": 4,
+            "points": 75,
+            "rows": 5,
             "users": 3
           },
           {
@@ -154,16 +155,16 @@
         ],
         "30": [
           {
+            "category": "Login bonus",
+            "points": 105,
+            "rows": 7,
+            "users": 5
+          },
+          {
             "category": "Onboarding",
             "points": 100,
             "rows": 4,
             "users": 2
-          },
-          {
-            "category": "Login bonus",
-            "points": 90,
-            "rows": 6,
-            "users": 5
           },
           {
             "category": "Checked in at a dog place",
@@ -175,8 +176,8 @@
         "all": [
           {
             "category": "Login bonus",
-            "points": 951,
-            "rows": 46,
+            "points": 966,
+            "rows": 47,
             "users": 12
           },
           {
@@ -223,7 +224,7 @@
           }
         ]
       },
-      "excludedLedgerRows": 764
+      "excludedLedgerRows": 767
     },
     "pickleague": {
       "currency": "pickles",
@@ -361,13 +362,13 @@
         "counts": [
           0,
           53,
-          11,
+          12,
           0,
-          150
+          156
         ],
-        "users": 214,
+        "users": 221,
         "uncapped": 0,
-        "atCap": 150
+        "atCap": 156
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -379,13 +380,13 @@
           "at / over cap"
         ],
         "counts": [
-          167,
-          16,
-          13,
+          171,
+          17,
+          15,
           5,
           13
         ],
-        "users": 214,
+        "users": 221,
         "uncapped": 0,
         "atCap": 13
       },
@@ -399,15 +400,15 @@
           "at / over cap"
         ],
         "counts": [
-          30,
-          11,
-          13,
-          14,
-          5
+          31,
+          12,
+          12,
+          15,
+          6
         ],
-        "users": 73,
+        "users": 76,
         "uncapped": 0,
-        "atCap": 5
+        "atCap": 6
       },
       "includedPrintsPerMonth": {
         "app": "michi",
@@ -423,11 +424,11 @@
           0,
           0,
           0,
-          4
+          5
         ],
-        "users": 4,
+        "users": 5,
         "uncapped": 0,
-        "atCap": 4
+        "atCap": 5
       },
       "cardScansPerMonth": {
         "app": "tcgscan",
@@ -460,12 +461,12 @@
         ],
         "counts": [
           0,
-          7,
+          8,
           2,
           0,
           3
         ],
-        "users": 12,
+        "users": 13,
         "uncapped": 0,
         "atCap": 3
       },
@@ -479,21 +480,21 @@
           "at / over cap"
         ],
         "counts": [
-          4,
+          5,
           1,
           0,
           2,
           0
         ],
-        "users": 7,
+        "users": 8,
         "uncapped": 0,
         "atCap": 0
       },
       "_accounts": {
-        "total": 2405,
-        "guests": 2290,
-        "excluded": 1539,
-        "excludedUsageRows": 290
+        "total": 2453,
+        "guests": 2335,
+        "excluded": 1569,
+        "excludedUsageRows": 306
       }
     }
   }
