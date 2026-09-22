@@ -597,6 +597,115 @@ if (made.length) {
 }
 
 // --- footer ---
+// ---------- Leave Feedback ----------
+//
+// Driven entirely by what the lane found, never by a hardcoded app list: the page,
+// the survey definition and feedback_responses are all app-agnostic (the table
+// carries its own `app` column), so the day a second app ships a /feedback page it
+// appears here with no edit. An app with no feedback spec is silent rather than
+// printing a zero it was never eligible for.
+//
+// THREE DIFFERENT NOTHINGS, and the section says which one it is looking at:
+//   table missing   -> "not available", the lane could not read it
+//   0 responses     -> "nobody has sent anything yet", which is a real answer
+//   0 opens too     -> nobody even reached the page, which is a different problem
+const fbApps = APPS.map((id) => ({ id, fb: events?.apps?.[id]?.feedback ?? null })).filter((x) => x.fb);
+if (fbApps.length) {
+  parts.push(h2("Leave Feedback"));
+  for (const { id, fb } of fbApps) {
+    // Opens and failed sends come from the event stream; responses come from the
+    // table. Deliberately: a response is a row that landed, and an open is only
+    // ever an impression. They are counted from different places and cannot be
+    // made to disagree by one of them dropping an event.
+    const w = events?.apps?.[id]?.windows?.["1"];
+    const byName = Object.fromEntries((w?.eventsByName ?? []).map((e) => [e.name, e]));
+    const opened = byName["feedback.shown"]?.count ?? 0;
+    const failed = byName["feedback.failed"]?.count ?? 0;
+    const sidecar = journeys?.apps?.[id]?.feedback ?? null;
+
+    if (!fb.available) {
+      parts.push(p(`<strong>${esc(appName(id))}</strong> — feedback table not readable in this run, so this is "not available" rather than zero.`, WARN));
+      continue;
+    }
+    if (!fb.responses) {
+      parts.push(
+        p(
+          `<strong>${esc(appName(id))}</strong> — <strong>nobody has sent feedback yet.</strong> ` +
+            (opened
+              ? `The form was opened ${opened} time${opened === 1 ? "" : "s"} in the last 24h, so people are reaching it and not finishing.`
+              : `The form was not opened at all in the last 24h either, so this is a reach problem before it is a response problem.`) +
+            (failed ? ` <span style="color:${WARN};">${failed} send${failed === 1 ? "" : "s"} failed.</span>` : ""),
+        ),
+      );
+      continue;
+    }
+
+    const n = fb.nps;
+    parts.push(
+      p(
+        `<strong>${esc(appName(id))}</strong> — <strong>${fb.responses}</strong> response${fb.responses === 1 ? "" : "s"} all time ` +
+          `from ${fb.people} ${fb.people === 1 ? "person" : "people"}${fb.guests ? `, ${fb.guests} sent as a guest` : ""}. ` +
+          `Opened ${opened} time${opened === 1 ? "" : "s"} in the last 24h${failed ? `, <span style="color:${WARN};">${failed} failed to send</span>` : ""}. ` +
+          (fb.contactable ? `<strong>${fb.contactable}</strong> asked to be replied to. ` : "") +
+          (fb.excluded ? `<span style="color:${MUTED};">${fb.excluded} of ours excluded.</span>` : ""),
+      ),
+    );
+
+    // An NPS off a handful of answers is a number, not a measurement. Print the n
+    // beside it always, and refuse the headline score under 10.
+    if (n.answered) {
+      parts.push(
+        p(
+          n.answered >= 10
+            ? `NPS <strong>${n.score}</strong> from ${n.answered} score${n.answered === 1 ? "" : "s"} — ${n.promoters} promoter${n.promoters === 1 ? "" : "s"}, ${n.passives} passive, ${n.detractors} detractor${n.detractors === 1 ? "" : "s"} (average ${n.average}/10).`
+            : `${n.answered} score${n.answered === 1 ? "" : "s"} so far, averaging <strong>${n.average}</strong>/10 (${n.promoters} promoter${n.promoters === 1 ? "" : "s"}, ${n.passives} passive, ${n.detractors} detractor${n.detractors === 1 ? "" : "s"}). Too few for an NPS figure — that needs 10.`,
+        ),
+      );
+    }
+
+    // The 1-5 aspect ratings, worst first: the lowest-scoring part of the product
+    // is the line worth reading, and sorting by name would bury it.
+    const rated = Object.entries(fb.ratings).sort((a, b) => (a[1].avg ?? 9) - (b[1].avg ?? 9)).slice(0, 5);
+    if (rated.length) {
+      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Rated</th><th style="${cellHead}text-align:right;">Average</th><th style="${cellHead}text-align:right;">Answers</th></tr>
+${rated.map(([k, v]) => `<tr><td style="${cell}">${esc(k)}</td><td style="${num}">${v.avg ?? "-"}</td><td style="${num}">${v.n}</td></tr>`).join("")}
+</table></td></tr>`);
+    }
+
+    // Choice answers - which other card games people asked for, mainly. Top 5,
+    // because the house rule caps a visible list there and the tail is a long
+    // flat one nobody acts on.
+    for (const [q, counts] of Object.entries(fb.choices)) {
+      const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      if (!top.length) continue;
+      parts.push(p(`<strong>${esc(q)}</strong>: ${top.map(([k, v]) => `${esc(k)} ${v}`).join(" · ")}${Object.keys(counts).length > 5 ? ` <span style="color:${MUTED};">+${Object.keys(counts).length - 5} more</span>` : ""}`));
+    }
+
+    // What they actually wrote. The whole point of a feedback section, and the one
+    // part that only exists in the gitignored sidecar - so when it is missing, say
+    // so rather than implying nobody wrote anything.
+    if (!sidecar) {
+      parts.push(p(`${fb.withText} response${fb.withText === 1 ? "" : "s"} carried written answers, but <code>data/journeys.json</code> was not available in this run, so they cannot be quoted.`, WARN));
+    } else {
+      const recent = sidecar.filter((r) => Object.keys(r.text ?? {}).length).slice(0, 5);
+      for (const r of recent) {
+        const lines = Object.entries(r.text).map(([k, v]) => `<div style="margin:2px 0;"><span style="color:${MUTED};">${esc(k)}</span> ${esc(String(v).slice(0, 400))}</div>`).join("");
+        parts.push(
+          p(
+            `<div style="border-left:3px solid ${LINE};padding-left:10px;">` +
+              `<div style="color:${MUTED};font-size:11.5px;">${esc(r.user)} · ${esc(String(r.at).slice(0, 16))}${r.nps != null ? ` · scored ${r.nps}/10` : ""}${r.contact ? ` · <span style="color:${ACCENT};">${esc(r.contact)}</span>` : ""}</div>` +
+              lines +
+              `</div>`,
+            INK,
+          ),
+        );
+      }
+      if (recent.length < fb.withText) parts.push(p(`+${fb.withText - recent.length} more written response${fb.withText - recent.length === 1 ? "" : "s"} not shown.`, MUTED));
+    }
+  }
+}
+
 parts.push(h2("Reading this"));
 parts.push(
   p(
@@ -658,6 +767,39 @@ if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);
 }
+if (fbApps.length) {
+  T.push("", "LEAVE FEEDBACK");
+  for (const { id, fb } of fbApps) {
+    const w = events?.apps?.[id]?.windows?.["1"];
+    const byName = Object.fromEntries((w?.eventsByName ?? []).map((e) => [e.name, e]));
+    const opened = byName["feedback.shown"]?.count ?? 0;
+    const failed = byName["feedback.failed"]?.count ?? 0;
+    if (!fb.available) {
+      T.push(`  ${appName(id)}: table not readable this run (not available, not zero)`);
+      continue;
+    }
+    if (!fb.responses) {
+      T.push(`  ${appName(id)}: nobody has sent feedback yet; form opened ${opened}x in 24h${failed ? `, ${failed} failed to send` : ""}`);
+      continue;
+    }
+    T.push(`  ${appName(id)}: ${fb.responses} response(s) from ${fb.people} people, opened ${opened}x in 24h${failed ? `, ${failed} failed` : ""}${fb.contactable ? `, ${fb.contactable} want a reply` : ""}`);
+    if (fb.nps.answered) {
+      T.push(
+        fb.nps.answered >= 10
+          ? `    NPS ${fb.nps.score} from ${fb.nps.answered} scores (avg ${fb.nps.average}/10)`
+          : `    ${fb.nps.answered} score(s), avg ${fb.nps.average}/10 — too few for an NPS figure`,
+      );
+    }
+    for (const [k, v] of Object.entries(fb.ratings).sort((a, b) => (a[1].avg ?? 9) - (b[1].avg ?? 9)).slice(0, 5)) {
+      T.push(`    ${k}: ${v.avg}/5 (${v.n})`);
+    }
+    for (const r of (journeys?.apps?.[id]?.feedback ?? []).filter((x) => Object.keys(x.text ?? {}).length).slice(0, 5)) {
+      T.push(`    ${r.user} ${String(r.at).slice(0, 16)}${r.nps != null ? ` (${r.nps}/10)` : ""}${r.contact ? ` <${r.contact}>` : ""}`);
+      for (const [k, v] of Object.entries(r.text)) T.push(`      ${k}: ${String(v).slice(0, 400)}`);
+    }
+  }
+}
+
 T.push("", `Generated ${NOW.toISOString()} · analytics-studio scripts/digest.mjs`);
 const text = T.join("\n");
 

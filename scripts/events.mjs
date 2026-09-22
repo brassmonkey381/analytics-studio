@@ -188,6 +188,37 @@ function roster(ids, identity) {
 
 // ---------- main ----------
 
+// Survey responses, read over ALL time like the truth tables and for the same
+// reason: a survey answered before instrumentation shipped is still an answer.
+// Config-driven (CFG.feedback.specs) so a second app is one config line and no
+// code — the responses table already carries its own `app` column.
+//
+// Two halves, split by what may be committed. The NUMBERS (nps, the 1-5 aspect
+// ratings, how many questions came back) go in data/events.json. The PROSE does
+// not: free text is identity-adjacent no matter who wrote it — people name
+// themselves, their binders and their email addresses inside it — and a
+// committed file may never carry that. It goes to the gitignored sidecar.
+function feedbackSql(apps) {
+  const keys = new Set(apps.map((a) => a.key));
+  const specs = (CFG.feedback?.specs ?? []).filter((s) => keys.has(s.app));
+  if (!specs.length) return null;
+  const parts = specs.map((s) => {
+    const where = s.filter ? ` where ${s.filter}` : "";
+    return `select '${s.app}'::text as app, f.${s.userCol} as user_id, f.${s.tsCol} as ts,
+       f.survey_id, f.survey_version, f.was_guest, f.nps, f.answers, f.context,
+       f.contact_email, f.contact_ok
+     from public.${s.table} f${where}`;
+  });
+  return `
+with ${excludedUnionCte(apps)},
+rows as (
+${parts.join("\nunion all\n")}
+)
+select r.*, (r.user_id in (select id from excluded_users)) as excluded
+from rows r order by r.ts`;
+}
+
+const feedbackRows = [];
 const sessionRows = [];
 const eventRows = [];
 const truth = {};
@@ -218,6 +249,19 @@ for (const [ref, apps] of PROJECT_GROUPS) {
   for (const kind of Object.keys(CFG.truth ?? {})) {
     const sql = truthSql(kind, apps);
     if (sql) truth[kind].push(...(await runSql(ref, sql)));
+  }
+  const fbSql = feedbackSql(apps);
+  if (fbSql) {
+    try {
+      feedbackRows.push(...(await runSql(ref, fbSql)));
+    } catch (err) {
+      // Same rule as a missing spine: absent must never render as zero. An app
+      // whose feedback table has not landed is stated, not silently emptied.
+      if (!String(err).includes("does not exist")) throw err;
+      console.warn(
+        `WARNING: feedback table missing on project ${ref} - those apps report "not available", not 0.`,
+      );
+    }
   }
 }
 
@@ -1072,10 +1116,81 @@ let store = { history: {} };
 if (existsSync(DATA_FILE)) {
   try { store = JSON.parse(readFileSync(DATA_FILE, "utf8")); } catch { /* start fresh on a corrupt file */ }
 }
+// ---------- feedback ----------
+// One block per app, all-time, exclusions applied but STATED. Numbers only here;
+// the written answers are handed to the sidecar below.
+//
+// `available` is the load-bearing field. A zero response count means nobody has
+// answered yet; a missing table means we cannot see. Those are different facts
+// and the digest prints different sentences for them, so the flag travels with
+// the numbers rather than being inferred from a zero at the far end.
+const FREE_TEXT = new Set(["one_thing", "broken", "want_other", "nps_why_low", "nps_why_mid", "nps_why_high"]);
+
+function buildFeedback(appKey) {
+  const specced = (CFG.feedback?.specs ?? []).some((f) => f.app === appKey);
+  if (!specced) return null;
+  const mine = feedbackRows.filter((r) => r.app === appKey);
+  const kept = mine.filter((r) => !r.excluded);
+  const scores = kept.map((r) => r.nps).filter((n) => typeof n === "number");
+
+  // Promoters minus detractors, the standard bands. Printed only with the counts
+  // beside it: an NPS off four answers is a number, not a measurement, and the
+  // digest is told the n so it can say so.
+  const promoters = scores.filter((n) => n >= 9).length;
+  const detractors = scores.filter((n) => n <= 6).length;
+
+  // Every choice answer, counted. Which questions exist is the survey's business,
+  // not this lane's - reading the keys off what arrived means a new question
+  // appears here the day it is first answered, with no config to update.
+  const choices = {};
+  const ratings = {};
+  for (const r of kept) {
+    const a = r.answers ?? {};
+    for (const [k, v] of Object.entries(a)) {
+      if (FREE_TEXT.has(k)) continue;
+      if (typeof v === "number") {
+        (ratings[k] ??= []).push(v);
+      } else if (typeof v === "string") {
+        ((choices[k] ??= {})[v] ??= 0), (choices[k][v] += 1);
+      } else if (Array.isArray(v)) {
+        for (const one of v) if (typeof one === "string") ((choices[k] ??= {})[one] ??= 0), (choices[k][one] += 1);
+      }
+    }
+  }
+  const avg = (xs) => (xs.length ? Math.round((xs.reduce((t, n) => t + n, 0) / xs.length) * 10) / 10 : null);
+
+  return {
+    available: true,
+    responses: kept.length,
+    people: new Set(kept.map((r) => r.user_id)).size,
+    guests: kept.filter((r) => r.was_guest).length,
+    excluded: mine.length - kept.length,
+    first: kept[0]?.ts ?? null,
+    last: kept[kept.length - 1]?.ts ?? null,
+    contactable: kept.filter((r) => r.contact_ok && r.contact_email).length,
+    nps: {
+      answered: scores.length,
+      promoters,
+      passives: scores.length - promoters - detractors,
+      detractors,
+      score: scores.length ? Math.round(((promoters - detractors) / scores.length) * 100) : null,
+      average: avg(scores),
+    },
+    ratings: Object.fromEntries(Object.entries(ratings).map(([k, xs]) => [k, { n: xs.length, avg: avg(xs) }])),
+    choices,
+    withText: kept.filter((r) => Object.entries(r.answers ?? {}).some(([k, v]) => FREE_TEXT.has(k) && typeof v === "string" && v.trim())).length,
+  };
+}
+
 store.collectedAt = out.collectedAt;
 store.windowDays = out.windowDays;
 store.windows = out.windows;
 store.apps = out.apps;
+for (const [id, a] of Object.entries(store.apps)) {
+  const key = CFG.apps.find((x) => x.id === id)?.key;
+  const fb = key ? buildFeedback(key) : null;
+  if (fb) a.feedback = fb;
+}
 store.history ??= {};
 for (const [id, a] of Object.entries(out.apps)) {
   for (const d of a.windows[Math.max(...WINDOWS)].daily) {
@@ -1086,5 +1201,42 @@ for (const [id, a] of Object.entries(out.apps)) {
 mkdirSync(dirname(DATA_FILE), { recursive: true });
 writeFileSync(DATA_FILE, JSON.stringify(store, null, 2));
 console.log(`\nWrote ${DATA_FILE}`);
+// A fleet-wide name lookup. The per-app `identity` map is built inside
+// computeWindow and is long out of scope here, and a feedback row can come from
+// somebody whose sessions all fell outside the 30-day fetch - they still get a
+// name where one is known, and an id stub where it is not.
+const identityAll = new Map();
+for (const s of sessionRows) {
+  if (!identityAll.has(s.user_id)) {
+    identityAll.set(s.user_id, {
+      id: s.user_id,
+      email: s.email,
+      username: s.username,
+      displayName: s.display_name,
+      anon: !!s.anon,
+    });
+  }
+}
+
+// The written answers, and the addresses of people who asked to be replied to.
+// Sidecar ONLY - this is the half of feedback that can never be committed.
+for (const [id, a] of Object.entries(journeys.apps)) {
+  const key = CFG.apps.find((x) => x.id === id)?.key;
+  if (!key || !(CFG.feedback?.specs ?? []).some((f) => f.app === key)) continue;
+  a.feedback = feedbackRows
+    .filter((r) => r.app === key && !r.excluded)
+    .map((r) => ({
+      at: r.ts,
+      user: userLabel(identityAll.get(r.user_id) ?? { id: r.user_id, anon: r.was_guest }),
+      nps: r.nps ?? null,
+      text: Object.fromEntries(
+        Object.entries(r.answers ?? {}).filter(([k, v]) => FREE_TEXT.has(k) && typeof v === "string" && v.trim()),
+      ),
+      // Only where they ticked the box. An address they did not offer is not ours to reprint.
+      contact: r.contact_ok ? (r.contact_email ?? null) : null,
+    }))
+    .reverse();
+}
+
 writeFileSync(JOURNEYS_FILE, JSON.stringify(journeys, null, 2));
 console.log(`Wrote ${JOURNEYS_FILE} (gitignored - contains emails)`);

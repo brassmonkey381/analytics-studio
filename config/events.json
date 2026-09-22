@@ -526,7 +526,29 @@
         "michi"
       ]
     },
-    "_storyBuildDoc": "story.build { template, pages, art, source, rarity } fires from StoryBinderSheet when someone builds a binder from a template instead of filling pockets one at a time. IT IS GATED TO VIP and its zero is a GATE, not a behaviour. The entry point is one small button on My binders behind `limits.multiPageCompose`, and the component says why: an experiment the owner wants to play with before deciding how it is sold, mentioned on no marketing surface. Ground truth 2026-09-10: tier_vip has 3 rows and all 3 are excluded owner accounts, 0 external - so nobody outside our own accounts can reach the button at all. All 10 story.build events to date are from one excluded account. A NOTE WRITTEN HERE ON 2026-09-10 CALLED IT 'the other route past the binder->card cliff', which was wrong in the way that matters: it implied users could take it. They cannot. Do not count it as an alternative path, and do not read its zero in any exclusions-applied report as disinterest - it is unreachable. If multiPageCompose ever reaches a sold tier, this note is what says the numbers before that date describe one person."
+    "_storyBuildDoc": "story.build { template, pages, art, source, rarity } fires from StoryBinderSheet when someone builds a binder from a template instead of filling pockets one at a time. IT IS GATED TO VIP and its zero is a GATE, not a behaviour. The entry point is one small button on My binders behind `limits.multiPageCompose`, and the component says why: an experiment the owner wants to play with before deciding how it is sold, mentioned on no marketing surface. Ground truth 2026-09-10: tier_vip has 3 rows and all 3 are excluded owner accounts, 0 external - so nobody outside our own accounts can reach the button at all. All 10 story.build events to date are from one excluded account. A NOTE WRITTEN HERE ON 2026-09-10 CALLED IT 'the other route past the binder->card cliff', which was wrong in the way that matters: it implied users could take it. They cannot. Do not count it as an alternative path, and do not read its zero in any exclusions-applied report as disinterest - it is unreachable. If multiPageCompose ever reaches a sold tier, this note is what says the numbers before that date describe one person.",
+    "feedback.shown": {
+      "label": "Opened the feedback form",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "feedback.submitted": {
+      "label": "Sent feedback",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "feedback.failed": {
+      "label": "Feedback did not send",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_feedbackDoc": "feedback.shown / .submitted / .failed cover /feedback - the Leave Feedback page reached from the web rail and the site footer. props: { survey, version } on all three, plus { answered, has_score, has_text } on .submitted and { reason } on .failed. NO PROSE, EVER. What people wrote lives in feedback_responses and must never reach an event prop: props are contractually ids and numbers, `answered` is a COUNT of questions returned, and has_score / has_text are booleans about shape. .submitted counts what was actually SENT rather than the working answer map, which holds hidden follow-ups, a prefilled address nobody typed and blank strings - counting that map would report a fuller survey than the one that landed. .failed keeps three refusals apart: no-session (the auth sheet opens, the person is still there), rate-limited (the insert policy's five-a-day cap) and error (ours). Pooling them would hide a broken write behind a working guard. NOT MICHI-ONLY BY DESIGN: feedback_responses already carries an `app` column and the page, survey definition and repo are app-agnostic. Adding another app is adding its key to `apps` here and a spec to `feedback` below - no new event names, and the digest section iterates whatever it finds."
   },
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness \u2014 the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
@@ -1074,6 +1096,15 @@
       "fix": "Emit binder.slot_press { filled }, dock.open / dock.close { tab, fit }, card.search from the dock's own box (michi's only search event is search.no_results, and it fires from ColorSearchSheet, not the main box - see tcgscan_search_blind), and a drag that starts without landing. The walkthrough shipped 2026-09-10 covers the teaching half of this; it does not make the editor observable.",
       "_whyItMattersMoreNow": "The 2026-09-10 changes are a bet that people stalled because nothing told them what to do. Without editor events the only way to score that bet is the binder->card rate, which says whether it worked and never why. A walkthrough that is shown, stepped through and followed by no card is a different failure from one that is dismissed at the ring, and today only the second is visible.",
       "_howWeFoundIt": "Not from the stream. @scorbuns (2026-09-09) was reconstructed from the tcgscan-data project's edge logs - catalog.enc 1.6MB HTTP 200, 272 requests all 200, CDN 137 HIT / 76 MISS, 16 result images 335ms after the search and 3 more 11 seconds later, which is how we know they scrolled. Those logs retain for days, not months, so that method answers questions about this week and never about last month."
+    },
+    "feedback_unmeasured": {
+      "severity": "medium",
+      "status": "landed",
+      "title": "The feedback page counted sends and nothing else",
+      "detail": "/feedback shipped emitting one event, feedback.submitted. A send that never landed was silent in all three of its failure modes, and there was no impression event at all - so the submit count was a numerator with no denominator, which reads as a triumph off six openings and a problem off six hundred.",
+      "direction": "made the response rate unknowable in either direction, and hid every failed send",
+      "fix": "Landed 2026-09-22 in michi: feedback.shown once per form mount, and feedback.failed with the repo's own reason enum (no-session | rate-limited | error) at both the classified and the thrown paths.",
+      "_zeroMeansEmptyNotBlind": "feedback_responses held 0 rows as of 2026-09-22, so every number this produces starts at zero and that zero means NOBODY HAS SENT ANYTHING YET - not that the lane cannot see it. Promote to fixed on the first observed feedback.shown, which will prove the page is being reached even while the responses table is still empty."
     }
   },
   "guestDepth": {
@@ -1088,6 +1119,18 @@
       "demo.csv_import",
       "demo.curation",
       "demo.print"
+    ]
+  },
+  "feedback": {
+    "_doc": "Where each app's survey responses live. One spec per app; the studio reads counts and numeric answers into data/events.json (committed) and the written answers into the gitignored sidecar, because prose is identity-adjacent and a committed file may never carry it. `filter` scopes the shared table by its own `app` column.",
+    "specs": [
+      {
+        "app": "michi",
+        "table": "feedback_responses",
+        "userCol": "user_id",
+        "tsCol": "created_at",
+        "filter": "app = 'michi'"
+      }
     ]
   }
 }
