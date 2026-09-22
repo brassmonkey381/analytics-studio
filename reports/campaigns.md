@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-09-21T18:31:49.903Z. All-time unless a window is named.
+Collected 2026-09-22T16:03:35.348Z. All-time unless a window is named.
 
-**66 campaign arrivals** across 4 apps.
+**70 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
@@ -19,7 +19,9 @@ Collected 2026-09-21T18:31:49.903Z. All-time unless a window is named.
 | (unregistered) | `14eeaf28-ff65-4236-aefd-2d99c5298e67` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `159f1618-33c4-4a43-943c-fc19b8a99970` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `16dcefb0-9a57-4421-a5d8-113708cca442` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `1d2c93e6-5a38-41f7-b55b-ac0914c6d467` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `1eedf2a2-8d68-4722-a98c-8b1b66f9f73d` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `208d7060-4d34-4586-b67c-abe439ea1832` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `22123b3d-a15c-43dd-957c-2255112b41be` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `22bbe2cb-dd7c-438a-aeb2-7ba28717969d` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `23be02d5-1cb6-4be8-968a-b430978bc477` | 1 | 1 | 1 | 0 | 0 |
@@ -28,12 +30,14 @@ Collected 2026-09-21T18:31:49.903Z. All-time unless a window is named.
 | (unregistered) | `325baed6-93a9-4e15-bb43-a961d1d3e533` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `32faff15-7b09-4fa0-9263-36c2f8b4a93a` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `335bd3c4-5e96-43f3-b915-26007fff0cb6` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `375e9741-2cbf-40c2-a881-4e86b7e3fa12` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `381a0346-5be3-4c17-94f2-5f770338bda2` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `38cc7ac0-4602-4f50-9cb4-9616856b1a65` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `3be00d93-86c9-4294-a03c-4c0aa98e5975` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `3f889f5f-8b8a-439b-aac9-4f531985202a` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `4159da30-3b2c-4e11-932b-cbc807b4b787` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `49bb8d42-bb93-4b2f-9b83-b1d0e58d91eb` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `4b3caf74-fac5-47db-9cee-f718233e7f7f` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `4e1c5e91-98ec-431c-ac97-27134a7a2875` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `598b7880-56a5-4c22-970f-fdc81d49a12a` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `5a162cf9-59cc-436b-939e-aecbcaf4fe00` | 1 | 1 | 1 | 0 | 1 |
@@ -71,11 +75,11 @@ Collected 2026-09-21T18:31:49.903Z. All-time unless a window is named.
 | (unregistered) | `faed5065-c1d1-45f8-8a78-3494094486ec` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `7b7772d0-25e9-4543-88a7-17f5b2b8fb5b` | 0 | 0 | 0 | 0 | 0 |
 
-Excluded from the above: 20 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 23 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-No campaign-tagged arrival, all time. Landing routes are recorded (1095 of 1232 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Landing routes are recorded (1130 of 1268 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Doggle
 
@@ -111,8 +115,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 2595 | 2358 | 82 | 2081 | a code was recorded 2026-08-13 |
-| TCGScan | 1232 | 1095 | 0 | 1058 | routes yes, never a code — a zero cannot be told from an unshipped build |
-| Doggle | 341 | 326 | 5 | 341 | a code was recorded 2026-08-13 |
+| Michi-Maker | 2721 | 2479 | 89 | 2207 | a code was recorded 2026-08-13 |
+| TCGScan | 1268 | 1130 | 0 | 1094 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Doggle | 347 | 332 | 5 | 347 | a code was recorded 2026-08-13 |
 | Pickleague | 135 | 127 | 0 | 135 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
