@@ -597,6 +597,56 @@ if (made.length) {
 }
 
 // --- footer ---
+// ---------- Who is on a PRO trial right now ----------
+//
+// Named, always, and sorted by who runs out first - which is the order they can
+// be acted on. Counts alone were the old behaviour and they cannot be acted on:
+// "3 trials ending" does not tell you whose window is closing tonight.
+//
+// The names live in the gitignored sidecar, so when it is missing this says so
+// rather than printing the count and implying that is all there was.
+const trialApps = APPS.map((id) => ({ id, tr: events?.apps?.[id]?.activeTrials ?? null })).filter((x) => x.tr);
+if (trialApps.length) {
+  const totalOn = trialApps.reduce((n, x) => n + x.tr.count, 0);
+  parts.push(h2(`On a PRO trial right now — ${totalOn}`));
+  for (const { id, tr } of trialApps) {
+    const named = journeys?.apps?.[id]?.activeTrials ?? null;
+    if (!tr.count) {
+      parts.push(p(`<strong>${esc(appName(id))}</strong> — nobody is on a trial.${tr.excluded ? ` <span style="color:${MUTED};">${tr.excluded} of ours excluded.</span>` : ""}`));
+      continue;
+    }
+    parts.push(
+      p(
+        `<strong>${esc(appName(id))}</strong> — <strong>${tr.count}</strong> on a trial` +
+          (tr.endingWithin3Days ? `, <span style="color:${WARN};">${tr.endingWithin3Days} ending within 3 days</span>` : "") +
+          `.${tr.excluded ? ` <span style="color:${MUTED};">${tr.excluded} of ours excluded.</span>` : ""}`,
+      ),
+    );
+    if (!named) {
+      parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
+      continue;
+    }
+    parts.push(`<tr><td style="padding:2px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Who</th><th style="${cellHead}text-align:right;">Days left</th><th style="${cellHead}">Ends</th><th style="${cellHead}">Started</th><th style="${cellHead}text-align:right;">Length</th></tr>
+${named
+  .map((t) => {
+    // Under two days is the only thing here worth a colour: it is the last
+    // window in which anything can be sent to them.
+    const urgent = t.daysLeft <= 1;
+    return `<tr><td style="${cell}">${esc(t.user)}</td><td style="${num}${urgent ? `color:${WARN};font-weight:600;` : ""}">${t.daysLeft === 0 ? "today" : t.daysLeft}</td><td style="${cell}">${esc(String(t.expiresAt).slice(0, 10))}</td><td style="${cell}">${esc(String(t.startedAt).slice(0, 10))}</td><td style="${num}">${t.grantedDays}d</td></tr>`;
+  })
+  .join("")}
+</table></td></tr>`);
+    // The trial length changed on 2026-09-20 (14 days -> 3). While a trial from
+    // before that is still running, the Length column has two different numbers
+    // in it and looks like a bug unless it is explained.
+    const lengths = [...new Set(named.map((t) => t.grantedDays))];
+    if (lengths.length > 1) {
+      parts.push(p(`Two trial lengths are running side by side (${lengths.sort((a, b) => a - b).join("d and ")}d). The trial was shortened to ${Math.min(...lengths)} days on 2026-09-20; anyone who started before that keeps the length they were given.`, MUTED));
+    }
+  }
+}
+
 // ---------- Leave Feedback ----------
 //
 // Driven entirely by what the lane found, never by a hardcoded app list: the page,
@@ -767,6 +817,25 @@ if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);
 }
+if (trialApps.length) {
+  T.push("", `ON A PRO TRIAL RIGHT NOW — ${trialApps.reduce((n, x) => n + x.tr.count, 0)}`);
+  for (const { id, tr } of trialApps) {
+    if (!tr.count) {
+      T.push(`  ${appName(id)}: nobody on a trial`);
+      continue;
+    }
+    const named = journeys?.apps?.[id]?.activeTrials ?? null;
+    T.push(`  ${appName(id)}: ${tr.count} on a trial${tr.endingWithin3Days ? `, ${tr.endingWithin3Days} ending within 3 days` : ""}`);
+    if (!named) {
+      T.push("    (names not carried in this run)");
+      continue;
+    }
+    for (const t of named) {
+      T.push(`    ${String(t.user).padEnd(20)} ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}  ends ${String(t.expiresAt).slice(0, 10)}  (${t.grantedDays}d trial, started ${String(t.startedAt).slice(0, 10)})`);
+    }
+  }
+}
+
 if (fbApps.length) {
   T.push("", "LEAVE FEEDBACK");
   for (const { id, fb } of fbApps) {

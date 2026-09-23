@@ -1132,5 +1132,24 @@
         "filter": "app = 'michi'"
       }
     ]
+  },
+  "trials": {
+    "_doc": "Where each app's trial ledger lives, so the digest can name who is ON a trial right now and how long they have left. `truth.trial` above answers a different question - how many people have EVER started one - and carries no expiry, which is why this exists separately rather than as another column on it. Counts go in data/events.json; the names and the days left go to the gitignored sidecar, because a list of who is mid-trial is identity. Same spec shape as feedback and truth: a new app is one entry.",
+    "specs": [
+      {
+        "app": "michi",
+        "table": "pro_trials",
+        "userCol": "user_id",
+        "startCol": "started_at",
+        "endCol": "expires_at"
+      },
+      {
+        "app": "tcgscan",
+        "table": "tcgscan_pro_trials",
+        "userCol": "user_id",
+        "startCol": "started_at",
+        "endCol": "expires_at"
+      }
+    ]
   }
 }

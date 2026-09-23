@@ -218,6 +218,32 @@ select r.*, (r.user_id in (select id from excluded_users)) as excluded
 from rows r order by r.ts`;
 }
 
+// Trials that are RUNNING RIGHT NOW, with their end dates. Distinct from
+// truth.trial, which counts everyone who ever started one and keeps no expiry -
+// "11 people have trialed" and "3 people are on a trial that ends Thursday" are
+// different questions and only the second one can be acted on.
+//
+// `now()` is evaluated by the database, not here, so "active" is decided in one
+// place no matter when the lane runs or what timezone the machine is in.
+function activeTrialsSql(apps) {
+  const keys = new Set(apps.map((a) => a.key));
+  const specs = (CFG.trials?.specs ?? []).filter((s) => keys.has(s.app));
+  if (!specs.length) return null;
+  const parts = specs.map(
+    (s) => `select '${s.app}'::text as app, t.${s.userCol} as user_id,
+       t.${s.startCol} as started_at, t.${s.endCol} as expires_at
+     from public.${s.table} t where t.${s.endCol} > now()`,
+  );
+  return `
+with ${excludedUnionCte(apps)},
+rows as (
+${parts.join("\nunion all\n")}
+)
+select r.*, (r.user_id in (select id from excluded_users)) as excluded
+from rows r order by r.expires_at`;
+}
+
+const activeTrialRows = [];
 const feedbackRows = [];
 const sessionRows = [];
 const eventRows = [];
@@ -249,6 +275,15 @@ for (const [ref, apps] of PROJECT_GROUPS) {
   for (const kind of Object.keys(CFG.truth ?? {})) {
     const sql = truthSql(kind, apps);
     if (sql) truth[kind].push(...(await runSql(ref, sql)));
+  }
+  const trSql = activeTrialsSql(apps);
+  if (trSql) {
+    try {
+      activeTrialRows.push(...(await runSql(ref, trSql)));
+    } catch (err) {
+      if (!String(err).includes("does not exist")) throw err;
+      console.warn(`WARNING: trial ledger missing on project ${ref} - those apps report "not available", not 0.`);
+    }
   }
   const fbSql = feedbackSql(apps);
   if (fbSql) {
@@ -1186,10 +1221,27 @@ store.collectedAt = out.collectedAt;
 store.windowDays = out.windowDays;
 store.windows = out.windows;
 store.apps = out.apps;
+const DAY_MS_T = 86_400_000;
+const daysLeft = (iso) => Math.max(0, Math.ceil((Date.parse(iso) - Date.now()) / DAY_MS_T));
+
 for (const [id, a] of Object.entries(store.apps)) {
   const key = CFG.apps.find((x) => x.id === id)?.key;
-  const fb = key ? buildFeedback(key) : null;
+  if (!key) continue;
+  const fb = buildFeedback(key);
   if (fb) a.feedback = fb;
+  if ((CFG.trials?.specs ?? []).some((t) => t.app === key)) {
+    const mine = activeTrialRows.filter((r) => r.app === key);
+    const kept = mine.filter((r) => !r.excluded);
+    // Counts only here. WHO is on a trial is a list of named people and belongs
+    // in the sidecar with every other roster.
+    a.activeTrials = {
+      available: true,
+      count: kept.length,
+      excluded: mine.length - kept.length,
+      endingWithin3Days: kept.filter((r) => daysLeft(r.expires_at) <= 3).length,
+      soonestEnd: kept[0]?.expires_at ?? null,
+    };
+  }
 }
 store.history ??= {};
 for (const [id, a] of Object.entries(out.apps)) {
@@ -1216,6 +1268,25 @@ for (const s of sessionRows) {
       anon: !!s.anon,
     });
   }
+}
+
+// Who is mid-trial, soonest to expire first - the order it is acted on.
+for (const [id, a] of Object.entries(journeys.apps)) {
+  const key = CFG.apps.find((x) => x.id === id)?.key;
+  if (!key || !(CFG.trials?.specs ?? []).some((t) => t.app === key)) continue;
+  a.activeTrials = activeTrialRows
+    .filter((r) => r.app === key && !r.excluded)
+    .map((r) => ({
+      user: userLabel(identityAll.get(r.user_id) ?? { id: r.user_id }),
+      startedAt: r.started_at,
+      expiresAt: r.expires_at,
+      daysLeft: daysLeft(r.expires_at),
+      // What they were actually granted, which is not always what today's copy
+      // says: the michi trial went from 14 days to 3 on 2026-09-20, so a trial
+      // opened before that is still running on the old length and a reader
+      // comparing it to the current button would think it was wrong.
+      grantedDays: Math.round((Date.parse(r.expires_at) - Date.parse(r.started_at)) / DAY_MS_T),
+    }));
 }
 
 // The written answers, and the addresses of people who asked to be replied to.
