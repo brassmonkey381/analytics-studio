@@ -669,7 +669,7 @@
       }
     }
   },
-  "collectedAt": "2026-09-23T19:11:37.513Z",
+  "collectedAt": "2026-09-23T19:31:06.205Z",
   "windowDays": 30,
   "apps": {
     "michi-maker": {
@@ -679,8 +679,8 @@
         "1": {
           "windowDays": 1,
           "totals": {
-            "sessions": 40,
-            "events": 1154,
+            "sessions": 39,
+            "events": 1104,
             "users": 24,
             "realUsers": 12,
             "guestUsers": 12,
@@ -689,14 +689,14 @@
             "guestSessions": 18,
             "upgradeSessions": 2,
             "excludedSessions": 32,
-            "excludedEvents": 190,
-            "orphanEvents": 4,
+            "excludedEvents": 193,
+            "orphanEvents": 21,
             "bouncedSessions": 2,
-            "medianSessionSecs": 247.985,
+            "medianSessionSecs": 150.382,
             "platforms": {
-              "web": 40
+              "web": 39
             },
-            "firstEventAt": "2026-09-22 19:18:48.009+00"
+            "firstEventAt": "2026-09-22 19:32:37.101736+00"
           },
           "daily": [
             {
@@ -711,7 +711,7 @@
               "name": "card.add",
               "label": "Added cards",
               "stage": "engagement",
-              "count": 621,
+              "count": 577,
               "users": 7,
               "known": true
             },
@@ -719,7 +719,7 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 359,
+              "count": 354,
               "users": 23,
               "known": true
             },
@@ -735,7 +735,7 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 38,
+              "count": 37,
               "users": 23,
               "known": true
             },
@@ -865,21 +865,21 @@
               "route": "/binder/:id",
               "label": null,
               "intent": null,
-              "count": 133,
+              "count": 132,
               "users": 14
             },
             {
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 131,
+              "count": 130,
               "users": 11
             },
             {
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 43,
+              "count": 42,
               "users": 13
             },
             {
@@ -900,8 +900,8 @@
               "route": "/michi-method",
               "label": "The michi method",
               "intent": null,
-              "count": 6,
-              "users": 3
+              "count": 5,
+              "users": 2
             },
             {
               "route": "/discover",
@@ -909,13 +909,6 @@
               "intent": null,
               "count": 4,
               "users": 3
-            },
-            {
-              "route": "/whats-new",
-              "label": null,
-              "intent": null,
-              "count": 2,
-              "users": 2
             },
             {
               "route": "/binder/ex-color-play",
@@ -962,6 +955,13 @@
             {
               "route": "/contest",
               "label": "Contest",
+              "intent": null,
+              "count": 1,
+              "users": 1
+            },
+            {
+              "route": "/whats-new",
+              "label": null,
               "intent": null,
               "count": 1,
               "users": 1
@@ -1236,9 +1236,13 @@
                   "shown": 2,
                   "people": 2,
                   "routes": {
+                    "—": {
+                      "count": 1,
+                      "users": 1
+                    },
                     "/binder/:id": {
-                      "count": 2,
-                      "users": 2
+                      "count": 1,
+                      "users": 1
                     }
                   },
                   "declined": 2,
@@ -1644,6 +1648,12 @@
               "excludedUsers": 22,
               "untracked": null,
               "earliest": "2026-09-02 18:35:12.987868+00"
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
+              "untracked": null,
+              "earliest": null
             }
           }
         },
@@ -1659,8 +1669,8 @@
             "convertedUsers": 10,
             "guestSessions": 222,
             "upgradeSessions": 6,
-            "excludedSessions": 263,
-            "excludedEvents": 2652,
+            "excludedSessions": 260,
+            "excludedEvents": 2641,
             "orphanEvents": 6,
             "bouncedSessions": 7,
             "medianSessionSecs": 126.176,
@@ -3340,6 +3350,12 @@
               "excludedUsers": 22,
               "untracked": null,
               "earliest": "2026-09-02 18:35:12.987868+00"
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
+              "untracked": null,
+              "earliest": null
             }
           }
         },
@@ -3355,8 +3371,8 @@
             "convertedUsers": 19,
             "guestSessions": 365,
             "upgradeSessions": 11,
-            "excludedSessions": 479,
-            "excludedEvents": 5051,
+            "excludedSessions": 478,
+            "excludedEvents": 5048,
             "orphanEvents": 11,
             "bouncedSessions": 14,
             "medianSessionSecs": 108.19,
@@ -5252,6 +5268,12 @@
               "excludedUsers": 22,
               "untracked": null,
               "earliest": "2026-09-02 18:35:12.987868+00"
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
+              "untracked": null,
+              "earliest": null
             }
           }
         },
@@ -5268,7 +5290,7 @@
             "guestSessions": 690,
             "upgradeSessions": 20,
             "excludedSessions": 1313,
-            "excludedEvents": 12239,
+            "excludedEvents": 12242,
             "orphanEvents": 22,
             "bouncedSessions": 24,
             "medianSessionSecs": 79.185,
@@ -7655,6 +7677,12 @@
               "excludedUsers": 22,
               "untracked": null,
               "earliest": "2026-09-02 18:35:12.987868+00"
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
+              "untracked": null,
+              "earliest": null
             }
           }
         }
@@ -7917,6 +7945,12 @@
             "entitlement": {
               "users": 0,
               "excludedUsers": 12,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
               "untracked": null,
               "earliest": null
             }
@@ -8445,6 +8479,12 @@
               "excludedUsers": 12,
               "untracked": null,
               "earliest": null
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
+              "untracked": null,
+              "earliest": null
             }
           }
         },
@@ -8460,8 +8500,8 @@
             "convertedUsers": 4,
             "guestSessions": 36,
             "upgradeSessions": 2,
-            "excludedSessions": 522,
-            "excludedEvents": 7009,
+            "excludedSessions": 511,
+            "excludedEvents": 6971,
             "orphanEvents": 1,
             "bouncedSessions": 8,
             "medianSessionSecs": 4.732,
@@ -9025,6 +9065,12 @@
             "entitlement": {
               "users": 0,
               "excludedUsers": 12,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
               "untracked": null,
               "earliest": null
             }
@@ -9752,6 +9798,12 @@
               "excludedUsers": 12,
               "untracked": null,
               "earliest": null
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 3,
+              "untracked": null,
+              "earliest": null
             }
           }
         }
@@ -9985,6 +10037,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,
@@ -10291,6 +10349,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,
@@ -10687,6 +10751,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,
@@ -11307,6 +11377,12 @@
               "excludedUsers": 0,
               "untracked": null,
               "earliest": null
+            },
+            "paid": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
             }
           }
         }
@@ -11457,6 +11533,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,
@@ -11614,6 +11696,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,
@@ -11864,6 +11952,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,
@@ -12210,6 +12304,12 @@
               "earliest": null
             },
             "entitlement": {
+              "users": 0,
+              "excludedUsers": 0,
+              "untracked": null,
+              "earliest": null
+            },
+            "paid": {
               "users": 0,
               "excludedUsers": 0,
               "untracked": null,

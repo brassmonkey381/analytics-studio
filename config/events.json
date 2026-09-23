@@ -870,7 +870,7 @@
       ]
     }
   ],
-  "_truthDoc": "Ground-truth tables read alongside the event stream. These predate instrumentation, so they answer 'did it actually happen' for the whole history, not just since tracking went live. Used to cross-check the event stream and to catch under-counting.",
+  "_truthDoc": "Ground-truth tables read alongside the event stream. These predate instrumentation, so they answer 'did it actually happen' for the whole history, not just since tracking went live. Used to cross-check the event stream and to catch under-counting. PAID vs ENTITLEMENT: a trial grants a real tier_pro entitlement row, so `entitlement` has always counted trials among its holders - it answers 'holds a tier', not 'has paid us'. `paid` is the same tables with source <> 'trial' and is the only one of the two that may ever be worded as paying. On 2026-09-23 they read 11 and 0: every entitlement michi has outside our own accounts was granted by a trial, and the digest called that 'a paid entitlement', which read as revenue.",
   "truth": {
     "trial": [
       {
@@ -900,6 +900,22 @@
         "userCol": "user_id",
         "tsCol": "granted_at",
         "filter": "product like 'tcgscan_%'"
+      }
+    ],
+    "paid": [
+      {
+        "app": "michi",
+        "table": "entitlements",
+        "userCol": "user_id",
+        "tsCol": "granted_at",
+        "filter": "product like 'tier_%' and coalesce(source,'') <> 'trial'"
+      },
+      {
+        "app": "tcgscan",
+        "table": "entitlements",
+        "userCol": "user_id",
+        "tsCol": "granted_at",
+        "filter": "product like 'tcgscan_%' and coalesce(source,'') <> 'trial'"
       }
     ]
   },

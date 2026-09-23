@@ -168,15 +168,20 @@ for (const id of APPS) {
   const pricing = (w.routes ?? []).filter((rt) => rt.intent === "pricing");
   const trial = w.truth?.trial ?? null;
   const ent = w.truth?.entitlement ?? null;
+  const paid = w.truth?.paid ?? null;
   if (!rows.length && !pricing.length && !trial?.users && !ent?.users) continue;
   money.push({
     app: id,
     events: rows.map((e) => ({ ...e, who: names(r?.events?.[e.name]) })),
     pricing: pricing.map((rt) => ({ ...rt, who: names(r?.routes?.[rt.route]) })),
+    // `entitlement` means "holds a tier", and a trial grants one - so it counts
+    // trials too. `paid` is the same tables with source <> 'trial' and is the
+    // only one of the two that may be worded as revenue.
     trialUsers: trial?.users ?? 0,
     trialExcluded: trial?.excludedUsers ?? 0,
     entUsers: ent?.users ?? 0,
     entExcluded: ent?.excludedUsers ?? 0,
+    paidUsers: paid?.users ?? null,
   });
 }
 
@@ -519,8 +524,13 @@ ${rows
     if (m.trialUsers || m.trialExcluded || m.entUsers || m.entExcluded) {
       parts.push(
         p(
-          `Ground truth (the product tables, not the event stream): ${m.trialUsers} real ${m.trialUsers === 1 ? "account holds" : "accounts hold"} a trial, ` +
-            `${m.entUsers} a paid entitlement${m.trialExcluded || m.entExcluded ? ` — plus ${m.trialExcluded} trial and ${m.entExcluded} entitlement rows on our own accounts, excluded` : ""}.`,
+          `Ground truth (the product tables, not the event stream): ${m.trialUsers} real ${m.trialUsers === 1 ? "account has" : "accounts have"} ever started a trial` +
+            (m.paidUsers == null
+              ? `, ${m.entUsers} hold a tier entitlement (trial grants included — the paid-only split was not available this run)`
+              : m.paidUsers
+                ? `, and <strong>${m.paidUsers} ${m.paidUsers === 1 ? "is paying" : "are paying"}</strong>`
+                : `, and <strong>none are paying</strong> — all ${m.entUsers} tier entitlements were granted by a trial, not bought`) +
+            `${m.trialExcluded || m.entExcluded ? ` — plus ${m.trialExcluded} trial and ${m.entExcluded} entitlement rows on our own accounts, excluded` : ""}.`,
         ),
       );
     }
