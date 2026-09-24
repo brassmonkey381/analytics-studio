@@ -1,25 +1,25 @@
 # Event analytics — last 30 days
 
-Collected 2026-09-24T06:56:58.316Z. Own/QA/automated accounts excluded.
+Collected 2026-09-24T08:27:32.374Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-1017 sessions · 14970 events · 78 accounts + 494 guests · median session 1m
-Excluded: 1314 sessions, 12178 events (our own, QA and automated accounts).
+1016 sessions · 14965 events · 78 accounts + 493 guests · median session 1m
+Excluded: 1319 sessions, 12242 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 29 | 456 | 18 |
-| 7d | 369 | 7762 | 185 |
-| 14d | 579 | 10261 | 308 |
-| 30d | 1017 | 14970 | 572 |
+| 24h | 28 | 404 | 16 |
+| 7d | 364 | 7664 | 184 |
+| 14d | 578 | 10261 | 307 |
+| 30d | 1016 | 14965 | 571 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **494** of 572 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **493** of 571 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
 - **78** Signed-in account (100% of top)
 - **78** Did anything past the open (100% of top)
@@ -32,15 +32,15 @@ _When a plan limit actually stops someone, does the trial offer sitting there co
 
 - **59** Was stopped by a plan limit (10.3% of top)
 - **25** Was shown the PRO offer (4.4% of top)
-- **6** Pressed start (1% of top)
-- **6** Started a PRO trial (1% of top)
+- **6** Pressed start (1.1% of top)
+- **6** Started a PRO trial (1.1% of top)
 
 ### First-session activation
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **567** Opened the app (99.1% of top)
-- **563** Viewed a page (98.4% of top)
+- **566** Opened the app (99.1% of top)
+- **562** Viewed a page (98.4% of top)
 - **23** Tried a demo (4% of top)
 - **21** Made something real (3.7% of top)
 
@@ -48,8 +48,8 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **523** Started as a guest (100% of top)
-- **514** Did anything at all (98.3% of top)
+- **522** Started as a guest (100% of top)
+- **513** Did anything at all (98.3% of top)
 - **80** Submitted the upgrade (15.3% of top) — see gap `upgrade_unconfirmed`
 - **28** Completed it (ground truth) (5.4% of top)
 
@@ -165,13 +165,13 @@ The PRO offer: shown **666** times to **49** people, walked away from **75**, pr
 
 ### What guests did past the open
 
-523 people opened as a guest across 683 sessions.
+522 people opened as a guest across 682 sessions.
 
-| How far they got | People | of 523 |
+| How far they got | People | of 522 |
 | --- | ---: | ---: |
 | Opened and left | 9 | 1.7% |
-| Looked at a page or two | 181 | 34.6% |
-| Wandered the site | 193 | 36.9% |
+| Looked at a page or two | 181 | 34.7% |
+| Wandered the site | 192 | 36.8% |
 | Built something | 140 | 26.8% |
 
 Of the 140 who built something, **27** created an account.
@@ -205,8 +205,8 @@ Of the 140 who built something, **27** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 416 | 1106 |
-| `/welcome` | 415 | 478 |
+| `/` | 415 | 1104 |
+| `/welcome` | 414 | 477 |
 | `/binder/:id` | 199 | 512 |
 | `/my-binders` | 169 | 416 |
 | `/browse` | 117 | 177 |
@@ -220,9 +220,9 @@ Of the 140 who built something, **27** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 6258 | 563 |
+| Viewed a page (`page.view`) | 6254 | 562 |
 | Added cards (`card.add`) | 5302 | 105 |
-| Session started (`session.start`) | 1008 | 567 |
+| Session started (`session.start`) | 1007 | 566 |
 | Saw the PRO offer (`pro.offer_shown`) | 666 | 49 |
 | Tried the theme search demo (`demo.theme_search`) | 338 | 74 |
 | Created a binder (`binder.add`) | 240 | 178 |
@@ -248,9 +248,9 @@ Of the 140 who built something, **27** created an account.
 | Tried collection curation (`demo.curation`) | 1 | 1 |
 | Previewed the print sheets (`print.preview`) | 1 | 1 |
 
-Instrumentation: 31/38 events verified firing (all traffic, all time).
+Instrumentation: 31/44 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `compose.pages_kept`, `trial.start_failed`, `search.no_results`, `feedback.submitted`, `feedback.failed`, `offer.checkout_start`, `offer.checkout_failed`
+Never fired by anyone (unverified): `compose.pages_kept`, `trial.start_failed`, `search.no_results`, `feedback.submitted`, `feedback.failed`, `offer.checkout_start`, `offer.checkout_failed`, `puzzle.offer_shown`, `puzzle.choice`, `puzzle.opened`, `puzzle.guess_submitted`, `puzzle.solved`, `puzzle.guess_failed`
 
 Works, but not yet from a real user: `binder.rebuild_from_tcgscan`, `story.build`, `feedback.shown`, `offer_checkout_start`
 
@@ -259,12 +259,12 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 69 sessions · 361 events · 13 accounts + 34 guests · median session 5s
-Excluded: 928 sessions, 12375 events (our own, QA and automated accounts).
+Excluded: 922 sessions, 12311 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 0 | 0 | 0 |
-| 7d | 19 | 116 | 14 |
+| 7d | 18 | 111 | 13 |
 | 14d | 50 | 237 | 37 |
 | 30d | 69 | 361 | 47 |
 
@@ -572,6 +572,14 @@ Three faults at once. The event name differed between the apps by one character 
 **Effect:** understated checkout intent by an unknown amount and made it unjoinable across the two apps
 
 **Fix:** Landed 2026-09-23. startCheckout() in both apps emits offer.checkout_start and, on a failed URL mint, offer.checkout_failed; every caller passes a `surface`. Six names registered. Promote to fixed once a checkout_start is observed from a surface other than offer_cards - that is the half that was invisible.
+
+### The daily puzzle emitted nothing `puzzle_blind` (high, landed)
+
+/daily, its home-card invitation, the opt-in preference and every guess shipped with zero track() calls. Whether anyone was offered it, accepted it, opened it, guessed, or solved it was entirely invisible - the only trace was page.view on /daily, which cannot tell a first look from a return to a solved puzzle and says nothing about play.
+
+**Effect:** made every question about the puzzle unanswerable
+
+**Fix:** Landed 2026-09-24: offer_shown, choice, opened, guess_submitted, solved and guess_failed, with ?from= on the card and rail links so entry point is attributable. Promote to fixed on the first observed puzzle.solved - that is the end of the chain and proves every link before it.
 
 ### Session length is a floor, not a duration `session_end` (medium, landed)
 

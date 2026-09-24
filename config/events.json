@@ -632,7 +632,51 @@
       "deprecated": true
     },
     "_deprecatedNamesDoc": "offer_checkout_start is michi's pre-rename spelling of offer.checkout_start, kept declared so the rows it already wrote stay recognised. It has no call site as of 2026-09-23 and must never gain one. A name listed here is history: it explains rows in the past and is not a thing the apps still do. Counting it alongside its replacement would double a funnel stage.",
-    "_tcgscanOnlyDoc": "scan.sealed_hint, collection.sealed_add, bulk_edit_applied, external_marketplace_search_clicked and the iap.* family are tcgscan-only and correctly so: sealed products, bulk lot editing, the marketplace hand-off and StoreKit have no michi equivalent. external_marketplace_search_clicked records a click that LEAVES the app for a marketplace, so it is the last thing seen of that visit - never read the silence after it as a drop-off."
+    "_tcgscanOnlyDoc": "scan.sealed_hint, collection.sealed_add, bulk_edit_applied, external_marketplace_search_clicked and the iap.* family are tcgscan-only and correctly so: sealed products, bulk lot editing, the marketplace hand-off and StoreKit have no michi equivalent. external_marketplace_search_clicked records a click that LEAVES the app for a marketplace, so it is the last thing seen of that visit - never read the silence after it as a drop-off.",
+    "puzzle.offer_shown": {
+      "label": "Was offered the daily puzzle",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "puzzle.choice": {
+      "label": "Opted in or out of the puzzle",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "puzzle.opened": {
+      "label": "Opened the daily puzzle",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "puzzle.guess_submitted": {
+      "label": "Guessed at the puzzle",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "puzzle.solved": {
+      "label": "Solved the daily puzzle",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "puzzle.guess_failed": {
+      "label": "A guess could not be graded",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_puzzleDoc": "The daily theme-search puzzle (/daily). One puzzle worldwide per UTC day. The chain is offer_shown -> choice -> opened -> guess_submitted (repeatable) -> solved. DENOMINATORS FIRST. puzzle.offer_shown is the home card actually drawing, and it is gated on five things - signed in, not a guest, not previously declined, a puzzle published today, and not already played - so it fires far less than the home page loads and is the only honest denominator for the opt-in. Its `asking` prop marks the ONE offer that can produce a choice; pooling later offers with it would sink the opt-in rate as the same people see the card again. PRESSING PLAY IS AN OPT-IN. When the question is still open, Play records choice='on' as well as navigating, so the rate counts everyone who answered rather than only the ones who pressed the quieter 'Not for me'. puzzle.opened carries `entry` (card | nav | direct, from a ?from= param) and `state` (fresh | played | solved) - a return visit to a solved puzzle is a different visit from a first look. guess_failed is the RPC throwing, NEVER a wrong answer: an outage and a player being wrong must not share a bucket.",
+    "_puzzleWordsDoc": "puzzle.guess_submitted carries `words`, the picked vocabulary, and that is a deliberate exception to the ids-and-numbers rule - justified by one fact and no other: the guess box CANNOT receive free text. Words enter the guess only through suggestion chips drawn from the curated puzzle_vocabulary table, a closed set we author, so they are enum values like a tier_caps limit key. The typed box filters chips and is never submitted. IF THAT INPUT EVER ACCEPTS A TYPED WORD, THE PROP MUST BE REMOVED. It earns its place because the puzzle exists to teach the vocabulary the paid artwork search runs on: a word people reach for and miss is a gap between what the art shows and how it is tagged, and that is the one thing this event can say that a count cannot."
   },
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness \u2014 the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
@@ -1214,6 +1258,15 @@
       "direction": "understated checkout intent by an unknown amount and made it unjoinable across the two apps",
       "fix": "Landed 2026-09-23. startCheckout() in both apps emits offer.checkout_start and, on a failed URL mint, offer.checkout_failed; every caller passes a `surface`. Six names registered. Promote to fixed once a checkout_start is observed from a surface other than offer_cards - that is the half that was invisible.",
       "_whatItStillCannotSee": "Completion. The browser leaves for Stripe and comes back as a fresh load, so paying is only ever ground truth: truth.paid counts entitlements whose source is not 'trial' and read 0 external users on 2026-09-23 against 11 trial-granted ones."
+    },
+    "puzzle_blind": {
+      "severity": "high",
+      "status": "landed",
+      "title": "The daily puzzle emitted nothing",
+      "detail": "/daily, its home-card invitation, the opt-in preference and every guess shipped with zero track() calls. Whether anyone was offered it, accepted it, opened it, guessed, or solved it was entirely invisible - the only trace was page.view on /daily, which cannot tell a first look from a return to a solved puzzle and says nothing about play.",
+      "direction": "made every question about the puzzle unanswerable",
+      "fix": "Landed 2026-09-24: offer_shown, choice, opened, guess_submitted, solved and guess_failed, with ?from= on the card and rail links so entry point is attributable. Promote to fixed on the first observed puzzle.solved - that is the end of the chain and proves every link before it.",
+      "_readTheOptInCarefully": "puzzle.choice is once per ACCOUNT, not per day: it writes profiles.preferences and the card stops asking afterwards. A declining account never sees the card again, so it emits one offer_shown and one choice and then disappears from this funnel entirely - which is correct, and is not churn."
     }
   },
   "guestDepth": {
