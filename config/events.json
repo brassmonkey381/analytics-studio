@@ -548,7 +548,91 @@
         "michi"
       ]
     },
-    "_feedbackDoc": "feedback.shown / .submitted / .failed cover /feedback - the Leave Feedback page reached from the web rail and the site footer. props: { survey, version } on all three, plus { answered, has_score, has_text } on .submitted and { reason } on .failed. NO PROSE, EVER. What people wrote lives in feedback_responses and must never reach an event prop: props are contractually ids and numbers, `answered` is a COUNT of questions returned, and has_score / has_text are booleans about shape. .submitted counts what was actually SENT rather than the working answer map, which holds hidden follow-ups, a prefilled address nobody typed and blank strings - counting that map would report a fuller survey than the one that landed. .failed keeps three refusals apart: no-session (the auth sheet opens, the person is still there), rate-limited (the insert policy's five-a-day cap) and error (ours). Pooling them would hide a broken write behind a working guard. NOT MICHI-ONLY BY DESIGN: feedback_responses already carries an `app` column and the page, survey definition and repo are app-agnostic. Adding another app is adding its key to `apps` here and a spec to `feedback` below - no new event names, and the digest section iterates whatever it finds."
+    "_feedbackDoc": "feedback.shown / .submitted / .failed cover /feedback - the Leave Feedback page reached from the web rail and the site footer. props: { survey, version } on all three, plus { answered, has_score, has_text } on .submitted and { reason } on .failed. NO PROSE, EVER. What people wrote lives in feedback_responses and must never reach an event prop: props are contractually ids and numbers, `answered` is a COUNT of questions returned, and has_score / has_text are booleans about shape. .submitted counts what was actually SENT rather than the working answer map, which holds hidden follow-ups, a prefilled address nobody typed and blank strings - counting that map would report a fuller survey than the one that landed. .failed keeps three refusals apart: no-session (the auth sheet opens, the person is still there), rate-limited (the insert policy's five-a-day cap) and error (ours). Pooling them would hide a broken write behind a working guard. NOT MICHI-ONLY BY DESIGN: feedback_responses already carries an `app` column and the page, survey definition and repo are app-agnostic. Adding another app is adding its key to `apps` here and a spec to `feedback` below - no new event names, and the digest section iterates whatever it finds.",
+    "offer.checkout_start": {
+      "label": "Opened Stripe Checkout",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ]
+    },
+    "offer.checkout_failed": {
+      "label": "Checkout could not be opened",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ]
+    },
+    "iap.purchase_start": {
+      "label": "Started an App Store purchase",
+      "stage": "monetization",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "iap.purchase_result": {
+      "label": "App Store purchase answered",
+      "stage": "monetization",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "print.preview": {
+      "label": "Previewed the print sheets",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_checkoutDoc": "offer.checkout_start { lookup_key, surface, bundle } is the last thing either web app can see before the browser leaves for Stripe, and offer.checkout_failed { lookup_key, surface, reason } is the same press going nowhere - fetchStripeUrl is an edge-function round trip before any navigation, so those two outcomes were identical in the stream until 2026-09-23. BOTH ARE EMITTED BY startCheckout() ITSELF, not by the buttons. Three call sites reach it in michi and two in tcgscan, and only OfferCards used to track, so a bundle upgrade and a binder-PDF purchase reached Stripe unrecorded. `surface` names the button: offer_cards | plan_comparison | print_gate. THE NAME WAS FORKED. michi emitted `offer_checkout_start` and tcgscan `offer.checkout_start` - the same line in the same component, one character apart, which no cross-app join could bridge. michi was renamed to the dotted form on 2026-09-23; its single pre-rename row is one of ours. WHAT NONE OF THIS SEES is whether they paid. Navigation leaves the page and the return is a fresh load, so completion is ground truth only - truth.paid, an entitlement whose source is not 'trial'. Read the click and the entitlement together; a checkout_start is intent, never revenue.",
+    "_iapDoc": "iap.purchase_start / iap.purchase_result { product, status } are tcgscan's iOS paywall (IosPaywall.tsx), which is StoreKit and never touches Stripe - an App Store purchase has no checkout URL and no stripe-checkout call. They are tcgscan-only because michi has no native build, and that asymmetry is correct rather than a missing call site. `status` carries StoreKit's own result, so a cancel and a failure stay apart.",
+    "scan.sealed_hint": {
+      "label": "Followed the sealed-products hint",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "collection.sealed_add": {
+      "label": "Added a sealed product to a collection",
+      "stage": "activation",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "external_marketplace_search_clicked": {
+      "label": "Searched a marketplace off-site",
+      "stage": "engagement",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "bulk_edit_applied": {
+      "label": "Applied a bulk edit",
+      "stage": "activation",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "iap.restore": {
+      "label": "Restored App Store purchases",
+      "stage": "monetization",
+      "apps": [
+        "tcgscan"
+      ]
+    },
+    "offer_checkout_start": {
+      "label": "Opened Stripe Checkout (pre-2026-09-23 name)",
+      "stage": "monetization",
+      "apps": [
+        "michi"
+      ],
+      "deprecated": true
+    },
+    "_deprecatedNamesDoc": "offer_checkout_start is michi's pre-rename spelling of offer.checkout_start, kept declared so the rows it already wrote stay recognised. It has no call site as of 2026-09-23 and must never gain one. A name listed here is history: it explains rows in the past and is not a thing the apps still do. Counting it alongside its replacement would double a funnel stage.",
+    "_tcgscanOnlyDoc": "scan.sealed_hint, collection.sealed_add, bulk_edit_applied, external_marketplace_search_clicked and the iap.* family are tcgscan-only and correctly so: sealed products, bulk lot editing, the marketplace hand-off and StoreKit have no michi equivalent. external_marketplace_search_clicked records a click that LEAVES the app for a marketplace, so it is the last thing seen of that visit - never read the silence after it as a drop-off."
   },
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness \u2014 the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
@@ -1121,6 +1205,15 @@
       "direction": "made the response rate unknowable in either direction, and hid every failed send",
       "fix": "Landed 2026-09-22 in michi: feedback.shown once per form mount, and feedback.failed with the repo's own reason enum (no-session | rate-limited | error) at both the classified and the thrown paths.",
       "_zeroMeansEmptyNotBlind": "feedback_responses held 0 rows as of 2026-09-22, so every number this produces starts at zero and that zero means NOBODY HAS SENT ANYTHING YET - not that the lane cannot see it. Promote to fixed on the first observed feedback.shown, which will prove the page is being reached even while the responses table is still empty."
+    },
+    "checkout_intent_blind": {
+      "severity": "high",
+      "status": "landed",
+      "title": "Checkout clicks were forked, partial and unregistered",
+      "detail": "Three faults at once. The event name differed between the apps by one character (offer_checkout_start vs offer.checkout_start), so no cross-app question could be asked. Only one of the three michi call sites and one of the two tcgscan ones emitted anything, so bundle upgrades and binder-PDF purchases reached Stripe silently. And all of it - plus tcgscan's IAP pair and michi's print.preview - was unregistered in this studio, arriving as unrecognised and counted by no report.",
+      "direction": "understated checkout intent by an unknown amount and made it unjoinable across the two apps",
+      "fix": "Landed 2026-09-23. startCheckout() in both apps emits offer.checkout_start and, on a failed URL mint, offer.checkout_failed; every caller passes a `surface`. Six names registered. Promote to fixed once a checkout_start is observed from a surface other than offer_cards - that is the half that was invisible.",
+      "_whatItStillCannotSee": "Completion. The browser leaves for Stripe and comes back as a fresh load, so paying is only ever ground truth: truth.paid counts entitlements whose source is not 'trial' and read 0 external users on 2026-09-23 against 11 trial-granted ones."
     }
   },
   "guestDepth": {
