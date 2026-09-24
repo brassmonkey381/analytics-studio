@@ -753,6 +753,44 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
     })
     .sort((a, b) => b.shown - a.shown || a.prompt.localeCompare(b.prompt));
 
+  // WHICH ONE WAS IT. Event rosters are keyed by name alone, so "Was shown a
+  // prompt" cannot say which prompt and "Opted in or out" cannot say which way.
+  // These key the same people by the single prop that tells them apart, so a
+  // reader gets the answer instead of the category.
+  //
+  // One entry per event, and the prop must be a CLOSED set - a prompt id, a
+  // choice, a state. Never a free value: this becomes a roster key and then an
+  // email line, and an unbounded prop would produce one row per distinct value.
+  const QUALIFIERS = {
+    "walkthrough.step": "step",
+    "walkthrough.done": "via",
+    "prompt.shown": "prompt",
+    "prompt.answered": "response",
+    "puzzle.choice": "choice",
+    "puzzle.opened": "state",
+    "puzzle.offer_shown": "asking",
+    "puzzle.guess_submitted": "correct",
+    "cap.gate_shown": "limit",
+    "cap.gate_dismissed": "via",
+    "feedback.failed": "reason",
+    "offer.checkout_start": "surface",
+    "offer.checkout_failed": "surface",
+    "push.permission_result": "result",
+    "location.permission_result": "result",
+    "checkin.create": "source",
+    "walk.end": "duration",
+    "discover.tab": "tab",
+  };
+  const qual = {};
+  for (const e of events) {
+    const prop = QUALIFIERS[e.name];
+    if (!prop) continue;
+    const raw = e.props?.[prop];
+    if (raw == null) continue;
+    (qual[`${e.name}|${String(raw)}`] ??= new Set()).add(e.user_id);
+  }
+  for (const [k, ids] of Object.entries(qual)) rosters.asks[`which|${k}`] = roster(ids, identity);
+
   rosters.asks["offerShown"] = roster(offerRows.shown, identity);
   rosters.asks["offerDeclined"] = roster(offerRows.declined, identity);
   rosters.asks["offerClicked"] = roster(offerRows.clicked, identity);

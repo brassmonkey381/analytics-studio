@@ -240,10 +240,35 @@ for (const id of APPS) {
   // Only real event names. The same roster map also carries derived keys (guestAction_*,
   // guest-depth buckets) which are views of the SAME events — printing them alongside would
   // list a person's afternoon twice, once in English and once in raw key form.
+  // "Was shown a prompt" is true and useless when three prompts exist, so each
+  // label is qualified by the prop that tells the event apart - the lane stores
+  // a `which|<event>|<value>` roster for exactly this. A person who saw two
+  // different prompts gets both named, in the order the lane found them.
+  //
+  // An event with no qualifier roster keeps its plain label rather than being
+  // dropped: a missing detail must never remove the fact.
+  const whichFor = (ev, nm) => {
+    const out = [];
+    for (const [key, entry] of Object.entries(r.asks ?? {})) {
+      if (!key.startsWith(`which|${ev}|`)) continue;
+      if (names(entry).includes(nm)) out.push(key.slice(`which|${ev}|`.length));
+    }
+    return out;
+  };
+  // A few props are flags rather than nouns, and read badly raw: "Guessed at the
+  // puzzle (true)" says less than "(right)". Only these need translating.
+  const READABLE = {
+    "puzzle.guess_submitted": { true: "right", false: "wrong" },
+    "puzzle.offer_shown": { true: "first time", false: "seen before" },
+  };
   for (const [ev, entry] of Object.entries(r.events ?? {})) {
     if (!labels.has(ev)) continue;
     if (ev === "session.start" || ev === "page.view") continue; // the visit itself, not a doing
-    for (const nm of names(entry)) touch(nm).did.add(labels.get(ev) ?? ev);
+    const label = labels.get(ev) ?? ev;
+    for (const nm of names(entry)) {
+      const which = whichFor(ev, nm).map((v) => READABLE[ev]?.[v] ?? v);
+      touch(nm).did.add(which.length ? `${label} (${which.join(", ")})` : label);
+    }
   }
   // Same filter as the events above: the roster map also holds guestRoute_* views of these
   // very routes, which would print each page twice.
