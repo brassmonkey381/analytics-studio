@@ -632,6 +632,50 @@ if (made.length) {
 }
 
 // --- footer ---
+// ---------- Daily puzzle ----------
+//
+// From puzzle_plays, not the event stream. The stream lost its call sites in a
+// page rewrite and reported nobody playing while three people solved it; a
+// table row cannot be dropped by a refactor.
+//
+// Answered and correct are SUBSETS of opened. A name in two lists is one person
+// with two facts true, never two people.
+const puzzleApps = APPS.map((id) => ({ id, pz: events?.apps?.[id]?.puzzle ?? null })).filter((x) => x.pz);
+if (puzzleApps.length) {
+  parts.push(h2("Daily puzzle"));
+  for (const { id, pz } of puzzleApps) {
+    const named = journeys?.apps?.[id]?.puzzle ?? null;
+    if (!pz.available) {
+      parts.push(p(`<strong>${esc(appName(id))}</strong> — puzzle tables not readable this run, so this is "not available" rather than zero.`, WARN));
+      continue;
+    }
+    if (!pz.days.length) {
+      parts.push(p(`<strong>${esc(appName(id))}</strong> — nobody has opened a puzzle yet.${pz.excluded ? ` <span style="color:${MUTED};">${pz.excluded} of our own plays excluded.</span>` : ""}`));
+      continue;
+    }
+    parts.push(
+      p(`<strong>${esc(appName(id))}</strong> — the last ${pz.days.length} ${pz.days.length === 1 ? "puzzle with any play on it" : "puzzles with any play on them"}.${pz.excluded ? ` <span style="color:${MUTED};">${pz.excluded} of our own plays excluded.</span>` : ""}`),
+    );
+    const list = (xs) => (xs.length ? esc(xs.join(", ")) : `<span style="color:${MUTED};">nobody</span>`);
+    parts.push(`<tr><td style="padding:2px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Puzzle</th><th style="${cellHead}">Opened it</th><th style="${cellHead}">Guessed</th><th style="${cellHead}">Got it right</th></tr>
+${pz.days
+  .map((d) => {
+    const n = named?.find((x) => x.day === d.day) ?? null;
+    const cellFor = (count, names) =>
+      n ? `${count ? `<strong>${count}</strong> — ` : ""}${list(names)}` : `<strong>${count}</strong> <span style="color:${MUTED};">(names not carried)</span>`;
+    return `<tr>
+  <td style="${cell}">${esc(d.day)}</td>
+  <td style="${cell}">${cellFor(d.opened, n?.opened ?? [])}</td>
+  <td style="${cell}">${cellFor(d.answered, n?.answered ?? [])}</td>
+  <td style="${cell}">${cellFor(d.correct, n?.correct ?? [])}</td>
+</tr>`;
+  })
+  .join("")}
+</table></td></tr>`);
+  }
+}
+
 // ---------- Who is on a PRO trial right now ----------
 //
 // Named, always, and sorted by who runs out first - which is the order they can
@@ -852,6 +896,24 @@ if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);
 }
+if (puzzleApps.length) {
+  T.push("", "DAILY PUZZLE");
+  for (const { id, pz } of puzzleApps) {
+    if (!pz.available) { T.push(`  ${appName(id)}: tables not readable this run`); continue; }
+    if (!pz.days.length) { T.push(`  ${appName(id)}: nobody has opened a puzzle yet`); continue; }
+    const named = journeys?.apps?.[id]?.puzzle ?? null;
+    for (const d of pz.days) {
+      const n = named?.find((x) => x.day === d.day) ?? null;
+      T.push(`  ${d.day} — opened ${d.opened}, guessed ${d.answered}, right ${d.correct}`);
+      if (n) {
+        T.push(`    opened:  ${n.opened.join(", ") || "nobody"}`);
+        T.push(`    guessed: ${n.answered.join(", ") || "nobody"}`);
+        T.push(`    right:   ${n.correct.join(", ") || "nobody"}`);
+      }
+    }
+  }
+}
+
 if (trialApps.length) {
   T.push("", `ON A PRO TRIAL RIGHT NOW — ${trialApps.reduce((n, x) => n + x.tr.count, 0)}`);
   for (const { id, tr } of trialApps) {

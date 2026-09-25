@@ -1314,5 +1314,16 @@
         "endCol": "expires_at"
       }
     ]
+  },
+  "puzzle": {
+    "_doc": "The daily puzzle, read from GROUND TRUTH rather than the event stream. puzzle_plays holds one row per person per puzzle: seen_at when they open it, answered_at and correct when they answer. The stream is the wrong source here and has already proved it - the call sites in daily.tsx were dropped by a page rewrite on 2026-09-24 and puzzle.guess_submitted never fired once while three people solved that day's puzzle. A table row cannot be lost by a refactor. Counts go in data/events.json; the names go to the gitignored sidecar.",
+    "specs": [
+      {
+        "app": "michi",
+        "table": "puzzle_plays",
+        "puzzleTable": "daily_puzzles",
+        "userCol": "user_id"
+      }
+    ]
   }
 }

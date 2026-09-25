@@ -243,6 +243,27 @@ select r.*, (r.user_id in (select id from excluded_users)) as excluded
 from rows r order by r.expires_at`;
 }
 
+// Who opened the puzzle, who answered, who got it right - from puzzle_plays,
+// not from the stream. See CFG.puzzle._doc for why ground truth wins here.
+function puzzlePlaysSql(apps) {
+  const keys = new Set(apps.map((a) => a.key));
+  const specs = (CFG.puzzle?.specs ?? []).filter((s) => keys.has(s.app));
+  if (!specs.length) return null;
+  const parts = specs.map(
+    (s) => `select '${s.app}'::text as app, pl.${s.userCol} as user_id, pz.publish_on,
+       pl.seen_at, pl.answered_at, pl.correct, pl.matched
+     from public.${s.table} pl join public.${s.puzzleTable} pz on pz.id = pl.puzzle_id`,
+  );
+  return `
+with ${excludedUnionCte(apps)},
+rows as (
+${parts.join("\nunion all\n")}
+)
+select r.*, (r.user_id in (select id from excluded_users)) as excluded
+from rows r order by r.publish_on desc, r.seen_at`;
+}
+
+const puzzlePlayRows = [];
 const activeTrialRows = [];
 const feedbackRows = [];
 const sessionRows = [];
@@ -275,6 +296,15 @@ for (const [ref, apps] of PROJECT_GROUPS) {
   for (const kind of Object.keys(CFG.truth ?? {})) {
     const sql = truthSql(kind, apps);
     if (sql) truth[kind].push(...(await runSql(ref, sql)));
+  }
+  const pzSql = puzzlePlaysSql(apps);
+  if (pzSql) {
+    try {
+      puzzlePlayRows.push(...(await runSql(ref, pzSql)));
+    } catch (err) {
+      if (!String(err).includes("does not exist")) throw err;
+      console.warn(`WARNING: puzzle tables missing on project ${ref} - reported as "not available", not 0.`);
+    }
   }
   const trSql = activeTrialsSql(apps);
   if (trSql) {
@@ -1267,6 +1297,23 @@ for (const [id, a] of Object.entries(store.apps)) {
   if (!key) continue;
   const fb = buildFeedback(key);
   if (fb) a.feedback = fb;
+  if ((CFG.puzzle?.specs ?? []).some((z) => z.app === key)) {
+    const mine = puzzlePlayRows.filter((r) => r.app === key && !r.excluded);
+    const byDay = {};
+    for (const r of mine) {
+      const d = (byDay[r.publish_on] ??= { day: r.publish_on, opened: 0, answered: 0, correct: 0 });
+      d.opened += 1;
+      if (r.answered_at) d.answered += 1;
+      if (r.correct) d.correct += 1;
+    }
+    a.puzzle = {
+      available: true,
+      excluded: puzzlePlayRows.filter((r) => r.app === key && r.excluded).length,
+      // Newest first, and capped - the email shows the last few days, not the
+      // whole history, and the studio report has the rest.
+      days: Object.values(byDay).sort((x, y) => (x.day < y.day ? 1 : -1)).slice(0, 7),
+    };
+  }
   if ((CFG.trials?.specs ?? []).some((t) => t.app === key)) {
     const mine = activeTrialRows.filter((r) => r.app === key);
     const kept = mine.filter((r) => !r.excluded);
@@ -1306,6 +1353,24 @@ for (const s of sessionRows) {
       anon: !!s.anon,
     });
   }
+}
+
+// Who opened, who answered, who got it right - named, newest puzzle first.
+for (const [id, a] of Object.entries(journeys.apps)) {
+  const key = CFG.apps.find((x) => x.id === id)?.key;
+  if (!key || !(CFG.puzzle?.specs ?? []).some((z) => z.app === key)) continue;
+  const byDay = {};
+  for (const r of puzzlePlayRows.filter((r) => r.app === key && !r.excluded)) {
+    const d = (byDay[r.publish_on] ??= { day: r.publish_on, opened: [], answered: [], correct: [] });
+    const who = userLabel(identityAll.get(r.user_id) ?? { id: r.user_id });
+    d.opened.push(who);
+    // Answered and correct are SUBSETS of opened, not separate populations: a
+    // name appears in two lists on purpose, because "10 played, 3 correct" is
+    // one group of ten with three outcomes, never thirteen people.
+    if (r.answered_at) d.answered.push(who);
+    if (r.correct) d.correct.push(who);
+  }
+  a.puzzle = Object.values(byDay).sort((x, y) => (x.day < y.day ? 1 : -1)).slice(0, 7);
 }
 
 // Who is mid-trial, soonest to expire first - the order it is acted on.
