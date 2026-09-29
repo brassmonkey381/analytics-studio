@@ -1325,5 +1325,24 @@
         "userCol": "user_id"
       }
     ]
+  },
+  "purchases": {
+    "_doc": "What people actually bought. truth.paid counts the same rows and says only how many; this carries the product, the billing interval and where the money came from, so a digest line can name the person and the thing. `source` is the provider that granted it - stripe, apple - and 'manual' is a grant WE made, which is revenue-shaped and is not revenue. It is kept and labelled rather than filtered, because a comped account silently dropped is how a fleet forgets it comped anyone. Trial-granted rows are excluded here by the same filter truth.paid uses: a trial writes a real tier_pro row and reading it as a purchase is the mistake that put '11 a paid entitlement' in the email on 2026-09-23.",
+    "specs": [
+      {
+        "app": "michi",
+        "table": "entitlements",
+        "userCol": "user_id",
+        "tsCol": "granted_at",
+        "filter": "product like 'tier_%' and coalesce(source,'') <> 'trial'"
+      },
+      {
+        "app": "tcgscan",
+        "table": "entitlements",
+        "userCol": "user_id",
+        "tsCol": "granted_at",
+        "filter": "product like 'tcgscan_%' and coalesce(source,'') <> 'trial'"
+      }
+    ]
   }
 }

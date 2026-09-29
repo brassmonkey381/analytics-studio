@@ -263,6 +263,28 @@ select r.*, (r.user_id in (select id from excluded_users)) as excluded
 from rows r order by r.publish_on desc, r.seen_at`;
 }
 
+// What was bought, by whom. truth.paid counts these same rows; this carries the
+// product and the provider so the email can say what the money was for.
+function purchasesSql(apps) {
+  const keys = new Set(apps.map((a) => a.key));
+  const specs = (CFG.purchases?.specs ?? []).filter((s) => keys.has(s.app));
+  if (!specs.length) return null;
+  const parts = specs.map((s) => {
+    const where = s.filter ? ` where ${s.filter}` : "";
+    return `select '${s.app}'::text as app, e.${s.userCol} as user_id, e.${s.tsCol} as ts,
+       e.product, e.source, e.interval, e.expires_at, e.term_print_allocation
+     from public.${s.table} e${where}`;
+  });
+  return `
+with ${excludedUnionCte(apps)},
+rows as (
+${parts.join("\nunion all\n")}
+)
+select r.*, (r.user_id in (select id from excluded_users)) as excluded
+from rows r order by r.ts desc`;
+}
+
+const purchaseRows = [];
 const puzzlePlayRows = [];
 const activeTrialRows = [];
 const feedbackRows = [];
@@ -296,6 +318,15 @@ for (const [ref, apps] of PROJECT_GROUPS) {
   for (const kind of Object.keys(CFG.truth ?? {})) {
     const sql = truthSql(kind, apps);
     if (sql) truth[kind].push(...(await runSql(ref, sql)));
+  }
+  const buySql = purchasesSql(apps);
+  if (buySql) {
+    try {
+      purchaseRows.push(...(await runSql(ref, buySql)));
+    } catch (err) {
+      if (!String(err).includes("does not exist")) throw err;
+      console.warn(`WARNING: entitlements missing on project ${ref} - purchases reported as "not available", not 0.`);
+    }
   }
   const pzSql = puzzlePlaysSql(apps);
   if (pzSql) {
@@ -1297,6 +1328,20 @@ for (const [id, a] of Object.entries(store.apps)) {
   if (!key) continue;
   const fb = buildFeedback(key);
   if (fb) a.feedback = fb;
+  if ((CFG.purchases?.specs ?? []).some((b) => b.app === key)) {
+    const mine = purchaseRows.filter((r) => r.app === key && !r.excluded);
+    // `manual` is a grant WE made. Revenue-shaped, and not revenue. Counted
+    // apart rather than filtered out, because a comped account quietly dropped
+    // is how a fleet forgets it comped anyone.
+    const bought = mine.filter((r) => r.source !== "manual");
+    a.purchases = {
+      available: true,
+      count: bought.length,
+      comped: mine.length - bought.length,
+      excluded: purchaseRows.filter((r) => r.app === key && r.excluded).length,
+      newestAt: bought[0]?.ts ?? null,
+    };
+  }
   if ((CFG.puzzle?.specs ?? []).some((z) => z.app === key)) {
     const mine = puzzlePlayRows.filter((r) => r.app === key && !r.excluded);
     const byDay = {};
@@ -1353,6 +1398,23 @@ for (const s of sessionRows) {
       anon: !!s.anon,
     });
   }
+}
+
+// Who bought what, newest first.
+for (const [id, a] of Object.entries(journeys.apps)) {
+  const key = CFG.apps.find((x) => x.id === id)?.key;
+  if (!key || !(CFG.purchases?.specs ?? []).some((b) => b.app === key)) continue;
+  a.purchases = purchaseRows
+    .filter((r) => r.app === key && !r.excluded)
+    .map((r) => ({
+      user: userLabel(identityAll.get(r.user_id) ?? { id: r.user_id }),
+      product: r.product,
+      source: r.source ?? "unknown",
+      interval: r.interval ?? null,
+      at: r.ts,
+      expiresAt: r.expires_at ?? null,
+      prints: r.term_print_allocation ?? null,
+    }));
 }
 
 // Who opened, who answered, who got it right - named, newest puzzle first.

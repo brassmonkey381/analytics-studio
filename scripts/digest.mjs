@@ -632,6 +632,52 @@ if (made.length) {
 }
 
 // --- footer ---
+// ---------- What people bought ----------
+//
+// The email said "Paying: 0" for weeks and then, on the day it became 1, still
+// could not say who or what. Name and product, newest first.
+//
+// `manual` grants are OURS and are listed apart: revenue-shaped, and not
+// revenue. Dropping them silently is how a fleet forgets it comped anyone.
+const buyApps = APPS.map((id) => ({ id, b: events?.apps?.[id]?.purchases ?? null })).filter((x) => x.b);
+if (buyApps.length) {
+  const totalBought = buyApps.reduce((n, x) => n + x.b.count, 0);
+  parts.push(h2(`What people bought — ${totalBought}`));
+  for (const { id, b } of buyApps) {
+    const named = journeys?.apps?.[id]?.purchases ?? null;
+    if (!b.available) {
+      parts.push(p(`<strong>${esc(appName(id))}</strong> — entitlements not readable this run, so this is "not available" rather than zero.`, WARN));
+      continue;
+    }
+    if (!b.count && !b.comped) {
+      parts.push(p(`<strong>${esc(appName(id))}</strong> — nobody has bought anything.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`));
+      continue;
+    }
+    parts.push(
+      p(`<strong>${esc(appName(id))}</strong> — <strong>${b.count}</strong> paid${b.comped ? `, plus ${b.comped} we granted by hand` : ""}.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`),
+    );
+    if (!named) {
+      parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
+      continue;
+    }
+    parts.push(`<tr><td style="padding:2px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Who</th><th style="${cellHead}">Bought</th><th style="${cellHead}">How</th><th style="${cellHead}">When</th><th style="${cellHead}">Runs to</th></tr>
+${named
+  .map((r) => {
+    const comped = r.source === "manual";
+    return `<tr>
+  <td style="${cell}">${esc(r.user)}</td>
+  <td style="${cell}"><strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}</td>
+  <td style="${cell}${comped ? `color:${WARN};` : ""}">${comped ? "granted by hand" : esc(r.source)}</td>
+  <td style="${cell}">${esc(String(r.at).slice(0, 10))}</td>
+  <td style="${cell}">${r.expiresAt ? esc(String(r.expiresAt).slice(0, 10)) : `<span style="color:${MUTED};">no end</span>`}</td>
+</tr>`;
+  })
+  .join("")}
+</table></td></tr>`);
+  }
+}
+
 // ---------- Daily puzzle ----------
 //
 // From puzzle_plays, not the event stream. The stream lost its call sites in a
@@ -896,6 +942,18 @@ if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);
 }
+if (buyApps.length) {
+  T.push("", `WHAT PEOPLE BOUGHT — ${buyApps.reduce((n, x) => n + x.b.count, 0)}`);
+  for (const { id, b } of buyApps) {
+    if (!b.available) { T.push(`  ${appName(id)}: entitlements not readable this run`); continue; }
+    if (!b.count && !b.comped) { T.push(`  ${appName(id)}: nobody has bought anything`); continue; }
+    T.push(`  ${appName(id)}: ${b.count} paid${b.comped ? `, plus ${b.comped} granted by hand` : ""}`);
+    for (const r of journeys?.apps?.[id]?.purchases ?? []) {
+      T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""} via ${r.source === "manual" ? "a hand grant" : r.source} on ${String(r.at).slice(0, 10)}${r.expiresAt ? `, runs to ${String(r.expiresAt).slice(0, 10)}` : ""}`);
+    }
+  }
+}
+
 if (puzzleApps.length) {
   T.push("", "DAILY PUZZLE");
   for (const { id, pz } of puzzleApps) {
