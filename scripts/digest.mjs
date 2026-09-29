@@ -181,7 +181,10 @@ for (const id of APPS) {
     trialExcluded: trial?.excludedUsers ?? 0,
     entUsers: ent?.users ?? 0,
     entExcluded: ent?.excludedUsers ?? 0,
-    paidUsers: paid?.users ?? null,
+    // NOT truth.paid: that counts any entitlement whose source is not 'trial',
+    // which includes a Stripe subscription sitting in its own $0 trial window.
+    // The purchases block has already told those apart.
+    paidUsers: events?.apps?.[id]?.purchases?.available ? events.apps[id].purchases.count : (paid?.users ?? null),
   });
 }
 
@@ -554,7 +557,7 @@ ${rows
               ? `, ${m.entUsers} hold a tier entitlement (trial grants included — the paid-only split was not available this run)`
               : m.paidUsers
                 ? `, and <strong>${m.paidUsers} ${m.paidUsers === 1 ? "is paying" : "are paying"}</strong>`
-                : `, and <strong>none are paying</strong> — all ${m.entUsers} tier entitlements were granted by a trial, not bought`) +
+                : `, and <strong>none are paying</strong> — the ${m.entUsers} tier entitlements are trials or subscriptions still inside a $0 trial period, not purchases`) +
             `${m.trialExcluded || m.entExcluded ? ` — plus ${m.trialExcluded} trial and ${m.entExcluded} entitlement rows on our own accounts, excluded` : ""}.`,
         ),
       );
@@ -642,19 +645,25 @@ if (made.length) {
 const buyApps = APPS.map((id) => ({ id, b: events?.apps?.[id]?.purchases ?? null })).filter((x) => x.b);
 if (buyApps.length) {
   const totalBought = buyApps.reduce((n, x) => n + x.b.count, 0);
-  parts.push(h2(`What people bought — ${totalBought}`));
+  const totalTrialing = buyApps.reduce((n, x) => n + (x.b.trialing ?? 0), 0);
+  parts.push(h2(`What people bought — ${totalBought} paying${totalTrialing ? `, ${totalTrialing} in a $0 trial` : ""}`));
   for (const { id, b } of buyApps) {
     const named = journeys?.apps?.[id]?.purchases ?? null;
     if (!b.available) {
       parts.push(p(`<strong>${esc(appName(id))}</strong> — entitlements not readable this run, so this is "not available" rather than zero.`, WARN));
       continue;
     }
-    if (!b.count && !b.comped) {
+    if (!b.count && !b.comped && !b.trialing) {
       parts.push(p(`<strong>${esc(appName(id))}</strong> — nobody has bought anything.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`));
       continue;
     }
     parts.push(
-      p(`<strong>${esc(appName(id))}</strong> — <strong>${b.count}</strong> paid${b.comped ? `, plus ${b.comped} we granted by hand` : ""}.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`),
+      p(
+        `<strong>${esc(appName(id))}</strong> — <strong>${b.count}</strong> paying` +
+          (b.trialing ? `, <strong>${b.trialing}</strong> subscribed but still inside a $0 trial period` : "") +
+          (b.comped ? `, ${b.comped} granted by hand` : "") +
+          `.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`,
+      ),
     );
     if (!named) {
       parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
@@ -664,13 +673,21 @@ if (buyApps.length) {
 <tr><th style="${cellHead}">Who</th><th style="${cellHead}">Bought</th><th style="${cellHead}">How</th><th style="${cellHead}">When</th><th style="${cellHead}">Runs to</th></tr>
 ${named
   .map((r) => {
-    const comped = r.source === "manual";
+    // The status column is the point of the table. A `trialing` row is a real
+    // subscription that has paid nothing yet, and its "runs to" date is when
+    // the first actual charge happens - not when access ends.
+    const how =
+      r.kind === "comped"
+        ? `<span style="color:${WARN};">granted by hand</span>`
+        : r.kind === "trialing"
+          ? `<span style="color:${WARN};">${esc(r.source)}, $0 trial</span>`
+          : esc(r.source);
     return `<tr>
   <td style="${cell}">${esc(r.user)}</td>
   <td style="${cell}"><strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}</td>
-  <td style="${cell}${comped ? `color:${WARN};` : ""}">${comped ? "granted by hand" : esc(r.source)}</td>
+  <td style="${cell}">${how}</td>
   <td style="${cell}">${esc(String(r.at).slice(0, 10))}</td>
-  <td style="${cell}">${r.expiresAt ? esc(String(r.expiresAt).slice(0, 10)) : `<span style="color:${MUTED};">no end</span>`}</td>
+  <td style="${cell}">${r.expiresAt ? `${esc(String(r.expiresAt).slice(0, 10))}${r.kind === "trialing" ? ` <span style="color:${MUTED};">first charge</span>` : ""}` : `<span style="color:${MUTED};">no end</span>`}</td>
 </tr>`;
   })
   .join("")}
@@ -943,13 +960,15 @@ if (made.length) {
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);
 }
 if (buyApps.length) {
-  T.push("", `WHAT PEOPLE BOUGHT — ${buyApps.reduce((n, x) => n + x.b.count, 0)}`);
+  const tTrial = buyApps.reduce((n, x) => n + (x.b.trialing ?? 0), 0);
+  T.push("", `WHAT PEOPLE BOUGHT — ${buyApps.reduce((n, x) => n + x.b.count, 0)} paying${tTrial ? `, ${tTrial} in a $0 trial` : ""}`);
   for (const { id, b } of buyApps) {
     if (!b.available) { T.push(`  ${appName(id)}: entitlements not readable this run`); continue; }
-    if (!b.count && !b.comped) { T.push(`  ${appName(id)}: nobody has bought anything`); continue; }
-    T.push(`  ${appName(id)}: ${b.count} paid${b.comped ? `, plus ${b.comped} granted by hand` : ""}`);
+    if (!b.count && !b.comped && !b.trialing) { T.push(`  ${appName(id)}: nobody has bought anything`); continue; }
+    T.push(`  ${appName(id)}: ${b.count} paying${b.trialing ? `, ${b.trialing} subscribed but inside a $0 trial` : ""}${b.comped ? `, ${b.comped} granted by hand` : ""}`);
     for (const r of journeys?.apps?.[id]?.purchases ?? []) {
-      T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""} via ${r.source === "manual" ? "a hand grant" : r.source} on ${String(r.at).slice(0, 10)}${r.expiresAt ? `, runs to ${String(r.expiresAt).slice(0, 10)}` : ""}`);
+      const how = r.kind === "comped" ? "a hand grant" : r.kind === "trialing" ? `${r.source} ($0 trial)` : r.source;
+      T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""} via ${how} on ${String(r.at).slice(0, 10)}${r.expiresAt ? `, ${r.kind === "trialing" ? "first charge" : "runs to"} ${String(r.expiresAt).slice(0, 10)}` : ""}`);
     }
   }
 }

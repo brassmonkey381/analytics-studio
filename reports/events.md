@@ -1,19 +1,19 @@
 # Event analytics — last 30 days
 
-Collected 2026-09-29T19:11:17.507Z. Own/QA/automated accounts excluded.
+Collected 2026-09-29T19:30:42.885Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-1134 sessions · 18124 events · 93 accounts + 525 guests · median session 1m
-Excluded: 1326 sessions, 11637 events (our own, QA and automated accounts).
+1134 sessions · 18130 events · 93 accounts + 525 guests · median session 1m
+Excluded: 1327 sessions, 11650 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 32 | 477 | 32 |
-| 7d | 299 | 5456 | 155 |
-| 14d | 665 | 12851 | 338 |
-| 30d | 1134 | 18124 | 618 |
+| 24h | 32 | 483 | 32 |
+| 7d | 298 | 5412 | 155 |
+| 14d | 664 | 12853 | 337 |
+| 30d | 1134 | 18130 | 618 |
 
 ### PRO trial: awareness to activation
 
@@ -162,7 +162,7 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 A row is one wall — the `limit_key` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. The **Offer** column is two things: what the wall said it was about to draw, then what the stream saw render (a `pro.offer_shown` in the same session on the same `surface`, within a minute). Where they disagree, the second is the truth.
 
-The PRO offer: shown **825** times to **68** people, walked away from **102**, pressed **15**. A decline is recorded only where walking away is an act, never for leaving a page.
+The PRO offer: shown **826** times to **68** people, walked away from **102**, pressed **15**. A decline is recorded only where walking away is an act, never for leaving a page.
 
 | Surface | On which page | Shown | People | Declined | Pressed |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -170,7 +170,7 @@ The PRO offer: shown **825** times to **68** people, walked away from **102**, p
 | `slice_studio` | `/binder/:id` 59, `/my-binders` 26, `/` 7, `/browse` 6 | 98 | 10 | 0 | 4 |
 | `binder_editor` | `/binder/:id` 46, `/my-binders` 12, `/` 2 | 60 | 28 | 63 | 2 |
 | `print_gate` | `/my-binders` 19, `/binder/:id` 18, `/binder/example-fill-sheet` 5, `/auth-callback` 1, `/` 1, `/learn/slice-studio` 1 | 45 | 26 | 30 | 5 |
-| `plans` | `/plans` 36, `/browse` 2, `/michi-method` 1 | 39 | 24 | 0 | 1 |
+| `plans` | `/plans` 37, `/browse` 2, `/michi-method` 1 | 40 | 24 | 0 | 1 |
 | `browse` | `/browse` 4, `/search-guide` 3 | 7 | 5 | 4 | 3 |
 | `trial_recovery` | `/` 3 | 3 | 3 | 3 | 0 |
 
@@ -250,10 +250,10 @@ Of the 148 who built something, **32** created an account.
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 7100 | 610 |
+| Viewed a page (`page.view`) | 7105 | 610 |
 | Added cards (`card.add`) | 6582 | 121 |
 | Session started (`session.start`) | 1125 | 613 |
-| Saw the PRO offer (`pro.offer_shown`) | 825 | 68 |
+| Saw the PRO offer (`pro.offer_shown`) | 826 | 68 |
 | Tried the theme search demo (`demo.theme_search`) | 522 | 99 |
 | Reached a walkthrough step (`walkthrough.step`) | 272 | 116 |
 | Created a binder (`binder.add`) | 261 | 195 |
@@ -297,7 +297,7 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 70 sessions · 417 events · 14 accounts + 38 guests · median session 8s
-Excluded: 805 sessions, 10145 events (our own, QA and automated accounts).
+Excluded: 804 sessions, 10138 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |

@@ -1320,6 +1320,36 @@ store.collectedAt = out.collectedAt;
 store.windowDays = out.windowDays;
 store.windows = out.windows;
 store.apps = out.apps;
+/**
+ * Is this entitlement MONEY yet?
+ *
+ * The database cannot answer directly - it stores no subscription status - so the period does it.
+ * michi's stripe-checkout carries an in-app trial onto the Stripe subscription with `trial_end`,
+ * and Stripe then opens the subscription on a $0 invoice for exactly that long. The entitlement
+ * that lands says source 'stripe' and interval 'month' while covering three days, which is not a
+ * month anybody paid for.
+ *
+ * So a row whose first period is far shorter than its own billing interval is a subscription in
+ * its trial window: real, card attached, and worth nothing until it renews. Called `trialing`,
+ * counted apart from `paid`, and never added to revenue.
+ *
+ * This matters because it already misled us. On 2026-09-29 the email announced the first paying
+ * customer off a $0.00 invoice - the second time a trial-shaped row has been read as revenue,
+ * after the tier_pro rows that trials grant directly.
+ *
+ * `manual` is ours by hand and is neither.
+ */
+const PERIOD_FLOOR_DAYS = { month: 20, year: 300 };
+function purchaseKind(r) {
+  if ((r.source ?? "") === "manual") return "comped";
+  // No end date is a perpetual grant, which is as paid as it gets.
+  if (!r.expires_at) return "paid";
+  const floor = PERIOD_FLOOR_DAYS[r.interval ?? ""];
+  if (!floor) return "paid"; // unknown cadence: do not invent a trial
+  const days = (Date.parse(r.expires_at) - Date.parse(r.ts)) / DAY_MS_T;
+  return days < floor ? "trialing" : "paid";
+}
+
 const DAY_MS_T = 86_400_000;
 const daysLeft = (iso) => Math.max(0, Math.ceil((Date.parse(iso) - Date.now()) / DAY_MS_T));
 
@@ -1330,14 +1360,16 @@ for (const [id, a] of Object.entries(store.apps)) {
   if (fb) a.feedback = fb;
   if ((CFG.purchases?.specs ?? []).some((b) => b.app === key)) {
     const mine = purchaseRows.filter((r) => r.app === key && !r.excluded);
+    for (const r of mine) r.kind = purchaseKind(r);
     // `manual` is a grant WE made. Revenue-shaped, and not revenue. Counted
     // apart rather than filtered out, because a comped account quietly dropped
     // is how a fleet forgets it comped anyone.
-    const bought = mine.filter((r) => r.source !== "manual");
+    const bought = mine.filter((r) => r.kind === "paid");
     a.purchases = {
       available: true,
       count: bought.length,
-      comped: mine.length - bought.length,
+      trialing: mine.filter((r) => r.kind === "trialing").length,
+      comped: mine.filter((r) => r.kind === "comped").length,
       excluded: purchaseRows.filter((r) => r.app === key && r.excluded).length,
       newestAt: bought[0]?.ts ?? null,
     };
@@ -1409,6 +1441,7 @@ for (const [id, a] of Object.entries(journeys.apps)) {
     .map((r) => ({
       user: userLabel(identityAll.get(r.user_id) ?? { id: r.user_id }),
       product: r.product,
+      kind: purchaseKind(r),
       source: r.source ?? "unknown",
       interval: r.interval ?? null,
       at: r.ts,
