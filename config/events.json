@@ -1294,7 +1294,125 @@
         "tsCol": "created_at",
         "filter": "app = 'michi'"
       }
-    ]
+    ],
+    "labels": {
+      "_doc": "How a survey answer is PRINTED. Transcribed from each app's survey definition - for michi, tcgscan/michi-maker/src/data/surveys/michiFeedback.ts, which stays the source of truth. The studio never imports app source, so this is a copy, and a copy can drift: an id with no entry here falls back to the raw id, so a question added to the survey shows up as `games_first` rather than vanishing. A WRONG label is the only failure mode worth fearing, which is why nothing here is inferred - if a prompt changed, change it here too. Matrix answers arrive as `<question>.<row>` (aspect.ease, want.physical); `questions` carries the row label alone, because the question's own prompt is a heading, not an answer.",
+      "questions": {
+        "nps": "How likely are you to recommend michi-maker to another collector?",
+        "nps_why_low": "What is holding it back?",
+        "nps_why_mid": "What would make it a 9 or a 10?",
+        "nps_why_high": "What do you like most about it?",
+        "aspect.ease": "Ease of use",
+        "aspect.building": "Building and editing a binder",
+        "aspect.finding": "Finding the cards you want",
+        "aspect.sharing": "Sharing and printing",
+        "aspect.value": "Value for money",
+        "umux_needs": "michi-maker does what I need it to do.",
+        "umux_easy": "michi-maker is easy to use.",
+        "effort_first_binder": "How easy was it to get your first binder looking the way you wanted?",
+        "one_thing": "If you could change one thing, what would it be?",
+        "broken": "Did anything not work, or look wrong?",
+        "games_wanted": "Which cards would you like michi-maker to support?",
+        "games_other": "Which cards - something else",
+        "games_first": "Of those, which one should come first?",
+        "want.phone_app": "A michi-maker app for iPhone and Android",
+        "want.camera_roll": "Add your own art straight from your phone",
+        "want.templates": "Ready-made binder templates",
+        "want.collection": "Manage your card collection inside michi-maker",
+        "want.auto_theme": "Ask michi-maker to plan a whole binder around a theme",
+        "want.physical": "Order your binder printed and posted to you",
+        "want_other": "Anything else you wish it did?",
+        "tenure": "How long have you been using michi-maker?",
+        "frequency": "How often do you use it?",
+        "purpose": "What do you use it for?"
+      },
+      "_scalesDoc": "A number on its own is not an answer: 1 is the WORST end on the aspect matrix and the worst end on `want` too, but 0 is a real deliberate answer on nps and means 'not at all likely'. A key ending in '.' is a prefix, matching every row of that matrix. `ends` is printed when a value has no named point, so a bare 0-10 still says which direction is good. `max` is the top of that scale and is NOT assumed: the digest printed 'nps: 0/5' for a 0-10 question until each scale carried its own.",
+      "scales": {
+        "nps": {
+          "ends": "0 = not at all likely, 10 = extremely likely",
+          "max": 10
+        },
+        "aspect.": {
+          "points": {
+            "1": "Poor",
+            "2": "Weak",
+            "3": "OK",
+            "4": "Good",
+            "5": "Great"
+          },
+          "max": 5
+        },
+        "want.": {
+          "points": {
+            "1": "Not for me",
+            "2": "Nice to have",
+            "3": "I want this"
+          },
+          "max": 3
+        },
+        "umux_needs": {
+          "ends": "1 = strongly disagree, 5 = strongly agree",
+          "max": 5
+        },
+        "umux_easy": {
+          "ends": "1 = strongly disagree, 5 = strongly agree",
+          "max": 5
+        },
+        "effort_first_binder": {
+          "ends": "1 = very difficult, 5 = very easy",
+          "max": 5
+        }
+      },
+      "options": {
+        "games_wanted": {
+          "vanguard": "Cardfight Vanguard",
+          "digimon": "Digimon",
+          "dragonball": "Dragon Ball Super",
+          "fleshandblood": "Flesh and Blood",
+          "gundam": "Gundam",
+          "magic": "Magic: The Gathering",
+          "riftbound": "Riftbound",
+          "sports": "Sports cards",
+          "starwars": "Star Wars Unlimited",
+          "weiss": "Weiss Schwarz",
+          "yugioh": "Yu-Gi-Oh!",
+          "other": "Something else"
+        },
+        "tenure": {
+          "today": "First time today",
+          "weeks": "A few weeks",
+          "months": "A few months",
+          "start": "Since early on"
+        },
+        "frequency": {
+          "daily": "Most days",
+          "weekly": "Most weeks",
+          "sometimes": "Now and then",
+          "once": "This is my first visit"
+        },
+        "purpose": {
+          "plan_real": "Planning a binder I will build for real",
+          "digital": "A collection that only exists online",
+          "show": "Showing people what I have",
+          "print": "Printing art and dividers",
+          "play": "Just enjoying the tool"
+        },
+        "games_first": {
+          "vanguard": "Cardfight Vanguard",
+          "digimon": "Digimon",
+          "dragonball": "Dragon Ball Super",
+          "fleshandblood": "Flesh and Blood",
+          "gundam": "Gundam",
+          "magic": "Magic: The Gathering",
+          "riftbound": "Riftbound",
+          "sports": "Sports cards",
+          "starwars": "Star Wars Unlimited",
+          "weiss": "Weiss Schwarz",
+          "yugioh": "Yu-Gi-Oh!",
+          "other": "Something else"
+        }
+      }
+    }
   },
   "trials": {
     "_doc": "Where each app's trial ledger lives, so the digest can name who is ON a trial right now and how long they have left. `truth.trial` above answers a different question - how many people have EVER started one - and carries no expiry, which is why this exists separately rather than as another column on it. Counts go in data/events.json; the names and the days left go to the gitignored sidecar, because a list of who is mid-trial is identity. Same spec shape as feedback and truth: a new app is one entry.",

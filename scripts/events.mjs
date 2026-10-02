@@ -1260,6 +1260,14 @@ if (existsSync(DATA_FILE)) {
 // the numbers rather than being inferred from a zero at the far end.
 const FREE_TEXT = new Set(["one_thing", "broken", "want_other", "nps_why_low", "nps_why_mid", "nps_why_high"]);
 
+// Prose must never reach the committed counts file, so the test cannot be a fixed
+// list alone. Every "Other" box in the survey writes `<question>_other` (toPayload
+// keeps it only while Other is picked), and a free-text answer that is not
+// recognised as one falls through to `choices` below and gets counted as if it
+// were an option id - which is how a typed sentence ends up in data/events.json.
+// The suffix rule means a new Other box is safe the day it ships, with no edit here.
+const isFreeText = (k) => FREE_TEXT.has(k) || k.endsWith("_other");
+
 function buildFeedback(appKey) {
   const specced = (CFG.feedback?.specs ?? []).some((f) => f.app === appKey);
   if (!specced) return null;
@@ -1281,7 +1289,7 @@ function buildFeedback(appKey) {
   for (const r of kept) {
     const a = r.answers ?? {};
     for (const [k, v] of Object.entries(a)) {
-      if (FREE_TEXT.has(k)) continue;
+      if (isFreeText(k)) continue;
       if (typeof v === "number") {
         (ratings[k] ??= []).push(v);
       } else if (typeof v === "string") {
@@ -1312,7 +1320,7 @@ function buildFeedback(appKey) {
     },
     ratings: Object.fromEntries(Object.entries(ratings).map(([k, xs]) => [k, { n: xs.length, avg: avg(xs) }])),
     choices,
-    withText: kept.filter((r) => Object.entries(r.answers ?? {}).some(([k, v]) => FREE_TEXT.has(k) && typeof v === "string" && v.trim())).length,
+    withText: kept.filter((r) => Object.entries(r.answers ?? {}).some(([k, v]) => isFreeText(k) && typeof v === "string" && v.trim())).length,
   };
 }
 
@@ -1499,8 +1507,18 @@ for (const [id, a] of Object.entries(journeys.apps)) {
       user: userLabel(identityAll.get(r.user_id) ?? { id: r.user_id, anon: r.was_guest }),
       nps: r.nps ?? null,
       text: Object.fromEntries(
-        Object.entries(r.answers ?? {}).filter(([k, v]) => FREE_TEXT.has(k) && typeof v === "string" && v.trim()),
+        Object.entries(r.answers ?? {}).filter(([k, v]) => isFreeText(k) && typeof v === "string" && v.trim()),
       ),
+      // THE WHOLE RESPONSE, not only its prose (owner, 2026-10-02). `text` above is
+      // what someone wrote; this is everything they answered, which for the first
+      // real response was all of it - nine numbers and not one sentence. The digest
+      // used to show per-response detail only for responses carrying text, so that
+      // response existed in the averages and nowhere else, and the owner could read
+      // the section as "no detail available" when the detail was sitting right here.
+      answers: r.answers ?? {},
+      context: r.context ?? {},
+      guest: !!r.was_guest,
+      version: r.survey_version ?? null,
       // Only where they ticked the box. An address they did not offer is not ours to reprint.
       contact: r.contact_ok ? (r.contact_email ?? null) : null,
     }))

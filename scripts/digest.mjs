@@ -25,7 +25,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-import { ROOT, loadEnv, isoDate, startOfDay, tzLabel, REPORT_TZ } from "./lib/studio.mjs";
+import { ROOT, loadEnv, isoDate, startOfDay, tzLabel, REPORT_TZ, readConfig } from "./lib/studio.mjs";
 
 loadEnv();
 const SEND = process.argv.includes("--send");
@@ -789,6 +789,68 @@ ${named
   }
 }
 
+// A survey answer as a person reads it, not as the database stores it.
+//
+// `3` is not an answer and neither is `aspect.sharing`. The labels are transcribed
+// in config/events.json -> feedback.labels (see its _doc); an id with no entry
+// falls back to the raw id, so a question added to the survey prints as
+// `games_first` rather than disappearing from the email.
+const FB_LABELS = (() => {
+  try {
+    return readConfig("events.json")?.feedback?.labels ?? null;
+  } catch {
+    return null;
+  }
+})();
+const FB_ORDER = Object.keys(FB_LABELS?.questions ?? {});
+const qLabel = (k) => FB_LABELS?.questions?.[k] ?? k;
+
+// Matrix rows share one scale, so a key ending in '.' is a prefix for all of them.
+function fbScale(k) {
+  const sc = FB_LABELS?.scales ?? {};
+  if (sc[k]) return sc[k];
+  for (const [pre, v] of Object.entries(sc)) if (pre.endsWith(".") && k.startsWith(pre)) return v;
+  return null;
+}
+
+// A named point where the scale has one. Otherwise the number WITH its direction
+// spelled out, because a bare 0 on the recommend question reads as a missing answer
+// when it is in fact the strongest thing anybody has said.
+function fbAnswer(k, v) {
+  const opts = FB_LABELS?.options?.[k];
+  if (Array.isArray(v)) return v.map((one) => opts?.[one] ?? one).join(", ");
+  if (typeof v === "number") {
+    const sc = fbScale(k);
+    const pt = sc?.points?.[String(v)];
+    if (pt) return `${v} - ${pt}`;
+    return sc?.ends ? `${v} (${sc.ends})` : String(v);
+  }
+  if (typeof v === "boolean") return v ? "yes" : "no";
+  return opts?.[v] ?? String(v);
+}
+
+// The top of a scale, never assumed. The digest printed "nps: 0/5" for a 0-10
+// question for as long as /5 was hardcoded; an unknown scale now prints the bare
+// average rather than inventing a denominator for it.
+const fbMax = (k) => fbScale(k)?.max ?? null;
+
+// The aggregate rated rows. `nps` is dropped from them because it has its own
+// block directly above with the proper bands - leaving it in reported the same
+// answer twice, the second time against the wrong scale.
+function fbRated(ratings) {
+  return Object.entries(ratings ?? {})
+    .filter(([k]) => k !== "nps")
+    .sort((a, b) => (a[1].avg ?? 9) - (b[1].avg ?? 9))
+    .slice(0, 5);
+}
+
+// Survey order, with anything unrecognised after it rather than dropped.
+const fbSort = (a, b) => {
+  const ia = FB_ORDER.indexOf(a[0]);
+  const ib = FB_ORDER.indexOf(b[0]);
+  return (ia < 0 ? 1e6 : ia) - (ib < 0 ? 1e6 : ib);
+};
+
 // ---------- Leave Feedback ----------
 //
 // Driven entirely by what the lane found, never by a hardcoded app list: the page,
@@ -857,11 +919,11 @@ if (fbApps.length) {
 
     // The 1-5 aspect ratings, worst first: the lowest-scoring part of the product
     // is the line worth reading, and sorting by name would bury it.
-    const rated = Object.entries(fb.ratings).sort((a, b) => (a[1].avg ?? 9) - (b[1].avg ?? 9)).slice(0, 5);
+    const rated = fbRated(fb.ratings);
     if (rated.length) {
       parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
 <tr><th style="${cellHead}">Rated</th><th style="${cellHead}text-align:right;">Average</th><th style="${cellHead}text-align:right;">Answers</th></tr>
-${rated.map(([k, v]) => `<tr><td style="${cell}">${esc(k)}</td><td style="${num}">${v.avg ?? "-"}</td><td style="${num}">${v.n}</td></tr>`).join("")}
+${rated.map(([k, v]) => `<tr><td style="${cell}">${esc(qLabel(k))}</td><td style="${num}">${v.avg ?? "-"}${v.avg != null && fbMax(k) ? `/${fbMax(k)}` : ""}</td><td style="${num}">${v.n}</td></tr>`).join("")}
 </table></td></tr>`);
     }
 
@@ -880,20 +942,69 @@ ${rated.map(([k, v]) => `<tr><td style="${cell}">${esc(k)}</td><td style="${num}
     if (!sidecar) {
       parts.push(p(`${fb.withText} response${fb.withText === 1 ? "" : "s"} carried written answers, but <code>data/journeys.json</code> was not available in this run, so they cannot be quoted.`, WARN));
     } else {
-      const recent = sidecar.filter((r) => Object.keys(r.text ?? {}).length).slice(0, 5);
-      for (const r of recent) {
-        const lines = Object.entries(r.text).map(([k, v]) => `<div style="margin:2px 0;"><span style="color:${MUTED};">${esc(k)}</span> ${esc(String(v).slice(0, 400))}</div>`).join("");
+      // EVERY response, each one whole (owner, 2026-10-02).
+      //
+      // This used to filter to responses carrying written answers and cap at five.
+      // The first real response was nine numbers and no prose, so it matched that
+      // filter nowhere: it existed in the averages above and in no other line of
+      // the email, which reads as "there is no detail" when the detail was in hand.
+      // A survey answered entirely in numbers is still an answered survey.
+      //
+      // The cap is high rather than absent so a hundred-response day cannot build an
+      // email a mail client refuses to render, and it says so when it bites.
+      const SHOW = 25;
+      const shown = sidecar.slice(0, SHOW);
+      for (const r of shown) {
+        const textKeys = new Set(Object.keys(r.text ?? {}));
+        const values = Object.entries(r.answers ?? {}).filter(([k]) => !textKeys.has(k)).sort(fbSort);
+        const ctx = r.context ?? {};
+        const meta = [
+          ctx.platform,
+          ctx.tier ? `${ctx.tier} tier` : null,
+          typeof ctx.binders === "number" ? `${ctx.binders} binder${ctx.binders === 1 ? "" : "s"}` : null,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+        const prose = Object.entries(r.text ?? {})
+          .sort(fbSort)
+          .map(
+            ([k, v]) =>
+              `<div style="margin:4px 0;"><div style="color:${MUTED};font-size:11.5px;">${esc(qLabel(k))}</div>` +
+              `<div style="white-space:pre-wrap;">${esc(String(v).slice(0, 1500))}</div></div>`,
+          )
+          .join("");
+        const rows = values
+          .map(
+            ([k, v]) =>
+              `<div style="margin:1px 0;"><span style="color:${MUTED};">${esc(qLabel(k))}:</span> <strong>${esc(fbAnswer(k, v))}</strong></div>`,
+          )
+          .join("");
+        // Said out loud, because an absent block and a skipped question look identical
+        // in an email and only one of them is a finding.
+        const nothingWritten = textKeys.size
+          ? ""
+          : `<div style="color:${MUTED};margin:4px 0;">No written answers - every open question was skipped.</div>`;
         parts.push(
           p(
             `<div style="border-left:3px solid ${LINE};padding-left:10px;">` +
-              `<div style="color:${MUTED};font-size:11.5px;">${esc(r.user)} · ${esc(String(r.at).slice(0, 16))}${r.nps != null ? ` · scored ${r.nps}/10` : ""}${r.contact ? ` · <span style="color:${ACCENT};">${esc(r.contact)}</span>` : ""}</div>` +
-              lines +
+              `<div style="color:${MUTED};font-size:11.5px;">${esc(r.user)}${r.guest ? " (guest)" : ""} · ${esc(String(r.at).slice(0, 16))}` +
+              `${r.nps != null ? ` · scored <strong>${r.nps}/10</strong>` : ""}${meta ? ` · ${esc(meta)}` : ""}` +
+              `${r.contact ? ` · <span style="color:${ACCENT};">${esc(r.contact)}</span>` : ""}</div>` +
+              prose +
+              nothingWritten +
+              rows +
               `</div>`,
             INK,
           ),
         );
       }
-      if (recent.length < fb.withText) parts.push(p(`+${fb.withText - recent.length} more written response${fb.withText - recent.length === 1 ? "" : "s"} not shown.`, MUTED));
+      if (sidecar.length > SHOW)
+        parts.push(
+          p(
+            `+${sidecar.length - SHOW} older response${sidecar.length - SHOW === 1 ? "" : "s"} not shown - all of them are in <code>data/journeys.json</code>.`,
+            MUTED,
+          ),
+        );
     }
   }
 }
@@ -1033,12 +1144,21 @@ if (fbApps.length) {
           : `    ${fb.nps.answered} score(s), avg ${fb.nps.average}/10 — too few for an NPS figure`,
       );
     }
-    for (const [k, v] of Object.entries(fb.ratings).sort((a, b) => (a[1].avg ?? 9) - (b[1].avg ?? 9)).slice(0, 5)) {
-      T.push(`    ${k}: ${v.avg}/5 (${v.n})`);
+    for (const [k, v] of fbRated(fb.ratings)) {
+      T.push(`    ${qLabel(k)}: ${v.avg}${fbMax(k) ? `/${fbMax(k)}` : ""} (${v.n})`);
     }
-    for (const r of (journeys?.apps?.[id]?.feedback ?? []).filter((x) => Object.keys(x.text ?? {}).length).slice(0, 5)) {
-      T.push(`    ${r.user} ${String(r.at).slice(0, 16)}${r.nps != null ? ` (${r.nps}/10)` : ""}${r.contact ? ` <${r.contact}>` : ""}`);
-      for (const [k, v] of Object.entries(r.text)) T.push(`      ${k}: ${String(v).slice(0, 400)}`);
+    for (const r of (journeys?.apps?.[id]?.feedback ?? []).slice(0, 25)) {
+      T.push(
+        `    ${r.user}${r.guest ? " (guest)" : ""} ${String(r.at).slice(0, 16)}${r.nps != null ? ` (${r.nps}/10)` : ""}${r.contact ? ` <${r.contact}>` : ""}`,
+      );
+      const textKeys = new Set(Object.keys(r.text ?? {}));
+      for (const [k, v] of Object.entries(r.text ?? {}).sort(fbSort)) {
+        T.push(`      ${qLabel(k)}: ${String(v).slice(0, 1500)}`);
+      }
+      if (!textKeys.size) T.push("      (no written answers - every open question was skipped)");
+      for (const [k, v] of Object.entries(r.answers ?? {}).filter(([k2]) => !textKeys.has(k2)).sort(fbSort)) {
+        T.push(`      ${qLabel(k)}: ${fbAnswer(k, v)}`);
+      }
     }
   }
 }
