@@ -1,6 +1,6 @@
 # Print & QR campaigns
 
-Collected 2026-10-02T17:42:44.668Z. All-time unless a window is named.
+Collected 2026-10-03T15:07:44.976Z. All-time unless a window is named.
 
 **100 campaign arrivals** across 4 apps.
 
@@ -105,11 +105,11 @@ Collected 2026-10-02T17:42:44.668Z. All-time unless a window is named.
 | (unregistered) | `faed5065-c1d1-45f8-8a78-3494094486ec` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `7b7772d0-25e9-4543-88a7-17f5b2b8fb5b` | 0 | 0 | 0 | 0 | 0 |
 
-Excluded from the above: 27 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 28 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-No campaign-tagged arrival, all time. Landing routes are recorded (1203 of 1334 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Landing routes are recorded (1204 of 1335 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Doggle
 
@@ -121,7 +121,7 @@ Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (128 of 136 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (129 of 137 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -145,8 +145,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 3348 | 3078 | 123 | 2833 | a code was recorded 2026-08-13 |
-| TCGScan | 1334 | 1203 | 0 | 1160 | routes yes, never a code — a zero cannot be told from an unshipped build |
-| Doggle | 392 | 374 | 5 | 392 | a code was recorded 2026-08-13 |
-| Pickleague | 136 | 128 | 0 | 136 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 3391 | 3107 | 124 | 2876 | a code was recorded 2026-08-13 |
+| TCGScan | 1335 | 1204 | 0 | 1161 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Doggle | 403 | 384 | 5 | 403 | a code was recorded 2026-08-13 |
+| Pickleague | 137 | 129 | 0 | 137 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
