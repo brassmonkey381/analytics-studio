@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-10-03T15:07:44.976Z. All-time unless a window is named.
+Collected 2026-10-04T17:19:13.902Z. All-time unless a window is named.
 
-**100 campaign arrivals** across 4 apps.
+**105 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
@@ -45,6 +45,7 @@ Collected 2026-10-03T15:07:44.976Z. All-time unless a window is named.
 | (unregistered) | `381a0346-5be3-4c17-94f2-5f770338bda2` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `38cc7ac0-4602-4f50-9cb4-9616856b1a65` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `3be00d93-86c9-4294-a03c-4c0aa98e5975` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `3e535cea-f1bf-4b36-a9a2-2166e4bbcdbd` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `3f889f5f-8b8a-439b-aac9-4f531985202a` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `4159da30-3b2c-4e11-932b-cbc807b4b787` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `49bb8d42-bb93-4b2f-9b83-b1d0e58d91eb` | 1 | 1 | 1 | 0 | 0 |
@@ -57,10 +58,12 @@ Collected 2026-10-03T15:07:44.976Z. All-time unless a window is named.
 | (unregistered) | `63b344d7-8fb7-4b0e-9bfb-3b4c822b4862` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `653fb409-cbb8-4bed-b6dc-076bc0ebf597` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `65c49b8c-7239-43a8-a6b8-b55dc9243004` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `66d45577-91bc-4bdb-b10b-b6f3b90f4811` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `68d561cb-4ffc-4c64-863f-d294c0f0ce7c` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `68e01d62-e52f-4a22-bfa8-ce4cb4183a86` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `6d06e1e3-5ec3-4221-a7ad-8c581f10f25c` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `6d55a2a2-8270-4f49-ad44-33eae88ddf75` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `6d55a2a2-8270-4f49-ad44-33eae88ddf75` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `6e324f06-3e91-4e8e-bc75-5dfe4423329b` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `711ff702-6ba9-46d1-8d8d-70babd0ad530` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `7bf1f3e9-dd92-477e-80e4-d6f229c32821` | 1 | 1 | 1 | 0 | 1 |
@@ -86,10 +89,12 @@ Collected 2026-10-03T15:07:44.976Z. All-time unless a window is named.
 | (unregistered) | `ce5788f4-883d-4012-b6f7-f23bd5ad1221` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `cf70b3e1-a0a1-4ae1-addc-2a363acc384e` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `d0f0c96e-9503-40a6-9238-13c46ba5dd4f` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `d61145be-8ea3-4a01-a437-fadbd05a9f8c` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `d78b6049-acb9-48ca-b36a-daaefba35e73` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `d89c1090-73e8-4bf6-ae28-7d686ff7a4b3` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `dbd73322-f50c-4d36-a85e-d324638fc5ca` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `dc6558c5-8381-47f1-8ecd-9f8f6a5da00e` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `dc746d0a-760d-4445-a570-963a656ff7ff` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `de4df162-8cc0-4fb6-af5f-5b4fe2dfd71d` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `ea83ff10-9acd-43f5-9ad6-a5c1d66b09d0` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `eabd4da3-9dc6-467b-b527-c3f1d05f3e4f` | 1 | 1 | 1 | 0 | 1 |
@@ -109,7 +114,7 @@ Excluded from the above: 28 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-No campaign-tagged arrival, all time. Landing routes are recorded (1204 of 1335 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Landing routes are recorded (1208 of 1339 sessions, first on 2026-08-06) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Doggle
 
@@ -145,8 +150,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 3391 | 3107 | 124 | 2876 | a code was recorded 2026-08-13 |
-| TCGScan | 1335 | 1204 | 0 | 1161 | routes yes, never a code — a zero cannot be told from an unshipped build |
-| Doggle | 403 | 384 | 5 | 403 | a code was recorded 2026-08-13 |
+| Michi-Maker | 3446 | 3160 | 129 | 2931 | a code was recorded 2026-08-13 |
+| TCGScan | 1339 | 1208 | 0 | 1165 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Doggle | 407 | 388 | 5 | 407 | a code was recorded 2026-08-13 |
 | Pickleague | 137 | 129 | 0 | 137 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
