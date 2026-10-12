@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-11T15:07:42.374Z",
+  "collectedAt": "2026-10-12T16:13:01.419Z",
   "windows": [
     "all",
     1,
@@ -118,34 +118,34 @@
   "capture": {
     "tcgscan": {
       "app": "tcgscan",
-      "sessions": 1352,
-      "with_landing": 1220,
-      "with_code": 0,
-      "with_device": 1178,
+      "sessions": 1361,
+      "with_landing": 1227,
+      "with_code": 1,
+      "with_device": 1187,
       "first_session": "2026-08-05 20:37:24.627618+00",
-      "last_session": "2026-10-10 14:33:45.0782+00",
+      "last_session": "2026-10-12 09:05:11.967127+00",
       "first_landing": "2026-08-06 22:18:20.778075+00",
-      "first_code": null
+      "first_code": "2026-10-12 06:35:47.090437+00"
     },
     "michi-maker": {
       "app": "michi",
-      "sessions": 3756,
-      "with_landing": 3440,
-      "with_code": 145,
-      "with_device": 3241,
+      "sessions": 3814,
+      "with_landing": 3496,
+      "with_code": 152,
+      "with_device": 3299,
       "first_session": "2026-08-05 17:56:45.400525+00",
-      "last_session": "2026-10-11 12:59:31.845531+00",
+      "last_session": "2026-10-12 16:10:01.526563+00",
       "first_landing": "2026-08-06 04:23:49.041089+00",
       "first_code": "2026-08-14 06:47:40.618104+00"
     },
     "doggle": {
       "app": "doggle",
-      "sessions": 450,
-      "with_landing": 428,
+      "sessions": 463,
+      "with_landing": 439,
       "with_code": 5,
-      "with_device": 450,
+      "with_device": 463,
       "first_session": "2026-08-14 06:30:45.05467+00",
-      "last_session": "2026-10-11 14:57:50.609572+00",
+      "last_session": "2026-10-12 05:35:19.398523+00",
       "first_landing": "2026-08-14 06:53:00.533601+00",
       "first_code": "2026-08-14 06:53:00.533601+00"
     },
@@ -169,33 +169,52 @@
       "byWindow": {
         "1": {
           "totals": {
-            "arrivals": 0,
-            "campaigns": 0,
-            "people": 0,
-            "stayed": 0,
+            "arrivals": 1,
+            "campaigns": 1,
+            "people": 1,
+            "stayed": 1,
             "signedUp": 0,
-            "returned": 0,
-            "alreadyMembers": 0,
+            "returned": 1,
+            "alreadyMembers": 1,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 0,
+            "excludedArrivals": 5,
             "verificationArrivals": 0
           },
-          "campaigns": [],
+          "campaigns": [
+            {
+              "code": "38f35148-5b12-44ba-a5d4-a7fe5daff98e",
+              "label": null,
+              "registryId": null,
+              "piece": null,
+              "printed": null,
+              "registered": false,
+              "source": null,
+              "medium": null,
+              "arrivals": 1,
+              "people": 1,
+              "stayed": 1,
+              "signedUp": 0,
+              "returned": 1,
+              "signupsWithCode": 0,
+              "firstSeen": "2026-10-12 08:21:17.158455+00",
+              "lastSeen": "2026-10-12 08:21:17.158455+00"
+            }
+          ],
           "daily": null
         },
         "7": {
           "totals": {
-            "arrivals": 9,
-            "campaigns": 9,
-            "people": 7,
-            "stayed": 7,
+            "arrivals": 6,
+            "campaigns": 6,
+            "people": 5,
+            "stayed": 5,
             "signedUp": 0,
-            "returned": 5,
-            "alreadyMembers": 7,
+            "returned": 4,
+            "alreadyMembers": 5,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 7,
+            "excludedArrivals": 10,
             "verificationArrivals": 0
           },
           "campaigns": [
@@ -216,6 +235,24 @@
               "signupsWithCode": 0,
               "firstSeen": "2026-10-07 03:46:25.13069+00",
               "lastSeen": "2026-10-07 03:46:25.13069+00"
+            },
+            {
+              "code": "38f35148-5b12-44ba-a5d4-a7fe5daff98e",
+              "label": null,
+              "registryId": null,
+              "piece": null,
+              "printed": null,
+              "registered": false,
+              "source": null,
+              "medium": null,
+              "arrivals": 1,
+              "people": 1,
+              "stayed": 1,
+              "signedUp": 0,
+              "returned": 1,
+              "signupsWithCode": 0,
+              "firstSeen": "2026-10-12 08:21:17.158455+00",
+              "lastSeen": "2026-10-12 08:21:17.158455+00"
             },
             {
               "code": "3a4e6be3-36b4-4dfb-82d3-f0529ffc8938",
@@ -254,24 +291,6 @@
               "lastSeen": "2026-10-09 11:36:50.922777+00"
             },
             {
-              "code": "5ee3e51d-61c3-4d6f-bad4-a6cdeb86baf8",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 0,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-10-04 21:54:57.746111+00",
-              "lastSeen": "2026-10-04 21:54:57.746111+00"
-            },
-            {
               "code": "78767bd4-1f4f-494b-9135-d222b8989073",
               "label": null,
               "registryId": null,
@@ -306,67 +325,9 @@
               "signupsWithCode": 0,
               "firstSeen": "2026-10-06 20:13:34.616921+00",
               "lastSeen": "2026-10-06 20:13:34.616921+00"
-            },
-            {
-              "code": "c3c2f0ea-a3ab-41c9-a444-29f4d13ca52c",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-10-05 08:12:59.385451+00",
-              "lastSeen": "2026-10-05 08:12:59.385451+00"
-            },
-            {
-              "code": "c728e8d2-668d-4383-8f74-cb892b019b45",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-10-04 18:54:18.483159+00",
-              "lastSeen": "2026-10-04 18:54:18.483159+00"
-            },
-            {
-              "code": "f9b2eaa8-1f0e-41df-9ad9-a04345bbaa13",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-10-05 03:08:27.920526+00",
-              "lastSeen": "2026-10-05 03:08:27.920526+00"
             }
           ],
           "daily": [
-            {
-              "day": "2026-10-05",
-              "arrivals": 1
-            },
             {
               "day": "2026-10-06",
               "arrivals": 4
@@ -390,21 +351,25 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 1
             }
           ]
         },
         "14": {
           "totals": {
-            "arrivals": 30,
-            "campaigns": 30,
-            "people": 19,
-            "stayed": 19,
+            "arrivals": 27,
+            "campaigns": 27,
+            "people": 18,
+            "stayed": 18,
             "signedUp": 0,
-            "returned": 15,
-            "alreadyMembers": 18,
+            "returned": 14,
+            "alreadyMembers": 17,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 10,
+            "excludedArrivals": 16,
             "verificationArrivals": 0
           },
           "campaigns": [
@@ -445,42 +410,6 @@
               "lastSeen": "2026-09-30 11:50:51.472674+00"
             },
             {
-              "code": "19eb1628-1e41-4745-8536-1110518f9503",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-27 18:51:49.029156+00",
-              "lastSeen": "2026-09-27 18:51:49.029156+00"
-            },
-            {
-              "code": "26f44bae-37fa-4775-b527-c1619ca1c1a5",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-28 13:19:47.219279+00",
-              "lastSeen": "2026-09-28 13:19:47.219279+00"
-            },
-            {
               "code": "2a6d107c-c9a5-4a97-a5f7-0809100a8239",
               "label": null,
               "registryId": null,
@@ -515,6 +444,24 @@
               "signupsWithCode": 0,
               "firstSeen": "2026-10-07 03:46:25.13069+00",
               "lastSeen": "2026-10-07 03:46:25.13069+00"
+            },
+            {
+              "code": "38f35148-5b12-44ba-a5d4-a7fe5daff98e",
+              "label": null,
+              "registryId": null,
+              "piece": null,
+              "printed": null,
+              "registered": false,
+              "source": null,
+              "medium": null,
+              "arrivals": 1,
+              "people": 1,
+              "stayed": 1,
+              "signedUp": 0,
+              "returned": 1,
+              "signupsWithCode": 0,
+              "firstSeen": "2026-10-12 08:21:17.158455+00",
+              "lastSeen": "2026-10-12 08:21:17.158455+00"
             },
             {
               "code": "3a4e6be3-36b4-4dfb-82d3-f0529ffc8938",
@@ -623,24 +570,6 @@
               "signupsWithCode": 0,
               "firstSeen": "2026-10-03 21:47:10.896418+00",
               "lastSeen": "2026-10-03 21:47:10.896418+00"
-            },
-            {
-              "code": "68e01d62-e52f-4a22-bfa8-ce4cb4183a86",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-28 07:18:54.158808+00",
-              "lastSeen": "2026-09-28 07:18:54.158808+00"
             },
             {
               "code": "6d55a2a2-8270-4f49-ad44-33eae88ddf75",
@@ -859,24 +788,6 @@
               "lastSeen": "2026-10-03 21:43:00.12106+00"
             },
             {
-              "code": "dbd73322-f50c-4d36-a85e-d324638fc5ca",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-27 18:19:01.834072+00",
-              "lastSeen": "2026-09-27 18:19:01.834072+00"
-            },
-            {
               "code": "dc746d0a-760d-4445-a570-963a656ff7ff",
               "label": null,
               "registryId": null,
@@ -951,10 +862,6 @@
           ],
           "daily": [
             {
-              "day": "2026-09-28",
-              "arrivals": 7
-            },
-            {
               "day": "2026-09-29",
               "arrivals": 3
             },
@@ -1005,42 +912,28 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 1
             }
           ]
         },
         "30": {
           "totals": {
-            "arrivals": 79,
-            "campaigns": 80,
-            "people": 48,
-            "stayed": 48,
+            "arrivals": 77,
+            "campaigns": 78,
+            "people": 46,
+            "stayed": 46,
             "signedUp": 0,
-            "returned": 35,
-            "alreadyMembers": 46,
+            "returned": 33,
+            "alreadyMembers": 44,
             "submittedSignups": 0,
             "signupsWithCode": 1,
-            "excludedArrivals": 16,
+            "excludedArrivals": 22,
             "verificationArrivals": 0
           },
           "campaigns": [
-            {
-              "code": "01d8315e-38a4-431e-be6d-f9367e930df9",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-11 22:13:55.782341+00",
-              "lastSeen": "2026-09-11 22:13:55.782341+00"
-            },
             {
               "code": "01fdacce-97f8-4330-a3fa-78f93cfc3045",
               "label": null,
@@ -1490,6 +1383,24 @@
               "signupsWithCode": 0,
               "firstSeen": "2026-09-22 06:12:10.539859+00",
               "lastSeen": "2026-09-22 06:12:10.539859+00"
+            },
+            {
+              "code": "38f35148-5b12-44ba-a5d4-a7fe5daff98e",
+              "label": null,
+              "registryId": null,
+              "piece": null,
+              "printed": null,
+              "registered": false,
+              "source": null,
+              "medium": null,
+              "arrivals": 1,
+              "people": 1,
+              "stayed": 1,
+              "signedUp": 0,
+              "returned": 1,
+              "signupsWithCode": 0,
+              "firstSeen": "2026-10-12 08:21:17.158455+00",
+              "lastSeen": "2026-10-12 08:21:17.158455+00"
             },
             {
               "code": "3a4e6be3-36b4-4dfb-82d3-f0529ffc8938",
@@ -1996,24 +1907,6 @@
               "lastSeen": "2026-09-21 01:26:34.322148+00"
             },
             {
-              "code": "945d1952-bce7-44b7-9ac9-94deb3aec9e4",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-11 22:17:35.692293+00",
-              "lastSeen": "2026-09-11 22:17:35.692293+00"
-            },
-            {
               "code": "a23be7e4-c8d3-485a-9e83-4295a338f571",
               "label": null,
               "registryId": null,
@@ -2392,24 +2285,6 @@
               "lastSeen": "2026-09-17 16:06:14.701032+00"
             },
             {
-              "code": "f6e806f5-95ff-4ead-bc9e-2d92f463b8ba",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": null,
-              "medium": null,
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 1,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-09-12 11:12:56.527502+00",
-              "lastSeen": "2026-09-12 11:12:56.527502+00"
-            },
-            {
               "code": "f8d85e84-4648-453a-84c5-915274b7f4fb",
               "label": null,
               "registryId": null,
@@ -2465,10 +2340,6 @@
             }
           ],
           "daily": [
-            {
-              "day": "2026-09-12",
-              "arrivals": 5
-            },
             {
               "day": "2026-09-13",
               "arrivals": 2
@@ -2584,13 +2455,17 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 1
             }
           ]
         },
         "all": {
           "totals": {
-            "arrivals": 110,
-            "campaigns": 110,
+            "arrivals": 111,
+            "campaigns": 111,
             "people": 67,
             "stayed": 67,
             "signedUp": 0,
@@ -2598,7 +2473,7 @@
             "alreadyMembers": 62,
             "submittedSignups": 1,
             "signupsWithCode": 2,
-            "excludedArrivals": 35,
+            "excludedArrivals": 41,
             "verificationArrivals": 0
           },
           "campaigns": [
@@ -3267,6 +3142,24 @@
               "signupsWithCode": 0,
               "firstSeen": "2026-09-05 20:17:09.797102+00",
               "lastSeen": "2026-09-05 20:17:09.797102+00"
+            },
+            {
+              "code": "38f35148-5b12-44ba-a5d4-a7fe5daff98e",
+              "label": null,
+              "registryId": null,
+              "piece": null,
+              "printed": null,
+              "registered": false,
+              "source": null,
+              "medium": null,
+              "arrivals": 1,
+              "people": 1,
+              "stayed": 1,
+              "signedUp": 0,
+              "returned": 1,
+              "signupsWithCode": 0,
+              "firstSeen": "2026-10-12 08:21:17.158455+00",
+              "lastSeen": "2026-10-12 08:21:17.158455+00"
             },
             {
               "code": "3a4e6be3-36b4-4dfb-82d3-f0529ffc8938",
@@ -4771,6 +4664,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 1
             }
           ]
         }
@@ -5538,6 +5435,13 @@
           "signedUp": 0,
           "firstSeen": "2026-10-09 11:36:50.922777+00",
           "lastSeen": "2026-10-09 11:36:50.922777+00"
+        },
+        "38f35148-5b12-44ba-a5d4-a7fe5daff98e": {
+          "arrivals": 1,
+          "people": 1,
+          "signedUp": 0,
+          "firstSeen": "2026-10-12 08:21:17.158455+00",
+          "lastSeen": "2026-10-12 08:21:17.158455+00"
         }
       }
     },
@@ -5556,7 +5460,7 @@
             "alreadyMembers": 0,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 0,
+            "excludedArrivals": 1,
             "verificationArrivals": 0
           },
           "campaigns": [],
@@ -5573,15 +5477,11 @@
             "alreadyMembers": 0,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 0,
+            "excludedArrivals": 1,
             "verificationArrivals": 0
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-05",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-06",
               "arrivals": 0
@@ -5605,6 +5505,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -5619,15 +5523,11 @@
             "alreadyMembers": 0,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 0,
+            "excludedArrivals": 1,
             "verificationArrivals": 0
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-09-28",
-              "arrivals": 0
-            },
             {
               "day": "2026-09-29",
               "arrivals": 0
@@ -5679,6 +5579,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -5693,15 +5597,11 @@
             "alreadyMembers": 0,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 0,
+            "excludedArrivals": 1,
             "verificationArrivals": 0
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-09-12",
-              "arrivals": 0
-            },
             {
               "day": "2026-09-13",
               "arrivals": 0
@@ -5817,6 +5717,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -5831,15 +5735,11 @@
             "alreadyMembers": 0,
             "submittedSignups": 0,
             "signupsWithCode": 0,
-            "excludedArrivals": 0,
+            "excludedArrivals": 1,
             "verificationArrivals": 0
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-05",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-06",
               "arrivals": 0
@@ -5862,6 +5762,10 @@
             },
             {
               "day": "2026-10-11",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
               "arrivals": 0
             }
           ]
@@ -5892,10 +5796,10 @@
         },
         "7": {
           "totals": {
-            "arrivals": 1,
-            "campaigns": 1,
-            "people": 1,
-            "stayed": 1,
+            "arrivals": 0,
+            "campaigns": 0,
+            "people": 0,
+            "stayed": 0,
             "signedUp": 0,
             "returned": 0,
             "alreadyMembers": 0,
@@ -5904,31 +5808,8 @@
             "excludedArrivals": 0,
             "verificationArrivals": 0
           },
-          "campaigns": [
-            {
-              "code": "AppAgg.com",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": "AppAgg.com",
-              "medium": "referral",
-              "arrivals": 1,
-              "people": 1,
-              "stayed": 1,
-              "signedUp": 0,
-              "returned": 0,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-10-04 17:55:51.711502+00",
-              "lastSeen": "2026-10-04 17:55:51.711502+00"
-            }
-          ],
+          "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-05",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-06",
               "arrivals": 0
@@ -5951,6 +5832,10 @@
             },
             {
               "day": "2026-10-11",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
               "arrivals": 0
             }
           ]
@@ -5990,10 +5875,6 @@
             }
           ],
           "daily": [
-            {
-              "day": "2026-09-28",
-              "arrivals": 0
-            },
             {
               "day": "2026-09-29",
               "arrivals": 0
@@ -6045,6 +5926,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -6083,10 +5968,6 @@
             }
           ],
           "daily": [
-            {
-              "day": "2026-09-12",
-              "arrivals": 0
-            },
             {
               "day": "2026-09-13",
               "arrivals": 0
@@ -6201,6 +6082,10 @@
             },
             {
               "day": "2026-10-11",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
               "arrivals": 0
             }
           ]
@@ -6409,6 +6294,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         }
@@ -6468,10 +6357,6 @@
           "campaigns": [],
           "daily": [
             {
-              "day": "2026-10-05",
-              "arrivals": 0
-            },
-            {
               "day": "2026-10-06",
               "arrivals": 0
             },
@@ -6494,6 +6379,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -6513,10 +6402,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-09-28",
-              "arrivals": 0
-            },
             {
               "day": "2026-09-29",
               "arrivals": 0
@@ -6568,6 +6453,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -6587,10 +6476,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-09-12",
-              "arrivals": 0
-            },
             {
               "day": "2026-09-13",
               "arrivals": 0
@@ -6706,6 +6591,10 @@
             {
               "day": "2026-10-11",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
+              "arrivals": 0
             }
           ]
         },
@@ -6725,10 +6614,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-05",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-06",
               "arrivals": 0
@@ -6751,6 +6636,10 @@
             },
             {
               "day": "2026-10-11",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-12",
               "arrivals": 0
             }
           ]
