@@ -226,6 +226,17 @@ for (const id of APPS) {
   });
 }
 
+// Sessions by platform from the event stream's last 24h - the only place platform is
+// recorded (analytics_sessions.platform). A different window and population from the
+// Active column beside it, and labelled as sessions, not people, for that reason. Now that
+// TCGScan is on the App Store this is the one line that says whether anyone is on the phone.
+const platformsOf = (id) => {
+  const pl = evWindow(id)?.totals?.platforms ?? null;
+  if (!pl) return "—";
+  const parts = Object.entries(pl).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${v} ${k}`);
+  return parts.length ? parts.join(" · ") : "—";
+};
+
 // What each real, named person did in the last 24h of the event stream. Built by inverting
 // the per-event and per-route rosters: the studio stores "who fired X", and a digest wants
 // "what did this person do", which is the same data read the other way round.
@@ -430,7 +441,7 @@ if (worstStale != null && worstStale > 26) {
 if (missing.length) parts.push(p(`Not available in this run: ${esc(missing.join(", "))}. Sections that need them are marked.`, WARN));
 
 // --- headline table ---
-parts.push(h2("Yesterday at a glance"));
+parts.push(h2("Yesterday"));
 parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
 <tr>
   <th style="${cellHead}">App</th>
@@ -438,6 +449,7 @@ parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" wi
   <th style="${cellHead}text-align:right;">New</th>
   <th style="${cellHead}text-align:right;">Today so far</th>
   <th style="${cellHead}text-align:right;">Accounts</th>
+  <th style="${cellHead}">Sessions by platform (24h)</th>
 </tr>
 ${dau
   .map(
@@ -447,6 +459,7 @@ ${dau
   <td style="${num}${newCounts[d.app].yesterday ? "" : `color:${MUTED};`}">${newCounts[d.app].yesterday}</td>
   <td style="${num}color:${MUTED};">${d.today} act · ${newCounts[d.app].today} new</td>
   <td style="${num}color:${MUTED};">${d.totalUsers ?? "—"}</td>
+  <td style="${cell}color:${MUTED};">${esc(platformsOf(d.app))}</td>
 </tr>`,
   )
   .join("")}
@@ -459,6 +472,40 @@ ${dau
     p(
       `Guests, kept out of every number above: <strong>${g}</strong> active and <strong>${gn}</strong> new yesterday. ` +
         `<strong>${ex}</strong> account-slots are excluded as ours, QA or automated — summed per app, and Michi-Maker and TCGScan share one auth pool, so an excluded account there is counted in both.`,
+    ),
+  );
+}
+
+// --- who was active and what they did ---
+parts.push(p(`<strong style="color:${INK};font-size:13.5px;">Who was active, and what they did</strong>`));
+if (!dau.some((d) => d.yesterday)) {
+  parts.push(p("No real account was active yesterday on any app."));
+} else {
+  for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
+    const known = d.who.length ? esc(d.who.join(", ")) : "<em>names not carried for this app in this run</em>";
+    parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(d.app))} — ${plural(d.yesterday, "active account")}</td></tr>`);
+    parts.push(p(`<span style="color:${MUTED};">Active (product activity, ${esc(TZ)} ${esc(YESTERDAY)}):</span> ${known}`, INK));
+    const detail = didByPerson.find((x) => x.app === d.app);
+    if (detail) {
+      parts.push(p(`<span style="color:${MUTED};">Event stream, rolling last 24h — a different window, and a different population: it sees instrumented actions, including from people the activity tables do not count.</span>`));
+      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Account</th><th style="${cellHead}">Did (last 24h)</th><th style="${cellHead}">Pages</th></tr>
+${detail.people
+  .map(
+    (pp) => `<tr>
+  <td style="${cell}">${esc(pp.name)}</td>
+  <td style="${cell}${pp.did.size ? "" : `color:${MUTED};`}">${pp.did.size ? esc([...pp.did].join(", ")) : "opened it, nothing else"}</td>
+  <td style="${cell}color:${MUTED};">${esc([...pp.pages].slice(0, 5).join(" ") || "—")}</td>
+</tr>`,
+  )
+  .join("")}
+</table></td></tr>`);
+    }
+  }
+  parts.push(
+    p(
+      `"Did" is the last 24 hours of the event stream, which is a different window from the calendar day above and only covers instrumented actions; ` +
+        `the active count itself comes from product tables (a login bonus on Doggle, a streak claim on Pickleague, a write on Michi/TCGScan), so an account can be active here with nothing in the "did" column.`,
     ),
   );
 }
@@ -521,25 +568,130 @@ ${newAccounts
 }
 
 // --- plans / PRO / trials ---
-parts.push(h2("Plans, PRO and trials since yesterday"));
-if (!events) {
-  parts.push(p("The event stream was not available in this run, so interactions cannot be reported. Ground-truth tiers below are unaffected.", WARN));
-} else if (!money.length) {
-  parts.push(
-    p(
-      `No PRO, trial or plan-limit interaction in the last 24h. Two blind spots make that zero softer than it looks: the offer impression only fires where <code>TrialCta</code> renders, and cap gates were only instrumented recently — both are tracked in the events report's gap register.`,
-    ),
-  );
-} else {
-  for (const m of money) {
-    const rows = [
-      ...m.events.map((e) => [e.label ?? e.name, e.count, e.users, e.who]),
-      ...m.pricing.map((r) => [`Viewed ${r.label ?? r.route}`, r.count, r.users, r.who]),
-    ];
-    parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(m.app))}</td></tr>`);
-    parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Interaction</th><th style="${cellHead}text-align:right;">Times</th><th style="${cellHead}">Who</th></tr>
+// ---------- Money ----------
+//
+// ONE section where there were three. "Plans, PRO and trials", "What people bought" and
+// "On a PRO trial right now" each restated the same two ledgers (entitlements and the trial
+// tables) from a different angle, in three places, with three chances to disagree. Now, per
+// app: one ledger line, one named table with a Status column, and the 24h interactions
+// underneath as the thing that moves the ledger. Every count on the ledger line is a product
+// table; only the interactions come from the stream, and they say so.
+//
+// A ledger that could not be read says NOT COLLECTED, in warning colour, where its number
+// would be. It used to say "nobody bought anything" - the same words for an empty table and
+// an unreadable one (owner, 2026-10-12).
+const fmtMoney = (minor, cur) =>
+  minor == null ? null : `${(cur ?? "usd").toLowerCase() === "usd" ? "$" : `${String(cur).toUpperCase()} `}${(minor / 100).toFixed(2)}`;
+const moneyApps = APPS.filter((id) => events?.apps?.[id]?.purchases || events?.apps?.[id]?.activeTrials || money.some((m) => m.app === id));
+if (moneyApps.length) {
+  const sum = (f) => moneyApps.reduce((n, id) => n + (f(events?.apps?.[id]) ?? 0), 0);
+  const paying = sum((a) => a?.purchases?.available ? a.purchases.count : 0);
+  const mrr = sum((a) => a?.purchases?.available ? a.purchases.mrrMinor : 0);
+  const onTrial = sum((a) => a?.activeTrials?.available ? a.activeTrials.count : 0);
+  const anyUnread = moneyApps.some((id) => events?.apps?.[id]?.purchases?.available === false || events?.apps?.[id]?.activeTrials?.available === false);
+  parts.push(h2(`Money — ${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo run-rate)` : ""}, ${onTrial} on a free trial${anyUnread ? " — a ledger was not collected, see below" : ""}`));
+  for (const id of moneyApps) {
+    const b = events?.apps?.[id]?.purchases ?? null;
+    const tr = events?.apps?.[id]?.activeTrials ?? null;
+    const m = money.find((x) => x.app === id) ?? null;
+    parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(id))}</td></tr>`);
+
+    // (1) The ledger line.
+    const bits = [];
+    if (!b) bits.push(`<span style="color:${MUTED};">purchases: no ledger configured</span>`);
+    else if (!b.available) bits.push(`<span style="color:${WARN};font-weight:600;">purchases NOT COLLECTED this run</span>`);
+    else {
+      bits.push(
+        `<strong>${b.count}</strong> paying` +
+          (b.priced
+            ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} with no price recorded` : ""})`
+            : b.count ? ` <span style="color:${MUTED};">(prices not recorded yet)</span>` : ""),
+      );
+      if (b.trialing) bits.push(`<strong>${b.trialing}</strong> subscribed but inside a $0 trial`);
+      if (b.comped) bits.push(`${b.comped} granted (contest prizes, comps)`);
+      if (b.lapsed) bits.push(`<span style="color:${MUTED};">${b.lapsed} lapsed</span>`);
+    }
+    if (!tr) bits.push(`<span style="color:${MUTED};">free trials: no ledger configured</span>`);
+    else if (!tr.available) bits.push(`<span style="color:${WARN};font-weight:600;">free trials NOT COLLECTED this run</span>`);
+    else bits.push(`<strong>${tr.count}</strong> on a free trial${tr.endingWithin3Days ? ` (<span style="color:${WARN};">${tr.endingWithin3Days} ending within 3 days</span>)` : ""}`);
+    if (m?.trialUsers) bits.push(`<span style="color:${MUTED};">${m.trialUsers} ever trialed</span>`);
+    const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
+    if (ex) bits.push(`<span style="color:${MUTED};">${ex} rows of ours excluded</span>`);
+    parts.push(p(bits.join(" · "), INK));
+
+    // (2) One named table. Status is the point of it: paid (and at what price), a Stripe
+    // subscription still inside its $0 trial, a free in-app trial with days left, or a hand
+    // grant. Sorted by what ends soonest, because that is the order anything can be acted on.
+    const rows = [];
+    for (const r of journeys?.apps?.[id]?.purchases ?? []) {
+      const price = fmtMoney(r.amountMinor, r.currency);
+      const status =
+        r.kind === "comped"
+          ? `<span style="color:${WARN};">granted</span> <span style="color:${MUTED};">(${esc(r.source)})</span>`
+          : r.kind === "lapsed"
+            ? `<span style="color:${MUTED};">lapsed — ${esc(r.source)} term ended, never charged</span>`
+          : r.kind === "trialing"
+            ? `<span style="color:${WARN};">$0 trial</span> — first charge ${esc(String(r.expiresAt ?? "").slice(0, 10) || "unknown")}`
+            : `paid${price ? ` <strong>${esc(price)}</strong>${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : ` <span style="color:${MUTED};">(price not recorded)</span>`} via ${esc(r.source)}`;
+      rows.push({
+        who: r.user,
+        holds: `<strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}`,
+        status,
+        since: String(r.at).slice(0, 10),
+        until: r.expiresAt ? String(r.expiresAt).slice(0, 10) : null,
+        sort: r.expiresAt ? Date.parse(r.expiresAt) : Infinity,
+      });
+    }
+    for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
+      const urgent = t.daysLeft <= 1;
+      rows.push({
+        who: t.user,
+        holds: `<strong>PRO</strong> <span style="color:${MUTED};">free trial, ${t.grantedDays}d</span>`,
+        status: `<span style="${urgent ? `color:${WARN};font-weight:600;` : ""}">free trial — ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left`}</span>`,
+        since: String(t.startedAt).slice(0, 10),
+        until: String(t.expiresAt).slice(0, 10),
+        sort: Date.parse(t.expiresAt),
+      });
+    }
+    const expectRows = (b?.available && (b.count || b.trialing || b.comped)) || (tr?.available && tr.count);
+    if (expectRows && !journeys) {
+      parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
+    } else if (rows.length) {
+      rows.sort((x, y) => x.sort - y.sort);
+      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Who</th><th style="${cellHead}">Holds</th><th style="${cellHead}">Status</th><th style="${cellHead}">Since</th><th style="${cellHead}">Until</th></tr>
 ${rows
+  .map(
+    (r) => `<tr>
+  <td style="${cell}">${esc(r.who)}</td>
+  <td style="${cell}">${r.holds}</td>
+  <td style="${cell}">${r.status}</td>
+  <td style="${cell}">${esc(r.since)}</td>
+  <td style="${cell}">${r.until ? esc(r.until) : `<span style="color:${MUTED};">no end</span>`}</td>
+</tr>`,
+  )
+  .join("")}
+</table></td></tr>`);
+      // The trial length changed on 2026-09-20 (14 days -> 3). While a trial from before
+      // that is still running, two lengths sit in one column and look like a bug unexplained.
+      const lengths = [...new Set((journeys?.apps?.[id]?.activeTrials ?? []).map((t) => t.grantedDays))];
+      if (lengths.length > 1) {
+        parts.push(p(`Two trial lengths are running side by side (${lengths.sort((a, b) => a - b).join("d and ")}d). The trial was shortened to ${Math.min(...lengths)} days on 2026-09-20; anyone who started before that keeps the length they were given.`, MUTED));
+      }
+    }
+
+    // (3) The 24h interactions that move the ledger - the stream, and only the stream.
+    if (!events) {
+      parts.push(p("The event stream was not available in this run, so 24h interactions cannot be reported; the ledger above is unaffected.", WARN));
+    } else if (m && (m.events.length || m.pricing.length)) {
+      const irows = [
+        ...m.events.map((e) => [e.label ?? e.name, e.count, e.users, e.who]),
+        ...m.pricing.map((r) => [`Viewed ${r.label ?? r.route}`, r.count, r.users, r.who]),
+      ];
+      parts.push(p(`<span style="color:${MUTED};">Last 24h, event stream — what moved toward (or away from) the ledger:</span>`));
+      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Interaction</th><th style="${cellHead}text-align:right;">Times</th><th style="${cellHead}">Who</th></tr>
+${irows
   .map(
     ([label, count, users, who]) => `<tr>
   <td style="${cell}">${esc(label)}</td>
@@ -549,71 +701,27 @@ ${rows
   )
   .join("")}
 </table></td></tr>`);
-    if (m.trialUsers || m.trialExcluded || m.entUsers || m.entExcluded) {
-      parts.push(
-        p(
-          `Ground truth (the product tables, not the event stream): ${m.trialUsers} real ${m.trialUsers === 1 ? "account has" : "accounts have"} ever started a trial` +
-            (m.paidUsers == null
-              ? `, ${m.entUsers} hold a tier entitlement (trial grants included — the paid-only split was not available this run)`
-              : m.paidUsers
-                ? `, and <strong>${m.paidUsers} ${m.paidUsers === 1 ? "is paying" : "are paying"}</strong>`
-                : `, and <strong>none are paying</strong> — the ${m.entUsers} tier entitlements are trials or subscriptions still inside a $0 trial period, not purchases`) +
-            `${m.trialExcluded || m.entExcluded ? ` — plus ${m.trialExcluded} trial and ${m.entExcluded} entitlement rows on our own accounts, excluded` : ""}.`,
-        ),
-      );
+    } else {
+      parts.push(p(`No PRO, trial or plan-limit interaction in the last 24h. The offer impression only fires where <code>TrialCta</code> renders, so this zero is softer than it looks.`));
     }
   }
-}
-if (tiers.length) {
-  parts.push(
-    p(
-      `<strong>Where the tiers stand</strong> (all accounts, point-in-time — this does not move with the day): ` +
-        tiers
-          .map(
-            (t) =>
-              `${esc(t.name)} ${t.tiers
-                .filter((x) => x.real)
-                .map((x) => `${x.real} ${x.tier}`)
-                .join(", ") || "no real accounts on any tier"}`,
-          )
-          .join("; ") +
-        `. Paying: ${tiers.reduce((n, t) => n + t.paying, 0)}; on trial: ${tiers.reduce((n, t) => n + t.onTrial, 0)}.`,
-    ),
-  );
-}
-
-// --- who was active and what they did ---
-parts.push(h2("Who was active yesterday, and what they did"));
-if (!dau.some((d) => d.yesterday)) {
-  parts.push(p("No real account was active yesterday on any app."));
-} else {
-  for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
-    const known = d.who.length ? esc(d.who.join(", ")) : "<em>names not carried for this app in this run</em>";
-    parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(d.app))} — ${plural(d.yesterday, "active account")}</td></tr>`);
-    parts.push(p(`<span style="color:${MUTED};">Active (product activity, ${esc(TZ)} ${esc(YESTERDAY)}):</span> ${known}`, INK));
-    const detail = didByPerson.find((x) => x.app === d.app);
-    if (detail) {
-      parts.push(p(`<span style="color:${MUTED};">Event stream, rolling last 24h — a different window, and a different population: it sees instrumented actions, including from people the activity tables do not count.</span>`));
-      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Account</th><th style="${cellHead}">Did (last 24h)</th><th style="${cellHead}">Pages</th></tr>
-${detail.people
-  .map(
-    (pp) => `<tr>
-  <td style="${cell}">${esc(pp.name)}</td>
-  <td style="${cell}${pp.did.size ? "" : `color:${MUTED};`}">${pp.did.size ? esc([...pp.did].join(", ")) : "opened it, nothing else"}</td>
-  <td style="${cell}color:${MUTED};">${esc([...pp.pages].slice(0, 5).join(" ") || "—")}</td>
-</tr>`,
-  )
-  .join("")}
-</table></td></tr>`);
-    }
+  if (tiers.length) {
+    parts.push(
+      p(
+        `<strong>Where the tiers stand</strong> (all accounts, point-in-time — this does not move with the day): ` +
+          tiers
+            .map(
+              (t) =>
+                `${esc(t.name)} ${t.tiers
+                  .filter((x) => x.real)
+                  .map((x) => `${x.real} ${x.tier}`)
+                  .join(", ") || "no real accounts on any tier"}`,
+            )
+            .join("; ") +
+          `. A "tier" here includes trial grants; the paying count above is the one that may be read as revenue.`,
+      ),
+    );
   }
-  parts.push(
-    p(
-      `"Did" is the last 24 hours of the event stream, which is a different window from the calendar day above and only covers instrumented actions; ` +
-        `the active count itself comes from product tables (a login bonus on Doggle, a streak claim on Pickleague, a write on Michi/TCGScan), so an account can be active here with nothing in the "did" column.`,
-    ),
-  );
 }
 
 // --- what got made ---
@@ -635,66 +743,6 @@ if (made.length) {
 }
 
 // --- footer ---
-// ---------- What people bought ----------
-//
-// The email said "Paying: 0" for weeks and then, on the day it became 1, still
-// could not say who or what. Name and product, newest first.
-//
-// `manual` grants are OURS and are listed apart: revenue-shaped, and not
-// revenue. Dropping them silently is how a fleet forgets it comped anyone.
-const buyApps = APPS.map((id) => ({ id, b: events?.apps?.[id]?.purchases ?? null })).filter((x) => x.b);
-if (buyApps.length) {
-  const totalBought = buyApps.reduce((n, x) => n + x.b.count, 0);
-  const totalTrialing = buyApps.reduce((n, x) => n + (x.b.trialing ?? 0), 0);
-  parts.push(h2(`What people bought — ${totalBought} paying${totalTrialing ? `, ${totalTrialing} in a $0 trial` : ""}`));
-  for (const { id, b } of buyApps) {
-    const named = journeys?.apps?.[id]?.purchases ?? null;
-    if (!b.available) {
-      parts.push(p(`<strong>${esc(appName(id))}</strong> — entitlements not readable this run, so this is "not available" rather than zero.`, WARN));
-      continue;
-    }
-    if (!b.count && !b.comped && !b.trialing) {
-      parts.push(p(`<strong>${esc(appName(id))}</strong> — nobody has bought anything.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`));
-      continue;
-    }
-    parts.push(
-      p(
-        `<strong>${esc(appName(id))}</strong> — <strong>${b.count}</strong> paying` +
-          (b.trialing ? `, <strong>${b.trialing}</strong> subscribed but still inside a $0 trial period` : "") +
-          (b.comped ? `, ${b.comped} granted by hand` : "") +
-          `.${b.excluded ? ` <span style="color:${MUTED};">${b.excluded} of ours excluded.</span>` : ""}`,
-      ),
-    );
-    if (!named) {
-      parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
-      continue;
-    }
-    parts.push(`<tr><td style="padding:2px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Who</th><th style="${cellHead}">Bought</th><th style="${cellHead}">How</th><th style="${cellHead}">When</th><th style="${cellHead}">Runs to</th></tr>
-${named
-  .map((r) => {
-    // The status column is the point of the table. A `trialing` row is a real
-    // subscription that has paid nothing yet, and its "runs to" date is when
-    // the first actual charge happens - not when access ends.
-    const how =
-      r.kind === "comped"
-        ? `<span style="color:${WARN};">granted by hand</span>`
-        : r.kind === "trialing"
-          ? `<span style="color:${WARN};">${esc(r.source)}, $0 trial</span>`
-          : esc(r.source);
-    return `<tr>
-  <td style="${cell}">${esc(r.user)}</td>
-  <td style="${cell}"><strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}</td>
-  <td style="${cell}">${how}</td>
-  <td style="${cell}">${esc(String(r.at).slice(0, 10))}</td>
-  <td style="${cell}">${r.expiresAt ? `${esc(String(r.expiresAt).slice(0, 10))}${r.kind === "trialing" ? ` <span style="color:${MUTED};">first charge</span>` : ""}` : `<span style="color:${MUTED};">no end</span>`}</td>
-</tr>`;
-  })
-  .join("")}
-</table></td></tr>`);
-  }
-}
-
 // ---------- Daily puzzle ----------
 //
 // From puzzle_plays, not the event stream. The stream lost its call sites in a
@@ -736,56 +784,6 @@ ${pz.days
   })
   .join("")}
 </table></td></tr>`);
-  }
-}
-
-// ---------- Who is on a PRO trial right now ----------
-//
-// Named, always, and sorted by who runs out first - which is the order they can
-// be acted on. Counts alone were the old behaviour and they cannot be acted on:
-// "3 trials ending" does not tell you whose window is closing tonight.
-//
-// The names live in the gitignored sidecar, so when it is missing this says so
-// rather than printing the count and implying that is all there was.
-const trialApps = APPS.map((id) => ({ id, tr: events?.apps?.[id]?.activeTrials ?? null })).filter((x) => x.tr);
-if (trialApps.length) {
-  const totalOn = trialApps.reduce((n, x) => n + x.tr.count, 0);
-  parts.push(h2(`On a PRO trial right now — ${totalOn}`));
-  for (const { id, tr } of trialApps) {
-    const named = journeys?.apps?.[id]?.activeTrials ?? null;
-    if (!tr.count) {
-      parts.push(p(`<strong>${esc(appName(id))}</strong> — nobody is on a trial.${tr.excluded ? ` <span style="color:${MUTED};">${tr.excluded} of ours excluded.</span>` : ""}`));
-      continue;
-    }
-    parts.push(
-      p(
-        `<strong>${esc(appName(id))}</strong> — <strong>${tr.count}</strong> on a trial` +
-          (tr.endingWithin3Days ? `, <span style="color:${WARN};">${tr.endingWithin3Days} ending within 3 days</span>` : "") +
-          `.${tr.excluded ? ` <span style="color:${MUTED};">${tr.excluded} of ours excluded.</span>` : ""}`,
-      ),
-    );
-    if (!named) {
-      parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
-      continue;
-    }
-    parts.push(`<tr><td style="padding:2px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Who</th><th style="${cellHead}text-align:right;">Days left</th><th style="${cellHead}">Ends</th><th style="${cellHead}">Started</th><th style="${cellHead}text-align:right;">Length</th></tr>
-${named
-  .map((t) => {
-    // Under two days is the only thing here worth a colour: it is the last
-    // window in which anything can be sent to them.
-    const urgent = t.daysLeft <= 1;
-    return `<tr><td style="${cell}">${esc(t.user)}</td><td style="${num}${urgent ? `color:${WARN};font-weight:600;` : ""}">${t.daysLeft === 0 ? "today" : t.daysLeft}</td><td style="${cell}">${esc(String(t.expiresAt).slice(0, 10))}</td><td style="${cell}">${esc(String(t.startedAt).slice(0, 10))}</td><td style="${num}">${t.grantedDays}d</td></tr>`;
-  })
-  .join("")}
-</table></td></tr>`);
-    // The trial length changed on 2026-09-20 (14 days -> 3). While a trial from
-    // before that is still running, the Length column has two different numbers
-    // in it and looks like a bug unless it is explained.
-    const lengths = [...new Set(named.map((t) => t.grantedDays))];
-    if (lengths.length > 1) {
-      parts.push(p(`Two trial lengths are running side by side (${lengths.sort((a, b) => a - b).join("d and ")}d). The trial was shortened to ${Math.min(...lengths)} days on 2026-09-20; anyone who started before that keeps the length they were given.`, MUTED));
-    }
   }
 }
 
@@ -1039,8 +1037,14 @@ T.push(`ANALYTICS DAILY — ${YESTERDAY}`, "");
 T.push(`Real accounts only; guests summarised, not dropped. Yesterday = the complete ${TZ} day ${YESTERDAY}.`);
 if (worstStale != null && worstStale > 26) T.push(`WARNING: data is ${worstStale.toFixed(0)}h old — the daily lanes may not have run.`);
 if (missing.length) T.push(`Not available this run: ${missing.join(", ")}`);
-T.push("", "YESTERDAY AT A GLANCE");
-for (const d of dau) T.push(`  ${appName(d.app).padEnd(12)} active ${String(d.yesterday).padStart(3)}   new ${String(newCounts[d.app].yesterday).padStart(3)}   accounts ${d.totalUsers ?? "-"}`);
+T.push("", "YESTERDAY");
+for (const d of dau) T.push(`  ${appName(d.app).padEnd(12)} active ${String(d.yesterday).padStart(3)}   new ${String(newCounts[d.app].yesterday).padStart(3)}   accounts ${String(d.totalUsers ?? "-").padStart(4)}   sessions by platform (24h): ${platformsOf(d.app)}`);
+for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
+  T.push(`  ${appName(d.app)} — active (product activity, ${d.yesterday}): ${d.who.join(", ") || "names not carried"}`);
+  const detail = didByPerson.find((x) => x.app === d.app);
+  if (detail?.people.length) T.push(`    event stream, rolling 24h:`);
+  for (const pp of detail?.people ?? []) T.push(`      ${pp.name}: ${[...pp.did].join(", ") || "opened it, nothing else"}`);
+}
 T.push("", `ACTIVE ACCOUNTS PER DAY (${chartDays[0]} .. ${chartDays[chartDays.length - 1]} ${TZ}, real accounts)`);
 for (const id of APPS) {
   const s = chartDays.map((d) => {
@@ -1052,38 +1056,39 @@ for (const id of APPS) {
 T.push("", `NEW ACCOUNTS SINCE YESTERDAY — ${totalNew}`);
 if (!totalNew) T.push("  none");
 for (const a of newAccounts) T.push(`  ${a.who} (${a.apps.map(appName).join(" + ")}) ${String(a.createdAt).slice(0, 16)} — ${a.activeSince ? "came back" : "signup only"}`);
-T.push("", "PLANS, PRO AND TRIALS SINCE YESTERDAY");
-if (!money.length) T.push("  no PRO/trial/plan-limit interaction in the last 24h");
-for (const m of money) {
-  T.push(`  ${appName(m.app)}:`);
-  for (const e of m.events) T.push(`    ${e.label ?? e.name} x${e.count} — ${e.who.join(", ") || `${e.users} guest(s)`}`);
-  for (const r of m.pricing) T.push(`    viewed ${r.label ?? r.route} x${r.count} — ${r.who.join(", ") || `${r.users} guest(s)`}`);
-}
-T.push("", `WHO WAS ACTIVE YESTERDAY (${TZ} ${YESTERDAY})`);
-for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
-  T.push(`  ${appName(d.app)} — active (product activity, ${d.yesterday}): ${d.who.join(", ") || "names not carried"}`);
-  const detail = didByPerson.find((x) => x.app === d.app);
-  if (detail?.people.length) T.push(`    event stream, rolling 24h:`);
-  for (const pp of detail?.people ?? []) T.push(`      ${pp.name}: ${[...pp.did].join(", ") || "opened it, nothing else"}`);
+T.push("", "MONEY");
+for (const id of moneyApps) {
+  const b = events?.apps?.[id]?.purchases ?? null;
+  const tr = events?.apps?.[id]?.activeTrials ?? null;
+  const m = money.find((x) => x.app === id) ?? null;
+  const bits = [];
+  if (!b) bits.push("purchases: no ledger configured");
+  else if (!b.available) bits.push("purchases NOT COLLECTED this run");
+  else bits.push(`${b.count} paying${b.priced ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} unpriced` : ""})` : b.count ? " (prices not recorded yet)" : ""}${b.trialing ? `, ${b.trialing} in a $0 trial` : ""}${b.comped ? `, ${b.comped} granted` : ""}${b.lapsed ? `, ${b.lapsed} lapsed` : ""}`);
+  if (!tr) bits.push("free trials: no ledger configured");
+  else if (!tr.available) bits.push("free trials NOT COLLECTED this run");
+  else bits.push(`${tr.count} on a free trial${tr.endingWithin3Days ? ` (${tr.endingWithin3Days} ending within 3 days)` : ""}`);
+  const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
+  if (ex) bits.push(`${ex} rows of ours excluded`);
+  T.push(`  ${appName(id)}: ${bits.join(" · ")}`);
+  for (const r of journeys?.apps?.[id]?.purchases ?? []) {
+    const price = fmtMoney(r.amountMinor, r.currency);
+    const status = r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `$0 trial, first charge ${String(r.expiresAt ?? "").slice(0, 10) || "unknown"}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}`;
+    T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""}  ${status}  since ${String(r.at).slice(0, 10)}${r.expiresAt ? `, until ${String(r.expiresAt).slice(0, 10)}` : ", no end"}`);
+  }
+  for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
+    T.push(`    ${String(t.user).padEnd(20)} PRO free trial (${t.grantedDays}d)  ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}  since ${String(t.startedAt).slice(0, 10)}, until ${String(t.expiresAt).slice(0, 10)}`);
+  }
+  if (m && (m.events.length || m.pricing.length)) {
+    T.push(`    last 24h, event stream:`);
+    for (const e of m.events) T.push(`      ${e.label ?? e.name} x${e.count} — ${e.who.join(", ") || `${e.users} guest(s)`}`);
+    for (const r of m.pricing) T.push(`      viewed ${r.label ?? r.route} x${r.count} — ${r.who.join(", ") || `${r.users} guest(s)`}`);
+  } else if (events) T.push(`    no PRO/trial/plan-limit interaction in the last 24h`);
 }
 if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);
 }
-if (buyApps.length) {
-  const tTrial = buyApps.reduce((n, x) => n + (x.b.trialing ?? 0), 0);
-  T.push("", `WHAT PEOPLE BOUGHT — ${buyApps.reduce((n, x) => n + x.b.count, 0)} paying${tTrial ? `, ${tTrial} in a $0 trial` : ""}`);
-  for (const { id, b } of buyApps) {
-    if (!b.available) { T.push(`  ${appName(id)}: entitlements not readable this run`); continue; }
-    if (!b.count && !b.comped && !b.trialing) { T.push(`  ${appName(id)}: nobody has bought anything`); continue; }
-    T.push(`  ${appName(id)}: ${b.count} paying${b.trialing ? `, ${b.trialing} subscribed but inside a $0 trial` : ""}${b.comped ? `, ${b.comped} granted by hand` : ""}`);
-    for (const r of journeys?.apps?.[id]?.purchases ?? []) {
-      const how = r.kind === "comped" ? "a hand grant" : r.kind === "trialing" ? `${r.source} ($0 trial)` : r.source;
-      T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""} via ${how} on ${String(r.at).slice(0, 10)}${r.expiresAt ? `, ${r.kind === "trialing" ? "first charge" : "runs to"} ${String(r.expiresAt).slice(0, 10)}` : ""}`);
-    }
-  }
-}
-
 if (puzzleApps.length) {
   T.push("", "DAILY PUZZLE");
   for (const { id, pz } of puzzleApps) {
@@ -1098,25 +1103,6 @@ if (puzzleApps.length) {
         T.push(`    guessed: ${n.answered.join(", ") || "nobody"}`);
         T.push(`    right:   ${n.correct.join(", ") || "nobody"}`);
       }
-    }
-  }
-}
-
-if (trialApps.length) {
-  T.push("", `ON A PRO TRIAL RIGHT NOW — ${trialApps.reduce((n, x) => n + x.tr.count, 0)}`);
-  for (const { id, tr } of trialApps) {
-    if (!tr.count) {
-      T.push(`  ${appName(id)}: nobody on a trial`);
-      continue;
-    }
-    const named = journeys?.apps?.[id]?.activeTrials ?? null;
-    T.push(`  ${appName(id)}: ${tr.count} on a trial${tr.endingWithin3Days ? `, ${tr.endingWithin3Days} ending within 3 days` : ""}`);
-    if (!named) {
-      T.push("    (names not carried in this run)");
-      continue;
-    }
-    for (const t of named) {
-      T.push(`    ${String(t.user).padEnd(20)} ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}  ends ${String(t.expiresAt).slice(0, 10)}  (${t.grantedDays}d trial, started ${String(t.startedAt).slice(0, 10)})`);
     }
   }
 }

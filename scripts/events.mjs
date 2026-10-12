@@ -271,8 +271,14 @@ function purchasesSql(apps) {
   if (!specs.length) return null;
   const parts = specs.map((s) => {
     const where = s.filter ? ` where ${s.filter}` : "";
+    // The three price columns are read through to_jsonb so a project whose
+    // 20261012120000_entitlement_price migration has not landed still returns rows
+    // (with NULL prices) instead of failing the whole purchases read.
     return `select '${s.app}'::text as app, e.${s.userCol} as user_id, e.${s.tsCol} as ts,
-       e.product, e.source, e.interval, e.expires_at, e.term_print_allocation
+       e.product, e.source, e.interval, e.expires_at, e.term_print_allocation,
+       to_jsonb(e)->>'price_lookup_key' as price_lookup_key,
+       (to_jsonb(e)->>'unit_amount_minor')::int as unit_amount_minor,
+       to_jsonb(e)->>'currency' as currency
      from public.${s.table} e${where}`;
   });
   return `
@@ -288,6 +294,15 @@ const purchaseRows = [];
 const puzzlePlayRows = [];
 const activeTrialRows = [];
 const feedbackRows = [];
+
+// WHICH GROUND-TRUTH READS FAILED, by kind and project. The catches below used to warn
+// on the console and move on, and the builders then wrote `available: true` over an empty
+// array - so the email said "nobody bought anything" on a morning the table could not be
+// read. A zero has two meanings; this set is how the builders tell them apart.
+const unavailable = new Set();
+const refOfKey = new Map();
+for (const [ref, apps] of PROJECT_GROUPS) for (const a of apps) refOfKey.set(a.key, ref);
+const readable = (kind, key) => !unavailable.has(`${kind}|${refOfKey.get(key)}`);
 const sessionRows = [];
 const eventRows = [];
 const truth = {};
@@ -325,6 +340,7 @@ for (const [ref, apps] of PROJECT_GROUPS) {
       purchaseRows.push(...(await runSql(ref, buySql)));
     } catch (err) {
       if (!String(err).includes("does not exist")) throw err;
+      unavailable.add(`purchases|${ref}`);
       console.warn(`WARNING: entitlements missing on project ${ref} - purchases reported as "not available", not 0.`);
     }
   }
@@ -334,6 +350,7 @@ for (const [ref, apps] of PROJECT_GROUPS) {
       puzzlePlayRows.push(...(await runSql(ref, pzSql)));
     } catch (err) {
       if (!String(err).includes("does not exist")) throw err;
+      unavailable.add(`puzzle|${ref}`);
       console.warn(`WARNING: puzzle tables missing on project ${ref} - reported as "not available", not 0.`);
     }
   }
@@ -343,6 +360,7 @@ for (const [ref, apps] of PROJECT_GROUPS) {
       activeTrialRows.push(...(await runSql(ref, trSql)));
     } catch (err) {
       if (!String(err).includes("does not exist")) throw err;
+      unavailable.add(`trials|${ref}`);
       console.warn(`WARNING: trial ledger missing on project ${ref} - those apps report "not available", not 0.`);
     }
   }
@@ -354,6 +372,7 @@ for (const [ref, apps] of PROJECT_GROUPS) {
       // Same rule as a missing spine: absent must never render as zero. An app
       // whose feedback table has not landed is stated, not silently emptied.
       if (!String(err).includes("does not exist")) throw err;
+      unavailable.add(`feedback|${ref}`);
       console.warn(
         `WARNING: feedback table missing on project ${ref} - those apps report "not available", not 0.`,
       );
@@ -1302,7 +1321,7 @@ function buildFeedback(appKey) {
   const avg = (xs) => (xs.length ? Math.round((xs.reduce((t, n) => t + n, 0) / xs.length) * 10) / 10 : null);
 
   return {
-    available: true,
+    available: readable("feedback", appKey),
     responses: kept.length,
     people: new Set(kept.map((r) => r.user_id)).size,
     guests: kept.filter((r) => r.was_guest).length,
@@ -1348,8 +1367,17 @@ store.apps = out.apps;
  * `manual` is ours by hand and is neither.
  */
 const PERIOD_FLOOR_DAYS = { month: 20, year: 300 };
+// ONLY A PAYMENT PROVIDER CAN MAKE A ROW "PAID". The test used to be "source is not
+// 'manual'", and on 2026-10-12 that read two contest prizes (source
+// 'contest-first-annual', a year of PRO for each winner) as revenue and would have put
+// "2 paying" in the email for an app with no paying customers. Every source that is not
+// one of these is a grant: revenue-shaped, not revenue, and named by its source.
+const PAYMENT_PROVIDERS = new Set(["stripe", "apple"]);
 function purchaseKind(r) {
-  if ((r.source ?? "") === "manual") return "comped";
+  if (!PAYMENT_PROVIDERS.has(r.source ?? "")) return "comped";
+  // A subscription whose term has already ended is not inside anything - not a
+  // trial, not paying. It lapsed. (A $0 Stripe trial that was never charged.)
+  if (r.expires_at && Date.parse(r.expires_at) < Date.now()) return "lapsed";
   // No end date is a perpetual grant, which is as paid as it gets.
   if (!r.expires_at) return "paid";
   const floor = PERIOD_FLOOR_DAYS[r.interval ?? ""];
@@ -1373,10 +1401,31 @@ for (const [id, a] of Object.entries(store.apps)) {
     // apart rather than filtered out, because a comped account quietly dropped
     // is how a fleet forgets it comped anyone.
     const bought = mine.filter((r) => r.kind === "paid");
+    // Monthly run-rate from the stamped prices: a yearly amount is spread over 12.
+    // A bundle price stamps the same amount on each product row it grants, so the
+    // sum is over distinct (user, lookup key), not over rows. Rows with no price
+    // are COUNTED as unpriced rather than summed as $0 - "price not recorded" is a
+    // different sentence from "free".
+    const seenPrice = new Set();
+    let mrrMinor = 0, priced = 0, unpriced = 0, currency = null;
+    for (const r of bought) {
+      if (r.unit_amount_minor == null) { unpriced += 1; continue; }
+      const k = `${r.user_id}|${r.price_lookup_key ?? r.product}`;
+      if (seenPrice.has(k)) continue;
+      seenPrice.add(k);
+      priced += 1;
+      currency ??= r.currency ?? null;
+      mrrMinor += r.interval === "year" ? Math.round(r.unit_amount_minor / 12) : r.unit_amount_minor;
+    }
     a.purchases = {
-      available: true,
+      available: readable("purchases", key),
+      mrrMinor,
+      priced,
+      unpriced,
+      currency,
       count: bought.length,
       trialing: mine.filter((r) => r.kind === "trialing").length,
+      lapsed: mine.filter((r) => r.kind === "lapsed").length,
       comped: mine.filter((r) => r.kind === "comped").length,
       excluded: purchaseRows.filter((r) => r.app === key && r.excluded).length,
       newestAt: bought[0]?.ts ?? null,
@@ -1392,7 +1441,7 @@ for (const [id, a] of Object.entries(store.apps)) {
       if (r.correct) d.correct += 1;
     }
     a.puzzle = {
-      available: true,
+      available: readable("puzzle", key),
       excluded: puzzlePlayRows.filter((r) => r.app === key && r.excluded).length,
       // Newest first, and capped - the email shows the last few days, not the
       // whole history, and the studio report has the rest.
@@ -1405,7 +1454,7 @@ for (const [id, a] of Object.entries(store.apps)) {
     // Counts only here. WHO is on a trial is a list of named people and belongs
     // in the sidecar with every other roster.
     a.activeTrials = {
-      available: true,
+      available: readable("trials", key),
       count: kept.length,
       excluded: mine.length - kept.length,
       endingWithin3Days: kept.filter((r) => daysLeft(r.expires_at) <= 3).length,
@@ -1455,6 +1504,9 @@ for (const [id, a] of Object.entries(journeys.apps)) {
       at: r.ts,
       expiresAt: r.expires_at ?? null,
       prints: r.term_print_allocation ?? null,
+      amountMinor: r.unit_amount_minor ?? null,
+      currency: r.currency ?? null,
+      lookupKey: r.price_lookup_key ?? null,
     }));
 }
 
