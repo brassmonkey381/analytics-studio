@@ -810,21 +810,30 @@ if (puzzleApps.length) {
     );
     const list = (xs) => (xs.length ? esc(xs.join(", ")) : `<span style="color:${MUTED};">nobody</span>`);
     parts.push(`<tr><td style="padding:2px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Puzzle</th><th style="${cellHead}">Opened it</th><th style="${cellHead}">Guessed</th><th style="${cellHead}">Got it right</th></tr>
+<tr><th style="${cellHead}">Puzzle</th><th style="${cellHead}">Opened it</th><th style="${cellHead}">Guessed <span style="color:${MUTED};font-weight:400;">(stream)</span></th><th style="${cellHead}">Got it right</th></tr>
 ${pz.days
   .map((d) => {
     const n = named?.find((x) => x.day === d.day) ?? null;
     const cellFor = (count, names) =>
       n ? `${count ? `<strong>${count}</strong> — ` : ""}${list(names)}` : `<strong>${count}</strong> <span style="color:${MUTED};">(names not carried)</span>`;
+    // Guesses are stream data (see the Guessed header): each person with their tries,
+    // because the misses are the one thing the ground-truth table cannot show.
+    const g = d.guesses;
+    const guessed = !g
+      ? `<span style="color:${MUTED};">nobody</span>`
+      : n?.guessers?.length
+        ? `<strong>${g.people}</strong> — ${n.guessers.map((x) => `${esc(x.who)} <span style="color:${MUTED};">(${x.tries} ${x.tries === 1 ? "try" : "tries"}${x.wrong ? `, ${x.wrong} wrong` : ""})</span>`).join(", ")}`
+        : `<strong>${g.people}</strong> <span style="color:${MUTED};">(${g.tries} tries, ${g.wrong} wrong; names not carried)</span>`;
     return `<tr>
   <td style="${cell}">${esc(d.day)}</td>
   <td style="${cell}">${cellFor(d.opened, n?.opened ?? [])}</td>
-  <td style="${cell}">${cellFor(d.answered, n?.answered ?? [])}</td>
+  <td style="${cell}">${guessed}</td>
   <td style="${cell}">${cellFor(d.correct, n?.correct ?? [])}</td>
 </tr>`;
   })
   .join("")}
 </table></td></tr>`);
+    parts.push(p(`"Guessed" is the event stream (puzzle.guess_submitted, one event per try), because the puzzle table keeps only the accepted answer and cannot see a miss. The other two columns are the table.`, MUTED));
   }
 }
 
@@ -1145,10 +1154,11 @@ if (puzzleApps.length) {
     const named = journeys?.apps?.[id]?.puzzle ?? null;
     for (const d of pz.days) {
       const n = named?.find((x) => x.day === d.day) ?? null;
-      T.push(`  ${d.day} — opened ${d.opened}, guessed ${d.answered}, right ${d.correct}`);
+      const g = d.guesses;
+      T.push(`  ${d.day} — opened ${d.opened}, guessed ${g ? `${g.people} (${g.tries} tries, ${g.wrong} wrong; stream)` : 0}, right ${d.correct}`);
       if (n) {
         T.push(`    opened:  ${n.opened.join(", ") || "nobody"}`);
-        T.push(`    guessed: ${n.answered.join(", ") || "nobody"}`);
+        T.push(`    guessed: ${(n.guessers ?? []).map((x) => `${x.who} (${x.tries} ${x.tries === 1 ? "try" : "tries"}${x.wrong ? `, ${x.wrong} wrong` : ""})`).join(", ") || "nobody"}`);
         T.push(`    right:   ${n.correct.join(", ") || "nobody"}`);
       }
     }

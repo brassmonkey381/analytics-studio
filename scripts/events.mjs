@@ -243,6 +243,27 @@ select r.*, (r.user_id in (select id from excluded_users)) as excluded
 from rows r order by r.expires_at`;
 }
 
+// puzzle id -> publish day, from the play rows (a guess needs a play, so every puzzle
+// anyone guessed at has a row here). Filled after the plays are read.
+const puzzleDayOf = new Map();
+// The stream's guesses for one app, grouped by puzzle id, OUR OWN EXCLUDED:
+//   Map<puzzleId, { tries, wrong, people: Map<userId, { tries, wrong }> }>
+function guessesByPuzzle(appKey) {
+  const out = new Map();
+  for (const e of eventRows) {
+    if (e.name !== "puzzle.guess_submitted" || e.excluded || e.app !== appKey) continue;
+    const pid = e.props?.puzzle;
+    if (!pid) continue;
+    const g = out.get(pid) ?? { tries: 0, wrong: 0, people: new Map() };
+    const t = g.people.get(e.user_id) ?? { tries: 0, wrong: 0 };
+    g.tries += 1; t.tries += 1;
+    if (e.props?.hit === false) { g.wrong += 1; t.wrong += 1; }
+    g.people.set(e.user_id, t);
+    out.set(pid, g);
+  }
+  return out;
+}
+
 // Who opened the puzzle, who answered, who got it right - from puzzle_plays,
 // not from the stream. See CFG.puzzle._doc for why ground truth wins here.
 function puzzlePlaysSql(apps) {
@@ -250,7 +271,7 @@ function puzzlePlaysSql(apps) {
   const specs = (CFG.puzzle?.specs ?? []).filter((s) => keys.has(s.app));
   if (!specs.length) return null;
   const parts = specs.map(
-    (s) => `select '${s.app}'::text as app, pl.${s.userCol} as user_id, pz.publish_on,
+    (s) => `select '${s.app}'::text as app, pl.${s.userCol} as user_id, pz.publish_on, pz.id as puzzle_id,
        pl.seen_at, pl.answered_at, pl.correct, pl.matched
      from public.${s.table} pl join public.${s.puzzleTable} pz on pz.id = pl.puzzle_id`,
   );
@@ -348,6 +369,7 @@ for (const [ref, apps] of PROJECT_GROUPS) {
   if (pzSql) {
     try {
       puzzlePlayRows.push(...(await runSql(ref, pzSql)));
+      for (const r of puzzlePlayRows) if (r.puzzle_id) puzzleDayOf.set(r.puzzle_id, r.publish_on);
     } catch (err) {
       if (!String(err).includes("does not exist")) throw err;
       unavailable.add(`puzzle|${ref}`);
@@ -1435,10 +1457,21 @@ for (const [id, a] of Object.entries(store.apps)) {
     const mine = puzzlePlayRows.filter((r) => r.app === key && !r.excluded);
     const byDay = {};
     for (const r of mine) {
-      const d = (byDay[r.publish_on] ??= { day: r.publish_on, opened: 0, answered: 0, correct: 0 });
+      const d = (byDay[r.publish_on] ??= { day: r.publish_on, opened: 0, answered: 0, correct: 0, guesses: null });
       d.opened += 1;
       if (r.answered_at) d.answered += 1;
       if (r.correct) d.correct += 1;
+    }
+    // GUESSES COME FROM THE STREAM, AND ONLY THE STREAM. puzzle_plays keeps one row per
+    // person per puzzle holding the guess that was ACCEPTED - every guess in that table is
+    // right by construction, so "answered" and "correct" above can never differ and a wrong
+    // guess is invisible to ground truth. puzzle.guess_submitted fires per attempt with
+    // `hit`, joined to the puzzle by its id in props. Reported as stream data: it only
+    // reaches back WINDOW_DAYS, and a page rewrite can drop the call site (it has before).
+    for (const [pid, g] of guessesByPuzzle(key)) {
+      const day = puzzleDayOf.get(pid);
+      if (!day || !byDay[day]) continue;
+      byDay[day].guesses = { tries: g.tries, wrong: g.wrong, people: g.people.size };
     }
     a.puzzle = {
       available: readable("puzzle", key),
@@ -1510,13 +1543,23 @@ for (const [id, a] of Object.entries(journeys.apps)) {
     }));
 }
 
-// Who opened, who answered, who got it right - named, newest puzzle first.
+// Who opened, who guessed (and how often), who got it right - named, newest puzzle first.
 for (const [id, a] of Object.entries(journeys.apps)) {
   const key = CFG.apps.find((x) => x.id === id)?.key;
   if (!key || !(CFG.puzzle?.specs ?? []).some((z) => z.app === key)) continue;
   const byDay = {};
+  for (const [pid, g] of guessesByPuzzle(key)) {
+    const day = puzzleDayOf.get(pid);
+    if (!day) continue;
+    const d = (byDay[day] ??= { day, opened: [], answered: [], correct: [], guessers: [] });
+    // One entry per person: "@name (4 tries, 3 wrong)" - the stream has the misses.
+    for (const [uid, t] of g.people) {
+      const who = userLabel(identityAll.get(uid) ?? { id: uid });
+      d.guessers.push({ who, tries: t.tries, wrong: t.wrong });
+    }
+  }
   for (const r of puzzlePlayRows.filter((r) => r.app === key && !r.excluded)) {
-    const d = (byDay[r.publish_on] ??= { day: r.publish_on, opened: [], answered: [], correct: [] });
+    const d = (byDay[r.publish_on] ??= { day: r.publish_on, opened: [], answered: [], correct: [], guessers: [] });
     const who = userLabel(identityAll.get(r.user_id) ?? { id: r.user_id });
     d.opened.push(who);
     // Answered and correct are SUBSETS of opened, not separate populations: a
