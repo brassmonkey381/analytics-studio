@@ -583,6 +583,18 @@ ${newAccounts
 const fmtMoney = (minor, cur) =>
   minor == null ? null : `${(cur ?? "usd").toLowerCase() === "usd" ? "$" : `${String(cur).toUpperCase()} `}${(minor / 100).toFixed(2)}`;
 const moneyApps = APPS.filter((id) => events?.apps?.[id]?.purchases || events?.apps?.[id]?.activeTrials || money.some((m) => m.app === id));
+// A STRIPE ROW'S expires_at IS NOT THE BILLING DATE. payments-webhook stores Stripe's period
+// end PLUS a 3-day grace (GRACE_MS in that function) so a slow renewal payment does not cut
+// access. On 2026-10-13 the email read that stored date as "first charge 2026-10-18" for a
+// trial Stripe charges on the 15th. Term dates for Stripe rows are shown net of the grace;
+// every other source stores the real end date.
+const STRIPE_GRACE_MS = 3 * 24 * 60 * 60 * 1000;
+const termEnd = (r) => {
+  if (!r.expiresAt) return null;
+  const ms = Date.parse(r.expiresAt);
+  return new Date(r.source === "stripe" ? ms - STRIPE_GRACE_MS : ms).toISOString().slice(0, 10);
+};
+
 // How many of an app's free trials are the free days of a $0 Stripe trial held by the
 // same person. The webhook writes both ledger rows for one checkout, so without this the
 // counts said "1 in a $0 trial, 1 on a free trial" about one person. Needs the names
@@ -646,7 +658,7 @@ if (moneyApps.length) {
           : r.kind === "lapsed"
             ? `<span style="color:${MUTED};">lapsed — ${esc(r.source)} term ended, never charged</span>`
           : r.kind === "trialing"
-            ? `<span style="color:${WARN};">$0 trial</span> — first charge ${esc(String(r.expiresAt ?? "").slice(0, 10) || "unknown")}`
+            ? `<span style="color:${WARN};">$0 trial</span> — first charge ${esc(termEnd(r) ?? "unknown")}`
             : `paid${price ? ` <strong>${esc(price)}</strong>${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : ` <span style="color:${MUTED};">(price not recorded)</span>`} via ${esc(r.source)}`;
       rows.push({
         who: r.user,
@@ -655,7 +667,7 @@ if (moneyApps.length) {
         holds: `<strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}`,
         status,
         since: String(r.at).slice(0, 10),
-        until: r.expiresAt ? String(r.expiresAt).slice(0, 10) : null,
+        until: termEnd(r),
         sort: r.expiresAt ? Date.parse(r.expiresAt) : Infinity,
       });
     }
@@ -669,7 +681,7 @@ if (moneyApps.length) {
       const left = `<span style="${urgent ? `color:${WARN};font-weight:600;` : ""}">free trial — ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left`}</span>`;
       const twin = rows.find((r) => r.who === t.user && r.kind === "trialing");
       if (twin) {
-        twin.status = `${left}, then <span style="color:${WARN};">$0 trial</span> — first charge ${esc(String(twin.expiresAt ?? "").slice(0, 10) || "unknown")}`;
+        twin.status = `${left}, then <span style="color:${WARN};">first charge ${esc(twin.until ?? "unknown")}</span>`;
         twin.holds += ` <span style="color:${MUTED};">· ${t.grantedDays}d free</span>`;
         continue;
       }
@@ -1106,8 +1118,8 @@ for (const id of moneyApps) {
   T.push(`  ${appName(id)}: ${bits.join(" · ")}`);
   for (const r of journeys?.apps?.[id]?.purchases ?? []) {
     const price = fmtMoney(r.amountMinor, r.currency);
-    const status = r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `${(() => { const t = (journeys?.apps?.[id]?.activeTrials ?? []).find((x) => x.user === r.user); return t ? `free trial ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}, then ` : ""; })()}$0 trial, first charge ${String(r.expiresAt ?? "").slice(0, 10) || "unknown"}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}`;
-    T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""}  ${status}  since ${String(r.at).slice(0, 10)}${r.expiresAt ? `, until ${String(r.expiresAt).slice(0, 10)}` : ", no end"}`);
+    const status = r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `${(() => { const t = (journeys?.apps?.[id]?.activeTrials ?? []).find((x) => x.user === r.user); return t ? `free trial ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}, then ` : ""; })()}$0 trial, first charge ${termEnd(r) ?? "unknown"}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}`;
+    T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""}  ${status}  since ${String(r.at).slice(0, 10)}${r.expiresAt ? `, until ${termEnd(r)}` : ", no end"}`);
   }
   const stripeTrialists = new Set((journeys?.apps?.[id]?.purchases ?? []).filter((r) => r.kind === "trialing").map((r) => r.user));
   for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
