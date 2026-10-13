@@ -583,13 +583,24 @@ ${newAccounts
 const fmtMoney = (minor, cur) =>
   minor == null ? null : `${(cur ?? "usd").toLowerCase() === "usd" ? "$" : `${String(cur).toUpperCase()} `}${(minor / 100).toFixed(2)}`;
 const moneyApps = APPS.filter((id) => events?.apps?.[id]?.purchases || events?.apps?.[id]?.activeTrials || money.some((m) => m.app === id));
+// How many of an app's free trials are the free days of a $0 Stripe trial held by the
+// same person. The webhook writes both ledger rows for one checkout, so without this the
+// counts said "1 in a $0 trial, 1 on a free trial" about one person. Needs the names
+// (journeys.json); without them the overlap is unknown and reads as 0.
+const trialOverlap = (id) => {
+  const a = journeys?.apps?.[id];
+  if (!a) return 0;
+  const stripe = new Set((a.purchases ?? []).filter((r) => r.kind === "trialing").map((r) => r.user));
+  return (a.activeTrials ?? []).filter((t) => stripe.has(t.user)).length;
+};
 if (moneyApps.length) {
   const sum = (f) => moneyApps.reduce((n, id) => n + (f(events?.apps?.[id]) ?? 0), 0);
   const paying = sum((a) => a?.purchases?.available ? a.purchases.count : 0);
   const mrr = sum((a) => a?.purchases?.available ? a.purchases.mrrMinor : 0);
-  const onTrial = sum((a) => a?.activeTrials?.available ? a.activeTrials.count : 0);
+  const trialing = sum((a) => a?.purchases?.available ? a.purchases.trialing : 0);
+  const onTrial = sum((a) => a?.activeTrials?.available ? a.activeTrials.count : 0) - moneyApps.reduce((n, id) => n + trialOverlap(id), 0);
   const anyUnread = moneyApps.some((id) => events?.apps?.[id]?.purchases?.available === false || events?.apps?.[id]?.activeTrials?.available === false);
-  parts.push(h2(`Money — ${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo run-rate)` : ""}, ${onTrial} on a free trial${anyUnread ? " — a ledger was not collected, see below" : ""}`));
+  parts.push(h2(`Money — ${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo run-rate)` : ""}${trialing ? `, ${trialing} in a $0 trial` : ""}, ${onTrial} on a free trial${anyUnread ? " — a ledger was not collected, see below" : ""}`));
   for (const id of moneyApps) {
     const b = events?.apps?.[id]?.purchases ?? null;
     const tr = events?.apps?.[id]?.activeTrials ?? null;
@@ -613,7 +624,11 @@ if (moneyApps.length) {
     }
     if (!tr) bits.push(`<span style="color:${MUTED};">free trials: no ledger configured</span>`);
     else if (!tr.available) bits.push(`<span style="color:${WARN};font-weight:600;">free trials NOT COLLECTED this run</span>`);
-    else bits.push(`<strong>${tr.count}</strong> on a free trial${tr.endingWithin3Days ? ` (<span style="color:${WARN};">${tr.endingWithin3Days} ending within 3 days</span>)` : ""}`);
+    else {
+      const ov = trialOverlap(id);
+      const net = tr.count - ov;
+      bits.push(`<strong>${net}</strong> on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (<span style="color:${WARN};">${tr.endingWithin3Days - ov} ending within 3 days</span>)` : ""}${ov ? ` <span style="color:${MUTED};">(+${ov} inside the $0 trial, counted once)</span>` : ""}`);
+    }
     if (m?.trialUsers) bits.push(`<span style="color:${MUTED};">${m.trialUsers} ever trialed</span>`);
     const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
     if (ex) bits.push(`<span style="color:${MUTED};">${ex} rows of ours excluded</span>`);
@@ -635,6 +650,8 @@ if (moneyApps.length) {
             : `paid${price ? ` <strong>${esc(price)}</strong>${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : ` <span style="color:${MUTED};">(price not recorded)</span>`} via ${esc(r.source)}`;
       rows.push({
         who: r.user,
+        kind: r.kind,
+        expiresAt: r.expiresAt ?? null,
         holds: `<strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}`,
         status,
         since: String(r.at).slice(0, 10),
@@ -642,12 +659,24 @@ if (moneyApps.length) {
         sort: r.expiresAt ? Date.parse(r.expiresAt) : Infinity,
       });
     }
+    // A FREE TRIAL AND A $0 STRIPE TRIAL FOR THE SAME PERSON ARE ONE ROW. When a checkout
+    // starts with free days, payments-webhook writes the pro_trials row itself, so the two
+    // ledgers record one event twice; printing both read as two people on 2026-10-13. The
+    // free-days line folds into the Stripe row (which knows the first-charge date) and the
+    // row keeps the later of the two end dates.
     for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
       const urgent = t.daysLeft <= 1;
+      const left = `<span style="${urgent ? `color:${WARN};font-weight:600;` : ""}">free trial — ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left`}</span>`;
+      const twin = rows.find((r) => r.who === t.user && r.kind === "trialing");
+      if (twin) {
+        twin.status = `${left}, then <span style="color:${WARN};">$0 trial</span> — first charge ${esc(String(twin.expiresAt ?? "").slice(0, 10) || "unknown")}`;
+        twin.holds += ` <span style="color:${MUTED};">· ${t.grantedDays}d free</span>`;
+        continue;
+      }
       rows.push({
         who: t.user,
         holds: `<strong>PRO</strong> <span style="color:${MUTED};">free trial, ${t.grantedDays}d</span>`,
-        status: `<span style="${urgent ? `color:${WARN};font-weight:600;` : ""}">free trial — ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left`}</span>`,
+        status: left,
         since: String(t.startedAt).slice(0, 10),
         until: String(t.expiresAt).slice(0, 10),
         sort: Date.parse(t.expiresAt),
@@ -1067,16 +1096,23 @@ for (const id of moneyApps) {
   else bits.push(`${b.count} paying${b.priced ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} unpriced` : ""})` : b.count ? " (prices not recorded yet)" : ""}${b.trialing ? `, ${b.trialing} in a $0 trial` : ""}${b.comped ? `, ${b.comped} granted` : ""}${b.lapsed ? `, ${b.lapsed} lapsed` : ""}`);
   if (!tr) bits.push("free trials: no ledger configured");
   else if (!tr.available) bits.push("free trials NOT COLLECTED this run");
-  else bits.push(`${tr.count} on a free trial${tr.endingWithin3Days ? ` (${tr.endingWithin3Days} ending within 3 days)` : ""}`);
+  else {
+    const ov = trialOverlap(id);
+    const net = tr.count - ov;
+    bits.push(`${net} on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (${tr.endingWithin3Days - ov} ending within 3 days)` : ""}${ov ? ` (+${ov} inside the $0 trial, counted once)` : ""}`);
+  }
   const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
   if (ex) bits.push(`${ex} rows of ours excluded`);
   T.push(`  ${appName(id)}: ${bits.join(" · ")}`);
   for (const r of journeys?.apps?.[id]?.purchases ?? []) {
     const price = fmtMoney(r.amountMinor, r.currency);
-    const status = r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `$0 trial, first charge ${String(r.expiresAt ?? "").slice(0, 10) || "unknown"}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}`;
+    const status = r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `${(() => { const t = (journeys?.apps?.[id]?.activeTrials ?? []).find((x) => x.user === r.user); return t ? `free trial ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}, then ` : ""; })()}$0 trial, first charge ${String(r.expiresAt ?? "").slice(0, 10) || "unknown"}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}`;
     T.push(`    ${String(r.user).padEnd(20)} ${r.product}${r.interval ? ` (${r.interval}ly)` : ""}  ${status}  since ${String(r.at).slice(0, 10)}${r.expiresAt ? `, until ${String(r.expiresAt).slice(0, 10)}` : ", no end"}`);
   }
+  const stripeTrialists = new Set((journeys?.apps?.[id]?.purchases ?? []).filter((r) => r.kind === "trialing").map((r) => r.user));
   for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
+    // Folded into the $0 trial line above when the same person has one (see the HTML renderer).
+    if (stripeTrialists.has(t.user)) continue;
     T.push(`    ${String(t.user).padEnd(20)} PRO free trial (${t.grantedDays}d)  ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}  since ${String(t.startedAt).slice(0, 10)}, until ${String(t.expiresAt).slice(0, 10)}`);
   }
   if (m && (m.events.length || m.pricing.length)) {
