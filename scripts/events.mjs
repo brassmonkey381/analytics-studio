@@ -299,7 +299,8 @@ function purchasesSql(apps) {
        e.product, e.source, e.interval, e.expires_at, e.term_print_allocation,
        to_jsonb(e)->>'price_lookup_key' as price_lookup_key,
        (to_jsonb(e)->>'unit_amount_minor')::int as unit_amount_minor,
-       to_jsonb(e)->>'currency' as currency
+       to_jsonb(e)->>'currency' as currency,
+       to_jsonb(e)->>'cancelled_at' as cancelled_at
      from public.${s.table} e${where}`;
   });
   return `
@@ -1448,6 +1449,11 @@ for (const [id, a] of Object.entries(store.apps)) {
       count: bought.length,
       trialing: mine.filter((r) => r.kind === "trialing").length,
       lapsed: mine.filter((r) => r.kind === "lapsed").length,
+      // Renewal turned off but the term is still running: a paid row that will not renew, or a
+      // $0 trial nobody is going to be charged for. Read from the entitlements.cancelled_at
+      // column (michi migration 20261014120000); rows written before it carry NULL, which reads
+      // as "renews" - the honest default, since every live subscription event re-stamps it.
+      cancelled: mine.filter((r) => (r.kind === "paid" || r.kind === "trialing") && r.cancelled_at).length,
       comped: mine.filter((r) => r.kind === "comped").length,
       excluded: purchaseRows.filter((r) => r.app === key && r.excluded).length,
       newestAt: bought[0]?.ts ?? null,
@@ -1540,6 +1546,7 @@ for (const [id, a] of Object.entries(journeys.apps)) {
       amountMinor: r.unit_amount_minor ?? null,
       currency: r.currency ?? null,
       lookupKey: r.price_lookup_key ?? null,
+      cancelledAt: r.cancelled_at ?? null,
     }));
 }
 
