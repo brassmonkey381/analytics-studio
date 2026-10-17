@@ -618,144 +618,157 @@ const trialOverlap = (id) => {
   const stripe = new Set((a.purchases ?? []).filter((r) => r.kind === "trialing").map((r) => r.user));
   return (a.activeTrials ?? []).filter((t) => stripe.has(t.user)).length;
 };
+// ---------- Money, grouped ----------
+//
+// Five groups a reader can act on, in the order anything can happen: In trial (a charge or a
+// cancellation is days away), Paying, One-off sales, Granted, Lapsed. One line per person,
+// "who — what", dates as "Oct 19". The five-column table this replaces (owner, 2026-10-16:
+// "chaotic") mixed all five states in one list sorted by date and spent a column on the
+// product id. Every number here is still a product table; only the interactions are stream.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const shortDate = (ymd) => {
+  if (!ymd) return "unknown";
+  const [y, mo, d] = String(ymd).slice(0, 10).split("-").map(Number);
+  if (!y || !mo || !d) return String(ymd).slice(0, 10);
+  return `${MONTHS[mo - 1]} ${d}${y !== new Date().getFullYear() ? `, ${y}` : ""}`;
+};
+const perLabel = (iv) => (iv === "year" ? "/yr" : iv === "month" ? "/mo" : "");
+const TIER_NAMES = { tier_pro: "PRO", tier_vip: "VIP", tcgscan_pro: "PRO", tcgscan_vip: "VIP" };
+const tierName = (product) => TIER_NAMES[product] ?? String(product);
+const GROUP_TITLES = { trial: "In trial", paying: "Paying", oneoff: "One-off sales", granted: "Granted", lapsed: "Lapsed" };
+
+function moneyGroups(id) {
+  const rows = journeys?.apps?.[id]?.purchases ?? [];
+  const trials = journeys?.apps?.[id]?.activeTrials ?? [];
+  const g = { trial: [], paying: [], oneoff: [], granted: [], lapsed: [] };
+  // The Stripe trial row and the free-days row for the same person are ONE line: the webhook
+  // writes both for one checkout. The free-days row knows the days left; the Stripe row knows
+  // the price and whether renewal is still on.
+  const stripeTrial = new Map(rows.filter((r) => r.kind === "trialing").map((r) => [r.user, r]));
+  for (const t of trials) {
+    const s = stripeTrial.get(t.user);
+    const left = t.daysLeft === 0 ? "ends today" : `${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left`;
+    const sort = Date.parse(t.expiresAt);
+    if (!s) {
+      g.trial.push({ who: t.user, what: `${left} · no card on file`, warn: t.daysLeft <= 1, sort });
+      continue;
+    }
+    stripeTrial.delete(t.user);
+    g.trial.push(
+      s.cancelledAt
+        ? { who: t.user, what: `${left} · cancelled ${shortDate(s.cancelledAt)}, no charge coming`, warn: false, sort }
+        : { who: t.user, what: `${left} · charges ${thenPrice(s)} on ${shortDate(termEnd(s))}`, warn: t.daysLeft <= 1, sort },
+    );
+  }
+  for (const s of stripeTrial.values()) {
+    const sort = s.expiresAt ? Date.parse(s.expiresAt) : Infinity;
+    g.trial.push(
+      s.cancelledAt
+        ? { who: s.user, what: `cancelled ${shortDate(s.cancelledAt)} · ends ${shortDate(termEnd(s))}, no charge coming`, warn: false, sort }
+        : { who: s.user, what: `charges ${thenPrice(s)} on ${shortDate(termEnd(s))}`, warn: false, sort },
+    );
+  }
+  for (const r of rows) {
+    const price = fmtMoney(r.amountMinor, r.currency);
+    const end = r.expiresAt ? shortDate(termEnd(r)) : null;
+    if (r.kind === "paid") {
+      g.paying.push({
+        who: r.user,
+        what: `${tierName(r.product)} ${price ? `${price}${perLabel(r.interval)}` : "(price not recorded)"} via ${r.source}${
+          r.cancelledAt ? ` · cancelled ${shortDate(r.cancelledAt)}, ends ${end}` : end ? ` · renews ${end}` : " · no end"
+        }`,
+        warn: !!r.cancelledAt,
+        sort: r.expiresAt ? Date.parse(r.expiresAt) : Infinity,
+      });
+    } else if (r.kind === "oneoff") {
+      g.oneoff.push({ who: r.user, what: `PDF binder ${price ?? "(price not recorded)"} · ${shortDate(r.at)}`, warn: false, sort: -Date.parse(r.at) });
+    } else if (r.kind === "comped") {
+      g.granted.push({ who: r.user, what: `${tierName(r.product)} · ${r.source}${end ? ` · until ${end}` : " · no end"}`, warn: false, sort: r.expiresAt ? Date.parse(r.expiresAt) : Infinity });
+    } else if (r.kind === "lapsed") {
+      // A short term that ended was a trial nobody was charged for; a full term that ended
+      // was a subscription that ran out. Say which.
+      const days = (Date.parse(r.expiresAt) - Date.parse(r.at)) / 86400000;
+      const floor = r.interval === "year" ? 300 : r.interval === "month" ? 20 : 0;
+      const how = floor && days < floor ? `trial ended ${end}, never charged` : `ended ${end}`;
+      g.lapsed.push({ who: r.user, what: `${tierName(r.product)}${r.interval ? ` ${r.interval}ly` : ""} · ${how}`, warn: false, sort: -Date.parse(r.expiresAt) });
+    }
+  }
+  for (const k of Object.keys(g)) g[k].sort((a, b) => a.sort - b.sort);
+  return g;
+}
+
+// The number beside a group title: a count, and money where money is the point.
+function groupLabel(key, lines, b) {
+  const n = lines.length;
+  if (key === "paying" && b?.priced) return `${n} · ${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? ` · ${b.unpriced} unpriced` : ""}`;
+  if (key === "oneoff" && b?.oneOffMinor) return `${n} · ${fmtMoney(b.oneOffMinor, b.currency ?? "usd")} all-time${b.oneOffLast24h ? ` · ${b.oneOffLast24h} in the last 24h` : ""}`;
+  return String(n);
+}
+
 if (moneyApps.length) {
   const sum = (f) => moneyApps.reduce((n, id) => n + (f(events?.apps?.[id]) ?? 0), 0);
-  const paying = sum((a) => a?.purchases?.available ? a.purchases.count : 0);
-  const pdfs = sum((a) => a?.purchases?.available ? a.purchases.oneOff ?? 0 : 0);
-  const mrr = sum((a) => a?.purchases?.available ? a.purchases.mrrMinor : 0);
-  const trialing = sum((a) => a?.purchases?.available ? a.purchases.trialing : 0);
-  const onTrial = sum((a) => a?.activeTrials?.available ? a.activeTrials.count : 0) - moneyApps.reduce((n, id) => n + trialOverlap(id), 0);
+  const paying = sum((a) => (a?.purchases?.available ? a.purchases.count : 0));
+  const mrr = sum((a) => (a?.purchases?.available ? a.purchases.mrrMinor : 0));
+  const pdfs = sum((a) => (a?.purchases?.available ? a.purchases.oneOff ?? 0 : 0));
+  const inTrial = moneyApps.reduce((n, id) => n + moneyGroups(id).trial.length, 0);
   const anyUnread = moneyApps.some((id) => events?.apps?.[id]?.purchases?.available === false || events?.apps?.[id]?.activeTrials?.available === false);
-  parts.push(h2(`Money — ${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo run-rate)` : ""}${pdfs ? `, ${pdfs} PDF${pdfs === 1 ? "" : "s"} sold` : ""}${trialing ? `, ${trialing} in a Stripe trial` : ""}, ${onTrial} on a free trial${anyUnread ? " — a ledger was not collected, see below" : ""}`));
+  const headBits = [];
+  headBits.push(`${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo)` : ""}`);
+  if (inTrial) headBits.push(`${inTrial} in trial`);
+  if (pdfs) headBits.push(`${pdfs} PDF${pdfs === 1 ? "" : "s"} sold`);
+  parts.push(h2(`Money — ${headBits.join(" · ")}${anyUnread ? " — a ledger was not collected, see below" : ""}`));
+
+  const groupHead = `padding:10px 8px 4px;font:600 11px/1.3 inherit;color:${MUTED};text-transform:uppercase;letter-spacing:.04em;text-align:left;`;
+  const lineWho = `padding:3px 8px;font:400 13px/1.4 inherit;color:${INK};vertical-align:top;white-space:nowrap;width:1%;`;
+  const lineWhat = `padding:3px 8px;font:400 13px/1.4 inherit;color:${INK};vertical-align:top;`;
+
   for (const id of moneyApps) {
     const b = events?.apps?.[id]?.purchases ?? null;
     const tr = events?.apps?.[id]?.activeTrials ?? null;
     const m = money.find((x) => x.app === id) ?? null;
     parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(id))}</td></tr>`);
 
-    // (1) The ledger line.
-    const bits = [];
-    if (!b) bits.push(`<span style="color:${MUTED};">purchases: no ledger configured</span>`);
-    else if (!b.available) bits.push(`<span style="color:${WARN};font-weight:600;">purchases NOT COLLECTED this run</span>`);
-    else {
-      bits.push(
-        `<strong>${b.count}</strong> paying` +
-          (b.priced
-            ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} with no price recorded` : ""})`
-            : b.count ? ` <span style="color:${MUTED};">(prices not recorded yet)</span>` : ""),
-      );
-      if (b.trialing) bits.push(`<strong>${b.trialing}</strong> subscribed, still in the trial`);
-      if (b.cancelled) bits.push(`<span style="color:${WARN};">${b.cancelled} cancelled, will not renew</span>`);
-      if (b.oneOff) {
-        bits.push(
-          `<strong>${b.oneOff}</strong> PDF binder${b.oneOff === 1 ? "" : "s"} sold` +
-            (b.oneOffMinor ? ` (${fmtMoney(b.oneOffMinor, b.currency ?? "usd")} all-time${b.oneOffUnpriced ? `; ${b.oneOffUnpriced} with no price recorded` : ""})` : ` <span style="color:${MUTED};">(prices not recorded)</span>`) +
-            (b.oneOffLast24h ? ` — <strong>${b.oneOffLast24h}</strong> in the last 24h` : ""),
-        );
-      }
-      if (b.comped) bits.push(`${b.comped} granted (contest prizes, comps)`);
-      if (b.lapsed) bits.push(`<span style="color:${MUTED};">${b.lapsed} lapsed</span>`);
-    }
-    if (!tr) bits.push(`<span style="color:${MUTED};">free trials: no ledger configured</span>`);
-    else if (!tr.available) bits.push(`<span style="color:${WARN};font-weight:600;">free trials NOT COLLECTED this run</span>`);
-    else {
-      const ov = trialOverlap(id);
-      const net = tr.count - ov;
-      bits.push(`<strong>${net}</strong> on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (<span style="color:${WARN};">${tr.endingWithin3Days - ov} ending within 3 days</span>)` : ""}${ov ? ` <span style="color:${MUTED};">(+${ov} inside the Stripe trial, counted once)</span>` : ""}`);
-    }
-    if (m?.trialUsers) bits.push(`<span style="color:${MUTED};">${m.trialUsers} ever trialed</span>`);
-    const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
-    if (ex) bits.push(`<span style="color:${MUTED};">${ex} rows of ours excluded</span>`);
-    parts.push(p(bits.join(" · "), INK));
+    // A ledger that could not be read says so where its group would be - never a quiet zero.
+    const unread = [];
+    if (b && !b.available) unread.push("purchases NOT COLLECTED this run");
+    if (tr && !tr.available) unread.push("free trials NOT COLLECTED this run");
+    if (unread.length) parts.push(p(`<strong>${unread.join(" · ")}</strong>`, WARN));
 
-    // (2) One named table. Status is the point of it: paid (and at what price), a Stripe
-    // subscription still inside its $0 trial, a free in-app trial with days left, or a hand
-    // grant. Sorted by what ends soonest, because that is the order anything can be acted on.
-    const rows = [];
-    for (const r of journeys?.apps?.[id]?.purchases ?? []) {
-      const price = fmtMoney(r.amountMinor, r.currency);
-      const status =
-        r.kind === "oneoff"
-          ? `bought${price ? ` <strong>${esc(price)}</strong>` : ` <span style="color:${MUTED};">(price not recorded)</span>`} via ${esc(r.source)}, one-off`
-          : r.kind === "comped"
-          ? `<span style="color:${WARN};">granted</span> <span style="color:${MUTED};">(${esc(r.source)})</span>`
-          : r.kind === "lapsed"
-            ? `<span style="color:${MUTED};">lapsed — ${esc(r.source)} term ended, never charged</span>`
-          : r.kind === "trialing"
-            ? r.cancelledAt
-              ? `trial, <span style="color:${WARN};">cancelled ${esc(String(r.cancelledAt).slice(0, 10))}</span> — no charge coming, access ends ${esc(termEnd(r) ?? "unknown")}`
-              : `trial, then <strong>${esc(thenPrice(r))}</strong> — first charge ${esc(termEnd(r) ?? "unknown")}`
-            : `paid${price ? ` <strong>${esc(price)}</strong>${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : ` <span style="color:${MUTED};">(price not recorded)</span>`} via ${esc(r.source)}${r.cancelledAt ? ` — <span style="color:${WARN};">cancelled ${esc(String(r.cancelledAt).slice(0, 10))}, will not renew</span>` : ""}`;
-      rows.push({
-        who: r.user,
-        kind: r.kind,
-        amountMinor: r.amountMinor ?? null,
-        currency: r.currency ?? null,
-        interval: r.interval ?? null,
-        cancelledAt: r.cancelledAt ?? null,
-        expiresAt: r.expiresAt ?? null,
-        holds: r.kind === "oneoff"
-          ? `<strong>PDF binder</strong> <span style="color:${MUTED};">${esc(String(r.product).split(":")[1] ?? "").slice(0, 8)}</span>`
-          : `<strong>${esc(r.product)}</strong>${r.interval ? ` <span style="color:${MUTED};">${esc(r.interval)}ly</span>` : ""}${r.prints ? ` <span style="color:${MUTED};">· ${r.prints} prints</span>` : ""}`,
-        status,
-        since: String(r.at).slice(0, 10),
-        until: termEnd(r),
-        sort: r.expiresAt ? Date.parse(r.expiresAt) : Infinity,
-      });
-    }
-    // A FREE TRIAL AND A $0 STRIPE TRIAL FOR THE SAME PERSON ARE ONE ROW. When a checkout
-    // starts with free days, payments-webhook writes the pro_trials row itself, so the two
-    // ledgers record one event twice; printing both read as two people on 2026-10-13. The
-    // free-days line folds into the Stripe row (which knows the first-charge date) and the
-    // row keeps the later of the two end dates.
-    for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
-      const urgent = t.daysLeft <= 1;
-      const left = `<span style="${urgent ? `color:${WARN};font-weight:600;` : ""}">free trial — ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft} day${t.daysLeft === 1 ? "" : "s"} left`}</span>`;
-      const twin = rows.find((r) => r.who === t.user && r.kind === "trialing");
-      if (twin) {
-        twin.status = twin.cancelledAt
-          ? `${left}, <span style="color:${WARN};">cancelled ${esc(String(twin.cancelledAt).slice(0, 10))}</span> — no charge coming`
-          : `${left}, then <strong>${esc(thenPrice(twin))}</strong> — first charge ${esc(twin.until ?? "unknown")}`;
-        twin.holds += ` <span style="color:${MUTED};">· ${t.grantedDays}d free</span>`;
-        continue;
-      }
-      rows.push({
-        who: t.user,
-        holds: `<strong>PRO</strong> <span style="color:${MUTED};">free trial, ${t.grantedDays}d</span>`,
-        status: left,
-        since: String(t.startedAt).slice(0, 10),
-        until: String(t.expiresAt).slice(0, 10),
-        sort: Date.parse(t.expiresAt),
-      });
-    }
-    const expectRows = (b?.available && (b.count || b.trialing || b.comped)) || (tr?.available && tr.count);
+    const g = moneyGroups(id);
+    const total = Object.values(g).reduce((n, xs) => n + xs.length, 0);
+    const expectRows = (b?.available && (b.count || b.trialing || b.comped || b.oneOff)) || (tr?.available && tr.count);
     if (expectRows && !journeys) {
       parts.push(p(`<code>data/journeys.json</code> was not available in this run, so these can only be counted, not named.`, WARN));
-    } else if (rows.length) {
-      rows.sort((x, y) => x.sort - y.sort);
-      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Who</th><th style="${cellHead}">Holds</th><th style="${cellHead}">Status</th><th style="${cellHead}">Since</th><th style="${cellHead}">Until</th></tr>
-${rows
-  .map(
-    (r) => `<tr>
-  <td style="${cell}">${esc(r.who)}</td>
-  <td style="${cell}">${r.holds}</td>
-  <td style="${cell}">${r.status}</td>
-  <td style="${cell}">${esc(r.since)}</td>
-  <td style="${cell}">${r.until ? esc(r.until) : `<span style="color:${MUTED};">${r.kind === "oneoff" ? "one-time" : "no end"}</span>`}</td>
+    } else if (!total) {
+      if (!unread.length) parts.push(p("Nothing on the ledger yet."));
+    } else {
+      const body = Object.entries(g)
+        .filter(([, lines]) => lines.length)
+        .map(
+          ([key, lines]) =>
+            `<tr><td colspan="2" style="${groupHead}">${esc(GROUP_TITLES[key])} <span style="font-weight:400;">· ${esc(groupLabel(key, lines, b))}</span></td></tr>` +
+            lines
+              .map(
+                (l) => `<tr>
+  <td style="${lineWho}">${esc(l.who)}</td>
+  <td style="${lineWhat}${l.warn ? `color:${WARN};` : ""}">${esc(l.what)}</td>
 </tr>`,
-  )
-  .join("")}
-</table></td></tr>`);
-      // The trial length changed on 2026-09-20 (14 days -> 3). While a trial from before
-      // that is still running, two lengths sit in one column and look like a bug unexplained.
-      const lengths = [...new Set((journeys?.apps?.[id]?.activeTrials ?? []).map((t) => t.grantedDays))];
-      if (lengths.length > 1) {
-        parts.push(p(`Two trial lengths are running side by side (${lengths.sort((a, b) => a - b).join("d and ")}d). The trial was shortened to ${Math.min(...lengths)} days on 2026-09-20; anyone who started before that keeps the length they were given.`, MUTED));
-      }
+              )
+              .join(""),
+        )
+        .join("");
+      parts.push(`<tr><td style="padding:0 22px 6px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">${body}</table></td></tr>`);
     }
 
-    // (3) The 24h interactions that move the ledger - the stream, and only the stream.
+    // The footprint: what was excluded is always stated (house rule), and the all-time trial
+    // count is context, not a group.
+    const foot = [];
+    if (m?.trialUsers) foot.push(`${m.trialUsers} ever trialed`);
+    const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
+    if (ex) foot.push(`${ex} rows of ours excluded`);
+    if (foot.length) parts.push(p(foot.join(" · ")));
+
+    // The 24h interactions that move the ledger - the stream, and only the stream.
     if (!events) {
       parts.push(p("The event stream was not available in this run, so 24h interactions cannot be reported; the ledger above is unaffected.", WARN));
     } else if (m && (m.events.length || m.pricing.length)) {
@@ -1145,32 +1158,24 @@ for (const id of moneyApps) {
   const b = events?.apps?.[id]?.purchases ?? null;
   const tr = events?.apps?.[id]?.activeTrials ?? null;
   const m = money.find((x) => x.app === id) ?? null;
-  const bits = [];
-  if (!b) bits.push("purchases: no ledger configured");
-  else if (!b.available) bits.push("purchases NOT COLLECTED this run");
-  else bits.push(`${b.count} paying${b.priced ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} unpriced` : ""})` : b.count ? " (prices not recorded yet)" : ""}${b.trialing ? `, ${b.trialing} in a Stripe trial` : ""}${b.comped ? `, ${b.comped} granted` : ""}${b.lapsed ? `, ${b.lapsed} lapsed` : ""}${b.cancelled ? `, ${b.cancelled} cancelled (will not renew)` : ""}${b.oneOff ? ` · ${b.oneOff} PDF binder(s) sold${b.oneOffMinor ? ` (${fmtMoney(b.oneOffMinor, b.currency ?? "usd")} all-time)` : " (prices not recorded)"}${b.oneOffLast24h ? `, ${b.oneOffLast24h} in the last 24h` : ""}` : ""}`);
-  if (!tr) bits.push("free trials: no ledger configured");
-  else if (!tr.available) bits.push("free trials NOT COLLECTED this run");
-  else {
-    const ov = trialOverlap(id);
-    const net = tr.count - ov;
-    bits.push(`${net} on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (${tr.endingWithin3Days - ov} ending within 3 days)` : ""}${ov ? ` (+${ov} inside the Stripe trial, counted once)` : ""}`);
+  T.push(`  ${appName(id)}`);
+  if (b && !b.available) T.push(`    purchases NOT COLLECTED this run`);
+  if (tr && !tr.available) T.push(`    free trials NOT COLLECTED this run`);
+  const g = moneyGroups(id);
+  const total = Object.values(g).reduce((n, xs) => n + xs.length, 0);
+  if (!total) {
+    if (b?.available !== false && tr?.available !== false) T.push(`    nothing on the ledger yet`);
   }
+  for (const [key, lines] of Object.entries(g)) {
+    if (!lines.length) continue;
+    T.push(`    ${GROUP_TITLES[key]} (${groupLabel(key, lines, b)})`);
+    for (const l of lines) T.push(`      ${String(l.who).padEnd(20)} ${l.what}`);
+  }
+  const foot = [];
+  if (m?.trialUsers) foot.push(`${m.trialUsers} ever trialed`);
   const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
-  if (ex) bits.push(`${ex} rows of ours excluded`);
-  T.push(`  ${appName(id)}: ${bits.join(" · ")}`);
-  for (const r of journeys?.apps?.[id]?.purchases ?? []) {
-    const price = fmtMoney(r.amountMinor, r.currency);
-    const status = r.kind === "oneoff" ? `bought ${price ?? "(price not recorded)"} via ${r.source}, one-off` : r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `${(() => { const t = (journeys?.apps?.[id]?.activeTrials ?? []).find((x) => x.user === r.user); return t ? `free trial ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}, then ` : ""; })()}${r.cancelledAt ? `cancelled ${String(r.cancelledAt).slice(0, 10)}, no charge coming` : `${thenPrice(r)}, first charge ${termEnd(r) ?? "unknown"}`}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}${r.cancelledAt ? `, cancelled ${String(r.cancelledAt).slice(0, 10)}, will not renew` : ""}`;
-    const holds = r.kind === "oneoff" ? `PDF binder ${String(r.product).split(":")[1]?.slice(0, 8) ?? ""}` : `${r.product}${r.interval ? ` (${r.interval}ly)` : ""}`;
-    T.push(`    ${String(r.user).padEnd(20)} ${holds}  ${status}  since ${String(r.at).slice(0, 10)}${r.expiresAt ? `, until ${termEnd(r)}` : r.kind === "oneoff" ? "" : ", no end"}`);
-  }
-  const stripeTrialists = new Set((journeys?.apps?.[id]?.purchases ?? []).filter((r) => r.kind === "trialing").map((r) => r.user));
-  for (const t of journeys?.apps?.[id]?.activeTrials ?? []) {
-    // Folded into the $0 trial line above when the same person has one (see the HTML renderer).
-    if (stripeTrialists.has(t.user)) continue;
-    T.push(`    ${String(t.user).padEnd(20)} PRO free trial (${t.grantedDays}d)  ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}  since ${String(t.startedAt).slice(0, 10)}, until ${String(t.expiresAt).slice(0, 10)}`);
-  }
+  if (ex) foot.push(`${ex} rows of ours excluded`);
+  if (foot.length) T.push(`    ${foot.join(" · ")}`);
   if (m && (m.events.length || m.pricing.length)) {
     T.push(`    last 24h, event stream:`);
     for (const e of m.events) T.push(`      ${e.label ?? e.name} x${e.count} — ${e.who.join(", ") || `${e.users} guest(s)`}`);
