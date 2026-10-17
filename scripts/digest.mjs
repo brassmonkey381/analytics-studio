@@ -117,12 +117,23 @@ for (const id of APPS) {
   const roster = accounts?.apps?.[id]?.roster ?? [];
   for (const a of roster) {
     if (!a.created_at || Date.parse(a.created_at) < SINCE) continue;
-    const who = a.email ?? "(no email on the account)";
+    // No email is not a gap in the data: a phone signup has none. Name it for what it is, and
+    // keep the id stub so the same person matches the activity list below.
+    const who =
+      a.email && a.email !== "(no email)"
+        ? a.email
+        : a.provider === "phone"
+          ? `phone signup ${a.id_stub ?? ""}`.trim()
+          : `(no email) ${a.id_stub ?? ""}`.trim();
     if (!newByPerson.has(who)) {
       newByPerson.set(who, {
         who,
         apps: [],
         createdAt: a.created_at,
+        // How the account was made, and whether they finished making it. An email signup
+        // that never confirmed cannot sign in, so "signup only" undersells what happened.
+        how: a.provider ?? null,
+        confirmed: a.confirmed !== false,
         // Did they come back after signing up, or was the signup the whole visit?
         activeSince: !!(a.last_activity && Date.parse(a.last_activity) > Date.parse(a.created_at) + 60_000),
       });
@@ -133,6 +144,8 @@ for (const id of APPS) {
   }
 }
 const newAccounts = [...newByPerson.values()].sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
+const viaLabel = (a) => a.how ?? "unknown";
+const sinceLabel = (a) => (a.activeSince ? "came back" : a.how === "email" && !a.confirmed ? "never confirmed the email" : "signup only");
 
 // The counts the DAU lane recorded, kept beside the named list: if they disagree, the
 // difference is an account created on a project whose roster we do not carry, and seeing
@@ -440,134 +453,8 @@ if (worstStale != null && worstStale > 26) {
 }
 if (missing.length) parts.push(p(`Not available in this run: ${esc(missing.join(", "))}. Sections that need them are marked.`, WARN));
 
-// --- headline table ---
-parts.push(h2("Yesterday"));
-parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr>
-  <th style="${cellHead}">App</th>
-  <th style="${cellHead}text-align:right;">Active</th>
-  <th style="${cellHead}text-align:right;">New</th>
-  <th style="${cellHead}text-align:right;">Today so far</th>
-  <th style="${cellHead}text-align:right;">Accounts</th>
-  <th style="${cellHead}">Sessions by platform (24h)</th>
-</tr>
-${dau
-  .map(
-    (d) => `<tr>
-  <td style="${cell}">${esc(appName(d.app))}</td>
-  <td style="${num}${d.yesterday ? "" : `color:${MUTED};`}">${d.yesterday}</td>
-  <td style="${num}${newCounts[d.app].yesterday ? "" : `color:${MUTED};`}">${newCounts[d.app].yesterday}</td>
-  <td style="${num}color:${MUTED};">${d.today} act · ${newCounts[d.app].today} new</td>
-  <td style="${num}color:${MUTED};">${d.totalUsers ?? "—"}</td>
-  <td style="${cell}color:${MUTED};">${esc(platformsOf(d.app))}</td>
-</tr>`,
-  )
-  .join("")}
-</table></td></tr>`);
-{
-  const g = dau.reduce((n, d) => n + d.guestYesterday, 0);
-  const gn = APPS.reduce((n, id) => n + newCounts[id].guestYesterday, 0);
-  const ex = dau.reduce((n, d) => n + d.excludedUsers, 0);
-  parts.push(
-    p(
-      `Guests, kept out of every number above: <strong>${g}</strong> active and <strong>${gn}</strong> new yesterday. ` +
-        `<strong>${ex}</strong> account-slots are excluded as ours, QA or automated — summed per app, and Michi-Maker and TCGScan share one auth pool, so an excluded account there is counted in both.`,
-    ),
-  );
-}
-
-// --- who was active and what they did ---
-parts.push(p(`<strong style="color:${INK};font-size:13.5px;">Who was active, and what they did</strong>`));
-if (!dau.some((d) => d.yesterday)) {
-  parts.push(p("No real account was active yesterday on any app."));
-} else {
-  for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
-    const known = d.who.length ? esc(d.who.join(", ")) : "<em>names not carried for this app in this run</em>";
-    parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(d.app))} — ${plural(d.yesterday, "active account")}</td></tr>`);
-    parts.push(p(`<span style="color:${MUTED};">Active (product activity, ${esc(TZ)} ${esc(YESTERDAY)}):</span> ${known}`, INK));
-    const detail = didByPerson.find((x) => x.app === d.app);
-    if (detail) {
-      parts.push(p(`<span style="color:${MUTED};">Event stream, rolling last 24h — a different window, and a different population: it sees instrumented actions, including from people the activity tables do not count.</span>`));
-      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Account</th><th style="${cellHead}">Did (last 24h)</th><th style="${cellHead}">Pages</th></tr>
-${detail.people
-  .map(
-    (pp) => `<tr>
-  <td style="${cell}">${esc(pp.name)}</td>
-  <td style="${cell}${pp.did.size ? "" : `color:${MUTED};`}">${pp.did.size ? esc([...pp.did].join(", ")) : "opened it, nothing else"}</td>
-  <td style="${cell}color:${MUTED};">${esc([...pp.pages].slice(0, 5).join(" ") || "—")}</td>
-</tr>`,
-  )
-  .join("")}
-</table></td></tr>`);
-    }
-  }
-  parts.push(
-    p(
-      `"Did" is the last 24 hours of the event stream, which is a different window from the calendar day above and only covers instrumented actions; ` +
-        `the active count itself comes from product tables (a login bonus on Doggle, a streak claim on Pickleague, a write on Michi/TCGScan), so an account can be active here with nothing in the "did" column.`,
-    ),
-  );
-}
-
-// --- trend charts ---
-// Placed directly after the headline because a single day's number cannot say whether it is
-// normal. Both charts read metrics.json's committed day history, so they cover days that
-// have already aged out of the event stream's 30-day window.
-{
-  const dauRows = APPS.map((id) => ({
-    label: appName(id),
-    series: chartDays.map((d) => metrics.apps?.[id]?.days?.[d]?.dau ?? null),
-  }));
-  const newRows = APPS.map((id) => ({
-    label: appName(id),
-    series: chartDays.map((d) => metrics.apps?.[id]?.days?.[d]?.new_users ?? null),
-  }));
-  const dauMax = Math.max(1, ...dauRows.flatMap((r) => r.series.filter((v) => v != null)));
-  const newMax = Math.max(1, ...newRows.flatMap((r) => r.series.filter((v) => v != null)));
-
-  parts.push(h2(`Active accounts per day — last ${CHART_DAYS} days`));
-  parts.push(
-    p(
-      `${esc(chartDays[0])} to ${esc(chartDays[chartDays.length - 1])} ${esc(TZ)}, ticks every other day (labels are day-of-month). ` +
-        `Real accounts only. All four rows share one scale (0 to ${dauMax}), so the apps are comparable and a quiet app cannot look busy. ` +
-        `A pale stub is a recorded zero; a thin grey line is a day with no data at all.`,
-    ),
-  );
-  parts.push(chart(dauRows, { max: dauMax, unit: "active" }));
-
-  if (newRows.some((r) => r.series.some((v) => v))) {
-    parts.push(h2(`New accounts per day — last ${CHART_DAYS} days`));
-    parts.push(p(`Same ${CHART_DAYS} days, shared scale (0 to ${newMax}). Signups on the shared Michi-Maker/TCGScan auth pool are attributed to one app by the DAU lane, so these rows can be added up without double counting.`));
-    parts.push(chart(newRows, { max: newMax, unit: "signups" }));
-  } else {
-    parts.push(p(`<strong>No signups at all in the last ${CHART_DAYS} days</strong> on any app, so that chart is omitted rather than drawn as four empty rows.`));
-  }
-}
-
-// --- new accounts ---
-parts.push(h2(`New accounts since yesterday — ${totalNew}`));
-if (!accounts) {
-  parts.push(p(`The account roster (<code>data/accounts.json</code>) was not available, so these can only be counted, not named: ${APPS.map((id) => `${appName(id)} ${newCounts[id].yesterday}`).join(", ")}.`, WARN));
-} else if (!totalNew) {
-  parts.push(p(`Nobody signed up. The DAU lane agrees — ${APPS.map((id) => newCounts[id].yesterday).reduce((a, b) => a + b, 0)} new real accounts recorded yesterday across the fleet.`));
-} else {
-  parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-<tr><th style="${cellHead}">Who</th><th style="${cellHead}">App</th><th style="${cellHead}">Signed up</th><th style="${cellHead}">Since</th></tr>
-${newAccounts
-  .map(
-    (a) => `<tr>
-  <td style="${cell}">${esc(a.who)}</td>
-  <td style="${cell}">${esc(a.apps.map(appName).join(" + "))}${a.apps.length > 1 ? `<br><span style="color:${MUTED};font-size:11.5px;">one account, shared auth</span>` : ""}</td>
-  <td style="${cell}color:${MUTED};">${esc(String(a.createdAt).slice(0, 16).replace("T", " "))}</td>
-  <td style="${cell}${a.activeSince ? "" : `color:${MUTED};`}">${a.activeSince ? "came back" : "signup only"}</td>
-</tr>`,
-  )
-  .join("")}
-</table></td></tr>`);
-}
-
-// --- plans / PRO / trials ---
+// Money first: the owner reads this email for trials and payments before anything else
+// (2026-10-17). Everything below it is context for the people it names.
 // ---------- Money ----------
 //
 // ONE section where there were three. "Plans, PRO and trials", "What people bought" and
@@ -810,6 +697,134 @@ ${irows
       ),
     );
   }
+}
+
+// --- headline table ---
+parts.push(h2("Yesterday"));
+parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+  <th style="${cellHead}">App</th>
+  <th style="${cellHead}text-align:right;">Active</th>
+  <th style="${cellHead}text-align:right;">New</th>
+  <th style="${cellHead}text-align:right;">Today so far</th>
+  <th style="${cellHead}text-align:right;">Accounts</th>
+  <th style="${cellHead}">Sessions by platform (24h)</th>
+</tr>
+${dau
+  .map(
+    (d) => `<tr>
+  <td style="${cell}">${esc(appName(d.app))}</td>
+  <td style="${num}${d.yesterday ? "" : `color:${MUTED};`}">${d.yesterday}</td>
+  <td style="${num}${newCounts[d.app].yesterday ? "" : `color:${MUTED};`}">${newCounts[d.app].yesterday}</td>
+  <td style="${num}color:${MUTED};">${d.today} act · ${newCounts[d.app].today} new</td>
+  <td style="${num}color:${MUTED};">${d.totalUsers ?? "—"}</td>
+  <td style="${cell}color:${MUTED};">${esc(platformsOf(d.app))}</td>
+</tr>`,
+  )
+  .join("")}
+</table></td></tr>`);
+{
+  const g = dau.reduce((n, d) => n + d.guestYesterday, 0);
+  const gn = APPS.reduce((n, id) => n + newCounts[id].guestYesterday, 0);
+  const ex = dau.reduce((n, d) => n + d.excludedUsers, 0);
+  parts.push(
+    p(
+      `Guests, kept out of every number above: <strong>${g}</strong> active and <strong>${gn}</strong> new yesterday. ` +
+        `<strong>${ex}</strong> account-slots are excluded as ours, QA or automated — summed per app, and Michi-Maker and TCGScan share one auth pool, so an excluded account there is counted in both.`,
+    ),
+  );
+}
+
+// --- who was active and what they did ---
+parts.push(p(`<strong style="color:${INK};font-size:13.5px;">Who was active, and what they did</strong>`));
+if (!dau.some((d) => d.yesterday)) {
+  parts.push(p("No real account was active yesterday on any app."));
+} else {
+  for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
+    const known = d.who.length ? esc(d.who.join(", ")) : "<em>names not carried for this app in this run</em>";
+    parts.push(`<tr><td style="padding:6px 22px 2px;font:600 13px/1.3 inherit;">${esc(appName(d.app))} — ${plural(d.yesterday, "active account")}</td></tr>`);
+    parts.push(p(`<span style="color:${MUTED};">Active (product activity, ${esc(TZ)} ${esc(YESTERDAY)}):</span> ${known}`, INK));
+    const detail = didByPerson.find((x) => x.app === d.app);
+    if (detail) {
+      parts.push(p(`<span style="color:${MUTED};">Event stream, rolling last 24h — a different window, and a different population: it sees instrumented actions, including from people the activity tables do not count.</span>`));
+      parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Account</th><th style="${cellHead}">Did (last 24h)</th><th style="${cellHead}">Pages</th></tr>
+${detail.people
+  .map(
+    (pp) => `<tr>
+  <td style="${cell}">${esc(pp.name)}</td>
+  <td style="${cell}${pp.did.size ? "" : `color:${MUTED};`}">${pp.did.size ? esc([...pp.did].join(", ")) : "opened it, nothing else"}</td>
+  <td style="${cell}color:${MUTED};">${esc([...pp.pages].slice(0, 5).join(" ") || "—")}</td>
+</tr>`,
+  )
+  .join("")}
+</table></td></tr>`);
+    }
+  }
+  parts.push(
+    p(
+      `"Did" is the last 24 hours of the event stream, which is a different window from the calendar day above and only covers instrumented actions; ` +
+        `the active count itself comes from product tables (a login bonus on Doggle, a streak claim on Pickleague, a write on Michi/TCGScan), so an account can be active here with nothing in the "did" column.`,
+    ),
+  );
+}
+
+// --- trend charts ---
+// Placed directly after the headline because a single day's number cannot say whether it is
+// normal. Both charts read metrics.json's committed day history, so they cover days that
+// have already aged out of the event stream's 30-day window.
+{
+  const dauRows = APPS.map((id) => ({
+    label: appName(id),
+    series: chartDays.map((d) => metrics.apps?.[id]?.days?.[d]?.dau ?? null),
+  }));
+  const newRows = APPS.map((id) => ({
+    label: appName(id),
+    series: chartDays.map((d) => metrics.apps?.[id]?.days?.[d]?.new_users ?? null),
+  }));
+  const dauMax = Math.max(1, ...dauRows.flatMap((r) => r.series.filter((v) => v != null)));
+  const newMax = Math.max(1, ...newRows.flatMap((r) => r.series.filter((v) => v != null)));
+
+  parts.push(h2(`Active accounts per day — last ${CHART_DAYS} days`));
+  parts.push(
+    p(
+      `${esc(chartDays[0])} to ${esc(chartDays[chartDays.length - 1])} ${esc(TZ)}, ticks every other day (labels are day-of-month). ` +
+        `Real accounts only. All four rows share one scale (0 to ${dauMax}), so the apps are comparable and a quiet app cannot look busy. ` +
+        `A pale stub is a recorded zero; a thin grey line is a day with no data at all.`,
+    ),
+  );
+  parts.push(chart(dauRows, { max: dauMax, unit: "active" }));
+
+  if (newRows.some((r) => r.series.some((v) => v))) {
+    parts.push(h2(`New accounts per day — last ${CHART_DAYS} days`));
+    parts.push(p(`Same ${CHART_DAYS} days, shared scale (0 to ${newMax}). Signups on the shared Michi-Maker/TCGScan auth pool are attributed to one app by the DAU lane, so these rows can be added up without double counting.`));
+    parts.push(chart(newRows, { max: newMax, unit: "signups" }));
+  } else {
+    parts.push(p(`<strong>No signups at all in the last ${CHART_DAYS} days</strong> on any app, so that chart is omitted rather than drawn as four empty rows.`));
+  }
+}
+
+// --- new accounts ---
+parts.push(h2(`New accounts since yesterday — ${totalNew}`));
+if (!accounts) {
+  parts.push(p(`The account roster (<code>data/accounts.json</code>) was not available, so these can only be counted, not named: ${APPS.map((id) => `${appName(id)} ${newCounts[id].yesterday}`).join(", ")}.`, WARN));
+} else if (!totalNew) {
+  parts.push(p(`Nobody signed up. The DAU lane agrees — ${APPS.map((id) => newCounts[id].yesterday).reduce((a, b) => a + b, 0)} new real accounts recorded yesterday across the fleet.`));
+} else {
+  parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Who</th><th style="${cellHead}">App</th><th style="${cellHead}">Via</th><th style="${cellHead}">Signed up</th><th style="${cellHead}">Since</th></tr>
+${newAccounts
+  .map(
+    (a) => `<tr>
+  <td style="${cell}">${esc(a.who)}</td>
+  <td style="${cell}">${esc(a.apps.map(appName).join(" + "))}${a.apps.length > 1 ? `<br><span style="color:${MUTED};font-size:11.5px;">one account, shared auth</span>` : ""}</td>
+  <td style="${cell}color:${MUTED};">${esc(viaLabel(a))}</td>
+  <td style="${cell}color:${MUTED};">${esc(String(a.createdAt).slice(0, 16).replace("T", " "))}</td>
+  <td style="${cell}${a.activeSince ? "" : `color:${a.how === "email" && !a.confirmed ? WARN : MUTED};`}">${esc(sinceLabel(a))}</td>
+</tr>`,
+  )
+  .join("")}
+</table></td></tr>`);
 }
 
 // --- what got made ---
@@ -1134,25 +1149,6 @@ T.push(`ANALYTICS DAILY — ${YESTERDAY}`, "");
 T.push(`Real accounts only; guests summarised, not dropped. Yesterday = the complete ${TZ} day ${YESTERDAY}.`);
 if (worstStale != null && worstStale > 26) T.push(`WARNING: data is ${worstStale.toFixed(0)}h old — the daily lanes may not have run.`);
 if (missing.length) T.push(`Not available this run: ${missing.join(", ")}`);
-T.push("", "YESTERDAY");
-for (const d of dau) T.push(`  ${appName(d.app).padEnd(12)} active ${String(d.yesterday).padStart(3)}   new ${String(newCounts[d.app].yesterday).padStart(3)}   accounts ${String(d.totalUsers ?? "-").padStart(4)}   sessions by platform (24h): ${platformsOf(d.app)}`);
-for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
-  T.push(`  ${appName(d.app)} — active (product activity, ${d.yesterday}): ${d.who.join(", ") || "names not carried"}`);
-  const detail = didByPerson.find((x) => x.app === d.app);
-  if (detail?.people.length) T.push(`    event stream, rolling 24h:`);
-  for (const pp of detail?.people ?? []) T.push(`      ${pp.name}: ${[...pp.did].join(", ") || "opened it, nothing else"}`);
-}
-T.push("", `ACTIVE ACCOUNTS PER DAY (${chartDays[0]} .. ${chartDays[chartDays.length - 1]} ${TZ}, real accounts)`);
-for (const id of APPS) {
-  const s = chartDays.map((d) => {
-    const v = metrics.apps?.[id]?.days?.[d]?.dau;
-    return v == null ? "-" : String(v);
-  });
-  T.push(`  ${appName(id).padEnd(12)} ${s.map((v) => v.padStart(2)).join(" ")}`);
-}
-T.push("", `NEW ACCOUNTS SINCE YESTERDAY — ${totalNew}`);
-if (!totalNew) T.push("  none");
-for (const a of newAccounts) T.push(`  ${a.who} (${a.apps.map(appName).join(" + ")}) ${String(a.createdAt).slice(0, 16)} — ${a.activeSince ? "came back" : "signup only"}`);
 T.push("", "MONEY");
 for (const id of moneyApps) {
   const b = events?.apps?.[id]?.purchases ?? null;
@@ -1182,6 +1178,25 @@ for (const id of moneyApps) {
     for (const r of m.pricing) T.push(`      viewed ${r.label ?? r.route} x${r.count} — ${r.who.join(", ") || `${r.users} guest(s)`}`);
   } else if (events) T.push(`    no PRO/trial/plan-limit interaction in the last 24h`);
 }
+T.push("", "YESTERDAY");
+for (const d of dau) T.push(`  ${appName(d.app).padEnd(12)} active ${String(d.yesterday).padStart(3)}   new ${String(newCounts[d.app].yesterday).padStart(3)}   accounts ${String(d.totalUsers ?? "-").padStart(4)}   sessions by platform (24h): ${platformsOf(d.app)}`);
+for (const d of dau.filter((x) => x.yesterday || x.who.length)) {
+  T.push(`  ${appName(d.app)} — active (product activity, ${d.yesterday}): ${d.who.join(", ") || "names not carried"}`);
+  const detail = didByPerson.find((x) => x.app === d.app);
+  if (detail?.people.length) T.push(`    event stream, rolling 24h:`);
+  for (const pp of detail?.people ?? []) T.push(`      ${pp.name}: ${[...pp.did].join(", ") || "opened it, nothing else"}`);
+}
+T.push("", `ACTIVE ACCOUNTS PER DAY (${chartDays[0]} .. ${chartDays[chartDays.length - 1]} ${TZ}, real accounts)`);
+for (const id of APPS) {
+  const s = chartDays.map((d) => {
+    const v = metrics.apps?.[id]?.days?.[d]?.dau;
+    return v == null ? "-" : String(v);
+  });
+  T.push(`  ${appName(id).padEnd(12)} ${s.map((v) => v.padStart(2)).join(" ")}`);
+}
+T.push("", `NEW ACCOUNTS SINCE YESTERDAY — ${totalNew}`);
+if (!totalNew) T.push("  none");
+for (const a of newAccounts) T.push(`  ${a.who} (${a.apps.map(appName).join(" + ")}) via ${viaLabel(a)} · ${String(a.createdAt).slice(0, 16)} — ${sinceLabel(a)}`);
 if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);

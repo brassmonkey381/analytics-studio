@@ -78,6 +78,7 @@ select
   to_jsonb(s)->>'device_id' as device_id,
   to_jsonb(s)->>'landing_route' as landing_route,
   u.email, coalesce(u.is_anonymous, false) as anon, u.created_at as user_created_at,
+  u.raw_app_meta_data->>'provider' as provider,
   ${userCol} as username, ${dispCol} as display_name,
   (s.user_id in (select id from excluded_users)) as excluded
 from public.analytics_sessions s
@@ -168,6 +169,9 @@ function userLabel(u) {
     return `visitor ${u.id.slice(u.id.indexOf(":") + 1, u.id.indexOf(":") + 9)}`;
   }
   if (u.anon) return `guest ${u.id.slice(0, 8)}`;
+  // A phone-number signup has no email to be named by. Say what it is rather than printing
+  // a bare id stub that reads like a bug (owner, 2026-10-17).
+  if (!u.email && u.provider === "phone") return `phone signup ${u.id.slice(0, 8)}`;
   return u.email ?? u.id.slice(0, 8);
 }
 
@@ -1177,6 +1181,7 @@ for (const app of CFG.apps) {
         email: s.email,
         username: s.username,
         displayName: s.display_name,
+        provider: s.provider ?? null,
         anon: !!s.anon,
         wasGuest: false,
         convertedAt: null,
@@ -1535,6 +1540,7 @@ for (const s of sessionRows) {
       email: s.email,
       username: s.username,
       displayName: s.display_name,
+      provider: s.provider ?? null,
       anon: !!s.anon,
     });
   }

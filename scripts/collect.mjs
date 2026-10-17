@@ -173,6 +173,10 @@ function buildRosterSql(app) {
 ${lastSeenCte(app)},
 ${cohortSql(app)}
 select coalesce(u.email, '(no email)') as email,
+       left(u.id::text, 8) as id_stub,
+       u.raw_app_meta_data->>'provider' as provider,
+       (u.phone is not null) as has_phone,
+       (u.confirmed_at is not null) as confirmed,
        nullif(greatest(coalesce(u.last_sign_in_at, '-infinity'::timestamptz),
                        coalesce(a.ts, '-infinity'::timestamptz)),
               '-infinity'::timestamptz) as last_seen,
