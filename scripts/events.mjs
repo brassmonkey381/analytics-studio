@@ -1396,8 +1396,13 @@ const PERIOD_FLOOR_DAYS = { month: 20, year: 300 };
 // "2 paying" in the email for an app with no paying customers. Every source that is not
 // one of these is a grant: revenue-shaped, not revenue, and named by its source.
 const PAYMENT_PROVIDERS = new Set(["stripe", "apple"]);
+// A one-off sale: a full-binder PDF bought through Checkout in payment mode. Not a
+// subscription, so none of the term logic below applies, and it must not count as a
+// paying subscriber - it is revenue once, not a run-rate.
+const isOneOff = (r) => String(r.product ?? "").startsWith("pdf_binder:");
 function purchaseKind(r) {
   if (!PAYMENT_PROVIDERS.has(r.source ?? "")) return "comped";
+  if (isOneOff(r)) return "oneoff";
   // A subscription whose term has already ended is not inside anything - not a
   // trial, not paying. It lapsed. (A $0 Stripe trial that was never charged.)
   if (r.expires_at && Date.parse(r.expires_at) < Date.now()) return "lapsed";
@@ -1440,8 +1445,15 @@ for (const [id, a] of Object.entries(store.apps)) {
       currency ??= r.currency ?? null;
       mrrMinor += r.interval === "year" ? Math.round(r.unit_amount_minor / 12) : r.unit_amount_minor;
     }
+    // One-off sales (PDF binders): how many, and the sum of the ones with a price.
+    const oneOffs = mine.filter((r) => r.kind === "oneoff");
+    const oneOffMinor = oneOffs.reduce((n, r) => n + (r.unit_amount_minor ?? 0), 0);
     a.purchases = {
       available: readable("purchases", key),
+      oneOff: oneOffs.length,
+      oneOffMinor,
+      oneOffUnpriced: oneOffs.filter((r) => r.unit_amount_minor == null).length,
+      oneOffLast24h: oneOffs.filter((r) => Date.now() - Date.parse(r.ts) < DAY_MS_T).length,
       mrrMinor,
       priced,
       unpriced,
