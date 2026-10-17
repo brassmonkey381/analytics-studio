@@ -582,6 +582,15 @@ ${newAccounts
 // an unreadable one (owner, 2026-10-12).
 const fmtMoney = (minor, cur) =>
   minor == null ? null : `${(cur ?? "usd").toLowerCase() === "usd" ? "$" : `${String(cur).toUpperCase()} `}${(minor / 100).toFixed(2)}`;
+// What a trial turns into when it ends: the row's own price and cadence. "$0 trial" said
+// what Stripe calls it, not what the person signed up for (owner, 2026-10-16).
+const thenPrice = (r) => {
+  const money = fmtMoney(r.amountMinor, r.currency);
+  const per = r.interval === "year" ? "per year" : r.interval === "month" ? "per month" : null;
+  if (money && per) return `${money} ${per}`;
+  if (money) return money;
+  return per ? `the list price ${per}` : "the list price";
+};
 const moneyApps = APPS.filter((id) => events?.apps?.[id]?.purchases || events?.apps?.[id]?.activeTrials || money.some((m) => m.app === id));
 // A STRIPE ROW'S expires_at IS NOT THE BILLING DATE. payments-webhook stores Stripe's period
 // end PLUS a 3-day grace (GRACE_MS in that function) so a slow renewal payment does not cut
@@ -617,7 +626,7 @@ if (moneyApps.length) {
   const trialing = sum((a) => a?.purchases?.available ? a.purchases.trialing : 0);
   const onTrial = sum((a) => a?.activeTrials?.available ? a.activeTrials.count : 0) - moneyApps.reduce((n, id) => n + trialOverlap(id), 0);
   const anyUnread = moneyApps.some((id) => events?.apps?.[id]?.purchases?.available === false || events?.apps?.[id]?.activeTrials?.available === false);
-  parts.push(h2(`Money — ${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo run-rate)` : ""}${pdfs ? `, ${pdfs} PDF${pdfs === 1 ? "" : "s"} sold` : ""}${trialing ? `, ${trialing} in a $0 trial` : ""}, ${onTrial} on a free trial${anyUnread ? " — a ledger was not collected, see below" : ""}`));
+  parts.push(h2(`Money — ${paying} paying${mrr ? ` (${fmtMoney(mrr, "usd")}/mo run-rate)` : ""}${pdfs ? `, ${pdfs} PDF${pdfs === 1 ? "" : "s"} sold` : ""}${trialing ? `, ${trialing} in a Stripe trial` : ""}, ${onTrial} on a free trial${anyUnread ? " — a ledger was not collected, see below" : ""}`));
   for (const id of moneyApps) {
     const b = events?.apps?.[id]?.purchases ?? null;
     const tr = events?.apps?.[id]?.activeTrials ?? null;
@@ -635,7 +644,7 @@ if (moneyApps.length) {
             ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} with no price recorded` : ""})`
             : b.count ? ` <span style="color:${MUTED};">(prices not recorded yet)</span>` : ""),
       );
-      if (b.trialing) bits.push(`<strong>${b.trialing}</strong> subscribed but inside a $0 trial`);
+      if (b.trialing) bits.push(`<strong>${b.trialing}</strong> subscribed, still in the trial`);
       if (b.cancelled) bits.push(`<span style="color:${WARN};">${b.cancelled} cancelled, will not renew</span>`);
       if (b.oneOff) {
         bits.push(
@@ -652,7 +661,7 @@ if (moneyApps.length) {
     else {
       const ov = trialOverlap(id);
       const net = tr.count - ov;
-      bits.push(`<strong>${net}</strong> on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (<span style="color:${WARN};">${tr.endingWithin3Days - ov} ending within 3 days</span>)` : ""}${ov ? ` <span style="color:${MUTED};">(+${ov} inside the $0 trial, counted once)</span>` : ""}`);
+      bits.push(`<strong>${net}</strong> on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (<span style="color:${WARN};">${tr.endingWithin3Days - ov} ending within 3 days</span>)` : ""}${ov ? ` <span style="color:${MUTED};">(+${ov} inside the Stripe trial, counted once)</span>` : ""}`);
     }
     if (m?.trialUsers) bits.push(`<span style="color:${MUTED};">${m.trialUsers} ever trialed</span>`);
     const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
@@ -674,12 +683,15 @@ if (moneyApps.length) {
             ? `<span style="color:${MUTED};">lapsed — ${esc(r.source)} term ended, never charged</span>`
           : r.kind === "trialing"
             ? r.cancelledAt
-              ? `<span style="color:${WARN};">$0 trial, cancelled ${esc(String(r.cancelledAt).slice(0, 10))}</span> — no charge coming, access ends ${esc(termEnd(r) ?? "unknown")}`
-              : `<span style="color:${WARN};">$0 trial</span> — first charge ${esc(termEnd(r) ?? "unknown")}`
+              ? `trial, <span style="color:${WARN};">cancelled ${esc(String(r.cancelledAt).slice(0, 10))}</span> — no charge coming, access ends ${esc(termEnd(r) ?? "unknown")}`
+              : `trial, then <strong>${esc(thenPrice(r))}</strong> — first charge ${esc(termEnd(r) ?? "unknown")}`
             : `paid${price ? ` <strong>${esc(price)}</strong>${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : ` <span style="color:${MUTED};">(price not recorded)</span>`} via ${esc(r.source)}${r.cancelledAt ? ` — <span style="color:${WARN};">cancelled ${esc(String(r.cancelledAt).slice(0, 10))}, will not renew</span>` : ""}`;
       rows.push({
         who: r.user,
         kind: r.kind,
+        amountMinor: r.amountMinor ?? null,
+        currency: r.currency ?? null,
+        interval: r.interval ?? null,
         cancelledAt: r.cancelledAt ?? null,
         expiresAt: r.expiresAt ?? null,
         holds: r.kind === "oneoff"
@@ -703,7 +715,7 @@ if (moneyApps.length) {
       if (twin) {
         twin.status = twin.cancelledAt
           ? `${left}, <span style="color:${WARN};">cancelled ${esc(String(twin.cancelledAt).slice(0, 10))}</span> — no charge coming`
-          : `${left}, then <span style="color:${WARN};">first charge ${esc(twin.until ?? "unknown")}</span>`;
+          : `${left}, then <strong>${esc(thenPrice(twin))}</strong> — first charge ${esc(twin.until ?? "unknown")}`;
         twin.holds += ` <span style="color:${MUTED};">· ${t.grantedDays}d free</span>`;
         continue;
       }
@@ -1136,20 +1148,20 @@ for (const id of moneyApps) {
   const bits = [];
   if (!b) bits.push("purchases: no ledger configured");
   else if (!b.available) bits.push("purchases NOT COLLECTED this run");
-  else bits.push(`${b.count} paying${b.priced ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} unpriced` : ""})` : b.count ? " (prices not recorded yet)" : ""}${b.trialing ? `, ${b.trialing} in a $0 trial` : ""}${b.comped ? `, ${b.comped} granted` : ""}${b.lapsed ? `, ${b.lapsed} lapsed` : ""}${b.cancelled ? `, ${b.cancelled} cancelled (will not renew)` : ""}${b.oneOff ? ` · ${b.oneOff} PDF binder(s) sold${b.oneOffMinor ? ` (${fmtMoney(b.oneOffMinor, b.currency ?? "usd")} all-time)` : " (prices not recorded)"}${b.oneOffLast24h ? `, ${b.oneOffLast24h} in the last 24h` : ""}` : ""}`);
+  else bits.push(`${b.count} paying${b.priced ? ` (${fmtMoney(b.mrrMinor, b.currency)}/mo run-rate${b.unpriced ? `; ${b.unpriced} unpriced` : ""})` : b.count ? " (prices not recorded yet)" : ""}${b.trialing ? `, ${b.trialing} in a Stripe trial` : ""}${b.comped ? `, ${b.comped} granted` : ""}${b.lapsed ? `, ${b.lapsed} lapsed` : ""}${b.cancelled ? `, ${b.cancelled} cancelled (will not renew)` : ""}${b.oneOff ? ` · ${b.oneOff} PDF binder(s) sold${b.oneOffMinor ? ` (${fmtMoney(b.oneOffMinor, b.currency ?? "usd")} all-time)` : " (prices not recorded)"}${b.oneOffLast24h ? `, ${b.oneOffLast24h} in the last 24h` : ""}` : ""}`);
   if (!tr) bits.push("free trials: no ledger configured");
   else if (!tr.available) bits.push("free trials NOT COLLECTED this run");
   else {
     const ov = trialOverlap(id);
     const net = tr.count - ov;
-    bits.push(`${net} on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (${tr.endingWithin3Days - ov} ending within 3 days)` : ""}${ov ? ` (+${ov} inside the $0 trial, counted once)` : ""}`);
+    bits.push(`${net} on a free trial${net && tr.endingWithin3Days - ov > 0 ? ` (${tr.endingWithin3Days - ov} ending within 3 days)` : ""}${ov ? ` (+${ov} inside the Stripe trial, counted once)` : ""}`);
   }
   const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
   if (ex) bits.push(`${ex} rows of ours excluded`);
   T.push(`  ${appName(id)}: ${bits.join(" · ")}`);
   for (const r of journeys?.apps?.[id]?.purchases ?? []) {
     const price = fmtMoney(r.amountMinor, r.currency);
-    const status = r.kind === "oneoff" ? `bought ${price ?? "(price not recorded)"} via ${r.source}, one-off` : r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `${(() => { const t = (journeys?.apps?.[id]?.activeTrials ?? []).find((x) => x.user === r.user); return t ? `free trial ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}, then ` : ""; })()}${r.cancelledAt ? `$0 trial, cancelled ${String(r.cancelledAt).slice(0, 10)}, no charge coming` : `$0 trial, first charge ${termEnd(r) ?? "unknown"}`}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}${r.cancelledAt ? `, cancelled ${String(r.cancelledAt).slice(0, 10)}, will not renew` : ""}`;
+    const status = r.kind === "oneoff" ? `bought ${price ?? "(price not recorded)"} via ${r.source}, one-off` : r.kind === "comped" ? `granted (${r.source})` : r.kind === "lapsed" ? `lapsed, ${r.source} term ended` : r.kind === "trialing" ? `${(() => { const t = (journeys?.apps?.[id]?.activeTrials ?? []).find((x) => x.user === r.user); return t ? `free trial ${t.daysLeft === 0 ? "ends today" : `${t.daysLeft}d left`}, then ` : ""; })()}${r.cancelledAt ? `cancelled ${String(r.cancelledAt).slice(0, 10)}, no charge coming` : `${thenPrice(r)}, first charge ${termEnd(r) ?? "unknown"}`}` : `paid ${price ? `${price}${r.interval ? `/${r.interval === "year" ? "yr" : "mo"}` : ""}` : "(price not recorded)"} via ${r.source}${r.cancelledAt ? `, cancelled ${String(r.cancelledAt).slice(0, 10)}, will not renew` : ""}`;
     const holds = r.kind === "oneoff" ? `PDF binder ${String(r.product).split(":")[1]?.slice(0, 8) ?? ""}` : `${r.product}${r.interval ? ` (${r.interval}ly)` : ""}`;
     T.push(`    ${String(r.user).padEnd(20)} ${holds}  ${status}  since ${String(r.at).slice(0, 10)}${r.expiresAt ? `, until ${termEnd(r)}` : r.kind === "oneoff" ? "" : ", no end"}`);
   }
