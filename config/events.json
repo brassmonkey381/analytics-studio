@@ -1044,7 +1044,7 @@
         "table": "entitlements",
         "userCol": "user_id",
         "tsCol": "granted_at",
-        "filter": "product like 'tcgscan_%' and coalesce(source,'') <> 'trial'"
+        "filter": "product like 'tcgscan_%' and coalesce(source,'') <> 'trial' and coalesce(environment,'production') <> 'sandbox'"
       }
     ]
   },
@@ -1467,7 +1467,7 @@
         "table": "entitlements",
         "userCol": "user_id",
         "tsCol": "granted_at",
-        "filter": "product like 'tcgscan_%' and coalesce(source,'') <> 'trial'"
+        "filter": "product like 'tcgscan_%' and coalesce(source,'') <> 'trial' and coalesce(environment,'production') <> 'sandbox'"
       }
     ]
   }
