@@ -677,7 +677,250 @@
     },
     "_puzzleDoc": "The daily theme-search puzzle (/daily). One puzzle worldwide per UTC day. The chain is offer_shown -> choice -> opened -> guess_submitted (repeatable) -> solved. DENOMINATORS FIRST. puzzle.offer_shown is the home card actually drawing, and it is gated on five things - signed in, not a guest, not previously declined, a puzzle published today, and not already played - so it fires far less than the home page loads and is the only honest denominator for the opt-in. Its `asking` prop marks the ONE offer that can produce a choice; pooling later offers with it would sink the opt-in rate as the same people see the card again. PRESSING PLAY IS AN OPT-IN. When the question is still open, Play records choice='on' as well as navigating, so the rate counts everyone who answered rather than only the ones who pressed the quieter 'Not for me'. puzzle.opened carries `entry` (card | nav | direct, from a ?from= param) and `state` (fresh | played | solved) - a return visit to a solved puzzle is a different visit from a first look. guess_failed is the RPC throwing, NEVER a wrong answer: an outage and a player being wrong must not share a bucket.",
     "_puzzleWordsDoc": "puzzle.guess_submitted carries `words`, the picked vocabulary, and that is a deliberate exception to the ids-and-numbers rule - justified by one fact and no other: the guess box CANNOT receive free text. Words enter the guess only through suggestion chips drawn from the curated puzzle_vocabulary table, a closed set we author, so they are enum values like a tier_caps limit key. The typed box filters chips and is never submitted. IF THAT INPUT EVER ACCEPTS A TYPED WORD, THE PROP MUST BE REMOVED. It earns its place because the puzzle exists to teach the vocabulary the paid artwork search runs on: a word people reach for and miss is a gap between what the art shows and how it is tagged, and that is the one thing this event can say that a count cannot.",
-    "_puzzleOfferSeam": "puzzle.offer_shown CHANGED MEANING ON 2026-09-25 and the two sides must not be pooled. BEFORE: the card re-asked on every home page load until somebody answered, so `asking` stayed true indefinitely - @jhouse86 and @evane5ce were each asked five times in one day and never replied, and 16 of the first 19 external offers produced nothing. An opt-in rate over those impressions read as a fifth of the truth. AFTER: the first sighting stamps profiles.daily_puzzle_prompt_at and the card never asks again. Expect offer_shown to fall sharply and the rate per impression to RISE - that is the fix working, not new interest. HOW TO COUNT AN IGNORE, which is now a real outcome rather than a pending question: ground truth, not the stream. daily_puzzle_prompt_at is not null AND preferences->>'dailyPuzzle' is null means asked once and never answered. The stream can only say offer_shown with no puzzle.choice after it, which is the same fact reached the long way. An ignore also HIDES THE CARD from then on, so a person who says nothing leaves this funnel after one impression by design; the puzzle stays reachable from the nav."
+    "_puzzleOfferSeam": "puzzle.offer_shown CHANGED MEANING ON 2026-09-25 and the two sides must not be pooled. BEFORE: the card re-asked on every home page load until somebody answered, so `asking` stayed true indefinitely - @jhouse86 and @evane5ce were each asked five times in one day and never replied, and 16 of the first 19 external offers produced nothing. An opt-in rate over those impressions read as a fifth of the truth. AFTER: the first sighting stamps profiles.daily_puzzle_prompt_at and the card never asks again. Expect offer_shown to fall sharply and the rate per impression to RISE - that is the fix working, not new interest. HOW TO COUNT AN IGNORE, which is now a real outcome rather than a pending question: ground truth, not the stream. daily_puzzle_prompt_at is not null AND preferences->>'dailyPuzzle' is null means asked once and never answered. The stream can only say offer_shown with no puzzle.choice after it, which is the same fact reached the long way. An ignore also HIDES THE CARD from then on, so a person who says nothing leaves this funnel after one impression by design; the puzzle stays reachable from the nav.",
+    "_editorToolsDoc": "Binder-editor tools, landed 2026-10-22 (owner: 'add tracking for all the buttons and tools that make sense without creating way too much event data'). ONE event per COMPLETED use of a tool, fired in the store method the buttons call, so one line covers every button that reaches it. Nothing fires on open, hover, keystroke or render; the inspector's per-keystroke rename is deliberately not tracked (binder.rename is the rename dialog's Save). Volume is bounded by human hands: a heavy session is a few hundred rows, and card.add stays the largest. Pocket clears are counted once per action with a count, not once per slot.",
+    "editor.undo": {
+      "label": "Undo or redo",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.duplicate": {
+      "label": "Duplicated a binder",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.delete": {
+      "label": "Deleted a binder",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.rename": {
+      "label": "Renamed a binder",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.public": {
+      "label": "Made a binder public or private",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.cover": {
+      "label": "Changed a binder cover",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.grid": {
+      "label": "Changed the pocket grid",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.style": {
+      "label": "Changed binder styling",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "binder.background": {
+      "label": "Changed the page background",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.add": {
+      "label": "Added a page",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.duplicate": {
+      "label": "Duplicated a page",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.remove": {
+      "label": "Removed a page",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.reorder": {
+      "label": "Reordered pages",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.swap": {
+      "label": "Swapped two pages",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.send": {
+      "label": "Copied or moved a page to another binder",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "page.compact": {
+      "label": "Removed blank pages",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.clear": {
+      "label": "Cleared pockets",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.move": {
+      "label": "Moved or swapped a pocket",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.tray": {
+      "label": "Used the tray",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.finish": {
+      "label": "Set a pocket finish",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.merge": {
+      "label": "Merged art pieces",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.split": {
+      "label": "Split an art piece",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.style": {
+      "label": "Styled a pocket",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "pocket.art": {
+      "label": "Placed artwork",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "share.link": {
+      "label": "Shared a binder link",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "share.hires": {
+      "label": "Downloaded the full-size share image",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "share.pages_featured": {
+      "label": "Chose the pages a share shows",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "print.download": {
+      "label": "Downloaded print sheets",
+      "stage": "monetization",
+      "apps": [
+        "michi"
+      ],
+      "milestone": true
+    },
+    "art.search": {
+      "label": "Searched stock art",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "art.link": {
+      "label": "Opened an outside art search",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "arrange_open": {
+      "label": "Opened Arrange",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "arrange_pick": {
+      "label": "Applied an arrangement",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "complete_open": {
+      "label": "Opened Complete page",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "complete_pick": {
+      "label": "Completed a page",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_underscoreNamesDoc": "arrange_open, arrange_pick, complete_open and complete_pick are the sheets' own pre-existing spellings (ArrangeSheet.tsx, CompletePageSheet.tsx), emitted since September and unregistered until 2026-10-22. They keep their underscores because rows already carry them; a rename would split each tool's history in two.",
+    "_cardAddViaDoc": "card.add carries `via` from 2026-10-22: how the card got into the pocket. pocket (a path that did not say), browse_all / browse_set / browse_search / browse_similar / browse_theme (the pocket picker, read from the kit's browse state at pick time), multi (multi-select or Add to another binder), collection (a batch from the user's own cards), add_to_binder (from outside the editor), fill (Auto fill or Complete page), vunion, duplicate. Rows before that date have no via and read as 'unknown', not as 'pocket'. Found from @cardorg's 144-card night: every path said source:'manual', and the only way to see they browse sets with no search was the slots table."
   },
   "_routesDoc": "page.view routes that carry intent. `intent: pricing` marks the pages that constitute *demonstrated* PRO awareness \u2014 the strongest awareness signal available until an impression event exists (see gaps.trial_awareness).",
   "routes": {
@@ -1276,6 +1519,14 @@
       "direction": "made every question about the puzzle unanswerable",
       "fix": "Landed 2026-09-24: offer_shown, choice, opened, guess_submitted, solved and guess_failed, with ?from= on the card and rail links so entry point is attributable. Promote to fixed on the first observed puzzle.solved - that is the end of the chain and proves every link before it.",
       "_readTheOptInCarefully": "puzzle.choice is once per ACCOUNT, not per day: it writes profiles.preferences and the card stops asking afterwards. A declining account never sees the card again, so it emits one offer_shown and one choice and then disappears from this funnel entirely - which is correct, and is not churn."
+    },
+    "michi_editor_tools_untracked": {
+      "severity": "medium",
+      "status": "landed",
+      "title": "The binder editor's tools emitted nothing, and card.add did not say how",
+      "detail": "Found 2026-10-22 answering 'how is @cardorg making binders?'. Every pick in the pocket picker, whether from a text search, a set, a theme or Similar, wrote card.add { source: 'manual' }; the picker's set browser fired no card.search at all (the kit has no onSearch / onSetChange callbacks, and card.search fired only from home and My binders). Add page, duplicate, delete, reorder, grid size, background, styling, pocket moves, clears, merges, finishes, the tray, share-link copy, print downloads, stock art and the rename dialog all had no event. The answer came from binder_slots created_at and card ids resolved against the catalogue.",
+      "direction": "the journey view under-describes editing sessions: a 144-card night reads as 149 identical card.add rows and page views; which tools are used, and which are never touched, was invisible",
+      "fix": "Landed 2026-10-22 in michi-maker (commit after 63d450a): card.add.via from the kit's browseState at pick time, and one event per completed tool use in the store methods (see _editorToolsDoc). Promote to fixed on the first observed card.add with via = 'browse_set' from a non-excluded account; that is the exact row the question needed."
     }
   },
   "guestDepth": {
