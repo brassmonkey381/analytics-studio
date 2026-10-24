@@ -653,22 +653,34 @@
         },
         "2026-10-22": {
           "dau": 0,
+          "new_users": 1,
+          "dau_guest": 0,
+          "new_guest": 0
+        },
+        "2026-10-23": {
+          "dau": 1,
+          "new_users": 1,
+          "dau_guest": 0,
+          "new_guest": 0
+        },
+        "2026-10-24": {
+          "dau": 0,
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
         }
       },
-      "totalUsers": 21,
+      "totalUsers": 23,
       "guestUsers": 0,
       "excludedUsers": 42,
       "coverage": null,
-      "lastCollected": "2026-10-22T15:07:07.646Z",
+      "lastCollected": "2026-10-24T15:07:04.592Z",
       "lastSource": "sql",
       "retention": {
-        "total": 21,
-        "active_7": 3,
-        "active_14": 4,
-        "active_30": 5
+        "total": 23,
+        "active_7": 4,
+        "active_14": 6,
+        "active_30": 7
       },
       "lastError": {
         "at": "2026-08-10T16:45:16.600Z",
@@ -1331,13 +1343,25 @@
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
+        },
+        "2026-10-23": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
+        },
+        "2026-10-24": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 11,
       "guestUsers": 1,
       "excludedUsers": 512,
       "coverage": null,
-      "lastCollected": "2026-10-22T15:07:11.286Z",
+      "lastCollected": "2026-10-24T15:07:07.970Z",
       "lastSource": "sql",
       "retention": {
         "total": 4,
@@ -1980,7 +2004,7 @@
           "new_guest": 3
         },
         "2026-10-19": {
-          "dau": 5,
+          "dau": 4,
           "new_users": 0,
           "dau_guest": 3,
           "new_guest": 2
@@ -1998,28 +2022,40 @@
           "new_guest": 1
         },
         "2026-10-22": {
-          "dau": 2,
+          "dau": 3,
           "new_users": 1,
-          "dau_guest": 0,
-          "new_guest": 0
+          "dau_guest": 2,
+          "new_guest": 2
+        },
+        "2026-10-23": {
+          "dau": 3,
+          "new_users": 1,
+          "dau_guest": 8,
+          "new_guest": 8
+        },
+        "2026-10-24": {
+          "dau": 4,
+          "new_users": 2,
+          "dau_guest": 3,
+          "new_guest": 3
         }
       },
-      "totalUsers": 132,
-      "guestUsers": 245,
+      "totalUsers": 135,
+      "guestUsers": 258,
       "excludedUsers": 84,
       "coverage": {
-        "registered": 166,
-        "guest_sessions": 1361,
-        "excluded": 2234,
+        "registered": 169,
+        "guest_sessions": 1416,
+        "excluded": 2241,
         "no_activity": 25
       },
-      "lastCollected": "2026-10-22T15:07:18.726Z",
+      "lastCollected": "2026-10-24T15:07:15.183Z",
       "lastSource": "sql",
       "retention": {
-        "total": 132,
-        "active_7": 16,
+        "total": 135,
+        "active_7": 17,
         "active_14": 27,
-        "active_30": 65
+        "active_30": 64
       }
     },
     "tcgscan": {
@@ -2678,18 +2714,30 @@
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 2
+        },
+        "2026-10-23": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 3
+        },
+        "2026-10-24": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 14,
       "guestUsers": 7,
       "excludedUsers": 162,
       "coverage": {
-        "registered": 166,
-        "guest_sessions": 1361,
-        "excluded": 2234,
+        "registered": 169,
+        "guest_sessions": 1416,
+        "excluded": 2241,
         "no_activity": 25
       },
-      "lastCollected": "2026-10-22T15:07:25.567Z",
+      "lastCollected": "2026-10-24T15:07:21.585Z",
       "lastSource": "sql",
       "retention": {
         "total": 14,

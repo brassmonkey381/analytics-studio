@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-10-22T15:07:44.109Z. All-time unless a window is named.
+Collected 2026-10-24T15:07:40.229Z. All-time unless a window is named.
 
-**132 campaign arrivals** across 4 apps.
+**134 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
@@ -33,6 +33,7 @@ Collected 2026-10-22T15:07:44.109Z. All-time unless a window is named.
 | (unregistered) | `22123b3d-a15c-43dd-957c-2255112b41be` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `22bbe2cb-dd7c-438a-aeb2-7ba28717969d` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `2308e3f1-f460-48e1-9130-c5084fbae68f` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `238fe9e8-01c8-4fd5-854a-a477f4b72eb7` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `239d3d5e-f9bd-4e71-a7a2-562d548caa32` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `23be02d5-1cb6-4be8-968a-b430978bc477` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `2677c484-189e-4ccf-83fe-d117f8ea4bac` | 1 | 1 | 1 | 0 | 1 |
@@ -94,6 +95,7 @@ Collected 2026-10-22T15:07:44.109Z. All-time unless a window is named.
 | (unregistered) | `a23be7e4-c8d3-485a-9e83-4295a338f571` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `a2715249-9bf4-44a9-b1ae-79910e3d216e` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `a6d172c4-e566-4b11-bf24-b26a652ba087` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `ad6a161b-1a09-434e-843c-cc47e2d74787` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `af6509dc-c1ed-4b26-93d9-2fbeeee76d96` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `b385ddb2-d99a-45f7-9fed-3bf03ad2e7d9` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `b670a578-6571-4cfc-a700-ae46ee6e0167` | 1 | 1 | 1 | 0 | 0 |
@@ -129,11 +131,11 @@ Collected 2026-10-22T15:07:44.109Z. All-time unless a window is named.
 | (unregistered) | `f8d85e84-4648-453a-84c5-915274b7f4fb` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `f9b2eaa8-1f0e-41df-9ad9-a04345bbaa13` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `faed5065-c1d1-45f8-8a78-3494094486ec` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `fe58f5f2-5d94-4b24-b47b-be2d3db8c0c7` | 1 | 1 | 1 | 0 | 0 |
+| (unregistered) | `fe58f5f2-5d94-4b24-b47b-be2d3db8c0c7` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `fe6e6e2f-0f0a-4049-bd9d-b09afc8e4533` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `7b7772d0-25e9-4543-88a7-17f5b2b8fb5b` | 0 | 0 | 0 | 0 | 0 |
 
-Excluded from the above: 51 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 53 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
@@ -155,7 +157,7 @@ Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (225 of 241 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (240 of 258 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -179,8 +181,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 4624 | 4263 | 175 | 4109 | a code was recorded 2026-08-13 |
-| TCGScan | 1482 | 1325 | 4 | 1308 | a code was recorded 2026-10-11 |
-| Doggle | 816 | 777 | 5 | 816 | a code was recorded 2026-08-13 |
-| Pickleague | 241 | 225 | 0 | 241 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 4726 | 4361 | 179 | 4211 | a code was recorded 2026-08-13 |
+| TCGScan | 1491 | 1334 | 4 | 1317 | a code was recorded 2026-10-11 |
+| Doggle | 847 | 806 | 5 | 847 | a code was recorded 2026-08-13 |
+| Pickleague | 258 | 240 | 0 | 258 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
