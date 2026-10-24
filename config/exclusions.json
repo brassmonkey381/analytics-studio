@@ -43,7 +43,9 @@
     },
     "pickleague": {
       "_note": "unclaimed.pickleague.club = auto-generated placeholder rows for imported roster players who never signed up (the 2026-07-29 bulk import); pickleague.test = QA accounts.",
-      "emailPatterns": ["%@unclaimed.pickleague.club", "%@pickleague.test", "%@pickleague.club"]
+      "emailPatterns": ["%@unclaimed.pickleague.club", "%@pickleague.test", "%@pickleague.club"],
+      "_userSqlDoc": "Pickleague's own flags (added 2026-10-24): profiles.is_test_account is admin-set (the hide-test-accounts switch's list of QA, review and demo accounts); profiles.is_unclaimed marks the imported placeholder rows. On 2026-10-24 every flagged account was already caught by a pattern above; the flag is here so the app's own list stays authoritative when a QA account is made with an ordinary address.",
+      "userSql": ["exists (select 1 from public.profiles p where p.id = u.id and (p.is_test_account or p.is_unclaimed))"]
     },
     "tcgscan": {
       "_note": "official@michi-maker.com is our own company account. Owner personal accounts are in global.emailExact, not repeated here.",
