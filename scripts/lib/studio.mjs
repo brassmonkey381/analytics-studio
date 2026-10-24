@@ -150,6 +150,10 @@ export function exclusionCte(appId, exclusions = readConfig("exclusions.json")) 
   const envIps = (process.env.EXCLUDED_IPS ?? "").split(",").map((s) => s.trim()).filter(Boolean);
   const ips = [...envIps, ...(g.ips ?? []), ...(a.ips ?? [])];
   const uaRegex = a.userAgentRegex ?? g.userAgentRegex ?? null;
+  // App-owned truth about test accounts (a flag an admin set in the product), as SQL predicates
+  // over `u` (auth.users). Patterns describe what an address looks like; these describe what the
+  // app itself says the account is.
+  const userSql = [...(g.userSql ?? []), ...(a.userSql ?? [])];
 
   const clauses = [];
   if (patterns.length) clauses.push(`u.email ilike any (array[${patterns.map(sqlStr).join(", ")}])`);
@@ -165,6 +169,7 @@ export function exclusionCte(appId, exclusions = readConfig("exclusions.json")) 
   if (ips.length) {
     clauses.push(`(u.is_anonymous and exists (select 1 from auth.sessions s where s.user_id = u.id and host(s.ip) = any (array[${ips.map(sqlStr).join(", ")}])))`);
   }
+  for (const pred of userSql) clauses.push(`(${pred})`);
   const where = clauses.length ? clauses.join("\n     or ") : "false";
   return `excluded_users as (\n  select u.id from auth.users u\n  where ${where}\n)`;
 }

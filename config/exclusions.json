@@ -1,6 +1,8 @@
 {
   "_doc": "Accounts excluded from all metrics: our own accounts, seeded/placeholder rows, QA and test accounts, and automated browser/HTTP clients. Every excluded account is still COUNTED and surfaced in the report so exclusions are never silent. Patterns are SQL ILIKE (use % as wildcard). userAgentRegex is a POSIX regex matched case-insensitively against auth.sessions.user_agent — a user is excluded if ANY of their sessions matches.",
 
+  "_userSqlDoc": "userSql (global or per app): raw SQL predicates over `u` (auth.users), OR-ed into the excluded_users CTE. For truth the app itself records about an account (an admin-set test flag), which patterns cannot express.",
+
   "global": {
     "_emailPatternsDoc": "Shapes that can only be ours, matched with SQL ILIKE. bstockman1+%@% is the owner plus-addressed: a plus tag routes to the owner mailbox, so no external person can hold one, and every test signup made that way is excluded without another config change. It currently covers brassmonkey382 (bstockman1+1@hotmail.com, added 2026-08-25) and bstockman1+2@hotmail.com. The untagged owner addresses live in emailExact below.",
     "emailPatterns": [
@@ -35,7 +37,9 @@
   "byApp": {
     "doggle": {
       "_note": "doggle.invalid = seeded synthetic accounts; doggle.club = our own staff/company accounts.",
-      "emailPatterns": ["%@doggle.invalid", "%@doggle.club"]
+      "emailPatterns": ["%@doggle.invalid", "%@doggle.club"],
+      "_userSqlDoc": "Doggle's own test-account flags (added 2026-10-24 at the Doggle session's request): profiles.is_test_account is set by an admin or the 0447/0450 backfills (seed, QA, App Review and demo accounts); profiles.is_fake marks the Long Beach / Alameda sim accounts (0192). The app's flag is authoritative where an email pattern is only a guess; the first account it caught that no pattern did was Apple's App Review tester (Sign in with Apple, GPS in Milpitas).",
+      "userSql": ["exists (select 1 from public.profiles p where p.id = u.id and (p.is_test_account or p.is_fake))"]
     },
     "pickleague": {
       "_note": "unclaimed.pickleague.club = auto-generated placeholder rows for imported roster players who never signed up (the 2026-07-29 bulk import); pickleague.test = QA accounts.",
