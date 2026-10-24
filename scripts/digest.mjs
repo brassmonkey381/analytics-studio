@@ -56,6 +56,8 @@ const journeys = read("journeys.json"); // gitignored: carries the names
 const usage = read("usage.json");
 const plans = read("plans.json");
 const accounts = read("accounts.json"); // gitignored: carries the emails
+const geoUsers = read("newuser-geo.json"); // where real new Doggle/Pickleague users are, vs ingestion coverage
+const geoRoster = read("newuser-geo-roster.json"); // gitignored: id stub + city per new account
 
 if (!metrics) {
   console.error("FAILED: data/metrics.json is missing — run `npm run collect` first. Nothing to digest.");
@@ -81,6 +83,7 @@ const staleness = [
   ["events", hoursOld(events?.collectedAt)],
   ["usage", hoursOld(usage?.collectedAt)],
   ["plans", hoursOld(plans?.collectedAt)],
+  ["new-user geo", hoursOld(geoUsers?.collectedAt)],
 ].filter(([, h]) => h != null && Number.isFinite(h));
 const worstStale = staleness.length ? Math.max(...staleness.map(([, h]) => h)) : null;
 
@@ -337,12 +340,49 @@ for (const [id, v] of Object.entries(usage?.byWindow?.["1"] ?? {})) {
   made.push({ app, label, n: v.n, users: v.users ?? 0, qty: v.qty ?? null });
 }
 
+// ---------- 5. where the new users are (Doggle, Pickleague) ----------
+//
+// From the new-user geography lane (scripts/newuser-geo.mjs), not re-queried. The lane
+// resolves each real new account to a city through the app's own us_cities table and
+// checks that city against the geo lane's ingestion coverage. The question this answers
+// is the owner's (2026-10-24): "should we be ingesting data for an area or state because
+// a new user showed up there?" - so a city with no places ingested in its county, or in a
+// state the pipeline has not touched, is an ALERT and goes into the subject line.
+const GEO_APPS = Object.keys(geoUsers?.apps ?? {});
+const geoAlerts = []; // since yesterday, by person
+const geoSinceYesterday = []; // every new real account since yesterday on those apps, located or not
+for (const id of GEO_APPS) {
+  for (const r of geoRoster?.apps?.[id] ?? []) {
+    if (!r.created_at || Date.parse(r.created_at) < SINCE) continue;
+    const cv = r.coverage;
+    const alert = r.city && cv?.known ? (!cv.stateCovered ? "state" : cv.countyPlaces === 0 ? "county" : null) : null;
+    const rec = { app: id, stub: r.stub, city: r.city, state: r.state, src: r.src, foreign: r.foreign, active: r.active, platform: r.platform, coverage: cv, alert };
+    geoSinceYesterday.push(rec);
+    if (alert) geoAlerts.push(rec);
+  }
+}
+const geoWho = (rec) => {
+  // Name the person the way the new-accounts list does, matched on the id stub the roster carries.
+  const a = (accounts?.apps?.[rec.app]?.roster ?? []).find((x) => x.id_stub === rec.stub);
+  return a ? (a.email && a.email !== "(no email)" ? a.email : `${a.provider === "phone" ? "phone signup" : "(no email)"} ${rec.stub}`) : `account ${rec.stub}`;
+};
+const geoPlace = (rec) => (rec.city ? `${rec.city}, ${rec.state}` : rec.foreign ? "outside the US" : "no location yet");
+const geoCoverLine = (rec, unit) => {
+  const cv = rec.coverage;
+  if (!rec.city) return "";
+  if (!cv?.known) return "coverage unknown (geo lane did not run)";
+  if (!cv.stateCovered) return `NO ${unit} ingested in ${rec.state} at all`;
+  if (cv.countyPlaces === 0) return `0 ${unit} in ${cv.county ?? "that county"} County, ${cv.statePlaces.toLocaleString()} in ${rec.state}`;
+  return `${cv.countyPlaces.toLocaleString()} ${unit} in ${cv.county ?? "the"} County, ${cv.statePlaces.toLocaleString()} in ${rec.state}`;
+};
+
 // ---------- assemble ----------
 
 const totalNew = newAccounts.length;
 const totalDau = dau.reduce((n, d) => n + d.yesterday, 0);
 const moneyTouches = money.reduce((n, m) => n + m.events.reduce((k, e) => k + e.count, 0) + m.pricing.reduce((k, p) => k + p.count, 0), 0);
 const subject =
+  (geoAlerts.length ? `NEW AREA: ${[...new Set(geoAlerts.map((g) => `${g.city}, ${g.state}`))].join("; ")} — ` : "") +
   `Analytics daily ${YESTERDAY} — ` +
   `${plural(totalNew, "new account")}, ${plural(totalDau, "active account")}, ${plural(moneyTouches, "plan/PRO touch", "plan/PRO touches")}`;
 
@@ -452,6 +492,16 @@ if (worstStale != null && worstStale > 26) {
   );
 }
 if (missing.length) parts.push(p(`Not available in this run: ${esc(missing.join(", "))}. Sections that need them are marked.`, WARN));
+if (geoAlerts.length) {
+  parts.push(
+    p(
+      `<strong>New user outside ingestion coverage.</strong> ` +
+        geoAlerts.map((g) => `${esc(geoWho(g))} signed up for ${esc(appName(g.app))} in <strong>${esc(geoPlace(g))}</strong>: ${esc(geoCoverLine(g, geoUsers.apps[g.app].unit))}.`).join(" ") +
+        ` Details under "Where new users are".`,
+      WARN,
+    ),
+  );
+}
 
 // Money first: the owner reads this email for trials and payments before anything else
 // (2026-10-17). Everything below it is context for the people it names.
@@ -827,6 +877,72 @@ ${newAccounts
 </table></td></tr>`);
 }
 
+// --- where new users are ---
+if (GEO_APPS.length) {
+  parts.push(h2("Where new users are — Doggle and Pickleague"));
+  if (!geoUsers) {
+    parts.push(p("The new-user geography lane did not run, so nothing can be said about where people are. That is not the same as nobody being anywhere.", WARN));
+  } else {
+    // Since yesterday, by person: the actionable part.
+    if (!geoSinceYesterday.length) {
+      parts.push(p(`No new real account on either app since yesterday, so no new place to consider. The 90-day picture is below.`));
+    } else {
+      parts.push(`<tr><td style="padding:6px 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Who</th><th style="${cellHead}">App</th><th style="${cellHead}">Where</th><th style="${cellHead}">From</th><th style="${cellHead}">Ingested there</th></tr>
+${geoSinceYesterday
+  .map(
+    (g) => `<tr>
+  <td style="${cell}">${esc(geoWho(g))}</td>
+  <td style="${cell}">${esc(appName(g.app))}</td>
+  <td style="${cell}${g.alert ? `color:${WARN};font-weight:600;` : ""}">${esc(geoPlace(g))}</td>
+  <td style="${cell}color:${MUTED};">${esc(g.src ?? "—")}</td>
+  <td style="${cell}${g.alert ? `color:${WARN};` : `color:${MUTED};`}">${esc(geoCoverLine(g, geoUsers.apps[g.app].unit) || "—")}</td>
+</tr>`,
+  )
+  .join("")}
+</table></td></tr>`);
+    }
+    // The 90-day picture per app: ranked cities with activity and coverage.
+    for (const id of GEO_APPS) {
+      const a = geoUsers.apps[id];
+      const w = a.windows?.["90"];
+      if (!w) continue;
+      const w7 = a.windows?.["7"];
+      const head = `<strong>${esc(appName(id))}</strong>, last 90 days: ${plural(w.real, "real new account")}, ${w.located} with a location, ${w.noLocation} without${w.foreign ? `, ${w.foreign} outside the US` : ""}. ` +
+        `${plural(w.active, "is", "are")} active in the last ${geoUsers.activeDays} days. Last 7 days: ${w7?.real ?? 0} new, ${w7?.located ?? 0} located. ` +
+        `Excluded from the 90 days: ${a.totals.excluded} of ours/QA, ${a.totals.guests} guests. ${a.totals.signedOutDevices} signed-out devices never made an account and have no location.`;
+      parts.push(p(head, INK));
+      if (!w.cities.length) {
+        parts.push(p(w.real ? `Nobody who signed up could be placed. ${id === "doggle" ? "Every profile sits on the Alameda column default, which means the location was never set, not that they live in Alameda." : "Nobody checked in, played or joined anything with a location."}` : "Nobody real signed up in 90 days: a true zero, not a visibility gap.", MUTED));
+        continue;
+      }
+      const SHOW = 8;
+      parts.push(`<tr><td style="padding:0 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">City</th><th style="${cellHead}text-align:right;">New (90d)</th><th style="${cellHead}text-align:right;">Active (${geoUsers.activeDays}d)</th><th style="${cellHead}">${esc(a.unit)} ingested</th></tr>
+${w.cities
+  .slice(0, SHOW)
+  .map((c) => {
+    const cv = c.coverage;
+    const cover = !cv?.known ? "unknown" : !cv.stateCovered ? `none in ${c.state}` : `${(cv.countyPlaces ?? 0).toLocaleString()} in ${cv.county ?? "the"} County · ${cv.statePlaces.toLocaleString()} in ${c.state}`;
+    return `<tr>
+  <td style="${cell}${c.alert && c.alert !== "unknown" ? `color:${WARN};font-weight:600;` : ""}">${esc(c.city)}, ${esc(c.state)}</td>
+  <td style="${num}">${c.users}</td>
+  <td style="${num}">${c.active}</td>
+  <td style="${cell}${c.alert && c.alert !== "unknown" ? `color:${WARN};` : `color:${MUTED};`}">${esc(cover)}${c.alert === "county" ? " — ingest?" : c.alert === "state" ? " — ingest the state?" : ""}</td>
+</tr>`;
+  })
+  .join("")}
+</table>${w.cities.length > SHOW ? `<div style="font:400 11.5px/1.4 inherit;color:${MUTED};padding:4px 8px;">+${w.cities.length - SHOW} more cities in data/newuser-geo.json</div>` : ""}</td></tr>`);
+    }
+    parts.push(
+      p(
+        `Location is the saved home on Doggle (a profile left on the Alameda default counts as unset), else the last place search, else a device fix; on Pickleague, where profiles have no home, it is the check-in fix or the venue, match, league, tournament or DUPR club the person touched. ` +
+          `Cities come from each app's own us_cities table; "ingested" is the geo lane's count of ${GEO_APPS.map((id) => geoUsers.apps[id].unit).join(" / ")} in the county the city centroid falls in. Counts here are rolling days, not Pacific days.`,
+      ),
+    );
+  }
+}
+
 // --- what got made ---
 if (made.length) {
   parts.push(h2("What got made (last 24h)"));
@@ -1197,6 +1313,23 @@ for (const id of APPS) {
 T.push("", `NEW ACCOUNTS SINCE YESTERDAY — ${totalNew}`);
 if (!totalNew) T.push("  none");
 for (const a of newAccounts) T.push(`  ${a.who} (${a.apps.map(appName).join(" + ")}) via ${viaLabel(a)} · ${String(a.createdAt).slice(0, 16)} — ${sinceLabel(a)}`);
+if (GEO_APPS.length) {
+  T.push("", "WHERE NEW USERS ARE (Doggle, Pickleague)");
+  if (geoAlerts.length) T.push(`  ALERT: new user outside ingestion coverage: ${geoAlerts.map((g) => `${geoWho(g)} in ${geoPlace(g)} (${geoCoverLine(g, geoUsers.apps[g.app].unit)})`).join("; ")}`);
+  if (!geoSinceYesterday.length) T.push("  nobody new since yesterday");
+  for (const g of geoSinceYesterday) T.push(`  ${geoWho(g)} (${appName(g.app)}) — ${geoPlace(g)}${g.src ? ` via ${g.src}` : ""}${g.city ? ` — ${geoCoverLine(g, geoUsers.apps[g.app].unit)}` : ""}`);
+  for (const id of GEO_APPS) {
+    const a = geoUsers.apps[id];
+    const w = a.windows?.["90"];
+    if (!w) continue;
+    T.push(`  ${appName(id)} 90d: ${w.real} real new, ${w.located} located, ${w.noLocation} no location, ${w.active} active ${geoUsers.activeDays}d; excluded ${a.totals.excluded} ours/QA, ${a.totals.guests} guests`);
+    for (const c of w.cities.slice(0, 8)) {
+      const cv = c.coverage;
+      const cover = !cv?.known ? "coverage unknown" : !cv.stateCovered ? `no ${a.unit} in ${c.state}` : `${cv.countyPlaces ?? 0} ${a.unit} in ${cv.county ?? "the"} County, ${cv.statePlaces} in ${c.state}`;
+      T.push(`    ${c.city}, ${c.state}: ${c.users} new, ${c.active} active — ${cover}${c.alert && c.alert !== "unknown" ? " — INGEST?" : ""}`);
+    }
+  }
+}
 if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");
   for (const m of made) T.push(`  ${m.n}${m.qty ? ` (${m.qty})` : ""} ${m.label} — ${appName(m.app)}, by ${m.users} account(s)`);

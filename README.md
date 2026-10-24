@@ -307,6 +307,21 @@ Three decisions worth knowing before changing it:
   per-bar values, ticks every other day anchored to the newest. Mixed-unit series (200 cards
   next to 1 check-in) stay a list rather than becoming a log axis.
 
+**Where new users are** (added 2026-10-24). A section for Doggle and Pickleague, the two
+apps whose product is place data: every real account created since yesterday, with the city
+the lane could resolve for it and how much of that county and state the ingestion pipeline
+has already covered, plus the ranked 90-day city table with 14-day activity. A new user in a
+county with nothing ingested, or in a state the pipeline has not run in, is an alert: it goes
+into the subject line (`NEW AREA: Columbus, IN`) and a warning at the top of the mail, so the
+decision to ingest an area can be taken the morning the user appears. The data comes from
+`scripts/newuser-geo.mjs` (`npm run newuser-geo`), which runs after the geo lane because it
+reads `data/geo.json` for coverage, and writes `data/newuser-geo.json` (counts by city,
+committed) plus a gitignored roster that puts a city beside each account's id stub. Location
+is the saved home on Doggle (a profile still on the Alameda column default is "unset"), else
+the last place search, else a device fix; Pickleague profiles have no home, so it is the
+check-in fix or the venue, match, league, tournament or DUPR club the person touched. Cities
+are resolved through each app's own `us_cities` table; no IP is ever geolocated.
+
 Sending needs `RESEND_API_KEY`, `DIGEST_FROM` (a Resend-verified sender) and `DIGEST_TO` in
 `.env` — an address is identity and never belongs in committed config.
 `state/setup-digest-email.ps1` collects them without echoing anything.

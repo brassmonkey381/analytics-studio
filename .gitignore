@@ -54,3 +54,8 @@ reports/economy.html
 # HISTORY (one row per day) that cannot be regenerated once days pass.
 data/geo-roster.json
 reports/geo.html
+
+# New-user geography lane. newuser-geo-roster.json puts a city beside each new
+# account's id stub, and a person's city is identity. data/newuser-geo.json
+# stays counts-by-city only and IS committed. No report HTML: the digest reads it.
+data/newuser-geo-roster.json

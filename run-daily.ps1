@@ -49,8 +49,16 @@ $economyExit = $LASTEXITCODE
 # data/enrich.json, one history row per day - a missed day is a hole in the
 # burn-down chart). Also non-fatal.
 & node (Join-Path $root "scripts\geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+$geoExit = $LASTEXITCODE
 
-"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit campaigns exit=$campaignsExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit economy exit=$economyExit geo exit=$LASTEXITCODE" | Out-File $log -Append -Encoding utf8
+# New-user geography lane: where real new Doggle/Pickleague users are, against
+# the geo lane's ingestion coverage (so it runs AFTER geo.mjs). The digest reads
+# its output. Also non-fatal.
+& node (Join-Path $root "scripts
+ewuser-geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+$newuserGeoExit = $LASTEXITCODE
+
+"collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit campaigns exit=$campaignsExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit economy exit=$economyExit geo exit=$geoExit newuser-geo exit=$newuserGeoExit" | Out-File $log -Append -Encoding utf8
 
 # Daily digest email: new accounts, plan/PRO/trial interactions, yesterday's DAU
 # and what those people did. Runs LAST because it reads the other lanes' output
@@ -80,7 +88,7 @@ function Write-Log([string]$msg) { $msg | Out-File $log -Append -Encoding utf8 }
 if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
   Push-Location $root
   try {
-    git add -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "reports/events.md" "reports/campaigns.md" 2>&1 | Out-Null
+    git add -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "data/newuser-geo.json" "reports/events.md" "reports/campaigns.md" 2>&1 | Out-Null
     $staged = @(git diff --cached --name-only)
 
     if ($staged.Count -eq 0) {
@@ -98,7 +106,7 @@ if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
       $hits = @($diff -split "`n" | Select-String -Pattern $pattern)
 
       if ($hits.Count -gt 0) {
-        git reset -q -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "reports/events.md" "reports/campaigns.md" 2>&1 | Out-Null
+        git reset -q -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "data/newuser-geo.json" "reports/events.md" "reports/campaigns.md" 2>&1 | Out-Null
         Write-Log "auto-commit: ABORTED - staged diff matched $($hits.Count) sensitive pattern(s); nothing committed."
         foreach ($h in $hits | Select-Object -First 5) {
           $line = $h.Line.Trim()
