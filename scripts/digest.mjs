@@ -538,10 +538,14 @@ const STRIPE_GRACE_MS = 3 * 24 * 60 * 60 * 1000;
 // A CANCELLED Stripe row is stored WITHOUT the grace (the webhook lapses it exactly at
 // period end), so the subtraction applies only while renewal is on. Caught 2026-10-16:
 // a trial cancelled on the 16th and ending the 19th printed "until 2026-10-16".
+// A TRIALING row is stored without the grace too (payments-webhook, "access ends at trial_end,
+// exactly", since the grace narrowing of 2026-10-19). Caught 2026-10-25: a trial started that
+// day and ending the 28th printed "charges $24.99 per year on Oct 25". The grace is only ever
+// on a PAID term's period end.
 const termEnd = (r) => {
   if (!r.expiresAt) return null;
   const ms = Date.parse(r.expiresAt);
-  const graced = r.source === "stripe" && !r.cancelledAt;
+  const graced = r.source === "stripe" && !r.cancelledAt && r.kind !== "trialing";
   return new Date(graced ? ms - STRIPE_GRACE_MS : ms).toISOString().slice(0, 10);
 };
 
@@ -594,7 +598,8 @@ function moneyGroups(id) {
     g.trial.push(
       s.cancelledAt
         ? { who: t.user, what: `${left} · cancelled ${shortDate(s.cancelledAt)}, no charge coming`, warn: false, sort }
-        : { who: t.user, what: `${left} · charges ${thenPrice(s)} on ${shortDate(termEnd(s))}`, warn: t.daysLeft <= 1, sort },
+        // The free-days row IS the trial end; the Stripe row only knows the price.
+        : { who: t.user, what: `${left} · charges ${thenPrice(s)} on ${shortDate(t.expiresAt)}`, warn: t.daysLeft <= 1, sort },
     );
   }
   for (const s of stripeTrial.values()) {
