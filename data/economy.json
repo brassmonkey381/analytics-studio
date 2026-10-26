@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-25T15:07:48.642Z",
+  "collectedAt": "2026-10-26T15:07:50.159Z",
   "windows": [
     "all",
     1,
@@ -52,10 +52,10 @@
       },
       "flows": {
         "1": {
-          "earned": 25,
+          "earned": 0,
           "spent": 0,
-          "rows": 3,
-          "earners": 2
+          "rows": 0,
+          "earners": 0
         },
         "7": {
           "earned": 135,
@@ -90,8 +90,8 @@
         ],
         "byWindow": {
           "1": [
-            1,
-            1,
+            0,
+            0,
             0
           ],
           "7": [
@@ -117,26 +117,7 @@
         }
       },
       "byReason": {
-        "1": [
-          {
-            "category": "Login bonus",
-            "points": 15,
-            "rows": 1,
-            "users": 1
-          },
-          {
-            "category": "Checked in at a dog place",
-            "points": 5,
-            "rows": 1,
-            "users": 1
-          },
-          {
-            "category": "Vibe bonus",
-            "points": 5,
-            "rows": 1,
-            "users": 1
-          }
-        ],
+        "1": [],
         "7": [
           {
             "category": "Login bonus",
@@ -266,7 +247,7 @@
           }
         ]
       },
-      "excludedLedgerRows": 922
+      "excludedLedgerRows": 926
     },
     "pickleague": {
       "currency": "pickles",
@@ -389,7 +370,7 @@
           ]
         }
       },
-      "excludedFlowRows": 800
+      "excludedFlowRows": 801
     },
     "caps": {
       "binders": {
@@ -404,13 +385,13 @@
         "counts": [
           0,
           0,
-          105,
+          107,
           0,
-          296
+          305
         ],
-        "users": 401,
+        "users": 412,
         "uncapped": 0,
-        "atCap": 296
+        "atCap": 305
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -422,13 +403,13 @@
           "at / over cap"
         ],
         "counts": [
-          278,
-          27,
+          286,
+          30,
           36,
           7,
           53
         ],
-        "users": 401,
+        "users": 412,
         "uncapped": 0,
         "atCap": 53
       },
@@ -442,13 +423,13 @@
           "at / over cap"
         ],
         "counts": [
-          27,
-          35,
-          29,
-          27,
+          28,
+          37,
+          31,
+          26,
           31
         ],
-        "users": 149,
+        "users": 153,
         "uncapped": 0,
         "atCap": 31
       },
@@ -533,9 +514,9 @@
         "atCap": 3
       },
       "_accounts": {
-        "total": 3907,
-        "guests": 3686,
-        "excluded": 2280,
+        "total": 3968,
+        "guests": 3744,
+        "excluded": 2305,
         "excludedUsageRows": 361
       }
     }
