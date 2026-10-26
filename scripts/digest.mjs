@@ -86,6 +86,10 @@ const staleness = [
   ["new-user geo", hoursOld(geoUsers?.collectedAt)],
 ].filter(([, h]) => h != null && Number.isFinite(h));
 const worstStale = staleness.length ? Math.max(...staleness.map(([, h]) => h)) : null;
+// Name the stale lanes, not just the age: on 2026-10-26 one lane (new-user geo) had failed to
+// start for two days while every other lane was fresh, and "40 hours old" read as if the whole
+// email were stale. The reader needs to know which section to distrust.
+const staleLanes = staleness.filter(([, h]) => h > 26).map(([k, h]) => `${k} (${h.toFixed(0)}h)`);
 
 // ---------- helpers ----------
 
@@ -486,7 +490,7 @@ parts.push(
 if (worstStale != null && worstStale > 26) {
   parts.push(
     p(
-      `<strong>The data behind this email is ${worstStale.toFixed(0)} hours old.</strong> The daily lanes may not have run — treat every number below as of the last successful collection, not as of this morning.`,
+      `<strong>Stale: ${esc(staleLanes.join(", "))}.</strong> ${staleLanes.length === staleness.length ? "The daily lanes may not have run — treat every number below as of the last successful collection, not as of this morning." : "Those lanes failed or did not run; their sections are as of the last successful collection. Everything else is fresh."} Check logs/run-${esc(TODAY)}.log.`,
       WARN,
     ),
   );
@@ -1268,7 +1272,7 @@ const html = wrap(parts.join("\n"));
 const T = [];
 T.push(`ANALYTICS DAILY — ${YESTERDAY}`, "");
 T.push(`Real accounts only; guests summarised, not dropped. Yesterday = the complete ${TZ} day ${YESTERDAY}.`);
-if (worstStale != null && worstStale > 26) T.push(`WARNING: data is ${worstStale.toFixed(0)}h old — the daily lanes may not have run.`);
+if (worstStale != null && worstStale > 26) T.push(`WARNING: stale lanes: ${staleLanes.join(", ")} — ${staleLanes.length === staleness.length ? "the daily lanes may not have run" : "those sections are as of their last successful run; everything else is fresh"}. See logs/run-${TODAY}.log.`);
 if (missing.length) T.push(`Not available this run: ${missing.join(", ")}`);
 T.push("", "MONEY");
 for (const id of moneyApps) {

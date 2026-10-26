@@ -54,8 +54,7 @@ $geoExit = $LASTEXITCODE
 # New-user geography lane: where real new Doggle/Pickleague users are, against
 # the geo lane's ingestion coverage (so it runs AFTER geo.mjs). The digest reads
 # its output. Also non-fatal.
-& node (Join-Path $root "scripts
-ewuser-geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
+& node (Join-Path $root "scripts\newuser-geo.mjs") 2>&1 | Out-File $log -Append -Encoding utf8
 $newuserGeoExit = $LASTEXITCODE
 
 "collect exit=$collectExit report exit=$reportExit events exit=$eventsExit eventsReport exit=$eventsReportExit campaigns exit=$campaignsExit plans exit=$plansExit shares exit=$sharesExit usage exit=$usageExit economy exit=$economyExit geo exit=$geoExit newuser-geo exit=$newuserGeoExit" | Out-File $log -Append -Encoding utf8

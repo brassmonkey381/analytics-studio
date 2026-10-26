@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-24T23:35:11.182Z",
+  "collectedAt": "2026-10-26T16:36:55.350Z",
   "windows": [
     1,
     7,
@@ -7,7 +7,7 @@
     90
   ],
   "activeDays": 14,
-  "geoCollectedAt": "2026-10-24T15:08:10.035Z",
+  "geoCollectedAt": "2026-10-26T15:08:13.098Z",
   "apps": {
     "doggle": {
       "unit": "places",
@@ -18,7 +18,7 @@
         "guests": 0,
         "deletedOrNoProfile": 0,
         "real": 16,
-        "signedOutDevices": 297
+        "signedOutDevices": 349
       },
       "windows": {
         "1": {
@@ -66,13 +66,13 @@
               "lng": -88.071,
               "coverage": {
                 "known": true,
-                "statePlaces": 0,
-                "stateCovered": false,
+                "statePlaces": 11389,
+                "stateCovered": true,
                 "county": "Waukesha",
                 "fips": "55133",
-                "countyPlaces": 0
+                "countyPlaces": 261
               },
-              "alert": "state"
+              "alert": null
             }
           ]
         },
@@ -88,9 +88,9 @@
             "home": 2
           },
           "byPlatform": {
+            "ios": 5,
             "web": 1,
-            "none": 1,
-            "ios": 5
+            "none": 1
           },
           "byState": [
             {
@@ -99,26 +99,6 @@
             }
           ],
           "cities": [
-            {
-              "city": "Butler",
-              "state": "WI",
-              "users": 1,
-              "active": 1,
-              "sources": {
-                "home": 1
-              },
-              "lat": 43.105,
-              "lng": -88.071,
-              "coverage": {
-                "known": true,
-                "statePlaces": 0,
-                "stateCovered": false,
-                "county": "Waukesha",
-                "fips": "55133",
-                "countyPlaces": 0
-              },
-              "alert": "state"
-            },
             {
               "city": "Suamico",
               "state": "WI",
@@ -131,13 +111,33 @@
               "lng": -88.039,
               "coverage": {
                 "known": true,
-                "statePlaces": 0,
-                "stateCovered": false,
+                "statePlaces": 11389,
+                "stateCovered": true,
                 "county": "Brown",
                 "fips": "55009",
-                "countyPlaces": 0
+                "countyPlaces": 181
               },
-              "alert": "state"
+              "alert": null
+            },
+            {
+              "city": "Butler",
+              "state": "WI",
+              "users": 1,
+              "active": 1,
+              "sources": {
+                "home": 1
+              },
+              "lat": 43.105,
+              "lng": -88.071,
+              "coverage": {
+                "known": true,
+                "statePlaces": 11389,
+                "stateCovered": true,
+                "county": "Waukesha",
+                "fips": "55133",
+                "countyPlaces": 261
+              },
+              "alert": null
             }
           ]
         },
@@ -177,26 +177,6 @@
           ],
           "cities": [
             {
-              "city": "Butler",
-              "state": "WI",
-              "users": 1,
-              "active": 1,
-              "sources": {
-                "home": 1
-              },
-              "lat": 43.105,
-              "lng": -88.071,
-              "coverage": {
-                "known": true,
-                "statePlaces": 0,
-                "stateCovered": false,
-                "county": "Waukesha",
-                "fips": "55133",
-                "countyPlaces": 0
-              },
-              "alert": "state"
-            },
-            {
               "city": "Suamico",
               "state": "WI",
               "users": 1,
@@ -208,13 +188,33 @@
               "lng": -88.039,
               "coverage": {
                 "known": true,
-                "statePlaces": 0,
-                "stateCovered": false,
+                "statePlaces": 11389,
+                "stateCovered": true,
                 "county": "Brown",
                 "fips": "55009",
-                "countyPlaces": 0
+                "countyPlaces": 181
               },
-              "alert": "state"
+              "alert": null
+            },
+            {
+              "city": "Butler",
+              "state": "WI",
+              "users": 1,
+              "active": 1,
+              "sources": {
+                "home": 1
+              },
+              "lat": 43.105,
+              "lng": -88.071,
+              "coverage": {
+                "known": true,
+                "statePlaces": 11389,
+                "stateCovered": true,
+                "county": "Waukesha",
+                "fips": "55133",
+                "countyPlaces": 261
+              },
+              "alert": null
             },
             {
               "city": "Novato",
@@ -248,13 +248,13 @@
               "lng": -85.932,
               "coverage": {
                 "known": true,
-                "statePlaces": 0,
-                "stateCovered": false,
+                "statePlaces": 159,
+                "stateCovered": true,
                 "county": "Bartholomew",
                 "fips": "18005",
-                "countyPlaces": 0
+                "countyPlaces": 24
               },
-              "alert": "state"
+              "alert": null
             },
             {
               "city": "Egg Harbor Township",
@@ -268,13 +268,13 @@
               "lng": -74.589,
               "coverage": {
                 "known": true,
-                "statePlaces": 2838,
+                "statePlaces": 3097,
                 "stateCovered": true,
                 "county": "Atlantic",
                 "fips": "34001",
-                "countyPlaces": 0
+                "countyPlaces": 88
               },
-              "alert": "county"
+              "alert": null
             }
           ]
         }
@@ -289,7 +289,7 @@
         "guests": 0,
         "deletedOrNoProfile": 0,
         "real": 0,
-        "signedOutDevices": 46
+        "signedOutDevices": 47
       },
       "windows": {
         "1": {
