@@ -322,6 +322,17 @@ the last place search, else a device fix; Pickleague profiles have no home, so i
 check-in fix or the venue, match, league, tournament or DUPR club the person touched. Cities
 are resolved through each app's own `us_cities` table; no IP is ever geolocated.
 
+**Wishlist** (added 2026-10-28). Who voted for what on michi-maker.com/wishlist, and what
+they wrote in the box. The page shows everyone a tally and nobody a name (the
+`feature_vote_counts` RPC returns counts only), so the digest is where the owner sees the
+people behind each vote. `scripts/wishlist.mjs` (`npm run wishlist`) reads `feature_votes`,
+the `wishlist` survey in `feedback_responses` and the five `wishlist.*` events, writes
+`data/wishlist.json` (votes per idea, committed) and a gitignored roster (voters, prose,
+contact emails). The ballot is read from the michi-maker checkout beside this repo
+(`src/data/featureIdeas.ts`); a vote for an idea pruned from it is kept and marked off the
+ballot, which is the one way the site's zeros and the digest's counts legitimately differ.
+Votes from our own accounts are counted and labelled "ours", never dropped.
+
 Sending needs `RESEND_API_KEY`, `DIGEST_FROM` (a Resend-verified sender) and `DIGEST_TO` in
 `.env` — an address is identity and never belongs in committed config.
 `state/setup-digest-email.ps1` collects them without echoing anything.

@@ -18,6 +18,7 @@
     "economy": "node scripts/economy.mjs",
     "geo": "node scripts/geo.mjs",
     "newuser-geo": "node scripts/newuser-geo.mjs",
+    "wishlist": "node scripts/wishlist.mjs",
     "serve": "node scripts/serve.mjs",
     "daily": "node scripts/collect.mjs && node scripts/report.mjs && node scripts/events.mjs && node scripts/events-report.mjs && node scripts/campaigns.mjs && node scripts/plans.mjs && node scripts/shares.mjs"
   }

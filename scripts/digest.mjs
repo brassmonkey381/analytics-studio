@@ -58,6 +58,8 @@ const plans = read("plans.json");
 const accounts = read("accounts.json"); // gitignored: carries the emails
 const geoUsers = read("newuser-geo.json"); // where real new Doggle/Pickleague users are, vs ingestion coverage
 const geoRoster = read("newuser-geo-roster.json"); // gitignored: id stub + city per new account
+const wishlist = read("wishlist.json"); // michi-maker.com/wishlist: votes per idea
+const wishRoster = read("wishlist-roster.json"); // gitignored: who voted for what, and the written ideas
 
 if (!metrics) {
   console.error("FAILED: data/metrics.json is missing — run `npm run collect` first. Nothing to digest.");
@@ -84,6 +86,7 @@ const staleness = [
   ["usage", hoursOld(usage?.collectedAt)],
   ["plans", hoursOld(plans?.collectedAt)],
   ["new-user geo", hoursOld(geoUsers?.collectedAt)],
+  ["wishlist", hoursOld(wishlist?.collectedAt)],
 ].filter(([, h]) => h != null && Number.isFinite(h));
 const worstStale = staleness.length ? Math.max(...staleness.map(([, h]) => h)) : null;
 // Name the stale lanes, not just the age: on 2026-10-26 one lane (new-user geo) had failed to
@@ -952,6 +955,51 @@ ${w.cities
   }
 }
 
+// --- wishlist ---
+// The page shows everyone a tally and nobody a name; this is where the owner sees who is
+// behind each vote. Votes from our own accounts are counted and labelled, never dropped
+// (CLAUDE.md staple 3), because on 2026-10-28 the only vote in the table was ours - for an
+// idea pruned from the ballot minutes later - and the page showed every button at 0.
+if (wishlist) {
+  parts.push(h2("Wishlist — what people want next (michi-maker)"));
+  const wt = wishlist.totals;
+  const w1 = wishlist.page?.["1"] ?? {};
+  const w7 = wishlist.page?.["7"] ?? {};
+  const voted = wishlist.features.filter((f) => f.votes);
+  const offBallot = voted.filter((f) => !f.onBallot);
+  parts.push(p(
+    `<strong>${plural(wt.votesReal + wt.votesGuests, "vote")}</strong> from ${wt.votersReal + wt.votersGuests} people (${wt.votersReal} with accounts, ${wt.votersGuests} guests), plus ${plural(wt.votesOurs, "vote")} from our own accounts, counted separately. ` +
+    `${plural(wt.ideasWritten - wt.ideasWrittenOurs, "idea")} written in the box. Last 24h: page opened ${w1.shown ?? 0}x (${w1.shownOurs ?? 0}x by us), ${w1.votesCast ?? 0} votes cast, ${w1.ideasWritten ?? 0} written. Last 7d: opened ${w7.shown ?? 0}x, ${w7.votesCast ?? 0} votes.` +
+    (offBallot.length ? ` <span style="color:${WARN};">${plural(offBallot.reduce((n, f) => n + f.votes, 0), "vote")} for ${offBallot.length === 1 ? "an idea" : "ideas"} no longer on the ballot (${esc(offBallot.map((f) => f.label).join(", "))}): the site cannot show ${offBallot.length === 1 ? "it" : "them"}, so its counts and these differ by that much.</span>` : ""),
+    INK,
+  ));
+  if (!voted.length) {
+    parts.push(p(`Nobody has voted yet, ours included: a true zero. The ballot has ${wishlist.ballot.length} ideas.`, MUTED));
+  } else {
+    const whoFor = (fid) => (wishRoster?.voters ?? []).filter((v) => v.features.some((f) => f.id === fid)).map((v) => `${v.who}${v.excluded ? " (ours)" : ""}`);
+    parts.push(`<tr><td style="padding:0 22px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><th style="${cellHead}">Idea</th><th style="${cellHead}text-align:right;">Votes</th><th style="${cellHead}text-align:right;">7d</th><th style="${cellHead}">Who</th></tr>
+${voted
+  .map((f) => {
+    const names = whoFor(f.id);
+    const shown = names.slice(0, 6).join(", ") + (names.length > 6 ? ` +${names.length - 6} more` : "");
+    return `<tr>
+  <td style="${cell}${f.onBallot ? "" : `color:${WARN};`}">${esc(f.label)}${f.onBallot ? "" : " (off the ballot)"}</td>
+  <td style="${cell}text-align:right;"><strong>${f.real + f.guests}</strong>${f.ours ? `<span style="color:${MUTED};"> +${f.ours} ours</span>` : ""}</td>
+  <td style="${cell}text-align:right;color:${MUTED};">${f.windows?.["7"] ?? 0}</td>
+  <td style="${cell}color:${MUTED};">${esc(shown || "roster not available")}</td>
+</tr>`;
+  })
+  .join("")}
+</table></td></tr>`);
+    const zero = wishlist.features.filter((f) => f.onBallot && !f.votes).map((f) => f.label);
+    if (zero.length) parts.push(p(`No votes yet: ${esc(zero.join(" · "))}.`, MUTED, "12px"));
+  }
+  // What they wrote, newest first, since yesterday. Prose stays in the gitignored roster.
+  const fresh = (wishRoster?.written ?? []).filter((x) => x.text && Date.parse(x.at) >= SINCE.getTime()).sort((a, b) => (a.at < b.at ? 1 : -1));
+  for (const x of fresh) parts.push(p(`<strong>${esc(x.who)}${x.excluded ? " (ours)" : ""}</strong> wrote ${esc(String(x.at).slice(0, 16))}${x.contactEmail ? ", may be emailed" : ""}: <em>${esc(x.text)}</em>`, INK));
+}
+
 // --- what got made ---
 if (made.length) {
   parts.push(h2("What got made (last 24h)"));
@@ -1338,6 +1386,16 @@ if (GEO_APPS.length) {
       T.push(`    ${c.city}, ${c.state}: ${c.users} new, ${c.active} active — ${cover}${c.alert && c.alert !== "unknown" ? " — INGEST?" : ""}`);
     }
   }
+}
+if (wishlist) {
+  const wt = wishlist.totals;
+  T.push("", "WISHLIST (michi-maker)");
+  T.push(`  ${wt.votesReal + wt.votesGuests} votes from ${wt.votersReal + wt.votersGuests} people (${wt.votersGuests} guests); ${wt.votesOurs} ours; ${wt.ideasWritten - wt.ideasWrittenOurs} written ideas; page opened ${wishlist.page?.["1"]?.shown ?? 0}x in 24h`);
+  for (const f of wishlist.features.filter((x) => x.votes)) {
+    const names = (wishRoster?.voters ?? []).filter((v) => v.features.some((g) => g.id === f.id)).map((v) => `${v.who}${v.excluded ? " (ours)" : ""}`);
+    T.push(`  ${f.label}${f.onBallot ? "" : " [OFF THE BALLOT - the site cannot show this]"}: ${f.real + f.guests}${f.ours ? ` (+${f.ours} ours)` : ""} — ${names.slice(0, 6).join(", ")}${names.length > 6 ? ` +${names.length - 6} more` : ""}`);
+  }
+  for (const x of (wishRoster?.written ?? []).filter((y) => y.text && Date.parse(y.at) >= SINCE.getTime())) T.push(`  ${x.who}${x.excluded ? " (ours)" : ""} wrote: ${x.text}`);
 }
 if (made.length) {
   T.push("", "WHAT GOT MADE (24h)");

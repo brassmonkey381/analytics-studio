@@ -549,6 +549,42 @@
       ]
     },
     "_feedbackDoc": "feedback.shown / .submitted / .failed cover /feedback - the Leave Feedback page reached from the web rail and the site footer. props: { survey, version } on all three, plus { answered, has_score, has_text } on .submitted and { reason } on .failed. NO PROSE, EVER. What people wrote lives in feedback_responses and must never reach an event prop: props are contractually ids and numbers, `answered` is a COUNT of questions returned, and has_score / has_text are booleans about shape. .submitted counts what was actually SENT rather than the working answer map, which holds hidden follow-ups, a prefilled address nobody typed and blank strings - counting that map would report a fuller survey than the one that landed. .failed keeps three refusals apart: no-session (the auth sheet opens, the person is still there), rate-limited (the insert policy's five-a-day cap) and error (ours). Pooling them would hide a broken write behind a working guard. NOT MICHI-ONLY BY DESIGN: feedback_responses already carries an `app` column and the page, survey definition and repo are app-agnostic. Adding another app is adding its key to `apps` here and a spec to `feedback` below - no new event names, and the digest section iterates whatever it finds.",
+    "wishlist.shown": {
+      "label": "Opened the wishlist",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wishlist.vote": {
+      "label": "Voted on a wishlist idea",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wishlist.vote_failed": {
+      "label": "Wishlist vote did not land",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wishlist.submitted": {
+      "label": "Sent a wishlist idea",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wishlist.submit_failed": {
+      "label": "Wishlist idea did not send",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_wishlistDoc": "wishlist.shown / .vote / .vote_failed / .submitted / .submit_failed cover /wishlist (michi-maker.com/wishlist, 'What should we build next?'). props: .shown { ideas } (how many ideas were on the ballot), .vote { feature, on } (the idea id and whether the click added or took back the vote), .vote_failed { reason }, .submitted { has_text, votes }, .submit_failed { reason }. The votes themselves are rows in feature_votes (toggle; the page shows the tally through feature_vote_counts, counts only) and the words go to feedback_responses as survey 'wishlist'. scripts/wishlist.mjs reads both into data/wishlist.json (counts per idea) and the gitignored roster (who voted for what, the prose), and the digest has a section. The ballot lives in the app (src/data/featureIdeas.ts); a vote for an id no longer on it is kept and marked off-ballot, which is why the site's tally and the digest's can differ.",
     "offer.checkout_start": {
       "label": "Opened Stripe Checkout",
       "stage": "monetization",
