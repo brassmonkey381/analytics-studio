@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-10-27T15:07:43.143Z. All-time unless a window is named.
+Collected 2026-10-28T15:07:42.134Z. All-time unless a window is named.
 
-**149 campaign arrivals** across 4 apps.
+**150 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
@@ -143,6 +143,7 @@ Collected 2026-10-27T15:07:43.143Z. All-time unless a window is named.
 | (unregistered) | `f30d2164-efc9-4219-81e1-5960c0ca9a4f` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `f5f8c2f8-e316-4456-8bdd-e8e7d06eea5a` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `f6e806f5-95ff-4ead-bc9e-2d92f463b8ba` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `f79ac44e-560b-4a0c-aecf-667059d15ca0` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `f8d85e84-4648-453a-84c5-915274b7f4fb` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `f9b2eaa8-1f0e-41df-9ad9-a04345bbaa13` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `faed5065-c1d1-45f8-8a78-3494094486ec` | 1 | 1 | 1 | 0 | 1 |
@@ -172,7 +173,7 @@ Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (268 of 289 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (278 of 299 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -196,8 +197,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 5324 | 4945 | 195 | 4809 | a code was recorded 2026-08-13 |
-| TCGScan | 1503 | 1344 | 4 | 1329 | a code was recorded 2026-10-11 |
-| Doggle | 1009 | 954 | 5 | 1009 | a code was recorded 2026-08-13 |
-| Pickleague | 289 | 268 | 0 | 289 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 5492 | 5109 | 196 | 4977 | a code was recorded 2026-08-13 |
+| TCGScan | 1513 | 1352 | 4 | 1339 | a code was recorded 2026-10-11 |
+| Doggle | 1123 | 1066 | 5 | 1123 | a code was recorded 2026-08-13 |
+| Pickleague | 299 | 278 | 0 | 299 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
