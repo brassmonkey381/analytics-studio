@@ -11,3 +11,5 @@ studio still never ships product code.
 | file | from | asks for | state |
 | --- | --- | --- | --- |
 | `2026-08-14-print-campaign-attribution.md` | marketing-studio | attribute printed QR codes to signups | approved for michi-maker 2026-08-14; tcgscan + the two metrics-only apps still open |
+| `2026-10-27-set-drop-content.md` | michi-maker | per-set, per-day numbers for Instagram set-drop posts | open |
+| `2026-10-27-late-october-features.md` | michi-maker | register nine new names; six untracked features (owned tick, art views, quick look, menu, Collect inputs, mats) | open |
