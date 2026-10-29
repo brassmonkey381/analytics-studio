@@ -585,6 +585,15 @@
       ]
     },
     "_wishlistDoc": "wishlist.shown / .vote / .vote_failed / .submitted / .submit_failed cover /wishlist (michi-maker.com/wishlist, 'What should we build next?'). props: .shown { ideas } (how many ideas were on the ballot), .vote { feature, on } (the idea id and whether the click added or took back the vote), .vote_failed { reason }, .submitted { has_text, votes }, .submit_failed { reason }. The votes themselves are rows in feature_votes (toggle; the page shows the tally through feature_vote_counts, counts only) and the words go to feedback_responses as survey 'wishlist'. scripts/wishlist.mjs reads both into data/wishlist.json (counts per idea) and the gitignored roster (who voted for what, the prose), and the digest has a section. The ballot lives in the app (src/data/featureIdeas.ts); a vote for an id no longer on it is kept and marked off-ballot, which is why the site's tally and the digest's can differ.",
+    "affiliate.click": {
+      "label": "Clicked out to a store",
+      "stage": "monetization",
+      "apps": [
+        "michi",
+        "tcgscan"
+      ]
+    },
+    "_affiliateDoc": "affiliate.click { network: tcgplayer|ebay, surface: browse|binder_label|home_sealed|recent_feed|portfolio|scan, item: card|sealed|set, id, affiliate: boolean } fires immediately BEFORE an outbound TCGplayer or eBay link opens. Specced 2026-10-28 in tcgscan/ANALYTICS-AFFILIATE-CLICKS.md after the owner asked whether anyone had clicked an affiliate link and the answer was that nothing records it: every call site in both apps and the shared browse kit opens the URL and fires nothing. The networks (Impact for TCGplayer, eBay Partner Network) count clicks and sales on their side, keyed by subId1 / customid per surface, never by user; this event is the studio-side half - who, which card, which surface, in which session. surface is one vocabulary across both apps (the app column separates them), id is a catalog id and never a name or a typed query, affiliate is false when a build shipped without the deep-link template or campaign id. One name with a network prop rather than tcgplayer.click / ebay.click, the same pattern as pro.offer_shown { surface }. Until it lands, a zero here is a visibility gap, not disinterest: see gaps.affiliate_clicks_blind.",
     "offer.checkout_start": {
       "label": "Opened Stripe Checkout",
       "stage": "monetization",
@@ -1329,6 +1338,14 @@
   },
   "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation), landed (code is in the app repos but no event has been observed yet, so it is not proven), deferred (a decision was made not to do it, with the reason), fixed (observed firing). landed -> fixed is not a judgement call: the coverage panel detects a planned name appearing in the data and says so. Fixes land in the app repos, never here.",
   "gaps": {
+    "affiliate_clicks_blind": {
+      "severity": "medium",
+      "status": "specced",
+      "title": "No outbound TCGplayer or eBay click is recorded anywhere we can read",
+      "detail": "Found 2026-10-28 when the owner asked whether anyone had clicked an affiliate link. michi-maker (browse card actions, the binder price label, home sealed tiles), tcgscan-app (five eBay call sites across browse, collection and the card page) and the shared tcgscan-browse kit (Recent and Upcoming feed) all open the URL with Linking.openURL and fire no event. The URLs carry the affiliate parameters, so Impact and the eBay Partner Network see the clicks and the sales, but by subId1 / customid only - no user, card, session or preceding action - and nothing joins to the studio.",
+      "direction": "every monetization question about buy intent (did a real person click out, from which surface, after what) reads as zero; the zero is blindness, not disinterest",
+      "fix": "tcgscan/ANALYTICS-AFFILIATE-CLICKS.md: one affiliate.click event with network / surface / item / id / affiliate props at every call site, and an onOutboundClick hook on configureBrowse so the kit can report without importing either app. landed on the commits, fixed on the first row from a non-excluded account."
+    },
     "doggle_email_signup_unattributed": {
       "severity": "medium",
       "status": "specced",
