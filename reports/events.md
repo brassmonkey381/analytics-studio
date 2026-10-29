@@ -1,25 +1,25 @@
 # Event analytics — last 30 days
 
-Collected 2026-10-29T15:07:37.963Z. Own/QA/automated accounts excluded.
+Collected 2026-10-29T16:36:35.129Z. Own/QA/automated accounts excluded.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-1220 sessions · 16606 events · 81 accounts + 586 guests · median session 54s
-Excluded: 1273 sessions, 11596 events (our own, QA and automated accounts).
+1259 sessions · 16730 events · 81 accounts + 623 guests · median session 47s
+Excluded: 1273 sessions, 11665 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 119 | 827 | 105 |
-| 7d | 438 | 8412 | 309 |
-| 14d | 666 | 10973 | 421 |
-| 30d | 1220 | 16606 | 667 |
+| 24h | 157 | 964 | 141 |
+| 7d | 475 | 8530 | 346 |
+| 14d | 704 | 11102 | 456 |
+| 30d | 1259 | 16730 | 704 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **586** of 667 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **623** of 704 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
 - **81** Signed-in account (100% of top)
 - **80** Did anything past the open (98.8% of top)
@@ -30,7 +30,7 @@ _Of the people a trial can even be offered to, how many see it, and how many sta
 
 _When a plan limit actually stops someone, does the trial offer sitting there convert them?_
 
-- **73** Was stopped by a plan limit (10.9% of top)
+- **74** Was stopped by a plan limit (10.5% of top)
 - **9** Was shown the PRO offer (1.3% of top)
 - **1** Pressed start (0.1% of top)
 - **1** Started a PRO trial (0.1% of top)
@@ -39,27 +39,27 @@ _When a plan limit actually stops someone, does the trial offer sitting there co
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **656** Opened the app (98.4% of top)
-- **651** Viewed a page (97.6% of top)
-- **14** Tried a demo (2.1% of top)
-- **13** Made something real (1.9% of top)
+- **692** Opened the app (98.3% of top)
+- **687** Viewed a page (97.6% of top)
+- **14** Tried a demo (2% of top)
+- **13** Made something real (1.8% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **618** Started as a guest (100% of top)
-- **604** Did anything at all (97.7% of top)
-- **74** Submitted the upgrade (12% of top) — see gap `upgrade_unconfirmed`
-- **31** Completed it (ground truth) (5% of top)
+- **655** Started as a guest (100% of top)
+- **641** Did anything at all (97.9% of top)
+- **74** Submitted the upgrade (11.3% of top) — see gap `upgrade_unconfirmed`
+- **31** Completed it (ground truth) (4.7% of top)
 
 ### Print & QR campaigns
 
 | Campaign | People | Sessions | Converted on a visit | Signups carrying the code |
 | --- | ---: | ---: | ---: | ---: |
-| `rd_lidi_image` (reddit · paid_social) | 23 | 23 | 0 | 0 |
-| `rd_rainbow_image` (reddit · paid_social) | 21 | 22 | 0 | 0 |
-| `rd_coverflow_4x5` (reddit · paid_social) | 8 | 8 | 0 | 0 |
+| `rd_lidi_image` (reddit · paid_social) | 34 | 34 | 0 | 0 |
+| `rd_rainbow_image` (reddit · paid_social) | 33 | 34 | 0 | 0 |
+| `rd_coverflow_4x5` (reddit · paid_social) | 19 | 19 | 0 | 0 |
 | `ig_coverflow_loop` (instagram · organic_social) | 4 | 4 | 0 | 0 |
 | `0b5cc0ad-a72d-4a73-ae54-3d35d99e6cc5` | 1 | 1 | 0 | 0 |
 | `63b344d7-8fb7-4b0e-9bfb-3b4c822b4862` | 1 | 1 | 0 | 0 |
@@ -118,7 +118,7 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 | Wall | Where | Shown | People | Guests | How | Offer | Backed out |
 | --- | --- | ---: | ---: | ---: | --- | --- | --- |
-| `themeSearch` | binder_editor | 64 | 36 | 24 | dialog 64 | trial 6, upgrade 14, signin 44<br>_trial rendered on 6 of 64_ | not_now 27, close 36 |
+| `themeSearch` | binder_editor | 66 | 37 | 24 | dialog 66 | trial 6, upgrade 16, signin 44<br>_trial rendered on 6 of 66_ | not_now 28, close 37 |
 | `findSimilar` | binder_editor | 43 | 27 | 12 | dialog 34, toast 9 | trial 7, upgrade 15, signin 12, toast 9<br>_trial rendered on 7 of 43_ | not_now 16, close 18 |
 | `themeSearch` | browse | 16 | 10 | 9 | dialog 16 | upgrade 1, signin 15<br>_trial rendered on 0 of 16_ | not_now 3, close 12 |
 | `artUploads` | binder_editor | 15 | 7 | 3 | dialog 6, toast 9 | upgrade 3, signin 3, toast 9<br>_trial rendered on 0 of 15_ | not_now 2, close 3 |
@@ -150,36 +150,36 @@ The PRO offer: shown **191** times to **22** people, walked away from **25**, pr
 
 ### What guests did past the open
 
-618 people opened as a guest across 774 sessions.
+655 people opened as a guest across 813 sessions.
 
-| How far they got | People | of 618 |
+| How far they got | People | of 655 |
 | --- | ---: | ---: |
-| Opened and left | 14 | 2.3% |
-| Looked at a page or two | 268 | 43.4% |
-| Wandered the site | 197 | 31.9% |
-| Built something | 139 | 22.5% |
+| Opened and left | 14 | 2.1% |
+| Looked at a page or two | 301 | 46% |
+| Wandered the site | 200 | 30.5% |
+| Built something | 140 | 21.4% |
 
-Of the 139 who built something, **29** created an account.
+Of the 140 who built something, **30** created an account.
 
 **43** guests walked to a pricing page; **7** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 139 | 150 |
-| Reached a walkthrough step (`walkthrough.step`) | 131 | 298 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 131 | 163 |
-| Left the walkthrough (`walkthrough.done`) | 94 | 102 |
+| Created a binder (`binder.add`) | 140 | 151 |
+| Reached a walkthrough step (`walkthrough.step`) | 132 | 300 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 132 | 164 |
+| Left the walkthrough (`walkthrough.done`) | 95 | 103 |
 | Added cards (`card.add`) | 83 | 1673 |
 | Account created (`account.created`) | 74 | 82 |
-| Tried the theme search demo (`demo.theme_search`) | 62 | 397 |
-| Hit a plan limit (`cap.gate_shown`) | 54 | 104 |
-| Backed out of a limit (`cap.gate_dismissed`) | 52 | 92 |
+| Tried the theme search demo (`demo.theme_search`) | 63 | 411 |
+| Hit a plan limit (`cap.gate_shown`) | 55 | 106 |
+| Backed out of a limit (`cap.gate_dismissed`) | 53 | 94 |
 | Opened the daily puzzle (`puzzle.opened`) | 42 | 47 |
 | Was shown a prompt (`prompt.shown`) | 30 | 33 |
 | Answered a prompt (`prompt.answered`) | 30 | 33 |
 | Was offered the daily puzzle (`puzzle.offer_shown`) | 25 | 65 |
 | Guessed at the puzzle (`puzzle.guess_submitted`) | 22 | 136 |
-| Searched cards (`card.search`) | 21 | 41 |
+| Searched cards (`card.search`) | 22 | 42 |
 | Moved or swapped a pocket (`pocket.move`) | 20 | 208 |
 | Opened Arrange (`arrange_open`) | 17 | 52 |
 | Added a page (`page.add`) | 15 | 54 |
@@ -222,9 +222,9 @@ Of the 139 who built something, **29** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/welcome` | 501 | 584 |
-| `/` | 476 | 1004 |
-| `/binder/:id` | 216 | 524 |
+| `/welcome` | 538 | 623 |
+| `/` | 512 | 1041 |
+| `/binder/:id` | 217 | 525 |
 | `/my-binders` | 172 | 406 |
 | `/discover` | 87 | 170 |
 | `/michi-method` | 80 | 136 |
@@ -233,36 +233,36 @@ Of the 139 who built something, **29** created an account.
 | `/learn` | 41 | 62 |
 | `/plans` _(pricing)_ | 40 | 65 |
 | `/search-guide` | 29 | 42 |
-| `/binder/ex-pitch-black-chase` | 20 | 23 |
+| `/binder/ex-pitch-black-chase` | 21 | 24 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 5308 | 652 |
-| Added cards (`card.add`) | 3427 | 113 |
+| Viewed a page (`page.view`) | 5383 | 689 |
+| Added cards (`card.add`) | 3416 | 113 |
 | Moved or swapped a pocket (`pocket.move`) | 1375 | 32 |
-| Session started (`session.start`) | 1192 | 656 |
+| Session started (`session.start`) | 1229 | 692 |
 | Placed artwork (`pocket.art`) | 621 | 26 |
 | Cleared pockets (`pocket.clear`) | 543 | 27 |
-| Tried the theme search demo (`demo.theme_search`) | 481 | 76 |
+| Tried the theme search demo (`demo.theme_search`) | 495 | 77 |
 | Undo or redo (`editor.undo`) | 382 | 13 |
-| Reached a walkthrough step (`walkthrough.step`) | 351 | 149 |
-| Was offered the daily puzzle (`puzzle.offer_shown`) | 297 | 66 |
-| Created a binder (`binder.add`) | 196 | 166 |
+| Reached a walkthrough step (`walkthrough.step`) | 353 | 150 |
+| Was offered the daily puzzle (`puzzle.offer_shown`) | 296 | 66 |
+| Created a binder (`binder.add`) | 197 | 167 |
 | Saw the PRO offer (`pro.offer_shown`) | 191 | 22 |
 | Set a pocket finish (`pocket.finish`) | 191 | 3 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 189 | 149 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 190 | 150 |
 | Opened Arrange (`arrange_open`) | 158 | 24 |
 | Guessed at the puzzle (`puzzle.guess_submitted`) | 157 | 25 |
 | Added a page (`page.add`) | 155 | 23 |
-| Hit a plan limit (`cap.gate_shown`) | 152 | 73 |
-| Backed out of a limit (`cap.gate_dismissed`) | 130 | 69 |
-| Left the walkthrough (`walkthrough.done`) | 120 | 112 |
+| Hit a plan limit (`cap.gate_shown`) | 154 | 74 |
+| Backed out of a limit (`cap.gate_dismissed`) | 132 | 70 |
+| Left the walkthrough (`walkthrough.done`) | 121 | 113 |
 | Answered a prompt (`prompt.answered`) | 118 | 66 |
 | Was shown a prompt (`prompt.shown`) | 99 | 66 |
 | Account created (`account.created`) | 82 | 74 |
 | Changed the page background (`binder.background`) | 82 | 9 |
+| Searched cards (`card.search`) | 71 | 30 |
 | Signed in (`auth.login`) | 70 | 42 |
-| Searched cards (`card.search`) | 70 | 29 |
 | Opened the daily puzzle (`puzzle.opened`) | 58 | 50 |
 | Previewed the print sheets (`print.preview`) | 37 | 22 |
 | pocket.art_edit (`pocket.art_edit`) | 35 | 11 |
@@ -313,13 +313,13 @@ Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.lin
 ## TCGScan
 
 103 sessions · 451 events · 4 accounts + 59 guests · median session 27s
-Excluded: 138 sessions, 929 events (our own, QA and automated accounts).
+Excluded: 139 sessions, 931 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
 | 24h | 7 | 29 | 4 |
-| 7d | 22 | 72 | 15 |
-| 14d | 55 | 216 | 34 |
+| 7d | 22 | 67 | 14 |
+| 14d | 54 | 214 | 33 |
 | 30d | 103 | 451 | 63 |
 
 ### PRO trial: awareness to activation
@@ -425,7 +425,7 @@ Excluded: 452 sessions, 4772 events (our own, QA and automated accounts).
 | --- | ---: | ---: | ---: |
 | 24h | 24 | 91 | 22 |
 | 7d | 182 | 650 | 179 |
-| 14d | 306 | 1182 | 297 |
+| 14d | 304 | 1176 | 295 |
 | 30d | 362 | 1451 | 348 |
 
 ### Visitor to account
@@ -621,14 +621,6 @@ account.created fires from the email/phone signUp wrappers in doggle's data/auth
 
 **Fix:** Fire account.created from the OAuth return path when the auth user was created moments before, mirroring michi's handling of the same ambiguity.
 
-### No outbound TCGplayer or eBay click is recorded anywhere we can read `affiliate_clicks_blind` (medium, specced)
-
-Found 2026-10-28 when the owner asked whether anyone had clicked an affiliate link. michi-maker (browse card actions, the binder price label, home sealed tiles), tcgscan-app (five eBay call sites across browse, collection and the card page) and the shared tcgscan-browse kit (Recent and Upcoming feed) all open the URL with Linking.openURL and fire no event. The URLs carry the affiliate parameters, so Impact and the eBay Partner Network see the clicks and the sales, but by subId1 / customid only - no user, card, session or preceding action - and nothing joins to the studio.
-
-**Effect:** every monetization question about buy intent (did a real person click out, from which surface, after what) reads as zero; the zero is blindness, not disinterest
-
-**Fix:** tcgscan/ANALYTICS-AFFILIATE-CLICKS.md: one affiliate.click event with network / surface / item / id / affiliate props at every call site, and an onOutboundClick hook on configureBrowse so the kit can report without importing either app. landed on the commits, fixed on the first row from a non-excluded account.
-
 ### A Doggle email signup leaves no event anyone owns `doggle_email_signup_unattributed` (medium, specced)
 
 Found 2026-10-17 from a real signup. With email confirmation on, supabase.auth.signUp returns the new user but no session, so the client is still anon: account.created is written with user_id null, the live session is never claimed (analytics_claim needs a JWT), and when the person confirms they arrive in a new session. auth.users is the only place the account exists. Phone signups are unaffected because they get a session at once. A QR campaign code merged onto that account.created belongs to nobody, so campaign attribution for confirmed-email signups is lost too.
@@ -668,6 +660,14 @@ Three faults at once. The event name differed between the apps by one character 
 **Effect:** made every question about the puzzle unanswerable
 
 **Fix:** Landed 2026-09-24: offer_shown, choice, opened, guess_submitted, solved and guess_failed, with ?from= on the card and rail links so entry point is attributable. Promote to fixed on the first observed puzzle.solved - that is the end of the chain and proves every link before it.
+
+### No outbound TCGplayer or eBay click is recorded anywhere we can read `affiliate_clicks_blind` (medium, landed)
+
+Found 2026-10-28 when the owner asked whether anyone had clicked an affiliate link. michi-maker (browse card actions, the binder price label, home sealed tiles), tcgscan-app (five eBay call sites across browse, collection and the card page) and the shared tcgscan-browse kit (Recent and Upcoming feed) all open the URL with Linking.openURL and fire no event. The URLs carry the affiliate parameters, so Impact and the eBay Partner Network see the clicks and the sales, but by subId1 / customid only - no user, card, session or preceding action - and nothing joins to the studio.
+
+**Effect:** every monetization question about buy intent (did a real person click out, from which surface, after what) reads as zero; the zero is blindness, not disinterest
+
+**Fix:** tcgscan/ANALYTICS-AFFILIATE-CLICKS.md: one affiliate.click event with network / surface / item / id / affiliate props at every call site, and an onOutboundClick hook on configureBrowse so the kit can report without importing either app. landed 2026-10-29: tcgscan-browse b407919 (v0.9.35, the hook), michi-maker 51133a5 (browse, binder_label, home_sealed, recent_feed) and tcgscan-app ab36440 (browse incl. the card/sealed detail pages, portfolio, scan, recent_feed; PriceCharting as a third network, affiliate always false). Not yet deployed: michi web is a manual deploy-web.ps1, tcgscan ships by EAS/OTA. fixed on the first row from a non-excluded account.
 
 ### Session length is a floor, not a duration `session_end` (medium, landed)
 
