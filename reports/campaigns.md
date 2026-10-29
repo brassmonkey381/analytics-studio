@@ -1,17 +1,17 @@
 # Print & QR campaigns
 
-Collected 2026-10-29T15:07:44.429Z. All-time unless a window is named.
+Collected 2026-10-29T23:15:24.732Z. All-time unless a window is named.
 
-**207 campaign arrivals** across 4 apps.
+**402 campaign arrivals** across 4 apps.
 
 ## Michi-Maker
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| (unregistered) | `rd_lidi_image` | 23 | 23 | 23 | 0 | 1 |
-| (unregistered) | `rd_rainbow_image` | 22 | 21 | 20 | 0 | 0 |
-| (unregistered) | `rd_coverflow_4x5` | 8 | 8 | 8 | 0 | 0 |
-| (unregistered) | `ig_coverflow_loop` | 4 | 4 | 4 | 0 | 0 |
+| Reddit ad - Lidi image | `rd_lidi_image` | 92 | 89 | 89 | 0 | 4 |
+| Reddit ad - Rainbow image | `rd_rainbow_image` | 80 | 79 | 78 | 0 | 2 |
+| Reddit ad - Coverflow video (feed) | `rd_coverflow_4x5` | 74 | 73 | 73 | 0 | 1 |
+| Instagram link in bio - Coverflow loop | `ig_coverflow_loop` | 4 | 4 | 4 | 0 | 0 |
 | (unregistered) | `299d297d-c1cb-43d6-be4a-cb5e2ce049e6` | 2 | 2 | 2 | 0 | 1 |
 | (unregistered) | `007f7e40-1142-4d5f-9d30-cfa1c8e4e6b6` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `01d8315e-38a4-431e-be6d-f9367e930df9` | 1 | 1 | 1 | 0 | 1 |
@@ -90,6 +90,7 @@ Collected 2026-10-29T15:07:44.429Z. All-time unless a window is named.
 | (unregistered) | `6e324f06-3e91-4e8e-bc75-5dfe4423329b` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `6f095b83-7624-43de-879f-34d3ca28f1e3` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `711ff702-6ba9-46d1-8d8d-70babd0ad530` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `71a07247-ea1b-4ece-a329-a573cb0540a1` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `736a0885-acff-4b30-a3fc-dac3f57b1cf4` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `777b74f9-db9a-41ec-8fc2-55986b4004ad` | 1 | 1 | 1 | 0 | 0 |
@@ -118,6 +119,7 @@ Collected 2026-10-29T15:07:44.429Z. All-time unless a window is named.
 | (unregistered) | `b670a578-6571-4cfc-a700-ae46ee6e0167` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `b8a1f656-7ab9-48f1-821b-5eb591628bab` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `be21af03-3a63-41a1-a4f3-7a51c4532587` | 1 | 1 | 1 | 0 | 1 |
+| (unregistered) | `c379a6c2-c2f2-41a0-bedf-fb74b2c45981` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `c3c2f0ea-a3ab-41c9-a444-29f4d13ca52c` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `c728e8d2-668d-4383-8f74-cb892b019b45` | 1 | 1 | 1 | 0 | 1 |
 | (unregistered) | `c9df78b1-3c4c-4480-b677-b8fc5c0713ee` | 1 | 1 | 1 | 0 | 1 |
@@ -155,7 +157,7 @@ Collected 2026-10-29T15:07:44.429Z. All-time unless a window is named.
 | (unregistered) | `fe6e6e2f-0f0a-4049-bd9d-b09afc8e4533` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `7b7772d0-25e9-4543-88a7-17f5b2b8fb5b` | 0 | 0 | 0 | 0 | 0 |
 
-Excluded from the above: 56 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 57 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
@@ -177,7 +179,7 @@ Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (282 of 303 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (287 of 310 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -194,6 +196,16 @@ No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from
 | Card show | tcgscan | `cardshow` | flyer + business card | 0 | 0 |
 | Word of mouth | michi-maker | `wom` | flyer + business card | 0 | 0 |
 | Card show | michi-maker | `cardshow` | flyer + business card | 0 | 0 |
+| Reddit ad - Coverflow video (feed) | michi-maker | `rd_coverflow_4x5` | reddit paid ad | 74 | 0 |
+| Reddit ad - Coverflow video (desktop) | michi-maker | `rd_coverflow_16x9` | reddit paid ad | 0 | 0 |
+| Reddit ad - Lidi video | michi-maker | `rd_lidi_video` | reddit paid ad | 0 | 0 |
+| Reddit ad - Lidi image | michi-maker | `rd_lidi_image` | reddit paid ad | 92 | 0 |
+| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 80 | 0 |
+| Reddit ad - Max (one link for the campaign) | michi-maker | `rd_max` | reddit paid ad | 0 | 0 |
+| r/michimaker post - Coverflow loop | michi-maker | `rd_sub_coverflow_loop` | reddit organic post | 0 | 0 |
+| Reddit organic post - Coverflow loop | michi-maker | `rd_coverflow_loop` | reddit organic post | 0 | 0 |
+| Instagram link in bio - Coverflow loop | michi-maker | `ig_coverflow_loop` | instagram post | 4 | 0 |
+| Discord share - Coverflow loop | michi-maker | `dc_coverflow_loop` | discord share | 0 | 0 |
 
 ## Can a scan be seen at all?
 
@@ -201,8 +213,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 5632 | 5234 | 255 | 5117 | a code was recorded 2026-08-13 |
-| TCGScan | 1573 | 1405 | 4 | 1399 | a code was recorded 2026-10-11 |
-| Doggle | 1183 | 1124 | 5 | 1183 | a code was recorded 2026-08-13 |
-| Pickleague | 303 | 282 | 0 | 303 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 5893 | 5479 | 451 | 5378 | a code was recorded 2026-08-13 |
+| TCGScan | 1581 | 1413 | 4 | 1407 | a code was recorded 2026-10-11 |
+| Doggle | 1197 | 1138 | 5 | 1197 | a code was recorded 2026-08-13 |
+| Pickleague | 310 | 287 | 0 | 310 | routes yes, never a code — a zero cannot be told from an unshipped build |
 

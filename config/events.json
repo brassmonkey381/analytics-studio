@@ -73,6 +73,22 @@
         "pickleague"
       ]
     },
+    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route. landing_route is still written and still the only place the campaign survives a reused session.",
+    "landing.skip": {
+      "label": "Skipped the landing page (tagged arrival)",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ]
+    },
+    "landing.cta": {
+      "label": "Pressed a landing-page button",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_landingDoc": "landing.skip { to, code?, utm_* } and landing.cta { cta: enter_hero|enter_closing|discover|sample_binder, binder?, code?, utm_* } - michi web only, added 2026-10-29. Why: the first Reddit ad day put 243 utm_source=reddit visitors on /welcome for a median 12 seconds; about 15 reached a second page, 1 signed up, 0 published a binder, and nothing recorded what the landing page got anyone to press. The fix routes tagged paid/social arrivals (michi-maker src/lib/landing.ts SKIP_LANDING_SOURCES, keyed on utm_source) straight to /my-binders and records that as landing.skip; everyone else still sees /welcome, whose four buttons now fire landing.cta. Read them together: skip sessions vs. welcome sessions is the A/B the owner asked for (does bypassing the pitch make more binders), and landing.cta per creative says which pitch works for the visitors who do see it. Zero landing.cta from a tagged source is expected after the skip lands, not a gap.",
     "auth.login": {
       "label": "Signed in",
       "stage": "acquisition",
