@@ -73,7 +73,7 @@
         "pickleague"
       ]
     },
-    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route. landing_route is still written and still the only place the campaign survives a reused session.",
+    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route; and props.referrer (origin + pathname of the linking page, absent for typed URLs, bookmarks, most apps and no-referrer sites, never same-origin). landing_route is still written and still the only place the campaign survives a reused session.",
     "landing.skip": {
       "label": "Skipped the landing page (tagged arrival)",
       "stage": "acquisition",
@@ -1470,11 +1470,11 @@
     },
     "referrer": {
       "severity": "low",
-      "status": "deferred",
+      "status": "landed",
       "title": "No acquisition source",
       "detail": "Nothing records how a session arrived \u2014 no referrer, no UTM capture. Marketing spend cannot be attributed to activation or trials. DEFERRED by Brian on 2026-08-06, for a real reason rather than as a backlog punt: michi-maker/src/app/legal/privacy.tsx promises first-party records of 'which pages you open and product actions', and referrer/UTM are neither. Capturing them means changing that disclosure first, in both apps.",
       "direction": "no attribution possible",
-      "fix": "not scheduled. When picked up: nullable referrer/utm_source/utm_medium/utm_campaign on analytics_sessions, web only, referrer stripped to origin + pathname CLIENT-SIDE so another site's query string cannot carry PII into our database \u2014 and the privacy copy updated in the same change."
+      "fix": "UTM capture landed 2026-08-14 (allowlisted code/utm_* into landing_route). Referrer landed 2026-10-29 on michi web (owner: turn Referrer capture on): session.start props.referrer = document.referrer trimmed CLIENT-SIDE to origin + pathname, dropped when same-origin, with michi-maker/src/app/legal/privacy.tsx updated in the same commit. Deliberately a session.start prop rather than a new analytics_sessions column: no migration, and the studio already reads session.start. tcgscan-app does not capture referrer yet. fixed when the first non-excluded session.start carries a referrer."
     },
     "upgrade_unconfirmed": {
       "severity": "medium",

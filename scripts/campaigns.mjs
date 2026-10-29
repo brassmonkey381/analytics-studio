@@ -58,6 +58,12 @@ for (const app of APPS) {
 // building the capture. They are excluded from every headline the same way our own
 // accounts are — and, like them, stated rather than dropped silently.
 const VERIFY_PREFIXES = CAMP.verificationPrefixes ?? ["test_"];
+// What a campaign code looks like: our own short labels, letters/digits/underscore. The OAuth
+// provider returns people to `/auth-callback?code=<uuid>`, and until michi stopped keeping it
+// (2026-10-29) that UUID landed in landing_route and read here as ~400 one-arrival campaigns.
+// Rows already written still carry them, so the lane ignores the shape and says how many.
+const CAMPAIGN_CODE = /^[a-z0-9_]{1,64}$/i;
+let ignoredCodes = 0;
 const isVerification = (code) => VERIFY_PREFIXES.some((p) => String(code).startsWith(p));
 
 // ---------- the printed registry ----------
@@ -331,6 +337,10 @@ function campaignOf(route) {
   }
   const code = p.get("code") ?? p.get("utm_campaign");
   if (!code) return null;
+  if (!CAMPAIGN_CODE.test(code)) {
+    ignoredCodes += 1; // an OAuth callback code, not a campaign - counted, never listed
+    return null;
+  }
   return { code, source: p.get("utm_source"), medium: p.get("utm_medium"), path: route.slice(0, q) || "/" };
 }
 
@@ -390,6 +400,9 @@ const out = {
   registry: { path: registry.path, found: registry.found, declared: registry.declared ?? null, count: registry.campaigns.length, campaigns: registry.campaigns },
   capture,
   skippedApps: skipped,
+  // `?code=` values that are not campaign codes (OAuth callback UUIDs), dropped before counting.
+  // Stated, not hidden: a reader comparing "codes" in the capture line with this table needs it.
+  ignoredCodes,
   apps: {},
 };
 const rosters = {};
@@ -433,7 +446,7 @@ for (const app of appList) {
     // emitters persist the code and a signup days later still credits the scan.
     const signupsByCode = new Map();
     for (const e of myEvents) {
-      if (e.name !== "account.created" || !e.code || e.excluded || isVerification(e.code)) continue;
+      if (e.name !== "account.created" || !e.code || e.excluded || isVerification(e.code) || !CAMPAIGN_CODE.test(e.code)) continue;
       if (!inWin(e.ts, w)) continue;
       if (!signupsByCode.has(e.code)) signupsByCode.set(e.code, new Set());
       signupsByCode.get(e.code).add(e.user_id ?? `ev:${e.id}`);
@@ -962,6 +975,7 @@ md.push(`# Print & QR campaigns`, ``, `Collected ${collectedAt}. All-time unless
   );
 }
 if (skipped.length) md.push(`> **${skipped.join(", ")} skipped** — no analytics spine reached; missing, not zero.`, ``);
+if (ignoredCodes) md.push(`> ${ignoredCodes} \`?code=\` arrival(s) ignored: OAuth sign-in callback codes (UUIDs), not campaigns. michi stopped recording them on 2026-10-29; these are older rows.`, ``);
 for (const app of appList) {
   const a = out.apps[app.id];
   const d = a.byWindow[ALL_WINDOW];
@@ -1014,7 +1028,8 @@ const totalArrivals = appList.reduce((n, app) => n + out.apps[app.id].byWindow[A
 const totalMembers = appList.reduce((n, app) => n + out.apps[app.id].byWindow[ALL_WINDOW].totals.signedUp, 0);
 console.log(
   `Campaigns  ${totalArrivals} arrival${totalArrivals === 1 ? "" : "s"} all-time across ${appList.length} app${appList.length === 1 ? "" : "s"}` +
-    `  ·  ${totalMembers} became members  ·  ${registry.campaigns.length} printed code${registry.campaigns.length === 1 ? "" : "s"} in the registry`,
+    `  ·  ${totalMembers} became members  ·  ${registry.campaigns.length} printed code${registry.campaigns.length === 1 ? "" : "s"} in the registry` +
+    (ignoredCodes ? `  ·  ${ignoredCodes} OAuth callback code(s) ignored` : ""),
 );
 for (const app of APPS) {
   const c = capture[app.id];

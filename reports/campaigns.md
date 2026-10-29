@@ -1,185 +1,37 @@
 # Print & QR campaigns
 
-Collected 2026-10-29T23:15:24.732Z. All-time unless a window is named.
+Collected 2026-10-29T23:24:26.588Z. All-time unless a window is named.
 
-**402 campaign arrivals** across 4 apps.
+**258 campaign arrivals** across 4 apps.
+
+> 202 `?code=` arrival(s) ignored: OAuth sign-in callback codes (UUIDs), not campaigns. michi stopped recording them on 2026-10-29; these are older rows.
 
 ## Michi-Maker
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Reddit ad - Lidi image | `rd_lidi_image` | 92 | 89 | 89 | 0 | 4 |
-| Reddit ad - Rainbow image | `rd_rainbow_image` | 80 | 79 | 78 | 0 | 2 |
-| Reddit ad - Coverflow video (feed) | `rd_coverflow_4x5` | 74 | 73 | 73 | 0 | 1 |
+| Reddit ad - Lidi image | `rd_lidi_image` | 93 | 90 | 90 | 0 | 4 |
+| Reddit ad - Rainbow image | `rd_rainbow_image` | 82 | 81 | 80 | 0 | 2 |
+| Reddit ad - Coverflow video (feed) | `rd_coverflow_4x5` | 75 | 74 | 74 | 0 | 1 |
 | Instagram link in bio - Coverflow loop | `ig_coverflow_loop` | 4 | 4 | 4 | 0 | 0 |
-| (unregistered) | `299d297d-c1cb-43d6-be4a-cb5e2ce049e6` | 2 | 2 | 2 | 0 | 1 |
-| (unregistered) | `007f7e40-1142-4d5f-9d30-cfa1c8e4e6b6` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `01d8315e-38a4-431e-be6d-f9367e930df9` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `01fdacce-97f8-4330-a3fa-78f93cfc3045` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `07fc1a10-825e-4777-8be5-2cb5c976dd97` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `081a8fbf-e3cc-44ef-aa9c-a1947b1fb1bd` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `08953ab2-c522-4d8c-8014-b1867e1faad4` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `0b5cc0ad-a72d-4a73-ae54-3d35d99e6cc5` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `0bb0dea8-0e4d-42e8-a8d5-f91eb373693b` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `0e6d9e65-9e0f-4168-ac35-ba5103001a6f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `10bab456-20f7-46df-8d9b-c53ad44007a5` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `14319b25-2892-4214-9614-5155b51c0890` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `14bf021b-045c-4575-8d38-272b85a79922` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `14eeaf28-ff65-4236-aefd-2d99c5298e67` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `14eefb6b-449c-4008-9bf9-3bfbab7da128` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `15701f69-957b-429f-933c-f268176d6807` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `159f1618-33c4-4a43-943c-fc19b8a99970` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `16a9b2a9-cfd7-41f6-b0f5-8f532385ddd4` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `16dcefb0-9a57-4421-a5d8-113708cca442` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `17be4d3b-9d36-4235-88a6-f878ed886a64` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `188543b7-79a4-4a44-a97b-79524b600f4b` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `19eb1628-1e41-4745-8536-1110518f9503` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `1d2c93e6-5a38-41f7-b55b-ac0914c6d467` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `1eedf2a2-8d68-4722-a98c-8b1b66f9f73d` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `208d7060-4d34-4586-b67c-abe439ea1832` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `22123b3d-a15c-43dd-957c-2255112b41be` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `22abdcbc-32b3-471a-8ff0-050b8b187f58` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `22bbe2cb-dd7c-438a-aeb2-7ba28717969d` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `2308e3f1-f460-48e1-9130-c5084fbae68f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `238fe9e8-01c8-4fd5-854a-a477f4b72eb7` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `239d3d5e-f9bd-4e71-a7a2-562d548caa32` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `23be02d5-1cb6-4be8-968a-b430978bc477` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `2677c484-189e-4ccf-83fe-d117f8ea4bac` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `26c7427b-3728-4e06-86f0-b2936d961d3f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `26f44bae-37fa-4775-b527-c1619ca1c1a5` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `2779e0f7-d851-427a-83e5-cdb4b02401e5` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `2a6d107c-c9a5-4a97-a5f7-0809100a8239` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `2a8d0348-ac35-4420-b0c8-9a27f7f90590` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `30a5765a-b6fb-4833-9646-2a6613061653` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `31d78d23-02b7-4cdc-a215-fcceb5d8a232` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `325baed6-93a9-4e15-bb43-a961d1d3e533` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `32faff15-7b09-4fa0-9263-36c2f8b4a93a` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `335bd3c4-5e96-43f3-b915-26007fff0cb6` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `375e9741-2cbf-40c2-a881-4e86b7e3fa12` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `381a0346-5be3-4c17-94f2-5f770338bda2` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `38cc7ac0-4602-4f50-9cb4-9616856b1a65` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `38f35148-5b12-44ba-a5d4-a7fe5daff98e` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `3a4e6be3-36b4-4dfb-82d3-f0529ffc8938` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `3be00d93-86c9-4294-a03c-4c0aa98e5975` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `3e535cea-f1bf-4b36-a9a2-2166e4bbcdbd` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `3f889f5f-8b8a-439b-aac9-4f531985202a` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `4159da30-3b2c-4e11-932b-cbc807b4b787` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `42b813b4-1812-41e5-876b-d8bcd8fcc888` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `42eaf66d-bc61-4437-bb9d-308e6eafd67a` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `44218417-e807-4cac-bfc6-db2932510fb5` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `4725f354-21fe-4625-a392-69399bc0ffcc` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `49bb8d42-bb93-4b2f-9b83-b1d0e58d91eb` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `4b3caf74-fac5-47db-9cee-f718233e7f7f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `4b5e0388-482c-4a26-8c84-718aac385fb4` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `4e1c5e91-98ec-431c-ac97-27134a7a2875` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `52940aea-f2ad-47ad-80f3-69d1681fed9e` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `598b7880-56a5-4c22-970f-fdc81d49a12a` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `5a162cf9-59cc-436b-939e-aecbcaf4fe00` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `5c8666b0-e51a-480f-a8e7-441bb638a31d` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `5ecba5d1-8e35-4c7d-9a6e-e17c2831c41d` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `5ee3e51d-61c3-4d6f-bad4-a6cdeb86baf8` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `63b344d7-8fb7-4b0e-9bfb-3b4c822b4862` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `653fb409-cbb8-4bed-b6dc-076bc0ebf597` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `65c49b8c-7239-43a8-a6b8-b55dc9243004` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `66d45577-91bc-4bdb-b10b-b6f3b90f4811` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `68d561cb-4ffc-4c64-863f-d294c0f0ce7c` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `68e01d62-e52f-4a22-bfa8-ce4cb4183a86` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `6d06e1e3-5ec3-4221-a7ad-8c581f10f25c` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `6d55a2a2-8270-4f49-ad44-33eae88ddf75` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `6d6e08c8-15bf-432f-a191-387b76b43212` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `6e324f06-3e91-4e8e-bc75-5dfe4423329b` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `6f095b83-7624-43de-879f-34d3ca28f1e3` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `711ff702-6ba9-46d1-8d8d-70babd0ad530` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `71a07247-ea1b-4ece-a329-a573cb0540a1` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `72baa86b-7204-444f-8ba1-f62c1103b534` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `736a0885-acff-4b30-a3fc-dac3f57b1cf4` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `777b74f9-db9a-41ec-8fc2-55986b4004ad` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `78767bd4-1f4f-494b-9135-d222b8989073` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `79a6471e-71fd-4797-adfe-c95b73242f71` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `7bf1f3e9-dd92-477e-80e4-d6f229c32821` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `7ffd6729-60b5-48f5-94f5-8809a9b62916` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `812d0537-b46a-45a0-ba8f-7f9a8495bf2b` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `83cc4629-38fa-450a-b7c4-9eecf1f6ee05` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `899adc54-d1c6-4016-9e41-ad6be8bbe7d1` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `8aa0957a-fb75-4828-b6bc-c5914429a25d` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `8eaa8128-8952-44b2-bf2c-cf2bb9b20785` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `8f96e8e4-e768-4d8b-9ea0-8caa2537c137` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `9151b121-450c-4ec0-ae33-a8ff7b194dbd` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `91a11ca2-1a00-4214-8661-93c138b7a75d` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `945d1952-bce7-44b7-9ac9-94deb3aec9e4` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `9731ea95-392d-4c73-b355-bc481a6d3dd1` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `9bad7d20-1e9d-4723-bc21-c39f0de71ebf` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `9c773823-ea9d-4e56-994c-4953ffd31358` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `a23be7e4-c8d3-485a-9e83-4295a338f571` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `a2715249-9bf4-44a9-b1ae-79910e3d216e` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `a6d172c4-e566-4b11-bf24-b26a652ba087` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `ad6a161b-1a09-434e-843c-cc47e2d74787` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `af6509dc-c1ed-4b26-93d9-2fbeeee76d96` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `b385ddb2-d99a-45f7-9fed-3bf03ad2e7d9` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `b670a578-6571-4cfc-a700-ae46ee6e0167` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `b8a1f656-7ab9-48f1-821b-5eb591628bab` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `be21af03-3a63-41a1-a4f3-7a51c4532587` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `c379a6c2-c2f2-41a0-bedf-fb74b2c45981` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `c3c2f0ea-a3ab-41c9-a444-29f4d13ca52c` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `c728e8d2-668d-4383-8f74-cb892b019b45` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `c9df78b1-3c4c-4480-b677-b8fc5c0713ee` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `cb37a28e-fb9e-48ce-902b-6720a60e7121` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `cc2788e0-8635-4111-91f1-812e9470b1b8` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `ce5788f4-883d-4012-b6f7-f23bd5ad1221` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `cf70b3e1-a0a1-4ae1-addc-2a363acc384e` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `d0f0c96e-9503-40a6-9238-13c46ba5dd4f` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `d5d7c0b2-fac7-461b-984e-53debf44fbdd` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `d61145be-8ea3-4a01-a437-fadbd05a9f8c` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `d78b6049-acb9-48ca-b36a-daaefba35e73` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `d89c1090-73e8-4bf6-ae28-7d686ff7a4b3` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `dbd73322-f50c-4d36-a85e-d324638fc5ca` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `dc6558c5-8381-47f1-8ecd-9f8f6a5da00e` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `dc746d0a-760d-4445-a570-963a656ff7ff` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `ddef4394-08a5-44d0-87c8-47e099dd9540` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `de4df162-8cc0-4fb6-af5f-5b4fe2dfd71d` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `dfbe35fa-0884-464c-a4eb-ce1ebbe70b3a` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `e0ea0d0f-1f4b-46f9-84b5-6f6d50a699df` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `ea83ff10-9acd-43f5-9ad6-a5c1d66b09d0` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `eabd4da3-9dc6-467b-b527-c3f1d05f3e4f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `eacc07d3-89ad-4398-8673-5cecdfd710ce` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `ec23abb4-6035-4354-8000-3d0f214133db` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `ecc9b6c8-6f4e-48a5-beed-cd691f29b28f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f22d26d7-64e6-4c5a-8d02-dc437d74b45e` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f2cb838f-20b9-4373-859a-3fd37989cce7` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f30d2164-efc9-4219-81e1-5960c0ca9a4f` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f5f8c2f8-e316-4456-8bdd-e8e7d06eea5a` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f6e806f5-95ff-4ead-bc9e-2d92f463b8ba` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f79ac44e-560b-4a0c-aecf-667059d15ca0` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `f8d85e84-4648-453a-84c5-915274b7f4fb` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `f9b2eaa8-1f0e-41df-9ad9-a04345bbaa13` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `faed5065-c1d1-45f8-8a78-3494094486ec` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `fe58f5f2-5d94-4b24-b47b-be2d3db8c0c7` | 1 | 1 | 1 | 0 | 1 |
-| (unregistered) | `fe6e6e2f-0f0a-4049-bd9d-b09afc8e4533` | 1 | 1 | 1 | 0 | 0 |
-| (unregistered) | `7b7772d0-25e9-4543-88a7-17f5b2b8fb5b` | 0 | 0 | 0 | 0 | 0 |
 
-Excluded from the above: 57 from our own/QA accounts, 0 verification scan(s).
+Excluded from the above: 4 from our own/QA accounts, 0 verification scan(s).
 
 ## TCGScan
 
-| Campaign | Code | Arrivals | People | Went further | Became members | Came back |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| (unregistered) | `3d13a4c6-d63a-428c-a360-4f09a2797503` | 2 | 2 | 2 | 0 | 0 |
-| (unregistered) | `6f328825-7b55-465b-aaf7-15f9883d6539` | 1 | 1 | 1 | 0 | 0 |
-
-Excluded from the above: 1 from our own/QA accounts, 0 verification scan(s).
+No campaign-tagged arrival, all time. A landing route carrying a code HAS been recorded here (first on 2026-10-11), so the capture path works end to end and this zero reads as "nobody scanned" — bearing in mind that the only codes seen so far may be our own verification scans, counted separately above.
 
 ## Doggle
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | (unregistered) | `verify_launch_qr` | 4 | 4 | 4 | 0 | 0 |
-| (unregistered) | `AppAgg.com` | 1 | 1 | 1 | 0 | 0 |
 
 Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (287 of 310 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (289 of 312 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -196,11 +48,11 @@ No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from
 | Card show | tcgscan | `cardshow` | flyer + business card | 0 | 0 |
 | Word of mouth | michi-maker | `wom` | flyer + business card | 0 | 0 |
 | Card show | michi-maker | `cardshow` | flyer + business card | 0 | 0 |
-| Reddit ad - Coverflow video (feed) | michi-maker | `rd_coverflow_4x5` | reddit paid ad | 74 | 0 |
+| Reddit ad - Coverflow video (feed) | michi-maker | `rd_coverflow_4x5` | reddit paid ad | 75 | 0 |
 | Reddit ad - Coverflow video (desktop) | michi-maker | `rd_coverflow_16x9` | reddit paid ad | 0 | 0 |
 | Reddit ad - Lidi video | michi-maker | `rd_lidi_video` | reddit paid ad | 0 | 0 |
-| Reddit ad - Lidi image | michi-maker | `rd_lidi_image` | reddit paid ad | 92 | 0 |
-| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 80 | 0 |
+| Reddit ad - Lidi image | michi-maker | `rd_lidi_image` | reddit paid ad | 93 | 0 |
+| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 82 | 0 |
 | Reddit ad - Max (one link for the campaign) | michi-maker | `rd_max` | reddit paid ad | 0 | 0 |
 | r/michimaker post - Coverflow loop | michi-maker | `rd_sub_coverflow_loop` | reddit organic post | 0 | 0 |
 | Reddit organic post - Coverflow loop | michi-maker | `rd_coverflow_loop` | reddit organic post | 0 | 0 |
@@ -213,8 +65,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 5893 | 5479 | 451 | 5378 | a code was recorded 2026-08-13 |
+| Michi-Maker | 5899 | 5485 | 455 | 5384 | a code was recorded 2026-08-13 |
 | TCGScan | 1581 | 1413 | 4 | 1407 | a code was recorded 2026-10-11 |
 | Doggle | 1197 | 1138 | 5 | 1197 | a code was recorded 2026-08-13 |
-| Pickleague | 310 | 287 | 0 | 310 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Pickleague | 312 | 289 | 0 | 312 | routes yes, never a code — a zero cannot be told from an unshipped build |
 

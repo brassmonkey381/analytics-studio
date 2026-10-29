@@ -427,9 +427,9 @@
         "users": 30
       },
       "2026-10-29": {
-        "sessions": 333,
-        "events": 1764,
-        "users": 303
+        "sessions": 335,
+        "events": 1772,
+        "users": 305
       }
     },
     "tcgscan": {
@@ -1194,7 +1194,7 @@
       }
     }
   },
-  "collectedAt": "2026-10-29T23:16:35.158Z",
+  "collectedAt": "2026-10-29T23:23:58.015Z",
   "windowDays": 30,
   "apps": {
     "michi-maker": {
@@ -1204,31 +1204,31 @@
         "1": {
           "windowDays": 1,
           "totals": {
-            "sessions": 347,
-            "events": 2004,
-            "users": 320,
+            "sessions": 348,
+            "events": 1958,
+            "users": 322,
             "realUsers": 11,
-            "guestUsers": 309,
-            "everGuestUsers": 313,
+            "guestUsers": 311,
+            "everGuestUsers": 315,
             "convertedUsers": 4,
-            "guestSessions": 338,
+            "guestSessions": 339,
             "upgradeSessions": 1,
-            "excludedSessions": 32,
-            "excludedEvents": 451,
-            "orphanEvents": 9,
+            "excludedSessions": 34,
+            "excludedEvents": 457,
+            "orphanEvents": 68,
             "bouncedSessions": 17,
             "medianSessionSecs": 11.813,
             "platforms": {
-              "web": 347
+              "web": 348
             },
-            "firstEventAt": "2026-10-28 23:19:55.006+00"
+            "firstEventAt": "2026-10-28 23:24:03.744311+00"
           },
           "daily": [
             {
               "day": "2026-10-29",
-              "sessions": 333,
-              "events": 1764,
-              "users": 303
+              "sessions": 335,
+              "events": 1772,
+              "users": 305
             }
           ],
           "eventsByName": [
@@ -1236,23 +1236,23 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 823,
-              "users": 308,
+              "count": 822,
+              "users": 310,
               "known": true
             },
             {
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 338,
-              "users": 311,
+              "count": 339,
+              "users": 313,
               "known": true
             },
             {
               "name": "card.add",
               "label": "Added cards",
               "stage": "engagement",
-              "count": 235,
+              "count": 234,
               "users": 10,
               "known": true
             },
@@ -1292,7 +1292,7 @@
               "name": "card.search",
               "label": "Searched cards",
               "stage": "engagement",
-              "count": 34,
+              "count": 33,
               "users": 6,
               "known": true
             },
@@ -1300,23 +1300,15 @@
               "name": "walkthrough.step",
               "label": "Reached a walkthrough step",
               "stage": "activation",
-              "count": 33,
-              "users": 16,
-              "known": true
-            },
-            {
-              "name": "binder.style",
-              "label": "Changed binder styling",
-              "stage": "engagement",
-              "count": 32,
-              "users": 2,
+              "count": 30,
+              "users": 15,
               "known": true
             },
             {
               "name": "pocket.art",
               "label": "Placed artwork",
               "stage": "engagement",
-              "count": 29,
+              "count": 30,
               "users": 4,
               "known": true
             },
@@ -1329,22 +1321,6 @@
               "known": true
             },
             {
-              "name": "binder.add",
-              "label": "Created a binder",
-              "stage": "activation",
-              "count": 18,
-              "users": 16,
-              "known": true
-            },
-            {
-              "name": "binder.background",
-              "label": "Changed the page background",
-              "stage": "engagement",
-              "count": 18,
-              "users": 5,
-              "known": true
-            },
-            {
               "name": "cap.gate_shown",
               "label": "Hit a plan limit",
               "stage": "monetization",
@@ -1353,11 +1329,19 @@
               "known": true
             },
             {
+              "name": "binder.add",
+              "label": "Created a binder",
+              "stage": "activation",
+              "count": 17,
+              "users": 15,
+              "known": true
+            },
+            {
               "name": "walkthrough.shown",
               "label": "Was shown the binder walkthrough",
               "stage": "activation",
-              "count": 16,
-              "users": 16,
+              "count": 15,
+              "users": 15,
               "known": true
             },
             {
@@ -1372,8 +1356,16 @@
               "name": "walkthrough.done",
               "label": "Left the walkthrough",
               "stage": "activation",
-              "count": 13,
-              "users": 13,
+              "count": 12,
+              "users": 12,
+              "known": true
+            },
+            {
+              "name": "binder.background",
+              "label": "Changed the page background",
+              "stage": "engagement",
+              "count": 8,
+              "users": 4,
               "known": true
             },
             {
@@ -1505,6 +1497,14 @@
               "known": true
             },
             {
+              "name": "binder.style",
+              "label": "Changed binder styling",
+              "stage": "engagement",
+              "count": 2,
+              "users": 1,
+              "known": true
+            },
+            {
               "name": "complete_open",
               "label": "Opened Complete page",
               "stage": "engagement",
@@ -1567,6 +1567,14 @@
               "count": 1,
               "users": 1,
               "known": true
+            },
+            {
+              "name": "landing.skip",
+              "label": "Skipped the landing page (tagged arrival)",
+              "stage": "acquisition",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
@@ -1575,7 +1583,7 @@
               "label": "Home",
               "intent": null,
               "count": 362,
-              "users": 298
+              "users": 300
             },
             {
               "route": "/welcome",
@@ -1588,7 +1596,7 @@
               "route": "/binder/:id",
               "label": null,
               "intent": null,
-              "count": 53,
+              "count": 52,
               "users": 28
             },
             {
@@ -1596,7 +1604,7 @@
               "label": null,
               "intent": null,
               "count": 43,
-              "users": 22
+              "users": 23
             },
             {
               "route": "/plans",
@@ -1941,8 +1949,8 @@
                 }
               ],
               "scope": {
-                "setAside": 309,
-                "of": 320,
+                "setAside": 311,
+                "of": 322,
                 "note": "Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above."
               }
             },
@@ -1994,7 +2002,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 311,
+                  "users": 313,
                   "ofPrev": 97.2,
                   "ofTop": 97.2,
                   "caveat": null
@@ -2002,9 +2010,9 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 306,
+                  "users": 308,
                   "ofPrev": 98.4,
-                  "ofTop": 95.6,
+                  "ofTop": 95.7,
                   "caveat": null
                 },
                 {
@@ -2034,7 +2042,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 313,
+                  "users": 315,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -2042,7 +2050,7 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 303,
+                  "users": 305,
                   "ofPrev": 96.8,
                   "ofTop": 96.8,
                   "caveat": null
@@ -2051,7 +2059,7 @@
                   "id": "signed",
                   "label": "Submitted the upgrade",
                   "users": 5,
-                  "ofPrev": 1.7,
+                  "ofPrev": 1.6,
                   "ofTop": 1.6,
                   "caveat": "upgrade_unconfirmed"
                 },
@@ -2068,11 +2076,11 @@
             }
           ],
           "guests": {
-            "people": 313,
-            "sessions": 338,
+            "people": 315,
+            "sessions": 339,
             "depth": {
               "openOnly": 10,
-              "looked": 256,
+              "looked": 258,
               "explored": 33,
               "made": 14
             },
@@ -2082,38 +2090,38 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 305,
-                "fires": 331
+                "people": 307,
+                "fires": 332
               },
               {
                 "name": "walkthrough.step",
                 "label": "Reached a walkthrough step",
-                "people": 14,
-                "fires": 29
+                "people": 13,
+                "fires": 26
               },
               {
                 "name": "walkthrough.shown",
                 "label": "Was shown the binder walkthrough",
-                "people": 14,
-                "fires": 14
+                "people": 13,
+                "fires": 13
               },
               {
                 "name": "binder.add",
                 "label": "Created a binder",
-                "people": 14,
-                "fires": 14
+                "people": 13,
+                "fires": 13
               },
               {
                 "name": "walkthrough.done",
                 "label": "Left the walkthrough",
-                "people": 11,
-                "fires": 11
+                "people": 10,
+                "fires": 10
               },
               {
                 "name": "card.add",
                 "label": "Added cards",
                 "people": 7,
-                "fires": 130
+                "fires": 129
               },
               {
                 "name": "demo.theme_search",
@@ -2155,19 +2163,19 @@
                 "name": "card.search",
                 "label": "Searched cards",
                 "people": 4,
-                "fires": 21
-              },
-              {
-                "name": "binder.background",
-                "label": "Changed the page background",
-                "people": 4,
-                "fires": 15
+                "fires": 20
               },
               {
                 "name": "pocket.art",
                 "label": "Placed artwork",
                 "people": 3,
-                "fires": 15
+                "fires": 16
+              },
+              {
+                "name": "binder.background",
+                "label": "Changed the page background",
+                "people": 3,
+                "fires": 5
               },
               {
                 "name": "prompt.shown",
@@ -2198,12 +2206,6 @@
                 "label": "Moved or swapped a pocket",
                 "people": 2,
                 "fires": 47
-              },
-              {
-                "name": "binder.style",
-                "label": "Changed binder styling",
-                "people": 2,
-                "fires": 32
               },
               {
                 "name": "art.link",
@@ -2260,6 +2262,12 @@
                 "fires": 3
               },
               {
+                "name": "binder.style",
+                "label": "Changed binder styling",
+                "people": 1,
+                "fires": 2
+              },
+              {
                 "name": "puzzle.choice",
                 "label": "Answered the puzzle offer",
                 "people": 1,
@@ -2288,12 +2296,18 @@
                 "label": "Opened the feedback form",
                 "people": 1,
                 "fires": 1
+              },
+              {
+                "name": "landing.skip",
+                "label": "Skipped the landing page (tagged arrival)",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
               {
                 "route": "/",
-                "people": 295,
+                "people": 297,
                 "fires": 352
               },
               {
@@ -2304,11 +2318,11 @@
               {
                 "route": "/binder/:id",
                 "people": 23,
-                "fires": 36
+                "fires": 35
               },
               {
                 "route": "/my-binders",
-                "people": 19,
+                "people": 20,
                 "fires": 28
               },
               {
@@ -2411,8 +2425,8 @@
               "code": "rd_rainbow_image",
               "source": "reddit",
               "medium": "paid_social",
-              "sessions": 80,
-              "people": 79,
+              "sessions": 82,
+              "people": 81,
               "converted": 0,
               "signups": 0
             },
@@ -2431,24 +2445,6 @@
               "medium": "organic_social",
               "sessions": 4,
               "people": 4,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "c379a6c2-c2f2-41a0-bedf-fb74b2c45981",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "71a07247-ea1b-4ece-a329-a573cb0540a1",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
               "converted": 0,
               "signups": 0
             }
@@ -2477,22 +2473,22 @@
         "7": {
           "windowDays": 7,
           "totals": {
-            "sessions": 670,
-            "events": 9634,
-            "users": 528,
+            "sessions": 672,
+            "events": 9642,
+            "users": 530,
             "realUsers": 36,
-            "guestUsers": 492,
-            "everGuestUsers": 507,
+            "guestUsers": 494,
+            "everGuestUsers": 509,
             "convertedUsers": 15,
-            "guestSessions": 576,
+            "guestSessions": 578,
             "upgradeSessions": 7,
-            "excludedSessions": 581,
-            "excludedEvents": 6962,
+            "excludedSessions": 583,
+            "excludedEvents": 6968,
             "orphanEvents": 33,
             "bouncedSessions": 22,
-            "medianSessionSecs": 14.721,
+            "medianSessionSecs": 14.693,
             "platforms": {
-              "web": 670
+              "web": 672
             },
             "firstEventAt": "2026-10-22 23:29:25.593+00"
           },
@@ -2535,9 +2531,9 @@
             },
             {
               "day": "2026-10-29",
-              "sessions": 333,
-              "events": 1764,
-              "users": 303
+              "sessions": 335,
+              "events": 1772,
+              "users": 305
             }
           ],
           "eventsByName": [
@@ -2545,8 +2541,8 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 2429,
-              "users": 516,
+              "count": 2433,
+              "users": 518,
               "known": true
             },
             {
@@ -2569,15 +2565,15 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 658,
-              "users": 520,
+              "count": 660,
+              "users": 522,
               "known": true
             },
             {
               "name": "pocket.art",
               "label": "Placed artwork",
               "stage": "engagement",
-              "count": 636,
+              "count": 637,
               "users": 29,
               "known": true
             },
@@ -2996,6 +2992,14 @@
               "count": 1,
               "users": 1,
               "known": true
+            },
+            {
+              "name": "landing.skip",
+              "label": "Skipped the landing page (tagged arrival)",
+              "stage": "acquisition",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
@@ -3003,15 +3007,15 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 796,
-              "users": 467
+              "count": 798,
+              "users": 469
             },
             {
               "route": "/welcome",
               "label": null,
               "intent": null,
-              "count": 495,
-              "users": 458
+              "count": 496,
+              "users": 459
             },
             {
               "route": "/binder/:id",
@@ -3024,8 +3028,8 @@
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 310,
-              "users": 96
+              "count": 311,
+              "users": 97
             },
             {
               "route": "/discover",
@@ -3568,8 +3572,8 @@
                 }
               ],
               "scope": {
-                "setAside": 492,
-                "of": 528,
+                "setAside": 494,
+                "of": 530,
                 "note": "Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above."
               }
             },
@@ -3621,7 +3625,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 520,
+                  "users": 522,
                   "ofPrev": 98.5,
                   "ofTop": 98.5,
                   "caveat": null
@@ -3629,9 +3633,9 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 514,
-                  "ofPrev": 98.8,
-                  "ofTop": 97.3,
+                  "users": 516,
+                  "ofPrev": 98.9,
+                  "ofTop": 97.4,
                   "caveat": null
                 },
                 {
@@ -3661,7 +3665,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 507,
+                  "users": 509,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -3669,7 +3673,7 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 495,
+                  "users": 497,
                   "ofPrev": 97.6,
                   "ofTop": 97.6,
                   "caveat": null
@@ -3678,7 +3682,7 @@
                   "id": "signed",
                   "label": "Submitted the upgrade",
                   "users": 26,
-                  "ofPrev": 5.3,
+                  "ofPrev": 5.2,
                   "ofTop": 5.1,
                   "caveat": "upgrade_unconfirmed"
                 },
@@ -3695,11 +3699,11 @@
             }
           ],
           "guests": {
-            "people": 507,
-            "sessions": 576,
+            "people": 509,
+            "sessions": 578,
             "depth": {
               "openOnly": 12,
-              "looked": 324,
+              "looked": 326,
               "explored": 103,
               "made": 68
             },
@@ -3709,8 +3713,8 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 499,
-                "fires": 584
+                "people": 501,
+                "fires": 586
               },
               {
                 "name": "binder.add",
@@ -3794,7 +3798,7 @@
                 "name": "pocket.art",
                 "label": "Placed artwork",
                 "people": 17,
-                "fires": 104
+                "fires": 105
               },
               {
                 "name": "arrange_open",
@@ -3981,18 +3985,24 @@
                 "label": "Duplicated a binder",
                 "people": 1,
                 "fires": 1
+              },
+              {
+                "name": "landing.skip",
+                "label": "Skipped the landing page (tagged arrival)",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
               {
                 "route": "/welcome",
-                "people": 458,
-                "fires": 495
+                "people": 459,
+                "fires": 496
               },
               {
                 "route": "/",
-                "people": 449,
-                "fires": 701
+                "people": 451,
+                "fires": 703
               },
               {
                 "route": "/binder/:id",
@@ -4001,8 +4011,8 @@
               },
               {
                 "route": "/my-binders",
-                "people": 79,
-                "fires": 158
+                "people": 80,
+                "fires": 159
               },
               {
                 "route": "/discover",
@@ -4104,8 +4114,8 @@
               "code": "rd_rainbow_image",
               "source": "reddit",
               "medium": "paid_social",
-              "sessions": 80,
-              "people": 79,
+              "sessions": 82,
+              "people": 81,
               "converted": 0,
               "signups": 0
             },
@@ -4124,177 +4134,6 @@
               "medium": "organic_social",
               "sessions": 4,
               "people": 4,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "238fe9e8-01c8-4fd5-854a-a477f4b72eb7",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6f095b83-7624-43de-879f-34d3ca28f1e3",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "22abdcbc-32b3-471a-8ff0-050b8b187f58",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "10bab456-20f7-46df-8d9b-c53ad44007a5",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "16a9b2a9-cfd7-41f6-b0f5-8f532385ddd4",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "007f7e40-1142-4d5f-9d30-cfa1c8e4e6b6",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "736a0885-acff-4b30-a3fc-dac3f57b1cf4",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "e0ea0d0f-1f4b-46f9-84b5-6f6d50a699df",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "9bad7d20-1e9d-4723-bc21-c39f0de71ebf",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "dfbe35fa-0884-464c-a4eb-ce1ebbe70b3a",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "5c8666b0-e51a-480f-a8e7-441bb638a31d",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "31d78d23-02b7-4cdc-a215-fcceb5d8a232",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "777b74f9-db9a-41ec-8fc2-55986b4004ad",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "42b813b4-1812-41e5-876b-d8bcd8fcc888",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "4725f354-21fe-4625-a392-69399bc0ffcc",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "44218417-e807-4cac-bfc6-db2932510fb5",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "f79ac44e-560b-4a0c-aecf-667059d15ca0",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "c379a6c2-c2f2-41a0-bedf-fb74b2c45981",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "71a07247-ea1b-4ece-a329-a573cb0540a1",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
               "converted": 0,
               "signups": 0
             }
@@ -4323,22 +4162,22 @@
         "14": {
           "windowDays": 14,
           "totals": {
-            "sessions": 904,
-            "events": 12252,
-            "users": 642,
+            "sessions": 906,
+            "events": 12260,
+            "users": 644,
             "realUsers": 52,
-            "guestUsers": 590,
-            "everGuestUsers": 612,
+            "guestUsers": 592,
+            "everGuestUsers": 614,
             "convertedUsers": 22,
-            "guestSessions": 710,
+            "guestSessions": 712,
             "upgradeSessions": 11,
-            "excludedSessions": 824,
-            "excludedEvents": 9043,
+            "excludedSessions": 826,
+            "excludedEvents": 9049,
             "orphanEvents": 11,
             "bouncedSessions": 28,
-            "medianSessionSecs": 21.723,
+            "medianSessionSecs": 21.65,
             "platforms": {
-              "web": 904
+              "web": 906
             },
             "firstEventAt": "2026-10-15 23:46:19.16+00"
           },
@@ -4423,9 +4262,9 @@
             },
             {
               "day": "2026-10-29",
-              "sessions": 333,
-              "events": 1764,
-              "users": 303
+              "sessions": 335,
+              "events": 1772,
+              "users": 305
             }
           ],
           "eventsByName": [
@@ -4433,8 +4272,8 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 3467,
-              "users": 625,
+              "count": 3471,
+              "users": 627,
               "known": true
             },
             {
@@ -4457,15 +4296,15 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 889,
-              "users": 631,
+              "count": 891,
+              "users": 633,
               "known": true
             },
             {
               "name": "pocket.art",
               "label": "Placed artwork",
               "stage": "engagement",
-              "count": 636,
+              "count": 637,
               "users": 29,
               "known": true
             },
@@ -4908,6 +4747,14 @@
               "count": 1,
               "users": 1,
               "known": true
+            },
+            {
+              "name": "landing.skip",
+              "label": "Skipped the landing page (tagged arrival)",
+              "stage": "acquisition",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
@@ -4915,8 +4762,8 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 1031,
-              "users": 550
+              "count": 1033,
+              "users": 552
             },
             {
               "route": "/binder/:id",
@@ -4929,15 +4776,15 @@
               "route": "/welcome",
               "label": null,
               "intent": null,
-              "count": 596,
-              "users": 537
+              "count": 597,
+              "users": 538
             },
             {
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 494,
-              "users": 135
+              "count": 495,
+              "users": 136
             },
             {
               "route": "/discover",
@@ -5585,8 +5432,8 @@
                 }
               ],
               "scope": {
-                "setAside": 590,
-                "of": 642,
+                "setAside": 592,
+                "of": 644,
                 "note": "Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above."
               }
             },
@@ -5599,8 +5446,8 @@
                   "id": "wall",
                   "label": "Was stopped by a plan limit",
                   "users": 46,
-                  "ofPrev": 7.2,
-                  "ofTop": 7.2,
+                  "ofPrev": 7.1,
+                  "ofTop": 7.1,
                   "caveat": "cap_gates_blind"
                 },
                 {
@@ -5638,7 +5485,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 631,
+                  "users": 633,
                   "ofPrev": 98.3,
                   "ofTop": 98.3,
                   "caveat": null
@@ -5646,7 +5493,7 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 623,
+                  "users": 625,
                   "ofPrev": 98.7,
                   "ofTop": 97,
                   "caveat": null
@@ -5678,7 +5525,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 612,
+                  "users": 614,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -5686,7 +5533,7 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 595,
+                  "users": 597,
                   "ofPrev": 97.2,
                   "ofTop": 97.2,
                   "caveat": null
@@ -5712,11 +5559,11 @@
             }
           ],
           "guests": {
-            "people": 612,
-            "sessions": 710,
+            "people": 614,
+            "sessions": 712,
             "depth": {
               "openOnly": 17,
-              "looked": 358,
+              "looked": 360,
               "explored": 144,
               "made": 93
             },
@@ -5726,8 +5573,8 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 601,
-                "fires": 734
+                "people": 603,
+                "fires": 736
               },
               {
                 "name": "binder.add",
@@ -5823,7 +5670,7 @@
                 "name": "pocket.art",
                 "label": "Placed artwork",
                 "people": 17,
-                "fires": 104
+                "fires": 105
               },
               {
                 "name": "prompt.shown",
@@ -6022,18 +5869,24 @@
                 "label": "Duplicated a binder",
                 "people": 1,
                 "fires": 1
+              },
+              {
+                "name": "landing.skip",
+                "label": "Skipped the landing page (tagged arrival)",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
               {
                 "route": "/welcome",
-                "people": 536,
-                "fires": 595
+                "people": 537,
+                "fires": 596
               },
               {
                 "route": "/",
-                "people": 525,
-                "fires": 879
+                "people": 527,
+                "fires": 881
               },
               {
                 "route": "/binder/:id",
@@ -6042,8 +5895,8 @@
               },
               {
                 "route": "/my-binders",
-                "people": 112,
-                "fires": 251
+                "people": 113,
+                "fires": 252
               },
               {
                 "route": "/discover",
@@ -6145,8 +5998,8 @@
               "code": "rd_rainbow_image",
               "source": "reddit",
               "medium": "paid_social",
-              "sessions": 80,
-              "people": 79,
+              "sessions": 82,
+              "people": 81,
               "converted": 0,
               "signups": 0
             },
@@ -6165,267 +6018,6 @@
               "medium": "organic_social",
               "sessions": 4,
               "people": 4,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "cb37a28e-fb9e-48ce-902b-6720a60e7121",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "b670a578-6571-4cfc-a700-ae46ee6e0167",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "26c7427b-3728-4e06-86f0-b2936d961d3f",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "fe6e6e2f-0f0a-4049-bd9d-b09afc8e4533",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "d5d7c0b2-fac7-461b-984e-53debf44fbdd",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "14eefb6b-449c-4008-9bf9-3bfbab7da128",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6d6e08c8-15bf-432f-a191-387b76b43212",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "79a6471e-71fd-4797-adfe-c95b73242f71",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "fe58f5f2-5d94-4b24-b47b-be2d3db8c0c7",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "ad6a161b-1a09-434e-843c-cc47e2d74787",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 1,
-              "signups": 0
-            },
-            {
-              "code": "238fe9e8-01c8-4fd5-854a-a477f4b72eb7",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6f095b83-7624-43de-879f-34d3ca28f1e3",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "22abdcbc-32b3-471a-8ff0-050b8b187f58",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "10bab456-20f7-46df-8d9b-c53ad44007a5",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "16a9b2a9-cfd7-41f6-b0f5-8f532385ddd4",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "007f7e40-1142-4d5f-9d30-cfa1c8e4e6b6",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "736a0885-acff-4b30-a3fc-dac3f57b1cf4",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "e0ea0d0f-1f4b-46f9-84b5-6f6d50a699df",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "9bad7d20-1e9d-4723-bc21-c39f0de71ebf",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "dfbe35fa-0884-464c-a4eb-ce1ebbe70b3a",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "5c8666b0-e51a-480f-a8e7-441bb638a31d",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "31d78d23-02b7-4cdc-a215-fcceb5d8a232",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "777b74f9-db9a-41ec-8fc2-55986b4004ad",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "42b813b4-1812-41e5-876b-d8bcd8fcc888",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "4725f354-21fe-4625-a392-69399bc0ffcc",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "44218417-e807-4cac-bfc6-db2932510fb5",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "f79ac44e-560b-4a0c-aecf-667059d15ca0",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "c379a6c2-c2f2-41a0-bedf-fb74b2c45981",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "71a07247-ea1b-4ece-a329-a573cb0540a1",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
               "converted": 0,
               "signups": 0
             }
@@ -6454,24 +6046,24 @@
         "30": {
           "windowDays": 30,
           "totals": {
-            "sessions": 1452,
-            "events": 17678,
-            "users": 886,
+            "sessions": 1454,
+            "events": 17682,
+            "users": 888,
             "realUsers": 83,
-            "guestUsers": 803,
-            "everGuestUsers": 836,
+            "guestUsers": 805,
+            "everGuestUsers": 838,
             "convertedUsers": 33,
-            "guestSessions": 1011,
+            "guestSessions": 1013,
             "upgradeSessions": 24,
-            "excludedSessions": 1268,
-            "excludedEvents": 11648,
-            "orphanEvents": 89,
+            "excludedSessions": 1270,
+            "excludedEvents": 11654,
+            "orphanEvents": 85,
             "bouncedSessions": 53,
-            "medianSessionSecs": 28.46,
+            "medianSessionSecs": 28.053,
             "platforms": {
-              "web": 1452
+              "web": 1454
             },
-            "firstEventAt": "2026-09-29 23:17:22.427608+00"
+            "firstEventAt": "2026-09-30 00:02:49.270888+00"
           },
           "daily": [
             {
@@ -6650,9 +6242,9 @@
             },
             {
               "day": "2026-10-29",
-              "sessions": 333,
-              "events": 1764,
-              "users": 303
+              "sessions": 335,
+              "events": 1772,
+              "users": 305
             }
           ],
           "eventsByName": [
@@ -6660,8 +6252,8 @@
               "name": "page.view",
               "label": "Viewed a page",
               "stage": "engagement",
-              "count": 5798,
-              "users": 867,
+              "count": 5801,
+              "users": 869,
               "known": true
             },
             {
@@ -6676,8 +6268,8 @@
               "name": "session.start",
               "label": "Session started",
               "stage": "acquisition",
-              "count": 1421,
-              "users": 873,
+              "count": 1423,
+              "users": 875,
               "known": true
             },
             {
@@ -6692,7 +6284,7 @@
               "name": "pocket.art",
               "label": "Placed artwork",
               "stage": "engagement",
-              "count": 636,
+              "count": 637,
               "users": 29,
               "known": true
             },
@@ -6772,7 +6364,7 @@
               "name": "pro.offer_shown",
               "label": "Saw the PRO offer",
               "stage": "monetization",
-              "count": 180,
+              "count": 179,
               "users": 22,
               "known": true
             },
@@ -6796,8 +6388,8 @@
               "name": "puzzle.guess_submitted",
               "label": "Guessed at the puzzle",
               "stage": "activation",
-              "count": 149,
-              "users": 25,
+              "count": 147,
+              "users": 24,
               "known": true
             },
             {
@@ -7167,6 +6759,14 @@
               "count": 1,
               "users": 1,
               "known": true
+            },
+            {
+              "name": "landing.skip",
+              "label": "Skipped the landing page (tagged arrival)",
+              "stage": "acquisition",
+              "count": 1,
+              "users": 1,
+              "known": true
             }
           ],
           "routes": [
@@ -7174,8 +6774,8 @@
               "route": "/",
               "label": "Home",
               "intent": null,
-              "count": 1507,
-              "users": 732
+              "count": 1509,
+              "users": 734
             },
             {
               "route": "/binder/:id",
@@ -7188,15 +6788,15 @@
               "route": "/my-binders",
               "label": null,
               "intent": null,
-              "count": 972,
-              "users": 222
+              "count": 973,
+              "users": 223
             },
             {
               "route": "/welcome",
               "label": null,
               "intent": null,
-              "count": 812,
-              "users": 718
+              "count": 813,
+              "users": 719
             },
             {
               "route": "/discover",
@@ -7223,7 +6823,7 @@
               "route": "/plans",
               "label": "Plans & pricing",
               "intent": "pricing",
-              "count": 111,
+              "count": 110,
               "users": 58
             },
             {
@@ -7913,7 +7513,7 @@
               }
             ],
             "offer": {
-              "shown": 180,
+              "shown": 179,
               "shownPeople": 22,
               "declined": 24,
               "declinedPeople": 13,
@@ -7964,11 +7564,11 @@
                 },
                 {
                   "surface": "plans",
-                  "shown": 16,
+                  "shown": 15,
                   "people": 11,
                   "routes": {
                     "/plans": {
-                      "count": 13,
+                      "count": 12,
                       "users": 10
                     },
                     "/my-binders": {
@@ -8070,8 +7670,8 @@
                 }
               ],
               "scope": {
-                "setAside": 803,
-                "of": 886,
+                "setAside": 805,
+                "of": 888,
                 "note": "Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above."
               }
             },
@@ -8123,7 +7723,7 @@
                 {
                   "id": "arrived",
                   "label": "Opened the app",
-                  "users": 873,
+                  "users": 875,
                   "ofPrev": 98.5,
                   "ofTop": 98.5,
                   "caveat": null
@@ -8131,7 +7731,7 @@
                 {
                   "id": "looked",
                   "label": "Viewed a page",
-                  "users": 865,
+                  "users": 867,
                   "ofPrev": 99.1,
                   "ofTop": 97.6,
                   "caveat": null
@@ -8163,7 +7763,7 @@
                 {
                   "id": "guest",
                   "label": "Started as a guest",
-                  "users": 836,
+                  "users": 838,
                   "ofPrev": 100,
                   "ofTop": 100,
                   "caveat": null
@@ -8171,9 +7771,9 @@
                 {
                   "id": "engaged",
                   "label": "Did anything at all",
-                  "users": 818,
-                  "ofPrev": 97.8,
-                  "ofTop": 97.8,
+                  "users": 820,
+                  "ofPrev": 97.9,
+                  "ofTop": 97.9,
                   "caveat": null
                 },
                 {
@@ -8197,11 +7797,11 @@
             }
           ],
           "guests": {
-            "people": 836,
-            "sessions": 1011,
+            "people": 838,
+            "sessions": 1013,
             "depth": {
               "openOnly": 18,
-              "looked": 458,
+              "looked": 460,
               "explored": 213,
               "made": 147
             },
@@ -8211,8 +7811,8 @@
               {
                 "name": "session.start",
                 "label": "Session started",
-                "people": 824,
-                "fires": 1049
+                "people": 826,
+                "fires": 1051
               },
               {
                 "name": "binder.add",
@@ -8332,7 +7932,7 @@
                 "name": "pocket.art",
                 "label": "Placed artwork",
                 "people": 17,
-                "fires": 104
+                "fires": 105
               },
               {
                 "name": "auth.login",
@@ -8537,18 +8137,24 @@
                 "label": "Duplicated a binder",
                 "people": 1,
                 "fires": 1
+              },
+              {
+                "name": "landing.skip",
+                "label": "Skipped the landing page (tagged arrival)",
+                "people": 1,
+                "fires": 1
               }
             ],
             "routes": [
               {
                 "route": "/welcome",
-                "people": 712,
-                "fires": 802
+                "people": 713,
+                "fires": 803
               },
               {
                 "route": "/",
-                "people": 687,
-                "fires": 1244
+                "people": 689,
+                "fires": 1246
               },
               {
                 "route": "/binder/:id",
@@ -8557,8 +8163,8 @@
               },
               {
                 "route": "/my-binders",
-                "people": 182,
-                "fires": 422
+                "people": 183,
+                "fires": 423
               },
               {
                 "route": "/discover",
@@ -8660,8 +8266,8 @@
               "code": "rd_rainbow_image",
               "source": "reddit",
               "medium": "paid_social",
-              "sessions": 80,
-              "people": 79,
+              "sessions": 82,
+              "people": 81,
               "converted": 0,
               "signups": 0
             },
@@ -8680,483 +8286,6 @@
               "medium": "organic_social",
               "sessions": 4,
               "people": 4,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "63b344d7-8fb7-4b0e-9bfb-3b4c822b4862",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "188543b7-79a4-4a44-a97b-79524b600f4b",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "7ffd6729-60b5-48f5-94f5-8809a9b62916",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "899adc54-d1c6-4016-9e41-ad6be8bbe7d1",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6d55a2a2-8270-4f49-ad44-33eae88ddf75",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6e324f06-3e91-4e8e-bc75-5dfe4423329b",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "d61145be-8ea3-4a01-a437-fadbd05a9f8c",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "66d45577-91bc-4bdb-b10b-b6f3b90f4811",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 1,
-              "signups": 0
-            },
-            {
-              "code": "dc746d0a-760d-4445-a570-963a656ff7ff",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 1,
-              "signups": 0
-            },
-            {
-              "code": "3e535cea-f1bf-4b36-a9a2-2166e4bbcdbd",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "c728e8d2-668d-4383-8f74-cb892b019b45",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "5ee3e51d-61c3-4d6f-bad4-a6cdeb86baf8",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "f9b2eaa8-1f0e-41df-9ad9-a04345bbaa13",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "c3c2f0ea-a3ab-41c9-a444-29f4d13ca52c",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "3a4e6be3-36b4-4dfb-82d3-f0529ffc8938",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "78767bd4-1f4f-494b-9135-d222b8989073",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "a23be7e4-c8d3-485a-9e83-4295a338f571",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "30a5765a-b6fb-4833-9646-2a6613061653",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "42eaf66d-bc61-4437-bb9d-308e6eafd67a",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "38f35148-5b12-44ba-a5d4-a7fe5daff98e",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "52940aea-f2ad-47ad-80f3-69d1681fed9e",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "17be4d3b-9d36-4235-88a6-f878ed886a64",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "ddef4394-08a5-44d0-87c8-47e099dd9540",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "8f96e8e4-e768-4d8b-9ea0-8caa2537c137",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "cb37a28e-fb9e-48ce-902b-6720a60e7121",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "b670a578-6571-4cfc-a700-ae46ee6e0167",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "26c7427b-3728-4e06-86f0-b2936d961d3f",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "fe6e6e2f-0f0a-4049-bd9d-b09afc8e4533",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "d5d7c0b2-fac7-461b-984e-53debf44fbdd",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "14eefb6b-449c-4008-9bf9-3bfbab7da128",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6d6e08c8-15bf-432f-a191-387b76b43212",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "79a6471e-71fd-4797-adfe-c95b73242f71",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "fe58f5f2-5d94-4b24-b47b-be2d3db8c0c7",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "ad6a161b-1a09-434e-843c-cc47e2d74787",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 1,
-              "signups": 0
-            },
-            {
-              "code": "238fe9e8-01c8-4fd5-854a-a477f4b72eb7",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6f095b83-7624-43de-879f-34d3ca28f1e3",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "22abdcbc-32b3-471a-8ff0-050b8b187f58",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "10bab456-20f7-46df-8d9b-c53ad44007a5",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "16a9b2a9-cfd7-41f6-b0f5-8f532385ddd4",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "007f7e40-1142-4d5f-9d30-cfa1c8e4e6b6",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "736a0885-acff-4b30-a3fc-dac3f57b1cf4",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "e0ea0d0f-1f4b-46f9-84b5-6f6d50a699df",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "9bad7d20-1e9d-4723-bc21-c39f0de71ebf",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "dfbe35fa-0884-464c-a4eb-ce1ebbe70b3a",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "5c8666b0-e51a-480f-a8e7-441bb638a31d",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "31d78d23-02b7-4cdc-a215-fcceb5d8a232",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "777b74f9-db9a-41ec-8fc2-55986b4004ad",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "42b813b4-1812-41e5-876b-d8bcd8fcc888",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "4725f354-21fe-4625-a392-69399bc0ffcc",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "44218417-e807-4cac-bfc6-db2932510fb5",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "f79ac44e-560b-4a0c-aecf-667059d15ca0",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "c379a6c2-c2f2-41a0-bedf-fb74b2c45981",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "71a07247-ea1b-4ece-a329-a573cb0540a1",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
               "converted": 0,
               "signups": 0
             }
@@ -9185,9 +8314,8 @@
       },
       "coverage": {
         "declared": 86,
-        "fired": 69,
+        "fired": 70,
         "neverFired": [
-          "landing.skip",
           "landing.cta",
           "demo.curation",
           "trial.start_failed",
@@ -10621,26 +9749,7 @@
               "offered": 0
             }
           },
-          "campaigns": [
-            {
-              "code": "3d13a4c6-d63a-428c-a360-4f09a2797503",
-              "source": null,
-              "medium": null,
-              "sessions": 2,
-              "people": 2,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6f328825-7b55-465b-aaf7-15f9883d6539",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            }
-          ],
+          "campaigns": [],
           "truth": {
             "trial": {
               "users": 0,
@@ -11342,26 +10451,7 @@
               "offered": 0
             }
           },
-          "campaigns": [
-            {
-              "code": "3d13a4c6-d63a-428c-a360-4f09a2797503",
-              "source": null,
-              "medium": null,
-              "sessions": 2,
-              "people": 2,
-              "converted": 0,
-              "signups": 0
-            },
-            {
-              "code": "6f328825-7b55-465b-aaf7-15f9883d6539",
-              "source": null,
-              "medium": null,
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            }
-          ],
+          "campaigns": [],
           "truth": {
             "trial": {
               "users": 0,
@@ -13789,17 +12879,7 @@
               "offered": 0
             }
           },
-          "campaigns": [
-            {
-              "code": "AppAgg.com",
-              "source": "AppAgg.com",
-              "medium": "referral",
-              "sessions": 1,
-              "people": 1,
-              "converted": 0,
-              "signups": 0
-            }
-          ],
+          "campaigns": [],
           "truth": {
             "trial": {
               "users": 0,
@@ -13856,8 +12936,8 @@
             "convertedUsers": 0,
             "guestSessions": 0,
             "upgradeSessions": 0,
-            "excludedSessions": 10,
-            "excludedEvents": 87,
+            "excludedSessions": 12,
+            "excludedEvents": 113,
             "orphanEvents": 0,
             "bouncedSessions": 0,
             "medianSessionSecs": null,
@@ -13981,8 +13061,8 @@
             "convertedUsers": 0,
             "guestSessions": 1,
             "upgradeSessions": 0,
-            "excludedSessions": 54,
-            "excludedEvents": 649,
+            "excludedSessions": 56,
+            "excludedEvents": 675,
             "orphanEvents": 0,
             "bouncedSessions": 0,
             "medianSessionSecs": 3619.3,
@@ -14182,8 +13262,8 @@
             "convertedUsers": 0,
             "guestSessions": 5,
             "upgradeSessions": 0,
-            "excludedSessions": 106,
-            "excludedEvents": 1092,
+            "excludedSessions": 108,
+            "excludedEvents": 1118,
             "orphanEvents": 0,
             "bouncedSessions": 0,
             "medianSessionSecs": 800.947,
@@ -14425,8 +13505,8 @@
             "convertedUsers": 0,
             "guestSessions": 35,
             "upgradeSessions": 0,
-            "excludedSessions": 140,
-            "excludedEvents": 1781,
+            "excludedSessions": 142,
+            "excludedEvents": 1807,
             "orphanEvents": 0,
             "bouncedSessions": 1,
             "medianSessionSecs": 3.718,

@@ -1066,7 +1066,9 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
     try {
       const p = new URLSearchParams(route.slice(q + 1));
       const code = p.get("code") ?? p.get("utm_campaign");
-      if (!code) return null;
+      // Our codes are short labels (letters/digits/underscore). A UUID here is the OAuth callback's
+      // `?code=`, which michi recorded as a campaign until 2026-10-29 - same filter as campaigns.mjs.
+      if (!code || !/^[a-z0-9_]{1,64}$/i.test(code)) return null;
       return { code, source: p.get("utm_source"), medium: p.get("utm_medium") };
     } catch {
       return null;
