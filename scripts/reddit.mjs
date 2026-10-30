@@ -105,6 +105,10 @@ if (existsSync(SPEND_PATH)) {
     .map((r) => ({
       date: r.date,
       code: r.code && r.code !== "null" ? r.code : null,
+      // Which Reddit campaign the row is for (ledger key `campaign`): traffic (Campaign 1,
+      // objective Traffic) or sales (Campaign 2, objective Sales / Sign up). Rows before the
+      // second campaign existed carry none and are the traffic campaign.
+      campaign: r.campaign && r.campaign !== "null" ? r.campaign : "traffic",
       spend: Number(r.spend ?? 0),
       clicks: Number(r.clicks ?? 0),
       impressions: Number(r.impressions ?? 0),
@@ -287,6 +291,11 @@ for (const s of sessions) {
     medium: s.p_medium ?? PARAM(s.landing_route, "utm_medium"),
     content: s.p_content ?? PARAM(s.landing_route, "utm_content"),
     term: s.p_term ?? PARAM(s.landing_route, "utm_term"),
+    // Campaign: both campaigns share utm_campaign. Only the Sales campaign's ads (launched
+    // 2026-10-30 20:00 UTC) carry utm_content={{ADGROUP_ID}}, so a paid arrival with
+    // utm_content is Campaign 2 (sales) and one without is Campaign 1 (traffic). If a
+    // Traffic ad ever gets utm_content, this rule needs a different key.
+    campaign: (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic",
     viewportW: s.viewport_w ?? null,
     fromSession: s.from_session ?? null,
     guest: !!s.started_as_guest,
@@ -600,6 +609,47 @@ for (const w of WINDOWS) {
     })
     .sort((a, b) => b.sessions - a.sessions);
 
+  // Campaign scoreboard: the two Reddit campaigns side by side, the view Ads Manager cannot
+  // give (its Sign Up column only counts what the pixel saw since it went live, with Reddit's
+  // attribution; this one counts accounts the site saw, by the session's campaign).
+  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)" };
+  const campRow = (camp, ss, rows, day) => {
+    const f = funnelOver(ss);
+    const key = day ? `campday|${w}|${camp}|${day}` : `camp|${w}|${camp}`;
+    rosters[key] = roster(ss.map((s) => s.uid));
+    rosters[`${key}|account`] = roster(f[STEP_AT.account]._ids);
+    for (const st of f) delete st._ids;
+    const sp = rows.reduce((a, r) => a + r.spend, 0);
+    const clicks = rows.reduce((a, r) => a + r.clicks, 0);
+    const accounts = at(f, "account");
+    return {
+      campaign: camp,
+      label: CAMPAIGN_LABEL[camp] ?? camp,
+      day: day ?? null,
+      spend: sp || null,
+      clicks: clicks || null,
+      sessions: ss.length,
+      phone: ss.filter(isPhone).length,
+      editor: at(f, "editor"),
+      placed: at(f, "placed"),
+      accounts,
+      signupRate: ss.length ? accounts / ss.length : null,
+      perArrival: sp && ss.length ? sp / ss.length : null,
+      perAccount: sp && accounts ? sp / accounts : null,
+      ledgerRows: rows.length,
+    };
+  };
+  const campaigns = [];
+  for (const camp of ["traffic", "sales"]) {
+    const ss = list.filter((s) => s.campaign === camp);
+    const rows = ledger.filter((r) => r.campaign === camp);
+    if (!ss.length && !rows.length) continue;
+    const total = campRow(camp, ss, rows);
+    const dayKeys = [...new Set([...ss.map((s) => s.day), ...rows.map((r) => r.date)])].sort();
+    total.days = dayKeys.map((day) => campRow(camp, ss.filter((s) => s.day === day), rows.filter((r) => r.date === day), day));
+    campaigns.push(total);
+  }
+
   // Audience and ad (utm_content / utm_term), once the links carry them.
   const dims = (key) => {
     const m = new Map();
@@ -738,6 +788,7 @@ for (const w of WINDOWS) {
     stitch,
     cost,
     perCode,
+    campaigns,
     audiences: dims("content"),
     ads: dims("term"),
     daily,
@@ -766,6 +817,17 @@ const secs = (v) => (v == null ? "n/a" : v >= 90 ? `${Math.round(v / 60)} min` :
 const usd = (v) => (v == null ? "<span class=\"na\">no spend rows</span>" : `$${v.toFixed(2)}`);
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : "");
 const hov = (...parts) => hoverAttr(...parts);
+const pctOrDash = (v) => (v == null ? '<span class="na">-</span>' : `${(v * 100).toFixed(1)}%`);
+const usdOrDash = (v) => (v == null ? '<span class="na">-</span>' : `$${v.toFixed(2)}`);
+function campaignTable(w, campaigns) {
+  if (!campaigns.length) return '<p class="note">No Reddit-tagged paid sessions and no ledger rows in this window.</p>';
+  const cell = (r, bold) => {
+    const k = r.day ? ["campday", w, r.campaign, r.day] : ["camp", w, r.campaign];
+    return `<tr${bold ? ' class="total"' : ""} ${hov(...k)}><td>${bold ? `<strong>${esc(r.label)}</strong>` : `<span class="sub">${esc(r.day)}</span>`}</td><td class="num">${usdOrDash(r.spend)}</td><td class="num">${r.clicks == null ? '<span class="na">-</span>' : r.clicks}</td><td class="num">${r.sessions}</td><td class="num">${r.phone}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num" ${hov(...k, "account")}>${r.accounts}</td><td class="num">${pctOrDash(r.signupRate)}</td><td class="num">${usdOrDash(r.perArrival)}</td><td class="num">${usdOrDash(r.perAccount)}</td></tr>`;
+  };
+  const body = campaigns.map((c) => [cell(c, true), ...c.days.map((d) => cell(d, false))].join("")).join("");
+  return `<table class="tbl"><thead><tr><th>Campaign / day</th><th class="num">Spend</th><th class="num">Clicks (Reddit)</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Accounts</th><th class="num">Sign-up rate</th><th class="num">Per arrival</th><th class="num">Per account</th></tr></thead><tbody>${body}</tbody></table>`;
+}
 const ptTime = (iso) =>
   new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(iso));
 
@@ -885,6 +947,10 @@ Device is read from <code>viewport_w</code> on <code>session.start</code> (michi
 
 <h2>Cost per step</h2>
 ${costRows}
+
+<h2>Campaign scoreboard</h2>
+${campaignTable(w, d.campaigns)}
+<p class="note">The view Ads Manager cannot give. A session is Campaign 2 when its link carried <code>utm_content</code> (only the Sales campaign's ads do, since 2026-10-30 20:00 UTC) and Campaign 1 otherwise. Spend and clicks are the ledger rows tagged <code>campaign:</code> in <code>${esc(spend.path)}</code>; arrivals and accounts are what the site saw, so they include blockers the pixel misses and exclude our own accounts. Sign-up rate is accounts over arrivals; Reddit's "Sign Up Rate" column divides pixel sign-ups by Reddit's clicks, so the two are close, not equal. A day with no ledger row shows the funnel and no cost. Campaign 2 is in Reddit's learning phase: compare rates after a few days, not on launch day.</p>
 
 <h2>The funnel</h2>
 ${funnelTable("f", w, f)}
@@ -1020,6 +1086,10 @@ if (a7.cost.spend) {
 } else {
   md.push(`No spend rows in the last 7 days (${spend.path}).`, ``);
 }
+md.push(`## Campaign scoreboard (7 days)`, ``);
+md.push(`| campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |`, `|---|---:|---:|---:|---:|---:|---:|---:|---:|`);
+for (const c of a7.campaigns) md.push(`| ${c.label} | ${c.spend == null ? "-" : `$${c.spend.toFixed(2)}`} | ${c.clicks ?? "-"} | ${c.sessions} | ${c.editor} | ${c.placed} | ${c.accounts} | ${c.signupRate == null ? "-" : `${(c.signupRate * 100).toFixed(1)}%`} | ${c.perAccount == null ? "-" : `$${c.perAccount.toFixed(2)}`} |`);
+md.push(``, `Campaign 2 is every paid session whose link carried utm_content (only its ads do); arrivals and accounts are the site's count, spend and clicks the ledger's.`, ``);
 md.push(`## Per day (30 days)`, ``);
 md.push(`| day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |`, `|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|`);
 for (const r of [...aa.daily].reverse()) md.push(`| ${r.day} | ${r.sessions} | ${r.phone} | ${r.editor} | ${r.placed} | ${r.taste} | ${r.fill} | ${r.wall} | ${r.accounts} | ${r.returned} | ${secs(r.medianSecs)} | ${r.spend == null ? "-" : `$${r.spend.toFixed(2)}`} |`);
