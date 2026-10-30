@@ -1393,6 +1393,14 @@
   },
   "_gapsDoc": "Known holes between what the product does and what the stream records. Each is surfaced in the report next to the number it distorts, with `direction` saying which way the number is wrong. `status` tracks the fix: open (found, not yet specced), specced (written up in ../tcgscan/ANALYTICS-TRACKING-GAPS.md, awaiting implementation), landed (code is in the app repos but no event has been observed yet, so it is not proven), deferred (a decision was made not to do it, with the reason), fixed (observed firing). landed -> fixed is not a judgement call: the coverage panel detects a planned name appearing in the data and says so. Fixes land in the app repos, never here.",
   "gaps": {
+    "account_created_fires_on_oauth_start": {
+      "severity": "high",
+      "status": "open",
+      "title": "account.created fires when Google sign-in STARTS, so an abandoned OAuth hop counts as a new account",
+      "detail": "Found 2026-10-29 when the owner asked who the three Reddit-session signups were. michi-maker src/store/auth.tsx tracks account.created { via: oauth | guest_upgrade } right after signInWithOAuth / linkIdentity returns, which is before the browser leaves for Google; the completion is never observed by this row. All three Reddit accounts that day were anonymous users with zero auth.identities: they tapped Create account and never came back. The email/password path (via password, and the guest_upgrade rows with is_anonymous=false) is real.",
+      "direction": "every signup count from the event stream is high by the number of abandoned OAuth hops; a campaign report reads abandoned taps as conversions",
+      "fix": "Fire account.created on the RETURN: in auth-callback.tsx (web) and the native deep-link handler, when the restored session is non-anonymous and auth.users.created_at (or identities.created_at) is within the last few minutes; emit auth.oauth_start { provider, guest } at the current call site instead so the hop itself stays measurable. Until then the studio should count accounts from ground truth: auth.users where is_anonymous=false joined to the guest session by uid, not from account.created rows whose user is still anonymous."
+    },
     "affiliate_clicks_blind": {
       "severity": "medium",
       "status": "landed",
