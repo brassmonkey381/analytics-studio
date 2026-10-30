@@ -160,6 +160,7 @@ rd as (
 select e.session_id, e.user_id, e.name, e.ts,
        e.props->>'step' as step, e.props->>'via' as via, e.props->>'kind' as kind,
        e.props->>'surface' as surface, e.props->>'feature' as feature, e.props->>'source' as source,
+       (e.props->>'placed')::int as placed,
        (e.props->>'route' like '/binder/%') as editor_route
 from public.analytics_events e
 join rd on rd.id = e.session_id
@@ -301,6 +302,9 @@ for (const s of sessions) {
     searchKinds: new Map(),
     noResults: 0,
     taste: false,
+    tasteFeatures: new Set(),
+    fillRun: false,
+    fillPlaced: false,
     capGate: false,
     proOffer: false,
     lastEvent: null,
@@ -361,6 +365,13 @@ for (const e of events) {
       break;
     case "taste.used":
       s.taste = true;
+      s.tasteFeatures.add(e.feature ?? "unknown");
+      break;
+    // Fill page or Complete finished composing (michi 5a83ee0). placed 0 is "nothing found",
+    // which is a different stall from never pressing a method.
+    case "autofill.run":
+      s.fillRun = true;
+      if ((e.placed ?? 0) > 0) s.fillPlaced = true;
       break;
     case "cap.gate_shown":
       s.capGate = true;
@@ -430,7 +441,7 @@ const STEPS = [
   ["ring", "Saw the first pocket ring", (s) => s.ring],
   ["browser", "Opened the card browser", (s) => s.browser || s.searches > 0 || s.cardAdd > 0],
   ["placed", "Placed a card", (s) => s.placed],
-  ["taste", "Took the guest taste (Find similar)", (s) => s.taste],
+  ["taste", "Took a guest taste (Find similar, Fill page)", (s) => s.taste],
   ["fill", "Opened Fill page", (s) => s.fillOpen],
   ["wall", "Met the create-account wall", (s) => s.wallSeen],
   ["tap", "Tapped Create account", (s) => s.wallClick || s.oauthStart],
@@ -471,6 +482,9 @@ const summarize = (list) => {
     dismissed: list.filter((s) => s.dismissed).length,
     shelfNotes: list.filter((s) => s.shelfNote).length,
     tasted: list.filter((s) => s.taste).length,
+    tasteByFeature: Object.fromEntries([...list.flatMap((s) => [...s.tasteFeatures])].reduce((m, k) => m.set(k, (m.get(k) ?? 0) + 1), new Map())),
+    fillRuns: list.filter((s) => s.fillRun).length,
+    fillPlaced: list.filter((s) => s.fillPlaced).length,
     capGates: list.filter((s) => s.capGate).length,
     proOffers: list.filter((s) => s.proOffer).length,
     funnel: f,
@@ -844,7 +858,7 @@ ${costRows}
 <h2>The funnel</h2>
 ${funnelTable("f", w, f)}
 <p class="note">Each row is sessions that reached that step; the right column is its share of arrivals. The steps are not nested: the wall is met on more surfaces than Fill page, and an account can follow a wall that was never shown in this session. "Became an account" counts the hop return (<code>from_session</code>, michi 7bc1d40), a same-id upgrade in the session, and for days before the fix a non-anonymous user created within ${STITCH_SECONDS} s of the guest session's end whose first page was the sign-in return. The tile above says how many came from each.
-"Took the guest taste" is a guest's one Find similar (michi 2ae2814; before that deploy guests had none, so the row reads zero). Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.
+"Took a guest taste" is a guest's one Find similar (michi 2ae2814) or, since michi 5a83ee0, the one Fill page / Complete run (feature fillPage, one taste covers both sheets); before those deploys guests had none, so the row reads zero. The taste and the first Fill run land on the same tap, so "Opened Fill page" above it is the sheet, the taste is a method pressed, and the wall (surface fill_wall / complete_wall) is the second press. Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.
 The My Binders shelf note ("you are at your binder limit, create a free account"), shown to <strong>${d.shelfNotes}</strong> session${d.shelfNotes === 1 ? "" : "s"} about one second in because the auto-made binder filled a guest's one-binder cap (removed on arrival in michi b77e3bc, 2026-10-30 08:05 UTC), is NOT counted as a wall: nothing it guards was tapped.</p>
 
 <div class="cols">
@@ -871,7 +885,7 @@ ${dayRows ? `<table class="tbl"><thead><tr><th>Day (${esc(out.dayTz)})</th><th c
 <h2>Where sessions stalled</h2>
 <div class="cols">
 <div><table class="tbl"><thead><tr><th>Last event, sessions that never placed a card</th><th class="num">Sessions</th></tr></thead><tbody>${stallRows || '<tr><td colspan="2" class="empty">Every session placed a card.</td></tr>'}</tbody></table>
-<p class="note">Walkthrough dismissed: <strong>${d.dismissed}</strong>. Took a free taste: <strong>${d.tasted}</strong>. Met a cap gate: <strong>${d.capGates}</strong>. Saw a PRO offer: <strong>${d.proOffers}</strong>.</p></div>
+<p class="note">Walkthrough dismissed: <strong>${d.dismissed}</strong>. Took a free taste: <strong>${d.tasted}</strong>${Object.keys(d.tasteByFeature).length ? ` (${Object.entries(d.tasteByFeature).map(([k, v]) => `${esc(k)} ${v}`).join(", ")})` : ""}. Fill page composed: <strong>${d.fillRuns}</strong>, of which <strong>${d.fillPlaced}</strong> placed at least one card (autofill.run, michi 5a83ee0; zero before that deploy is blindness). Met a cap gate: <strong>${d.capGates}</strong>. Saw a PRO offer: <strong>${d.proOffers}</strong>.</p></div>
 <div><table class="tbl"><thead><tr><th>Search kind</th><th class="num">Searches</th></tr></thead><tbody>${kindRows || '<tr><td colspan="2" class="empty">No searches.</td></tr>'}</tbody></table>
 <p class="note"><span ${hov("t", "{scope}", "searching")}><strong>${d.search.sessionsSearching}</strong> session${d.search.sessionsSearching === 1 ? "" : "s"} searched</span>, <span ${hov("t", "{scope}", "noresults")}><strong>${d.search.sessionsWithNoResults}</strong> hit no results</span> (${d.search.noResults} time${d.search.noResults === 1 ? "" : "s"}). The typed text of the main search box is not recorded (gaps.tcgscan_search_blind), so what people look for is a kind, never a word.</p></div>
 </div>
