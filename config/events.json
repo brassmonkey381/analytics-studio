@@ -89,6 +89,14 @@
       ]
     },
     "_landingDoc": "landing.skip { to, code?, utm_* } and landing.cta { cta: enter_hero|enter_closing|discover|sample_binder, binder?, code?, utm_* } - michi web only, added 2026-10-29. Why: the first Reddit ad day put 243 utm_source=reddit visitors on /welcome for a median 12 seconds; about 15 reached a second page, 1 signed up, 0 published a binder, and nothing recorded what the landing page got anyone to press. The fix routes tagged paid/social arrivals (michi-maker src/lib/landing.ts SKIP_LANDING_SOURCES, keyed on utm_source) straight to /my-binders?open=new, which creates a binder and opens the editor (one empty guest binder per ad click, visible as binder.add in the same session), and records that as landing.skip { to }; everyone else still sees /welcome, whose four buttons now fire landing.cta. Read them together: skip sessions vs. welcome sessions is the A/B the owner asked for (does bypassing the pitch make more binders), and landing.cta per creative says which pitch works for the visitors who do see it. Zero landing.cta from a tagged source is expected after the skip lands, not a gap.",
+    "taste.used": {
+      "label": "Took a free taste of a PRO feature",
+      "stage": "monetization",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_tasteDoc": "taste.used { feature: findSimilar|advancedSearch|binderCovers|binderTracks|artViews, surface: binder_editor|inspector|my_binders|home|browser|fill_sheet|complete_sheet } - michi, added 2026-10-29 (michi-maker b7eb33c, data/tastes.ts). A FREE account taps a locked PRO control for the first time: the lock lifts for the rest of that visit, a toast says so, and the taste is recorded on the device and on profiles.preferences.tastes so it is never offered again for that feature. Guests get none (their first step is the free account); paid tiers are never locked. Not covered: theme search (the data server meters it per tier, a client cannot lift it), printing (owner), the VIP composer, the binder/page/artwork caps. Read it against trial.start_click, offer.checkout_start and account tier changes: which taste, on which surface, precedes a plan. Zero here after the deploy means no free account tried a PRO control, which is itself a finding about where the locks sit.",
     "auth.login": {
       "label": "Signed in",
       "stage": "acquisition",
