@@ -259,6 +259,7 @@
         "tcgscan"
       ]
     },
+    "_cardAddDoc": "card.add { kind: add|swap } on michi since michi-maker 3307b50 (2026-10-30, on development; production pending the owner's ship script at the time of writing). kind=swap is a card dropped onto an OCCUPIED pocket, replacing what was there. BEFORE THAT COMMIT A SWAP FIRED NOTHING AT ALL, so card.add counts rise slightly from that deploy without anyone adding more cards; a before/after on placed cards should compare kind=add rows, or state the seam. Rows with no kind are from before the deploy and are all adds. The same commit shows a placement toast on phones only (width under michi's own PHONE_MAX_WIDTH of 700 CSS px in binderLayout, NOT the Reddit lane's 500): card name, pocket number, next pocket, Undo, 5 s. The toast itself emits no event. The mobile card browser's Select control moved to the results line and the + pill flips to a check after a tap in tcgscan-browse 7672ddb (kit 0.9.43, pinned michi e43240e); no new events from that either.",
     "card.open": {
       "label": "Opened a card",
       "stage": "engagement",
