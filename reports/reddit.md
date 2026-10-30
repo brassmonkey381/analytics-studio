@@ -1,6 +1,6 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-10-30T06:58:27.370Z. Days are PDT. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (9 sessions in the lookback), plus 3 test-link sessions.
+Collected 2026-10-30T07:09:27.400Z. Days are PDT. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (9 sessions in the lookback), plus 3 test-link sessions.
 
 ## Last 7 days
 
@@ -36,6 +36,7 @@ Spend $25.00 over 1 ledger rows: per arrival $0.05, per first card $2.78, per ac
 | 5873b67 | 2026-10-30T04:14:47.662Z | 8 | 7 | 1 | 0 | 1 | 1 | 1 | 0 | 0 |
 | 7bc1d40 | 2026-10-30T05:19:51.067Z | 13 | 13 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | b6ab3d7 | 2026-10-30T05:51:35.514Z | 57 | 33 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| b77e3bc | 2026-10-30T07:08:16.757Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ## Per creative (30 days)
 

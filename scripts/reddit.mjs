@@ -845,7 +845,7 @@ ${costRows}
 ${funnelTable("f", w, f)}
 <p class="note">Each row is sessions that reached that step; the right column is its share of arrivals. The steps are not nested: the wall is met on more surfaces than Fill page, and an account can follow a wall that was never shown in this session. "Became an account" counts the hop return (<code>from_session</code>, michi 7bc1d40), a same-id upgrade in the session, and for days before the fix a non-anonymous user created within ${STITCH_SECONDS} s of the guest session's end whose first page was the sign-in return. The tile above says how many came from each.
 "Took the guest taste" is a guest's one Find similar (michi 2ae2814; before that deploy guests had none, so the row reads zero). Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.
-The My Binders shelf note ("you are at your binder limit, create a free account"), shown to <strong>${d.shelfNotes}</strong> session${d.shelfNotes === 1 ? "" : "s"} about one second in because the auto-made binder fills a guest's one-binder cap, is NOT counted as a wall: nothing it guards was tapped.</p>
+The My Binders shelf note ("you are at your binder limit, create a free account"), shown to <strong>${d.shelfNotes}</strong> session${d.shelfNotes === 1 ? "" : "s"} about one second in because the auto-made binder filled a guest's one-binder cap (removed on arrival in michi b77e3bc, 2026-10-30 08:05 UTC), is NOT counted as a wall: nothing it guards was tapped.</p>
 
 <div class="cols">
 <div><h3>Phone</h3>${funnelTable("p", w, d.phoneFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
