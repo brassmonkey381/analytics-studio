@@ -166,6 +166,7 @@ select e.session_id, e.user_id, e.name, e.ts,
        e.props->>'step' as step, e.props->>'via' as via, e.props->>'kind' as kind,
        e.props->>'surface' as surface, e.props->>'feature' as feature, e.props->>'source' as source,
        (e.props->>'placed')::int as placed,
+       e.props->>'walkthrough' as walkthrough, (e.props->>'seeded')::boolean as seeded, e.props->>'theme' as theme,
        (e.props->>'route' like '/binder/%') as editor_route
 from public.analytics_events e
 join rd on rd.id = e.session_id
@@ -307,6 +308,9 @@ for (const s of sessions) {
     searchKinds: new Map(),
     noResults: 0,
     taste: false,
+    seeded: false,
+    theme: null,
+    filled: false,
     tasteFeatures: new Set(),
     fillRun: false,
     fillPlaced: false,
@@ -330,14 +334,24 @@ for (const e of events) {
       s.ring = true;
       break;
     case "walkthrough.step":
-      if (e.step === "ring") s.ring = true;
+      // 'first-pocket': ring -> card -> placed. 'seeded' (michi 85697bd): complete -> filled.
+      // The first step of either is "saw the first prompt"; a Complete that filled the page is
+      // cards on the page by the person's own tap, so it counts as placed.
+      if (e.step === "ring" || e.step === "complete") s.ring = true;
       if (e.step === "card") s.browser = true;
       if (e.step === "placed") s.placed = true;
+      if (e.step === "filled") { s.filled = true; s.placed = true; }
+      break;
+    case "binder.add":
+      if (e.seeded) { s.seeded = true; s.theme = e.theme ?? s.theme; }
       break;
     case "walkthrough.done":
       if (e.via === "dismissed") s.dismissed = true;
       break;
     case "card.add":
+      // kind 'seed' is the three cards michi put on the page before the person did anything
+      // (85697bd): one row per seeded binder, never a placement.
+      if (e.kind === "seed") { s.seeded = true; s.theme = e.theme ?? s.theme; break; }
       s.cardAdd++;
       s.placed = true;
       break;
@@ -376,7 +390,7 @@ for (const e of events) {
     // which is a different stall from never pressing a method.
     case "autofill.run":
       s.fillRun = true;
-      if ((e.placed ?? 0) > 0) s.fillPlaced = true;
+      if ((e.placed ?? 0) > 0) { s.fillPlaced = true; s.placed = true; }
       break;
     case "cap.gate_shown":
       s.capGate = true;
@@ -443,9 +457,9 @@ const madePublic = (s) => {
 const STEPS = [
   ["arrived", "Arrived from Reddit", (s) => true],
   ["editor", "Reached the binder editor", (s) => s.editor],
-  ["ring", "Saw the first pocket ring", (s) => s.ring],
+  ["ring", "Saw the first prompt (pocket ring, or Complete on a seeded page)", (s) => s.ring],
   ["browser", "Opened the card browser", (s) => s.browser || s.searches > 0 || s.cardAdd > 0],
-  ["placed", "Placed a card", (s) => s.placed],
+  ["placed", "Placed a card (own tap, or a Fill/Complete that placed)", (s) => s.placed],
   ["taste", "Took a guest taste (Find similar, Fill page)", (s) => s.taste],
   ["fill", "Opened Fill page", (s) => s.fillOpen],
   ["wall", "Met the create-account wall", (s) => s.wallSeen],
@@ -530,6 +544,9 @@ for (const w of WINDOWS) {
   // Device split of the whole funnel.
   const phoneF = funnelOver(list.filter(isPhone));
   const deskF = funnelOver(list.filter(isDesktop));
+  const seededF = funnelOver(list.filter((s) => s.seeded));
+  const emptyF = funnelOver(list.filter((s) => !s.seeded));
+  const themes = Object.fromEntries([...list.filter((s) => s.seeded).reduce((m, s) => m.set(s.theme ?? "unknown", (m.get(s.theme ?? "unknown") ?? 0) + 1), new Map())]);
   for (const st of phoneF) {
     rosters[`p|${w}|${st.id}`] = roster(st._ids);
     delete st._ids;
@@ -729,6 +746,10 @@ for (const w of WINDOWS) {
     stalls,
     phoneFunnel: phoneF.map(({ id, sessions }) => ({ id, sessions })),
     desktopFunnel: deskF.map(({ id, sessions }) => ({ id, sessions })),
+    seeded: list.filter((s) => s.seeded).length,
+    themes,
+    seededFunnel: seededF.map(({ id, sessions }) => ({ id, sessions })),
+    emptyFunnel: emptyF.map(({ id, sessions }) => ({ id, sessions })),
     excludedSessions: sessions.filter((s) => s.excluded && inWin(s.started_at, w)).length,
   };
 }
@@ -876,6 +897,13 @@ The My Binders shelf note ("you are at your binder limit, create a free account"
 <div><h3>Desktop</h3>${funnelTable("d", w, d.desktopFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 </div>
 <p class="note">Phone ${d.phone} + desktop ${d.desktop} + unknown ${d.unknownDevice} = ${d.sessions}. The two columns cover only sessions that recorded a viewport (since 2026-10-29 evening); the other ${d.unknownDevice} are in neither, including ${at(f, "account") - d.phoneFunnel[STEP_AT.account].sessions - d.desktopFunnel[STEP_AT.account].sessions} of the ${at(f, "account")} account${at(f, "account") === 1 ? "" : "s"}.</p>
+
+<h2>Seeded first page vs empty page</h2>
+<div class="cols">
+<div><h3>Seeded (3 cards on arrival)</h3>${funnelTable("sd", w, d.seededFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
+<div><h3>Empty page</h3>${funnelTable("em", w, d.emptyFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
+</div>
+<p class="note">Seeded arrivals: <strong>${d.seeded}</strong> of ${d.sessions}${Object.keys(d.themes).length ? ` (${Object.entries(d.themes).map(([k, v]) => `${esc(k)} ${v}`).join(", ")})` : ""}. Since michi 85697bd a tagged arrival lands on a page already holding three themed cards and the walkthrough (id <code>seeded</code>) points at Complete: steps complete then filled, no card step. The three seeds are <code>card.add kind=seed</code> and never count as a placement; "Placed a card" on the seeded side is a Complete that filled the page or a card they added by hand. Before that deploy every arrival is on the empty side, so the split is only a comparison inside windows that contain both.</p>
 
 <h2>Per day</h2>
 ${dailyChart(w, d.daily)}
