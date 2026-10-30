@@ -119,6 +119,14 @@
       ]
     },
     "_guestWallDoc": "autofill.open { guest, source: card_bar|auth_return } fires when the Fill page sheet opens, from the pocket bar or on the way back from a sign-in that the sheet sent the person on (lib/authReturn.ts). signin.perk_shown / signin.perk_click { surface, guest } fire on every SignInPerk, surfaces: binder_cap, plans, arrange_sheet, fill_sheet, card_labels, complete_sheet, print_sheet, slice_studio, build_sheet, import_sheet, cap_gate. Added 2026-10-29 (michi-maker 6d01a53, 3ddd78f) after the Reddit before/after read showed the two blind steps of the guest funnel: the walkthrough sends a guest to Fill page at step 3, and until these events neither the sheet opening nor the create-account note it shows left a row. Read shown -> click -> account.created within the same session as the guest wall conversion; perk_shown with guest=false is a signed-out returning visitor, not a guest. Rows before the deploy do not exist, so a before/after on these two steps starts at the deploy, not at the ad launch.",
+    "deploy.live": {
+      "label": "Production deploy went live (ops marker)",
+      "stage": "ops",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_deployDoc": "deploy.live { commit, short, by } is written by michi-maker promote-to-production.ps1 (scripts/record-deploy.mjs) the moment vercel --prod returns, one row per production deploy, with no session_id and no user_id. It exists so a before/after read cuts on the real deploy time instead of the commit time (2026-10-29 request from this studio; the first row lands with the deploy that carries it, so cuts earlier than that stay on commit times). It is NOT behaviour: scripts/events.mjs drops it from the stream it rolls up, and any lane that counts people must do the same. Stage ops is this one event.",
     "auth.login": {
       "label": "Signed in",
       "stage": "acquisition",
@@ -187,6 +195,7 @@
         "michi"
       ]
     },
+    "_composeKeptDoc": "compose.pages_kept came from the Fill sheet's Pages around this card (VIP multiPageCompose) and from the Story binder. The Fill sheet path is deprecated as of michi-maker 2026-10-29 (the commit that added deploy.live), so from that deploy on the event arrives only from the Story binder; a drop in it is a removal, not churn.",
     "csv.import": {
       "label": "Imported a CSV",
       "stage": "activation",

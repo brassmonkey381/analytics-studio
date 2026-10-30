@@ -97,6 +97,8 @@ select
   (e.user_id in (select id from excluded_users)) as excluded
 from public.analytics_events e
 where e.ts >= now() - interval '${WINDOW_DAYS} days'
+  -- deploy.live is an ops marker written by michi's promote-to-production.ps1 with no session and no user; it cuts before/after reads and must never count as behaviour.
+  and e.name <> 'deploy.live'
 order by e.ts
 limit ${ROW_CAP}`;
 }
