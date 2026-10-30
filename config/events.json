@@ -126,7 +126,7 @@
         "michi"
       ]
     },
-    "_deployDoc": "deploy.live { commit, short, by } is written by michi-maker promote-to-production.ps1 (scripts/record-deploy.mjs) the moment vercel --prod returns, one row per production deploy, with no session_id and no user_id. It exists so a before/after read cuts on the real deploy time instead of the commit time (2026-10-29 request from this studio; the first row lands with the deploy that carries it, so cuts earlier than that stay on commit times). It is NOT behaviour: scripts/events.mjs drops it from the stream it rolls up, and any lane that counts people must do the same. Stage ops is this one event.",
+    "_deployDoc": "deploy.live { commit, short, by } is written by michi-maker promote-to-production.ps1 (scripts/record-deploy.mjs) the moment vercel --prod returns, one row per production deploy, with no session_id and no user_id. It exists so a before/after read cuts on the real deploy time instead of the commit time (2026-10-29 request from this studio; the first row lands with the deploy that carries it, so cuts earlier than that stay on commit times). It is NOT behaviour: scripts/events.mjs drops it from the stream it rolls up, and any lane that counts people must do the same. Stage ops is this one event. The row is written under the owner uid (5873b67), so the exclusion CTE drops it as well; the name filter in events.mjs stays because exclusions are stated, never relied on for shape.",
     "auth.login": {
       "label": "Signed in",
       "stage": "acquisition",
@@ -156,6 +156,14 @@
       ]
     },
     "_oauthStartDoc": "auth.oauth_start { provider, guest } is the tap that leaves for the provider (michi-maker bf6844e, 2026-10-29); account.created is the return. oauth_start minus account.created within the same session is the abandoned-hop count, which before bf6844e was invisible because the tap itself was recorded as the account (see gaps.account_created_fires_on_oauth_start).",
+    "auth.link_exists": {
+      "label": "Google account already had a michi account",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_authHopDoc": "auth.link_exists { provider } (michi-maker 7bc1d40): a guest tapped Create account with a Google account that already owns a michi account; GoTrue refused the link (identity_already_exists) and /auth-callback signs them into that account with one more hop instead, so the person is a returning user and their guest binder stays on the anonymous uid by design. From the same commit the web page stores campaign params, referrer, guest uid and analytics session id in sessionStorage at the tap (lib/authHop) and the return page load adopts them: session.start / landing_route carry the utm_* again, and session.start, account.created and auth.login carry from_uid and from_session. STITCH a guest session to the account it became with those two props, never by uid alone: the provider may mint a new uid.",
     "demo.tricolor_search": {
       "label": "Tried tri-color search",
       "stage": "activation",
@@ -1410,7 +1418,7 @@
       "fix": "TWO HALVES. (a) Timing: fire on the return, not the tap (landed, below). (b) Continuity: the guest-to-account upgrade must either really link (linkIdentity onto the anonymous uid, so uid, binders and session survive) or carry the campaign across the hop (persist landingCampaign beside lib/authReturn.ts and put it on the new session.start and on account.created) and re-home the guest binder; until (b) lands the studio joins a Reddit guest session to its account by session end within 10 seconds of auth.users.created_at, and says so. Original ask: Fire account.created on the RETURN: in auth-callback.tsx (web) and the native deep-link handler, when the restored session is non-anonymous and auth.users.created_at (or identities.created_at) is within the last few minutes; emit auth.oauth_start { provider, guest } at the current call site instead so the hop itself stays measurable. Until then the studio should count accounts from ground truth: auth.users where is_anonymous=false joined to the guest session by uid, not from account.created rows whose user is still anonymous. landed 2026-10-29 michi-maker bf6844e (development, not deployed): the tap is auth.oauth_start { provider, guest }; account.created { via, provider } fires from the auth store onAuthStateChange (web and native alike) when the returned session carries a non-email identity created within the last ten minutes (via oauth when the user row is as new, guest_upgrade when the identity was linked onto an older anonymous row), once per uid per page life; older identities record auth.login as before. Rows before that deploy keep the old meaning: an account.created with via oauth/guest_upgrade whose user is still anonymous is an abandoned hop. fixed on the first post-deploy OAuth signup whose user has an identity."
     },
     "affiliate_clicks_blind": {
-      "severity": "medium",
+      "severity": "medium ROOT CAUSE (michi session, 2026-10-29 21:13 PT): the guests never called linkIdentity. The account sheet opened on the Sign in tab for guests and link is true only on the Create tab, so every guest Google tap ran signInWithOAuth (new uid, new session, binder left behind). 56e656f opens a guest on Create (live in production 5873b67 ~21:20 PT): the tap now links onto the anonymous uid and account.created reports via guest_upgrade on the same uid. Continuity half landed in 7bc1d40 (development, not deployed): see _authHopDoc for from_uid / from_session. Remaining by design: a guest who flips to Sign in and uses Google gets another uid and leaves the guest binder behind. fixed when a post-7bc1d40 Reddit session.start carries utm_source and an account.created the same minute carries its from_session.",
       "status": "landed",
       "title": "No outbound TCGplayer or eBay click is recorded anywhere we can read",
       "detail": "Found 2026-10-28 when the owner asked whether anyone had clicked an affiliate link. michi-maker (browse card actions, the binder price label, home sealed tiles), tcgscan-app (five eBay call sites across browse, collection and the card page) and the shared tcgscan-browse kit (Recent and Upcoming feed) all open the URL with Linking.openURL and fire no event. The URLs carry the affiliate parameters, so Impact and the eBay Partner Network see the clicks and the sales, but by subId1 / customid only - no user, card, session or preceding action - and nothing joins to the studio.",
