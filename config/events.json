@@ -5,6 +5,7 @@
   "_campaignsDoc": "The print/QR lane (scripts/campaigns.mjs) reads the same two tables through the same app->project map, so its config lives here rather than in a second file that could disagree about which project an app is on. `registry` is the path, relative to the repo root, to marketing-studio's list of codes that physically exist on paper \u2014 the join that makes a zero mean 'printed but never scanned' instead of 'we printed nothing'. `verificationPrefixes` are OUR OWN end-to-end proof scans: excluded from every headline the way our accounts are, and stated inline rather than dropped silently.",
   "campaigns": {
     "registry": "../marketing-studio/assets/qr/campaigns.yaml",
+    "spendLedger": "../marketing-studio/assets/qr/spend.yaml",
     "verificationPrefixes": [
       "test_"
     ]

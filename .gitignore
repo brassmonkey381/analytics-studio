@@ -63,3 +63,9 @@ data/newuser-geo-roster.json
 # Wishlist lane. wishlist-roster.json names every voter and carries the ideas people
 # wrote in the box (prose and email are identity). data/wishlist.json is counts only.
 data/wishlist-roster.json
+
+# Reddit lane. reddit-roster.json names who arrived from each ad and what they became;
+# reddit.html renders them. data/reddit.json and reports/reddit.md stay counts-only and ARE
+# committed (marketing-studio reads the md).
+data/reddit-roster.json
+reports/reddit.html
