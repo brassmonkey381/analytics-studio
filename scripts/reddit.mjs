@@ -292,6 +292,7 @@ for (const s of sessions) {
     cardAdd: 0,
     fillOpen: false,
     wallSeen: false,
+    shelfNote: false,
     wallClick: false,
     oauthStart: false,
     accountHere: false,
@@ -335,7 +336,12 @@ for (const e of events) {
       s.fillOpen = true;
       break;
     case "signin.perk_shown":
-      s.wallSeen = true;
+      // The My Binders shelf note (binder_cap) appears for every Reddit guest one second in,
+      // because the auto-made binder puts a guest at 1 of 1 binders; nobody is stopped by it.
+      // It is counted apart so the "wall" step means a wall that stood between a tap and a
+      // feature (Fill page, Complete, labels, print, cap gate dialog).
+      if (e.surface === "binder_cap") s.shelfNote = true;
+      else s.wallSeen = true;
       break;
     case "signin.perk_click":
       s.wallClick = true;
@@ -459,6 +465,7 @@ const summarize = (list) => {
     p90Secs: secs.length ? [...secs].sort((a, b) => a - b)[Math.floor(secs.length * 0.9)] : null,
     returned: list.filter(returned).length,
     dismissed: list.filter((s) => s.dismissed).length,
+    shelfNotes: list.filter((s) => s.shelfNote).length,
     tasted: list.filter((s) => s.taste).length,
     capGates: list.filter((s) => s.capGate).length,
     proOffers: list.filter((s) => s.proOffer).length,
@@ -830,12 +837,14 @@ ${costRows}
 <h2>The funnel</h2>
 ${funnelTable("f", w, f)}
 <p class="note">Each row is sessions that reached that step; the right column is its share of arrivals. The steps are not nested: the wall is met on more surfaces than Fill page, and an account can follow a wall that was never shown in this session. "Became an account" counts the hop return (<code>from_session</code>, michi 7bc1d40), a same-id upgrade in the session, and for days before the fix a non-anonymous user created within ${STITCH_SECONDS} s of the guest session's end whose first page was the sign-in return. The tile above says how many came from each.
-Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.</p>
+Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.
+The My Binders shelf note ("you are at your binder limit, create a free account"), shown to <strong>${d.shelfNotes}</strong> session${d.shelfNotes === 1 ? "" : "s"} about one second in because the auto-made binder fills a guest's one-binder cap, is NOT counted as a wall: nothing it guards was tapped.</p>
 
 <div class="cols">
 <div><h3>Phone</h3>${funnelTable("p", w, d.phoneFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 <div><h3>Desktop</h3>${funnelTable("d", w, d.desktopFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 </div>
+<p class="note">Phone ${d.phone} + desktop ${d.desktop} + unknown ${d.unknownDevice} = ${d.sessions}. The two columns cover only sessions that recorded a viewport (since 2026-10-29 evening); the other ${d.unknownDevice} are in neither, including ${f[8].sessions - d.phoneFunnel[8].sessions - d.desktopFunnel[8].sessions} of the ${f[8].sessions} account${f[8].sessions === 1 ? "" : "s"}.</p>
 
 <h2>Per day</h2>
 ${dailyChart(w, d.daily)}
