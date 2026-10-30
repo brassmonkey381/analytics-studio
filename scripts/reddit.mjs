@@ -430,12 +430,16 @@ const STEPS = [
   ["ring", "Saw the first pocket ring", (s) => s.ring],
   ["browser", "Opened the card browser", (s) => s.browser || s.searches > 0 || s.cardAdd > 0],
   ["placed", "Placed a card", (s) => s.placed],
+  ["taste", "Took the guest taste (Find similar)", (s) => s.taste],
   ["fill", "Opened Fill page", (s) => s.fillOpen],
   ["wall", "Met the create-account wall", (s) => s.wallSeen],
   ["tap", "Tapped Create account", (s) => s.wallClick || s.oauthStart],
   ["account", "Became an account", (s) => accountOf.has(s.id) || (s.accountHere && !identity.get(s.uid)?.anon)],
   ["public", "Made a binder public", (s) => madePublic(s)],
 ];
+
+const STEP_AT = Object.fromEntries(STEPS.map(([id], i) => [id, i]));
+const at = (f, id) => f[STEP_AT[id]].sessions;
 
 const isPhone = (s) => s.viewportW != null && s.viewportW < PHONE_MAX_W;
 const isDesktop = (s) => s.viewportW != null && s.viewportW >= PHONE_MAX_W;
@@ -543,13 +547,14 @@ for (const w of WINDOWS) {
         medium: ss[0].medium ?? null,
         sessions: ss.length,
         phone: ss.filter(isPhone).length,
-        editor: f[1].sessions,
-        placed: f[4].sessions,
-        fill: f[5].sessions,
-        wall: f[6].sessions,
-        tap: f[7].sessions,
-        accounts: f[8].sessions,
-        public: f[9].sessions,
+        editor: at(f, "editor"),
+        placed: at(f, "placed"),
+        taste: at(f, "taste"),
+        fill: at(f, "fill"),
+        wall: at(f, "wall"),
+        tap: at(f, "tap"),
+        accounts: at(f, "account"),
+        public: at(f, "public"),
         returned: ss.filter(returned).length,
         medianSecs: median(ss.map((s) => s.secs)),
         spend: sp || null,
@@ -574,7 +579,7 @@ for (const w of WINDOWS) {
           rosters[`${key}|${w}|${k}|${st.id}`] = roster(st._ids);
           delete st._ids;
         }
-        return { value: k, sessions: ss.length, editor: f[1].sessions, placed: f[4].sessions, accounts: f[8].sessions };
+        return { value: k, sessions: ss.length, editor: at(f, "editor"), placed: at(f, "placed"), accounts: at(f, "account") };
       })
       .sort((a, b) => b.sessions - a.sessions);
   };
@@ -590,18 +595,19 @@ for (const w of WINDOWS) {
     .map(([day, ss]) => {
       const f = funnelOver(ss);
       rosters[`day|${w}|${day}`] = roster(ss.map((s) => s.uid));
-      rosters[`dayacc|${w}|${day}`] = roster(f[8]._ids);
+      rosters[`dayacc|${w}|${day}`] = roster(f[STEP_AT.account]._ids);
       for (const st of f) delete st._ids;
       const sp = spend.rows.filter((r) => r.date === day && !r.code).reduce((a, r) => a + r.spend, 0) + spend.rows.filter((r) => r.date === day && r.code).reduce((a, r) => a + r.spend, 0);
       return {
         day,
         sessions: ss.length,
         phone: ss.filter(isPhone).length,
-        editor: f[1].sessions,
-        placed: f[4].sessions,
-        fill: f[5].sessions,
-        wall: f[6].sessions,
-        accounts: f[8].sessions,
+        editor: at(f, "editor"),
+        placed: at(f, "placed"),
+        taste: at(f, "taste"),
+        fill: at(f, "fill"),
+        wall: at(f, "wall"),
+        accounts: at(f, "account"),
         returned: ss.filter(returned).length,
         medianSecs: median(ss.map((s) => s.secs)),
         spend: sp || null,
@@ -631,12 +637,13 @@ for (const w of WINDOWS) {
       to: bounds[i + 1] === Infinity ? null : new Date(bounds[i + 1]).toISOString(),
       sessions: ss.length,
       phone: ss.filter(isPhone).length,
-      editor: f[1].sessions,
-      placed: f[4].sessions,
-      fill: f[5].sessions,
-      wall: f[6].sessions,
-      tap: f[7].sessions,
-      accounts: f[8].sessions,
+      editor: at(f, "editor"),
+      placed: at(f, "placed"),
+      taste: at(f, "taste"),
+      fill: at(f, "fill"),
+      wall: at(f, "wall"),
+      tap: at(f, "tap"),
+      accounts: at(f, "account"),
       returned: ss.filter(returned).length,
       medianSecs: median(ss.map((s) => s.secs)),
     });
@@ -678,9 +685,9 @@ for (const w of WINDOWS) {
         impressions: totalImpr || null,
         ledgerRows: ledger.length,
         perArrival: sum.sessions ? totalSpend / sum.sessions : null,
-        perEditor: sum.funnel[1].sessions ? totalSpend / sum.funnel[1].sessions : null,
-        perPlaced: sum.funnel[4].sessions ? totalSpend / sum.funnel[4].sessions : null,
-        perAccount: sum.funnel[8].sessions ? totalSpend / sum.funnel[8].sessions : null,
+        perEditor: at(sum.funnel, "editor") ? totalSpend / at(sum.funnel, "editor") : null,
+        perPlaced: at(sum.funnel, "placed") ? totalSpend / at(sum.funnel, "placed") : null,
+        perAccount: at(sum.funnel, "account") ? totalSpend / at(sum.funnel, "account") : null,
         perReturn: sum.returned ? totalSpend / sum.returned : null,
       }
     : { spend: 0, ledgerRows: ledger.length };
@@ -769,8 +776,8 @@ const blocks = WINDOWS.map((w) => {
   const f = d.funnel;
   const tiles = [
     ["Arrivals", d.sessions, `${d.phone} on a phone, ${d.desktop} desktop, ${d.unknownDevice} unknown`, "f", "arrived"],
-    ["Placed a card", f[4].sessions, pct(f[4].sessions, d.sessions) + " of arrivals", "f", "placed"],
-    ["Became an account", f[8].sessions, `${d.stitch.hop + d.stitch.same_uid} by the hop, ${d.stitch.time} stitched by time`, "f", "account"],
+    ["Placed a card", at(f, "placed"), pct(at(f, "placed"), d.sessions) + " of arrivals", "f", "placed"],
+    ["Became an account", at(f, "account"), `${d.stitch.hop + d.stitch.same_uid} by the hop, ${d.stitch.time} stitched by time`, "f", "account"],
     ["Came back a later day", d.returned, pct(d.returned, d.sessions) + " of arrivals, guests included", "t", "returned"],
     ["Bounced", d.bounced, "one page, under 10 seconds", "t", "bounced"],
     ["Median stay", secs(d.medianSecs), `p90 ${secs(d.p90Secs)}`, null, null],
@@ -792,10 +799,10 @@ const blocks = WINDOWS.map((w) => {
     ? d.perCode
         .map(
           (r) =>
-            `<tr ${hov("c", "{scope}", r.code, "arrived")}><td><code>${esc(r.code)}</code>${r.label ? `<div class="sub">${esc(r.label)}</div>` : r.registered ? "" : '<div class="sub warn">not in the registry</div>'}</td><td class="num">${r.sessions}</td><td class="num">${r.phone}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num">${r.fill}</td><td class="num">${r.wall}</td><td class="num">${r.tap}</td><td class="num" ${hov("c", "{scope}", r.code, "account")}>${r.accounts}</td><td class="num">${r.public}</td><td class="num">${r.returned}</td><td class="num">${secs(r.medianSecs)}</td><td class="num">${r.spend == null ? '<span class="na">-</span>' : usd(r.spend)}</td></tr>`,
+            `<tr ${hov("c", "{scope}", r.code, "arrived")}><td><code>${esc(r.code)}</code>${r.label ? `<div class="sub">${esc(r.label)}</div>` : r.registered ? "" : '<div class="sub warn">not in the registry</div>'}</td><td class="num">${r.sessions}</td><td class="num">${r.phone}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num">${r.taste}</td><td class="num">${r.fill}</td><td class="num">${r.wall}</td><td class="num">${r.tap}</td><td class="num" ${hov("c", "{scope}", r.code, "account")}>${r.accounts}</td><td class="num">${r.public}</td><td class="num">${r.returned}</td><td class="num">${secs(r.medianSecs)}</td><td class="num">${r.spend == null ? '<span class="na">-</span>' : usd(r.spend)}</td></tr>`,
         )
         .join("")
-    : `<tr><td colspan="13" class="empty">No arrivals.</td></tr>`;
+    : `<tr><td colspan="14" class="empty">No arrivals.</td></tr>`;
 
   const dimTable = (title, rows, key, hint) =>
     rows.length
@@ -808,17 +815,17 @@ const blocks = WINDOWS.map((w) => {
     ? d.segments
         .map(
           (s) =>
-            `<tr ${hov("seg", "{scope}", s.id, "arrived")}><td>${s.id === "before" ? "before the first marker" : `<code>${esc(s.id)}</code>`}<div class="sub">${s.from ? ptTime(s.from) : "window start"} to ${s.to ? ptTime(s.to) : "now"}</div></td><td class="num">${s.sessions}</td><td class="num">${s.phone}</td><td class="num">${s.editor}</td><td class="num">${s.placed}</td><td class="num">${s.fill}</td><td class="num">${s.wall}</td><td class="num">${s.tap}</td><td class="num" ${hov("seg", "{scope}", s.id, "account")}>${s.accounts}</td><td class="num">${s.returned}</td><td class="num">${secs(s.medianSecs)}</td></tr>`,
+            `<tr ${hov("seg", "{scope}", s.id, "arrived")}><td>${s.id === "before" ? "before the first marker" : `<code>${esc(s.id)}</code>`}<div class="sub">${s.from ? ptTime(s.from) : "window start"} to ${s.to ? ptTime(s.to) : "now"}</div></td><td class="num">${s.sessions}</td><td class="num">${s.phone}</td><td class="num">${s.editor}</td><td class="num">${s.placed}</td><td class="num">${s.taste}</td><td class="num">${s.fill}</td><td class="num">${s.wall}</td><td class="num">${s.tap}</td><td class="num" ${hov("seg", "{scope}", s.id, "account")}>${s.accounts}</td><td class="num">${s.returned}</td><td class="num">${secs(s.medianSecs)}</td></tr>`,
         )
         .join("")
-    : `<tr><td colspan="11" class="empty">No arrivals.</td></tr>`;
+    : `<tr><td colspan="12" class="empty">No arrivals.</td></tr>`;
 
   const dayRows = d.daily.length
     ? [...d.daily]
         .reverse()
         .map(
           (r) =>
-            `<tr ${hov("day", "{scope}", r.day)}><td>${esc(r.day)}</td><td class="num">${r.sessions}</td><td class="num">${r.phone}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num">${r.fill}</td><td class="num">${r.wall}</td><td class="num" ${hov("dayacc", "{scope}", r.day)}>${r.accounts}</td><td class="num">${r.returned}</td><td class="num">${secs(r.medianSecs)}</td><td class="num">${r.spend == null ? '<span class="na">-</span>' : usd(r.spend)}</td></tr>`,
+            `<tr ${hov("day", "{scope}", r.day)}><td>${esc(r.day)}</td><td class="num">${r.sessions}</td><td class="num">${r.phone}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num">${r.taste}</td><td class="num">${r.fill}</td><td class="num">${r.wall}</td><td class="num" ${hov("dayacc", "{scope}", r.day)}>${r.accounts}</td><td class="num">${r.returned}</td><td class="num">${secs(r.medianSecs)}</td><td class="num">${r.spend == null ? '<span class="na">-</span>' : usd(r.spend)}</td></tr>`,
         )
         .join("")
     : "";
@@ -837,25 +844,25 @@ ${costRows}
 <h2>The funnel</h2>
 ${funnelTable("f", w, f)}
 <p class="note">Each row is sessions that reached that step; the right column is its share of arrivals. The steps are not nested: the wall is met on more surfaces than Fill page, and an account can follow a wall that was never shown in this session. "Became an account" counts the hop return (<code>from_session</code>, michi 7bc1d40), a same-id upgrade in the session, and for days before the fix a non-anonymous user created within ${STITCH_SECONDS} s of the guest session's end whose first page was the sign-in return. The tile above says how many came from each.
-Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.
+"Took the guest taste" is a guest's one Find similar (michi 2ae2814; before that deploy guests had none, so the row reads zero). Fill page and the wall are visible only since michi 6d01a53: a zero on those rows before 2026-10-29 evening is blindness, not behaviour.
 The My Binders shelf note ("you are at your binder limit, create a free account"), shown to <strong>${d.shelfNotes}</strong> session${d.shelfNotes === 1 ? "" : "s"} about one second in because the auto-made binder fills a guest's one-binder cap, is NOT counted as a wall: nothing it guards was tapped.</p>
 
 <div class="cols">
 <div><h3>Phone</h3>${funnelTable("p", w, d.phoneFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 <div><h3>Desktop</h3>${funnelTable("d", w, d.desktopFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 </div>
-<p class="note">Phone ${d.phone} + desktop ${d.desktop} + unknown ${d.unknownDevice} = ${d.sessions}. The two columns cover only sessions that recorded a viewport (since 2026-10-29 evening); the other ${d.unknownDevice} are in neither, including ${f[8].sessions - d.phoneFunnel[8].sessions - d.desktopFunnel[8].sessions} of the ${f[8].sessions} account${f[8].sessions === 1 ? "" : "s"}.</p>
+<p class="note">Phone ${d.phone} + desktop ${d.desktop} + unknown ${d.unknownDevice} = ${d.sessions}. The two columns cover only sessions that recorded a viewport (since 2026-10-29 evening); the other ${d.unknownDevice} are in neither, including ${at(f, "account") - d.phoneFunnel[STEP_AT.account].sessions - d.desktopFunnel[STEP_AT.account].sessions} of the ${at(f, "account")} account${at(f, "account") === 1 ? "" : "s"}.</p>
 
 <h2>Per day</h2>
 ${dailyChart(w, d.daily)}
-${dayRows ? `<table class="tbl"><thead><tr><th>Day (${esc(out.dayTz)})</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Accounts</th><th class="num">Returned</th><th class="num">Median stay</th><th class="num">Spend</th></tr></thead><tbody>${dayRows}</tbody></table>` : ""}
+${dayRows ? `<table class="tbl"><thead><tr><th>Day (${esc(out.dayTz)})</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Taste</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Accounts</th><th class="num">Returned</th><th class="num">Median stay</th><th class="num">Spend</th></tr></thead><tbody>${dayRows}</tbody></table>` : ""}
 
 <h2>Per deploy</h2>
-<table class="tbl"><thead><tr><th>Segment</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Tap</th><th class="num">Accounts</th><th class="num">Returned</th><th class="num">Median stay</th></tr></thead><tbody>${segRows}</tbody></table>
+<table class="tbl"><thead><tr><th>Segment</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Taste</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Tap</th><th class="num">Accounts</th><th class="num">Returned</th><th class="num">Median stay</th></tr></thead><tbody>${segRows}</tbody></table>
 <p class="note">A segment runs from one <code>deploy.live</code> marker (michi promote-to-production.ps1, the moment Vercel went live) to the next. Markers exist since 2026-10-30 04:14 UTC; everything earlier is one "before" segment, because the first day's deploy times were never recorded. A segment a few hours old has the arrivals of a few hours: compare rates, not counts.</p>
 
 <h2>Per creative</h2>
-<table class="tbl"><thead><tr><th>Code</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Tap</th><th class="num">Accounts</th><th class="num">Public</th><th class="num">Returned</th><th class="num">Median stay</th><th class="num">Spend</th></tr></thead><tbody>${codeRows}</tbody></table>
+<table class="tbl"><thead><tr><th>Code</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Taste</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Tap</th><th class="num">Accounts</th><th class="num">Public</th><th class="num">Returned</th><th class="num">Median stay</th><th class="num">Spend</th></tr></thead><tbody>${codeRows}</tbody></table>
 <div class="cols">
 <div>${dimTable("Audience (utm_content)", d.audiences, "content", "No link carried utm_content yet. Put the subreddit in utm_content on each ad link and this table fills in.")}</div>
 <div>${dimTable("Ad (utm_term)", d.ads, "term", "No link carried utm_term yet. Put the ad name in utm_term and the creative and the audience separate.")}</div>
@@ -962,11 +969,11 @@ if (a7.cost.spend) {
   md.push(`No spend rows in the last 7 days (${spend.path}).`, ``);
 }
 md.push(`## Per day (30 days)`, ``);
-md.push(`| day | arrivals | phone | editor | placed | fill | wall | accounts | returned | median stay | spend |`, `|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|`);
-for (const r of [...aa.daily].reverse()) md.push(`| ${r.day} | ${r.sessions} | ${r.phone} | ${r.editor} | ${r.placed} | ${r.fill} | ${r.wall} | ${r.accounts} | ${r.returned} | ${secs(r.medianSecs)} | ${r.spend == null ? "-" : `$${r.spend.toFixed(2)}`} |`);
+md.push(`| day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |`, `|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|`);
+for (const r of [...aa.daily].reverse()) md.push(`| ${r.day} | ${r.sessions} | ${r.phone} | ${r.editor} | ${r.placed} | ${r.taste} | ${r.fill} | ${r.wall} | ${r.accounts} | ${r.returned} | ${secs(r.medianSecs)} | ${r.spend == null ? "-" : `$${r.spend.toFixed(2)}`} |`);
 md.push(``, `## Per deploy (30 days)`, ``);
-md.push(`| segment | from (UTC) | arrivals | editor | placed | fill | wall | tap | accounts | returned |`, `|---|---|---:|---:|---:|---:|---:|---:|---:|---:|`);
-for (const s of aa.segments) md.push(`| ${s.id} | ${s.from ?? "-"} | ${s.sessions} | ${s.editor} | ${s.placed} | ${s.fill} | ${s.wall} | ${s.tap} | ${s.accounts} | ${s.returned} |`);
+md.push(`| segment | from (UTC) | arrivals | editor | placed | taste | fill | wall | tap | accounts | returned |`, `|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|`);
+for (const s of aa.segments) md.push(`| ${s.id} | ${s.from ?? "-"} | ${s.sessions} | ${s.editor} | ${s.placed} | ${s.taste} | ${s.fill} | ${s.wall} | ${s.tap} | ${s.accounts} | ${s.returned} |`);
 md.push(``, `## Per creative (30 days)`, ``);
 md.push(`| code | label | arrivals | editor | placed | accounts | returned | spend |`, `|---|---|---:|---:|---:|---:|---:|---:|`);
 for (const r of aa.perCode) md.push(`| ${r.code} | ${r.label ?? (r.registered ? "" : "not in registry")} | ${r.sessions} | ${r.editor} | ${r.placed} | ${r.accounts} | ${r.returned} | ${r.spend == null ? "-" : `$${r.spend.toFixed(2)}`} |`);
@@ -974,7 +981,7 @@ md.push(``, `> Fill page and the wall are recorded since michi 6d01a53 (2026-10-
 writeFileSync(MD_FILE, md.join("\n") + "\n");
 
 console.log(
-  `Reddit  7d: ${a7.sessions} arrivals, ${a7.funnel[1].sessions} editor, ${a7.funnel[4].sessions} placed, ${a7.funnel[5].sessions} fill, ${a7.funnel[6].sessions} wall, ${a7.funnel[8].sessions} accounts, ${a7.returned} returned  ·  phone ${a7.phone}/${a7.sessions}  ·  excluded ${a7.excludedSessions}`,
+  `Reddit  7d: ${a7.sessions} arrivals, ${at(a7.funnel, "editor")} editor, ${at(a7.funnel, "placed")} placed, ${at(a7.funnel, "fill")} fill, ${at(a7.funnel, "wall")} wall, ${at(a7.funnel, "account")} accounts, ${a7.returned} returned  ·  phone ${a7.phone}/${a7.sessions}  ·  excluded ${a7.excludedSessions}`,
 );
 console.log(`  deploy markers: ${deploys.length}  ·  spend rows: ${spend.rows.length}${spend.found ? "" : " (ledger missing)"}  ·  stitch (all): hop ${aa.stitch.hop + aa.stitch.same_uid}, time ${aa.stitch.time}`);
 console.log(`\nWrote ${DATA_FILE}`);
