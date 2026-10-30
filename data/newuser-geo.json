@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-29T15:08:29.269Z",
+  "collectedAt": "2026-10-30T15:08:32.711Z",
   "windows": [
     1,
     7,
@@ -7,29 +7,33 @@
     90
   ],
   "activeDays": 14,
-  "geoCollectedAt": "2026-10-29T15:08:22.278Z",
+  "geoCollectedAt": "2026-10-30T15:08:26.223Z",
   "apps": {
     "doggle": {
       "unit": "places",
       "days": 90,
       "totals": {
-        "accounts": 25,
+        "accounts": 26,
         "excluded": 9,
         "guests": 0,
         "deletedOrNoProfile": 0,
-        "real": 16,
-        "signedOutDevices": 441
+        "real": 17,
+        "signedOutDevices": 483
       },
       "windows": {
         "1": {
-          "real": 0,
-          "active": 0,
+          "real": 1,
+          "active": 1,
           "located": 0,
           "foreign": 0,
-          "noLocation": 0,
+          "noLocation": 1,
           "activeLocated": 0,
-          "bySource": {},
-          "byPlatform": {},
+          "bySource": {
+            "none": 1
+          },
+          "byPlatform": {
+            "ios": 1
+          },
           "byState": [],
           "cities": []
         },
@@ -77,18 +81,18 @@
           ]
         },
         "30": {
-          "real": 7,
-          "active": 4,
+          "real": 8,
+          "active": 5,
           "located": 2,
           "foreign": 0,
-          "noLocation": 5,
+          "noLocation": 6,
           "activeLocated": 2,
           "bySource": {
-            "none": 5,
+            "none": 6,
             "home": 2
           },
           "byPlatform": {
-            "ios": 5,
+            "ios": 6,
             "web": 1,
             "none": 1
           },
@@ -142,19 +146,19 @@
           ]
         },
         "90": {
-          "real": 16,
-          "active": 4,
+          "real": 17,
+          "active": 5,
           "located": 5,
           "foreign": 0,
-          "noLocation": 11,
+          "noLocation": 12,
           "activeLocated": 2,
           "bySource": {
-            "none": 11,
+            "none": 12,
             "home": 5
           },
           "byPlatform": {
             "none": 6,
-            "ios": 8,
+            "ios": 9,
             "web": 2
           },
           "byState": [

@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-29T15:07:55.653Z",
+  "collectedAt": "2026-10-30T15:07:57.211Z",
   "windows": [
     "all",
     1,
@@ -12,74 +12,80 @@
     "doggle": {
       "currency": "points",
       "balances": {
-        "accounts": 15,
-        "outstanding": 2450,
+        "accounts": 16,
+        "outstanding": 2573,
         "excludedAccounts": 43,
         "distribution": {
           "buckets": [
             "1–9",
             "10–99",
-            "100+"
+            "100–999",
+            "1,000+"
           ],
           "byWindow": {
             "1": [
               0,
-              10,
-              5
+              11,
+              4,
+              1
             ],
             "7": [
               0,
-              10,
-              5
+              11,
+              4,
+              1
             ],
             "14": [
               0,
-              10,
-              5
+              11,
+              4,
+              1
             ],
             "30": [
               0,
-              10,
-              5
+              11,
+              4,
+              1
             ],
             "all": [
               0,
-              10,
-              5
+              11,
+              4,
+              1
             ]
           }
         }
       },
       "flows": {
         "1": {
-          "earned": 39,
+          "earned": 123,
           "spent": 0,
-          "rows": 2,
+          "rows": 8,
           "earners": 2
         },
         "7": {
-          "earned": 124,
+          "earned": 247,
           "spent": 0,
-          "rows": 8,
-          "earners": 4
-        },
-        "14": {
-          "earned": 297,
-          "spent": 0,
-          "rows": 18,
-          "earners": 4
-        },
-        "30": {
-          "earned": 475,
-          "spent": 0,
-          "rows": 28,
+          "rows": 16,
           "earners": 5
         },
+        "14": {
+          "earned": 356,
+          "spent": 0,
+          "rows": 23,
+          "earners": 5
+        },
+        "30": {
+          "earned": 598,
+          "spent": 0,
+          "rows": 36,
+          "earners": 6
+        },
         "all": {
-          "earned": 2475,
+          "earned": 2598,
           "spent": 25,
-          "rows": 121,
-          "earners": 15
+          "rows": 129,
+          "earners": 16
         }
       },
       "earnedDistribution": {
@@ -97,21 +103,21 @@
           "7": [
             1,
             3,
-            0
+            1
           ],
           "14": [
             0,
-            2,
-            2
+            4,
+            1
           ],
           "30": [
             0,
-            3,
+            4,
             2
           ],
           "all": [
             0,
-            10,
+            11,
             5
           ]
         }
@@ -119,24 +125,16 @@
       "byReason": {
         "1": [
           {
-            "category": "Login bonus",
-            "points": 39,
-            "rows": 2,
+            "category": "Onboarding",
+            "points": 60,
+            "rows": 3,
             "users": 2
-          }
-        ],
-        "7": [
-          {
-            "category": "Login bonus",
-            "points": 84,
-            "rows": 5,
-            "users": 3
           },
           {
-            "category": "Onboarding",
-            "points": 30,
-            "rows": 1,
-            "users": 1
+            "category": "Login bonus",
+            "points": 48,
+            "rows": 2,
+            "users": 2
           },
           {
             "category": "Checked in at a dog place",
@@ -145,7 +143,45 @@
             "users": 1
           },
           {
+            "category": "Joined a group",
+            "points": 5,
+            "rows": 1,
+            "users": 1
+          },
+          {
             "category": "Vibe bonus",
+            "points": 5,
+            "rows": 1,
+            "users": 1
+          }
+        ],
+        "7": [
+          {
+            "category": "Login bonus",
+            "points": 132,
+            "rows": 7,
+            "users": 4
+          },
+          {
+            "category": "Onboarding",
+            "points": 90,
+            "rows": 4,
+            "users": 3
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 10,
+            "rows": 2,
+            "users": 1
+          },
+          {
+            "category": "Vibe bonus",
+            "points": 10,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Joined a group",
             "points": 5,
             "rows": 1,
             "users": 1
@@ -154,67 +190,79 @@
         "14": [
           {
             "category": "Login bonus",
-            "points": 177,
-            "rows": 10,
-            "users": 4
+            "points": 201,
+            "rows": 11,
+            "users": 5
           },
           {
             "category": "Onboarding",
-            "points": 100,
-            "rows": 4,
-            "users": 2
+            "points": 120,
+            "rows": 5,
+            "users": 4
           },
           {
             "category": "Vibe bonus",
-            "points": 10,
-            "rows": 2,
-            "users": 2
+            "points": 15,
+            "rows": 3,
+            "users": 3
           },
           {
             "category": "Checked in at a dog place",
-            "points": 10,
-            "rows": 2,
+            "points": 15,
+            "rows": 3,
+            "users": 1
+          },
+          {
+            "category": "Joined a group",
+            "points": 5,
+            "rows": 1,
             "users": 1
           }
         ],
         "30": [
           {
             "category": "Login bonus",
-            "points": 285,
-            "rows": 16,
-            "users": 5
+            "points": 333,
+            "rows": 18,
+            "users": 6
           },
           {
             "category": "Onboarding",
-            "points": 160,
-            "rows": 6,
-            "users": 3
+            "points": 220,
+            "rows": 9,
+            "users": 5
           },
           {
             "category": "Checked in at a dog place",
-            "points": 20,
-            "rows": 4,
+            "points": 25,
+            "rows": 5,
             "users": 1
           },
           {
             "category": "Vibe bonus",
-            "points": 10,
-            "rows": 2,
-            "users": 2
+            "points": 15,
+            "rows": 3,
+            "users": 3
+          },
+          {
+            "category": "Joined a group",
+            "points": 5,
+            "rows": 1,
+            "users": 1
           }
         ],
         "all": [
           {
             "category": "Login bonus",
-            "points": 1251,
-            "rows": 63,
-            "users": 15
+            "points": 1299,
+            "rows": 65,
+            "users": 16
           },
           {
             "category": "Onboarding",
-            "points": 580,
-            "rows": 27,
-            "users": 12
+            "points": 640,
+            "rows": 30,
+            "users": 13
           },
           {
             "category": "Referral welcome",
@@ -230,8 +278,8 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 100,
-            "rows": 20,
+            "points": 105,
+            "rows": 21,
             "users": 2
           },
           {
@@ -242,25 +290,25 @@
           },
           {
             "category": "Vibe bonus",
-            "points": 15,
-            "rows": 3,
-            "users": 2
+            "points": 20,
+            "rows": 4,
+            "users": 3
           },
           {
             "category": "Joined a group",
-            "points": 5,
-            "rows": 1,
-            "users": 1
+            "points": 10,
+            "rows": 2,
+            "users": 2
           }
         ]
       },
-      "excludedLedgerRows": 1007
+      "excludedLedgerRows": 1015
     },
     "pickleague": {
       "currency": "pickles",
       "balances": {
         "accounts": 11,
-        "outstanding": 8824319,
+        "outstanding": 8825292,
         "excludedAccounts": 513,
         "topShare": 99.8,
         "distribution": {
@@ -377,7 +425,7 @@
           ]
         }
       },
-      "excludedFlowRows": 804
+      "excludedFlowRows": 805
     },
     "caps": {
       "binders": {
@@ -392,13 +440,13 @@
         "counts": [
           0,
           0,
-          114,
+          99,
           0,
-          328
+          686
         ],
-        "users": 442,
+        "users": 785,
         "uncapped": 0,
-        "atCap": 328
+        "atCap": 686
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -410,13 +458,13 @@
           "at / over cap"
         ],
         "counts": [
-          303,
-          33,
-          38,
-          9,
+          640,
+          29,
+          35,
+          6,
           59
         ],
-        "users": 442,
+        "users": 769,
         "uncapped": 0,
         "atCap": 59
       },
@@ -430,15 +478,15 @@
           "at / over cap"
         ],
         "counts": [
-          33,
-          36,
           34,
-          27,
-          33
+          38,
+          34,
+          28,
+          32
         ],
-        "users": 163,
+        "users": 166,
         "uncapped": 0,
-        "atCap": 33
+        "atCap": 32
       },
       "includedPrintsPerMonth": {
         "app": "michi",
@@ -494,11 +542,11 @@
           0,
           0,
           0,
-          30
+          36
         ],
-        "users": 30,
+        "users": 36,
         "uncapped": 0,
-        "atCap": 30
+        "atCap": 36
       },
       "cardsPerCollection": {
         "app": "tcgscan",
@@ -510,21 +558,21 @@
           "at / over cap"
         ],
         "counts": [
-          4,
+          5,
           3,
           2,
           1,
           3
         ],
-        "users": 13,
+        "users": 14,
         "uncapped": 0,
         "atCap": 3
       },
       "_accounts": {
-        "total": 4301,
-        "guests": 4065,
-        "excluded": 2457,
-        "excludedUsageRows": 361
+        "total": 5100,
+        "guests": 4859,
+        "excluded": 2536,
+        "excludedUsageRows": 403
       }
     }
   }

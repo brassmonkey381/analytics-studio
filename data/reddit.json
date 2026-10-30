@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-30T14:35:58.654Z",
+  "collectedAt": "2026-10-30T15:07:47.752Z",
   "dayTz": "PDT",
   "source": "reddit",
   "lookbackDays": 30,
@@ -38,6 +38,14 @@
     {
       "ts": "2026-10-30 14:10:13.509847+00",
       "short": "8308dd9"
+    },
+    {
+      "ts": "2026-10-30 14:45:38.885808+00",
+      "short": "c5332f6"
+    },
+    {
+      "ts": "2026-10-30 15:03:44.737924+00",
+      "short": "540fce5"
     }
   ],
   "changes": [
@@ -51,14 +59,14 @@
   "verificationSessions": 3,
   "byWindow": {
     "1": {
-      "sessions": 654,
-      "phone": 271,
+      "sessions": 637,
+      "phone": 277,
       "desktop": 10,
-      "unknownDevice": 373,
+      "unknownDevice": 350,
       "bounced": 65,
-      "medianSecs": 10.652000000000001,
-      "p90Secs": 80.088,
-      "returned": 1,
+      "medianSecs": 10.702,
+      "p90Secs": 79.894,
+      "returned": 0,
       "dismissed": 19,
       "shelfNotes": 57,
       "tasted": 5,
@@ -73,17 +81,17 @@
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 654
+          "sessions": 637
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 346
+          "sessions": 350
         },
         {
           "id": "ring",
           "label": "Saw the first pocket ring",
-          "sessions": 337
+          "sessions": 343
         },
         {
           "id": "browser",
@@ -141,9 +149,9 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 266,
-          "phone": 122,
-          "editor": 140,
+          "sessions": 254,
+          "phone": 123,
+          "editor": 141,
           "placed": 6,
           "taste": 2,
           "fill": 1,
@@ -151,7 +159,7 @@
           "tap": 1,
           "accounts": 2,
           "public": 0,
-          "returned": 1,
+          "returned": 0,
           "medianSecs": 9.7195,
           "spend": null,
           "clicks": null
@@ -161,9 +169,9 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 206,
-          "phone": 92,
-          "editor": 129,
+          "sessions": 203,
+          "phone": 97,
+          "editor": 132,
           "placed": 5,
           "taste": 2,
           "fill": 0,
@@ -172,7 +180,7 @@
           "accounts": 0,
           "public": 0,
           "returned": 0,
-          "medianSecs": 12.6725,
+          "medianSecs": 12.614,
           "spend": null,
           "clicks": null
         },
@@ -181,7 +189,7 @@
           "label": "Reddit ad - Coverflow video (feed)",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 180,
+          "sessions": 178,
           "phone": 57,
           "editor": 75,
           "placed": 0,
@@ -222,23 +230,23 @@
       "daily": [
         {
           "day": "2026-10-29",
-          "sessions": 457,
+          "sessions": 434,
           "phone": 82,
-          "editor": 185,
+          "editor": 183,
           "placed": 9,
           "taste": 0,
           "fill": 1,
           "wall": 1,
           "accounts": 3,
-          "returned": 1,
-          "medianSecs": 10.581,
+          "returned": 0,
+          "medianSecs": 10.339500000000001,
           "spend": 25
         },
         {
           "day": "2026-10-30",
-          "sessions": 197,
-          "phone": 189,
-          "editor": 161,
+          "sessions": 203,
+          "phone": 195,
+          "editor": 167,
           "placed": 4,
           "taste": 5,
           "fill": 0,
@@ -255,17 +263,17 @@
           "kind": "before",
           "from": null,
           "to": "2026-10-30T04:14:47.662Z",
-          "sessions": 379,
+          "sessions": 356,
           "phone": 5,
-          "editor": 132,
+          "editor": 130,
           "placed": 8,
           "taste": 0,
           "fill": 0,
           "wall": 0,
           "tap": 0,
           "accounts": 3,
-          "returned": 1,
-          "medianSecs": 11.326
+          "returned": 0,
+          "medianSecs": 11.400500000000001
         },
         {
           "id": "5873b67",
@@ -356,10 +364,10 @@
           "id": "geo-targeted",
           "kind": "change",
           "from": "2026-10-30T14:35:00.000Z",
-          "to": null,
-          "sessions": 1,
-          "phone": 1,
-          "editor": 1,
+          "to": "2026-10-30T14:45:38.885Z",
+          "sessions": 4,
+          "phone": 4,
+          "editor": 4,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -367,7 +375,41 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 0.838
+          "medianSecs": 6.4715
+        },
+        {
+          "id": "c5332f6",
+          "kind": "deploy",
+          "from": "2026-10-30T14:45:38.885Z",
+          "to": "2026-10-30T15:03:44.737Z",
+          "sessions": 3,
+          "phone": 3,
+          "editor": 3,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 7.528
+        },
+        {
+          "id": "540fce5",
+          "kind": "deploy",
+          "from": "2026-10-30T15:03:44.737Z",
+          "to": null,
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": null
         }
       ],
       "search": {
@@ -385,19 +427,19 @@
       "stalls": [
         {
           "event": "session.start",
-          "n": 298
+          "n": 280
         },
         {
           "event": "page.view",
-          "n": 125
+          "n": 122
         },
         {
           "event": "walkthrough.step",
-          "n": 97
+          "n": 98
         },
         {
           "event": "binder.add",
-          "n": 47
+          "n": 50
         },
         {
           "event": "walkthrough.shown",
@@ -419,15 +461,15 @@
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 271
+          "sessions": 277
         },
         {
           "id": "editor",
-          "sessions": 209
+          "sessions": 215
         },
         {
           "id": "ring",
-          "sessions": 210
+          "sessions": 216
         },
         {
           "id": "browser",
@@ -508,14 +550,14 @@
           "sessions": 0
         }
       ],
-      "excludedSessions": 8
+      "excludedSessions": 7
     },
     "7": {
-      "sessions": 684,
-      "phone": 271,
+      "sessions": 690,
+      "phone": 277,
       "desktop": 10,
       "unknownDevice": 403,
-      "bounced": 65,
+      "bounced": 66,
       "medianSecs": 11.0015,
       "p90Secs": 87.332,
       "returned": 1,
@@ -533,17 +575,17 @@
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 684
+          "sessions": 690
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 349
+          "sessions": 355
         },
         {
           "id": "ring",
           "label": "Saw the first pocket ring",
-          "sessions": 337
+          "sessions": 343
         },
         {
           "id": "browser",
@@ -596,8 +638,8 @@
         "clicks": 288,
         "impressions": null,
         "ledgerRows": 1,
-        "perArrival": 0.03654970760233918,
-        "perEditor": 0.07163323782234957,
+        "perArrival": 0.036231884057971016,
+        "perEditor": 0.07042253521126761,
         "perPlaced": 1.9230769230769231,
         "perAccount": 8.333333333333334,
         "perReturn": 25
@@ -608,9 +650,9 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 276,
-          "phone": 122,
-          "editor": 141,
+          "sessions": 277,
+          "phone": 123,
+          "editor": 142,
           "placed": 6,
           "taste": 2,
           "fill": 1,
@@ -619,7 +661,7 @@
           "accounts": 2,
           "public": 0,
           "returned": 1,
-          "medianSecs": 9.8895,
+          "medianSecs": 9.953,
           "spend": null,
           "clicks": null
         },
@@ -628,9 +670,9 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 220,
-          "phone": 92,
-          "editor": 130,
+          "sessions": 225,
+          "phone": 97,
+          "editor": 135,
           "placed": 5,
           "taste": 2,
           "fill": 0,
@@ -639,7 +681,7 @@
           "accounts": 0,
           "public": 0,
           "returned": 0,
-          "medianSecs": 12.786,
+          "medianSecs": 12.702,
           "spend": null,
           "clicks": null
         },
@@ -703,9 +745,9 @@
         },
         {
           "day": "2026-10-30",
-          "sessions": 197,
-          "phone": 189,
-          "editor": 161,
+          "sessions": 203,
+          "phone": 195,
+          "editor": 167,
           "placed": 4,
           "taste": 5,
           "fill": 0,
@@ -823,10 +865,10 @@
           "id": "geo-targeted",
           "kind": "change",
           "from": "2026-10-30T14:35:00.000Z",
-          "to": null,
-          "sessions": 1,
-          "phone": 1,
-          "editor": 1,
+          "to": "2026-10-30T14:45:38.885Z",
+          "sessions": 4,
+          "phone": 4,
+          "editor": 4,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -834,7 +876,41 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 0.838
+          "medianSecs": 6.4715
+        },
+        {
+          "id": "c5332f6",
+          "kind": "deploy",
+          "from": "2026-10-30T14:45:38.885Z",
+          "to": "2026-10-30T15:03:44.737Z",
+          "sessions": 3,
+          "phone": 3,
+          "editor": 3,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 7.528
+        },
+        {
+          "id": "540fce5",
+          "kind": "deploy",
+          "from": "2026-10-30T15:03:44.737Z",
+          "to": null,
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": null
         }
       ],
       "search": {
@@ -852,19 +928,19 @@
       "stalls": [
         {
           "event": "session.start",
-          "n": 322
+          "n": 323
         },
         {
           "event": "page.view",
-          "n": 131
+          "n": 132
         },
         {
           "event": "walkthrough.step",
-          "n": 97
+          "n": 98
         },
         {
           "event": "binder.add",
-          "n": 47
+          "n": 50
         },
         {
           "event": "walkthrough.shown",
@@ -886,15 +962,15 @@
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 271
+          "sessions": 277
         },
         {
           "id": "editor",
-          "sessions": 209
+          "sessions": 215
         },
         {
           "id": "ring",
-          "sessions": 210
+          "sessions": 216
         },
         {
           "id": "browser",
@@ -978,11 +1054,11 @@
       "excludedSessions": 9
     },
     "14": {
-      "sessions": 684,
-      "phone": 271,
+      "sessions": 690,
+      "phone": 277,
       "desktop": 10,
       "unknownDevice": 403,
-      "bounced": 65,
+      "bounced": 66,
       "medianSecs": 11.0015,
       "p90Secs": 87.332,
       "returned": 1,
@@ -1000,17 +1076,17 @@
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 684
+          "sessions": 690
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 349
+          "sessions": 355
         },
         {
           "id": "ring",
           "label": "Saw the first pocket ring",
-          "sessions": 337
+          "sessions": 343
         },
         {
           "id": "browser",
@@ -1063,8 +1139,8 @@
         "clicks": 288,
         "impressions": null,
         "ledgerRows": 1,
-        "perArrival": 0.03654970760233918,
-        "perEditor": 0.07163323782234957,
+        "perArrival": 0.036231884057971016,
+        "perEditor": 0.07042253521126761,
         "perPlaced": 1.9230769230769231,
         "perAccount": 8.333333333333334,
         "perReturn": 25
@@ -1075,9 +1151,9 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 276,
-          "phone": 122,
-          "editor": 141,
+          "sessions": 277,
+          "phone": 123,
+          "editor": 142,
           "placed": 6,
           "taste": 2,
           "fill": 1,
@@ -1086,7 +1162,7 @@
           "accounts": 2,
           "public": 0,
           "returned": 1,
-          "medianSecs": 9.8895,
+          "medianSecs": 9.953,
           "spend": null,
           "clicks": null
         },
@@ -1095,9 +1171,9 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 220,
-          "phone": 92,
-          "editor": 130,
+          "sessions": 225,
+          "phone": 97,
+          "editor": 135,
           "placed": 5,
           "taste": 2,
           "fill": 0,
@@ -1106,7 +1182,7 @@
           "accounts": 0,
           "public": 0,
           "returned": 0,
-          "medianSecs": 12.786,
+          "medianSecs": 12.702,
           "spend": null,
           "clicks": null
         },
@@ -1170,9 +1246,9 @@
         },
         {
           "day": "2026-10-30",
-          "sessions": 197,
-          "phone": 189,
-          "editor": 161,
+          "sessions": 203,
+          "phone": 195,
+          "editor": 167,
           "placed": 4,
           "taste": 5,
           "fill": 0,
@@ -1290,10 +1366,10 @@
           "id": "geo-targeted",
           "kind": "change",
           "from": "2026-10-30T14:35:00.000Z",
-          "to": null,
-          "sessions": 1,
-          "phone": 1,
-          "editor": 1,
+          "to": "2026-10-30T14:45:38.885Z",
+          "sessions": 4,
+          "phone": 4,
+          "editor": 4,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -1301,7 +1377,41 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 0.838
+          "medianSecs": 6.4715
+        },
+        {
+          "id": "c5332f6",
+          "kind": "deploy",
+          "from": "2026-10-30T14:45:38.885Z",
+          "to": "2026-10-30T15:03:44.737Z",
+          "sessions": 3,
+          "phone": 3,
+          "editor": 3,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 7.528
+        },
+        {
+          "id": "540fce5",
+          "kind": "deploy",
+          "from": "2026-10-30T15:03:44.737Z",
+          "to": null,
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": null
         }
       ],
       "search": {
@@ -1319,19 +1429,19 @@
       "stalls": [
         {
           "event": "session.start",
-          "n": 322
+          "n": 323
         },
         {
           "event": "page.view",
-          "n": 131
+          "n": 132
         },
         {
           "event": "walkthrough.step",
-          "n": 97
+          "n": 98
         },
         {
           "event": "binder.add",
-          "n": 47
+          "n": 50
         },
         {
           "event": "walkthrough.shown",
@@ -1353,15 +1463,15 @@
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 271
+          "sessions": 277
         },
         {
           "id": "editor",
-          "sessions": 209
+          "sessions": 215
         },
         {
           "id": "ring",
-          "sessions": 210
+          "sessions": 216
         },
         {
           "id": "browser",
@@ -1445,11 +1555,11 @@
       "excludedSessions": 9
     },
     "30": {
-      "sessions": 684,
-      "phone": 271,
+      "sessions": 690,
+      "phone": 277,
       "desktop": 10,
       "unknownDevice": 403,
-      "bounced": 65,
+      "bounced": 66,
       "medianSecs": 11.0015,
       "p90Secs": 87.332,
       "returned": 1,
@@ -1467,17 +1577,17 @@
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 684
+          "sessions": 690
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 349
+          "sessions": 355
         },
         {
           "id": "ring",
           "label": "Saw the first pocket ring",
-          "sessions": 337
+          "sessions": 343
         },
         {
           "id": "browser",
@@ -1530,8 +1640,8 @@
         "clicks": 288,
         "impressions": null,
         "ledgerRows": 1,
-        "perArrival": 0.03654970760233918,
-        "perEditor": 0.07163323782234957,
+        "perArrival": 0.036231884057971016,
+        "perEditor": 0.07042253521126761,
         "perPlaced": 1.9230769230769231,
         "perAccount": 8.333333333333334,
         "perReturn": 25
@@ -1542,9 +1652,9 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 276,
-          "phone": 122,
-          "editor": 141,
+          "sessions": 277,
+          "phone": 123,
+          "editor": 142,
           "placed": 6,
           "taste": 2,
           "fill": 1,
@@ -1553,7 +1663,7 @@
           "accounts": 2,
           "public": 0,
           "returned": 1,
-          "medianSecs": 9.8895,
+          "medianSecs": 9.953,
           "spend": null,
           "clicks": null
         },
@@ -1562,9 +1672,9 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 220,
-          "phone": 92,
-          "editor": 130,
+          "sessions": 225,
+          "phone": 97,
+          "editor": 135,
           "placed": 5,
           "taste": 2,
           "fill": 0,
@@ -1573,7 +1683,7 @@
           "accounts": 0,
           "public": 0,
           "returned": 0,
-          "medianSecs": 12.786,
+          "medianSecs": 12.702,
           "spend": null,
           "clicks": null
         },
@@ -1637,9 +1747,9 @@
         },
         {
           "day": "2026-10-30",
-          "sessions": 197,
-          "phone": 189,
-          "editor": 161,
+          "sessions": 203,
+          "phone": 195,
+          "editor": 167,
           "placed": 4,
           "taste": 5,
           "fill": 0,
@@ -1757,10 +1867,10 @@
           "id": "geo-targeted",
           "kind": "change",
           "from": "2026-10-30T14:35:00.000Z",
-          "to": null,
-          "sessions": 1,
-          "phone": 1,
-          "editor": 1,
+          "to": "2026-10-30T14:45:38.885Z",
+          "sessions": 4,
+          "phone": 4,
+          "editor": 4,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -1768,7 +1878,41 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 0.838
+          "medianSecs": 6.4715
+        },
+        {
+          "id": "c5332f6",
+          "kind": "deploy",
+          "from": "2026-10-30T14:45:38.885Z",
+          "to": "2026-10-30T15:03:44.737Z",
+          "sessions": 3,
+          "phone": 3,
+          "editor": 3,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 7.528
+        },
+        {
+          "id": "540fce5",
+          "kind": "deploy",
+          "from": "2026-10-30T15:03:44.737Z",
+          "to": null,
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": null
         }
       ],
       "search": {
@@ -1786,19 +1930,19 @@
       "stalls": [
         {
           "event": "session.start",
-          "n": 322
+          "n": 323
         },
         {
           "event": "page.view",
-          "n": 131
+          "n": 132
         },
         {
           "event": "walkthrough.step",
-          "n": 97
+          "n": 98
         },
         {
           "event": "binder.add",
-          "n": 47
+          "n": 50
         },
         {
           "event": "walkthrough.shown",
@@ -1820,15 +1964,15 @@
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 271
+          "sessions": 277
         },
         {
           "id": "editor",
-          "sessions": 209
+          "sessions": 215
         },
         {
           "id": "ring",
-          "sessions": 210
+          "sessions": 216
         },
         {
           "id": "browser",
@@ -1912,11 +2056,11 @@
       "excludedSessions": 9
     },
     "all": {
-      "sessions": 684,
-      "phone": 271,
+      "sessions": 690,
+      "phone": 277,
       "desktop": 10,
       "unknownDevice": 403,
-      "bounced": 65,
+      "bounced": 66,
       "medianSecs": 11.0015,
       "p90Secs": 87.332,
       "returned": 1,
@@ -1934,17 +2078,17 @@
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 684
+          "sessions": 690
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 349
+          "sessions": 355
         },
         {
           "id": "ring",
           "label": "Saw the first pocket ring",
-          "sessions": 337
+          "sessions": 343
         },
         {
           "id": "browser",
@@ -1997,8 +2141,8 @@
         "clicks": 288,
         "impressions": null,
         "ledgerRows": 1,
-        "perArrival": 0.03654970760233918,
-        "perEditor": 0.07163323782234957,
+        "perArrival": 0.036231884057971016,
+        "perEditor": 0.07042253521126761,
         "perPlaced": 1.9230769230769231,
         "perAccount": 8.333333333333334,
         "perReturn": 25
@@ -2009,9 +2153,9 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 276,
-          "phone": 122,
-          "editor": 141,
+          "sessions": 277,
+          "phone": 123,
+          "editor": 142,
           "placed": 6,
           "taste": 2,
           "fill": 1,
@@ -2020,7 +2164,7 @@
           "accounts": 2,
           "public": 0,
           "returned": 1,
-          "medianSecs": 9.8895,
+          "medianSecs": 9.953,
           "spend": null,
           "clicks": null
         },
@@ -2029,9 +2173,9 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 220,
-          "phone": 92,
-          "editor": 130,
+          "sessions": 225,
+          "phone": 97,
+          "editor": 135,
           "placed": 5,
           "taste": 2,
           "fill": 0,
@@ -2040,7 +2184,7 @@
           "accounts": 0,
           "public": 0,
           "returned": 0,
-          "medianSecs": 12.786,
+          "medianSecs": 12.702,
           "spend": null,
           "clicks": null
         },
@@ -2104,9 +2248,9 @@
         },
         {
           "day": "2026-10-30",
-          "sessions": 197,
-          "phone": 189,
-          "editor": 161,
+          "sessions": 203,
+          "phone": 195,
+          "editor": 167,
           "placed": 4,
           "taste": 5,
           "fill": 0,
@@ -2224,10 +2368,10 @@
           "id": "geo-targeted",
           "kind": "change",
           "from": "2026-10-30T14:35:00.000Z",
-          "to": null,
-          "sessions": 1,
-          "phone": 1,
-          "editor": 1,
+          "to": "2026-10-30T14:45:38.885Z",
+          "sessions": 4,
+          "phone": 4,
+          "editor": 4,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -2235,7 +2379,41 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 0.838
+          "medianSecs": 6.4715
+        },
+        {
+          "id": "c5332f6",
+          "kind": "deploy",
+          "from": "2026-10-30T14:45:38.885Z",
+          "to": "2026-10-30T15:03:44.737Z",
+          "sessions": 3,
+          "phone": 3,
+          "editor": 3,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 7.528
+        },
+        {
+          "id": "540fce5",
+          "kind": "deploy",
+          "from": "2026-10-30T15:03:44.737Z",
+          "to": null,
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
+          "placed": 0,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": null
         }
       ],
       "search": {
@@ -2253,19 +2431,19 @@
       "stalls": [
         {
           "event": "session.start",
-          "n": 322
+          "n": 323
         },
         {
           "event": "page.view",
-          "n": 131
+          "n": 132
         },
         {
           "event": "walkthrough.step",
-          "n": 97
+          "n": 98
         },
         {
           "event": "binder.add",
-          "n": 47
+          "n": 50
         },
         {
           "event": "walkthrough.shown",
@@ -2287,15 +2465,15 @@
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 271
+          "sessions": 277
         },
         {
           "id": "editor",
-          "sessions": 209
+          "sessions": 215
         },
         {
           "id": "ring",
-          "sessions": 210
+          "sessions": 216
         },
         {
           "id": "browser",
