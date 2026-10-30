@@ -73,7 +73,7 @@
         "pickleague"
       ]
     },
-    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route; and props.referrer (origin + pathname of the linking page, absent for typed URLs, bookmarks, most apps and no-referrer sites, never same-origin). landing_route is still written and still the only place the campaign survives a reused session.",
+    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route; and props.referrer (origin + pathname of the linking page, absent for typed URLs, bookmarks, most apps and no-referrer sites, never same-origin). landing_route is still written and still the only place the campaign survives a reused session. Since michi-maker 6d01a53 (2026-10-29) session.start also carries viewport_w and viewport_h in CSS pixels for every session, so phone versus desktop is a filter on the event (walkthrough.shown width was the only device signal before, and only for people who saw the walkthrough); account.created from OAuth carries provider from the same commit.",
     "landing.skip": {
       "label": "Skipped the landing page (tagged arrival)",
       "stage": "acquisition",
@@ -97,6 +97,28 @@
       ]
     },
     "_tasteDoc": "taste.used { feature: findSimilar|advancedSearch|binderCovers|binderTracks|artViews, surface: binder_editor|inspector|my_binders|home|browser|fill_sheet|complete_sheet } - michi, added 2026-10-29 (michi-maker b7eb33c, data/tastes.ts). A FREE account taps a locked PRO control for the first time: the lock lifts for the rest of that visit, a toast says so, and the taste is recorded on the device and on profiles.preferences.tastes so it is never offered again for that feature. Guests get none (their first step is the free account); paid tiers are never locked. Not covered: theme search (the data server meters it per tier, a client cannot lift it), printing (owner), the VIP composer, the binder/page/artwork caps. Read it against trial.start_click, offer.checkout_start and account tier changes: which taste, on which surface, precedes a plan. Zero here after the deploy means no free account tried a PRO control, which is itself a finding about where the locks sit.",
+    "autofill.open": {
+      "label": "Opened Fill page",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "signin.perk_shown": {
+      "label": "Saw a create-account wall",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ]
+    },
+    "signin.perk_click": {
+      "label": "Tapped Create account on a wall",
+      "stage": "acquisition",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_guestWallDoc": "autofill.open { guest, source: card_bar|auth_return } fires when the Fill page sheet opens, from the pocket bar or on the way back from a sign-in that the sheet sent the person on (lib/authReturn.ts). signin.perk_shown / signin.perk_click { surface, guest } fire on every SignInPerk, surfaces: binder_cap, plans, arrange_sheet, fill_sheet, card_labels, complete_sheet, print_sheet, slice_studio, build_sheet, import_sheet, cap_gate. Added 2026-10-29 (michi-maker 6d01a53, 3ddd78f) after the Reddit before/after read showed the two blind steps of the guest funnel: the walkthrough sends a guest to Fill page at step 3, and until these events neither the sheet opening nor the create-account note it shows left a row. Read shown -> click -> account.created within the same session as the guest wall conversion; perk_shown with guest=false is a signed-out returning visitor, not a guest. Rows before the deploy do not exist, so a before/after on these two steps starts at the deploy, not at the ad launch.",
     "auth.login": {
       "label": "Signed in",
       "stage": "acquisition",
