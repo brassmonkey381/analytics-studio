@@ -95,7 +95,7 @@ if (existsSync(REGISTRY_PATH)) {
   }
 }
 
-const spend = { path: CFG.campaigns?.spendLedger ?? "../marketing-studio/assets/qr/spend.yaml", found: false, rows: [], declared: 0 };
+const spend = { path: CFG.campaigns?.spendLedger ?? "../marketing-studio/assets/qr/spend.yaml", found: false, rows: [], declared: 0, changes: [] };
 if (existsSync(SPEND_PATH)) {
   const text = readFileSync(SPEND_PATH, "utf8");
   spend.found = true;
@@ -111,6 +111,11 @@ if (existsSync(SPEND_PATH)) {
       currency: r.currency ?? "USD",
       note: r.note ?? null,
     }));
+  // Campaign setting flips (targeting, bid, creative swap) from the same ledger: each one cuts
+  // the deploy segments like a deploy.live row does, because it changes WHO arrives.
+  spend.changes = parseFlatList(text, "changes")
+    .filter((r) => r.at && (r.source ?? SOURCE) === SOURCE && r.label)
+    .map((r) => ({ ts: new Date(r.at).toISOString(), short: r.label, kind: "change", note: r.note ?? null }));
   if (spend.declared !== spend.rows.length) {
     console.warn(`WARNING: spend.yaml declares ${spend.declared} rows but ${spend.rows.length} parsed as ${SOURCE} rows - cost columns may be short.`);
   }
@@ -503,6 +508,7 @@ const out = {
   defaultWindow: DEFAULT_WINDOW,
   spend: { found: spend.found, path: spend.path, rows: spend.rows.length, declared: spend.declared },
   deploys: deploys.map((d) => ({ ts: d.ts, short: d.short })),
+  changes: spend.changes,
   verificationSessions,
   byWindow: {},
 };
@@ -630,7 +636,10 @@ for (const w of WINDOWS) {
 
   // Per deploy segment: from each deploy.live row to the next. Sessions before the first marker
   // in the window form a "before" segment, which is honest about the days with no marker.
-  const marks = deploys.filter((d) => inWin(d.ts, w) || w === ALL_WINDOW).map((d) => ({ at: parseTs(d.ts).getTime(), short: d.short }));
+  const marks = [...deploys.map((d) => ({ ...d, kind: "deploy" })), ...spend.changes]
+    .filter((d) => inWin(d.ts, w) || w === ALL_WINDOW)
+    .map((d) => ({ at: parseTs(d.ts).getTime(), short: d.short, kind: d.kind }))
+    .sort((a, b) => a.at - b.at);
   const segments = [];
   const bounds = [-Infinity, ...marks.map((m) => m.at), Infinity];
   for (let i = 0; i < bounds.length - 1; i++) {
@@ -647,6 +656,7 @@ for (const w of WINDOWS) {
     }
     segments.push({
       id: segId,
+      kind: i === 0 ? "before" : marks[i - 1].kind,
       from: i === 0 ? null : new Date(bounds[i]).toISOString(),
       to: bounds[i + 1] === Infinity ? null : new Date(bounds[i + 1]).toISOString(),
       sessions: ss.length,
@@ -829,7 +839,7 @@ const blocks = WINDOWS.map((w) => {
     ? d.segments
         .map(
           (s) =>
-            `<tr ${hov("seg", "{scope}", s.id, "arrived")}><td>${s.id === "before" ? "before the first marker" : `<code>${esc(s.id)}</code>`}<div class="sub">${s.from ? ptTime(s.from) : "window start"} to ${s.to ? ptTime(s.to) : "now"}</div></td><td class="num">${s.sessions}</td><td class="num">${s.phone}</td><td class="num">${s.editor}</td><td class="num">${s.placed}</td><td class="num">${s.taste}</td><td class="num">${s.fill}</td><td class="num">${s.wall}</td><td class="num">${s.tap}</td><td class="num" ${hov("seg", "{scope}", s.id, "account")}>${s.accounts}</td><td class="num">${s.returned}</td><td class="num">${secs(s.medianSecs)}</td></tr>`,
+            `<tr ${hov("seg", "{scope}", s.id, "arrived")}><td>${s.id === "before" ? "before the first marker" : s.kind === "change" ? `<strong>${esc(s.id)}</strong> <span class="sub">campaign change</span>` : `<code>${esc(s.id)}</code>`}<div class="sub">${s.from ? ptTime(s.from) : "window start"} to ${s.to ? ptTime(s.to) : "now"}</div></td><td class="num">${s.sessions}</td><td class="num">${s.phone}</td><td class="num">${s.editor}</td><td class="num">${s.placed}</td><td class="num">${s.taste}</td><td class="num">${s.fill}</td><td class="num">${s.wall}</td><td class="num">${s.tap}</td><td class="num" ${hov("seg", "{scope}", s.id, "account")}>${s.accounts}</td><td class="num">${s.returned}</td><td class="num">${secs(s.medianSecs)}</td></tr>`,
         )
         .join("")
     : `<tr><td colspan="12" class="empty">No arrivals.</td></tr>`;
@@ -954,7 +964,7 @@ ${windowBar(WINDOWS, DEFAULT_WINDOW, "scopes sessions by their start time; retur
 ${blocks}
 
 <p class="note"><strong>What this cannot say.</strong> A Reddit click that never loaded a page leaves no session, so Reddit's click count will always exceed arrivals here.
-The deploy segments start with the first <code>deploy.live</code> marker (2026-10-30 04:14 UTC); the first day's deploys are inside the "before" segment.
+The deploy segments start with the first <code>deploy.live</code> marker (2026-10-30 04:14 UTC); the first day's deploys are inside the "before" segment. Campaign changes from the spend ledger (bold rows, e.g. <strong>geo-targeted</strong>, Locations flipped from global to US/CA/UK/AU at 2026-10-30 14:35 UTC) cut the segments too: a change in who Reddit sends is a different population, never a before/after on the product.
 A return by a guest who cleared their browser storage is a new guest, uncounted.</p>
 </main>
 ${hoverLayer(rosters, { unit: "person/people" })}
