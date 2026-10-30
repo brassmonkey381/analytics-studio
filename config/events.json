@@ -74,7 +74,7 @@
         "pickleague"
       ]
     },
-    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route; and props.referrer (origin + pathname of the linking page, absent for typed URLs, bookmarks, most apps and no-referrer sites, never same-origin). landing_route is still written and still the only place the campaign survives a reused session. Since michi-maker 6d01a53 (2026-10-29) session.start also carries viewport_w and viewport_h in CSS pixels for every session, so phone versus desktop is a filter on the event (walkthrough.shown width was the only device signal before, and only for people who saw the walkthrough); account.created from OAuth carries provider from the same commit.",
+    "_sessionStartDoc": "session.start props: is_guest everywhere; on michi web since 2026-10-29 also the allowlisted campaign params the page load arrived with (code, utm_source, utm_medium, utm_campaign - michi-maker src/lib/analytics.ts CAMPAIGN_PARAMS), so a paid arrival is one filter on analytics_events instead of a parse of analytics_sessions.landing_route; and props.referrer (origin + pathname of the linking page, absent for typed URLs, bookmarks, most apps and no-referrer sites, never same-origin). landing_route is still written and still the only place the campaign survives a reused session. Since michi-maker 6d01a53 (2026-10-29) session.start also carries viewport_w and viewport_h in CSS pixels for every session, so phone versus desktop is a filter on the event (walkthrough.shown width was the only device signal before, and only for people who saw the walkthrough); account.created from OAuth carries provider from the same commit. From michi-maker b6ab3d7 (2026-10-29, not yet deployed at the time of writing) utm_content and utm_term are allowlisted too and ride everywhere the other params do, including across the Google hop; the Reddit lane reads them as audience and ad.",
     "landing.skip": {
       "label": "Skipped the landing page (tagged arrival)",
       "stage": "acquisition",
@@ -128,6 +128,28 @@
       ]
     },
     "_deployDoc": "deploy.live { commit, short, by } is written by michi-maker promote-to-production.ps1 (scripts/record-deploy.mjs) the moment vercel --prod returns, one row per production deploy, with no session_id and no user_id. It exists so a before/after read cuts on the real deploy time instead of the commit time (2026-10-29 request from this studio; the first row lands with the deploy that carries it, so cuts earlier than that stay on commit times). It is NOT behaviour: scripts/events.mjs drops it from the stream it rolls up, and any lane that counts people must do the same. Stage ops is this one event. The row is written under the owner uid (5873b67), so the exclusion CTE drops it as well; the name filter in events.mjs stays because exclusions are stated, never relied on for shape.",
+    "returned_binder.shown": {
+      "label": "Saw the returned-binder banner",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "returned_binder.open": {
+      "label": "Opened the returned binder from the banner",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "returned_binder.dismiss": {
+      "label": "Dismissed the returned-binder banner",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_returnedBinderDoc": "returned_binder.shown / .open / .dismiss { binders } (michi-maker 03d2aba, 2026-10-29): the one-time My Binders banner shown to an account whose shelf holds a cap_exempt binder, i.e. one of the 33 guest binders re-homed on 2026-10-29 23:30 PT. shown is capped at once per account (profiles.preferences), so it is a reach count for the migration notice, not engagement with the binder; open is the person going to look.",
     "auth.login": {
       "label": "Signed in",
       "stage": "acquisition",
