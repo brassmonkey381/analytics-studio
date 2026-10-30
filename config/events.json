@@ -266,7 +266,7 @@
         "michi"
       ]
     },
-    "_capGatesDoc": "A cap gate is the block a user hits when a tier limit stops them \u2014 16 of 16 binder pages, 3 of 3 binders, the print gate. It is the moment upgrade intent is highest and, until these land, the one moment the stream cannot see. pro.offer_shown covers only the surfaces TrialCta itself renders; a gate that refuses an action without rendering that button emits nothing at all. `limit` MUST be the tier_caps limit_key verbatim so a gate joins to its cap without a lookup table.",
+    "_capGatesDoc": "A cap gate is the block a user hits when a tier limit stops them \u2014 16 of 16 binder pages, 3 of 3 binders, the print gate. It is the moment upgrade intent is highest and, until these land, the one moment the stream cannot see. pro.offer_shown covers only the surfaces TrialCta itself renders; a gate that refuses an action without rendering that button emits nothing at all. `limit` MUST be the tier_caps limit_key verbatim so a gate joins to its cap without a lookup table. CTA WORDING (2026-10-29, michi d18a512, owner call): every PRO wall a trial-eligible FREE account meets (UpgradePerk, TriColorUpsell, CapGateOffer, the limit toasts in the editor, shelf, home and browse) now reads PRO Free Trial and leads to /plans; once the trial is used the fallbacks are Upgrade to PRO / See plans, guests still see Create account (free), and the /plans PRO button keeps Try PRO for FREE. The label change adds no event: a toast wall still emits nothing, so the walls that count here are still only the TrialCta surfaces.",
     "cap.gate_shown": {
       "label": "Hit a plan limit",
       "stage": "monetization",
