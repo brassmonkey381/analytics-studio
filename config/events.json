@@ -186,6 +186,7 @@
         "michi"
       ]
     },
+    "_redditPixelDoc": "REDDIT PIXEL (michi-maker 553caa9, 2026-10-30, on development; production once EXPO_PUBLIC_REDDIT_PIXEL_ID is set in Vercel and the owner ships): the page sends Reddit three conversions and nothing else. PageVisit once per page load from the base snippet; SignUp on the very same track('account.created') call, every path (provider return, email/password Create, guest upgrade), conversionId = the new uid; ViewContent once per page load on the first card.add whose kind is not swap, guests and accounts alike. So Reddit's SignUp count and this stream's account.created from utm_source=reddit sessions are the SAME moment and should agree to within the pixel's attribution window and ad blockers; a gap between them is blockers plus Reddit's view-through attribution, not two definitions. Reddit's cost per SignUp is the campaign's number from that deploy on. Unset env = no-op, native = no-op. CONSENT: michi has no cookie or tracking consent banner, so the pixel loads for every web visitor; raised with the owner 2026-10-30.",
     "_oauthStartDoc": "auth.oauth_start { provider, guest } is the tap that leaves for the provider (michi-maker bf6844e, 2026-10-29); account.created is the return. oauth_start minus account.created within the same session is the abandoned-hop count, which before bf6844e was invisible because the tap itself was recorded as the account (see gaps.account_created_fires_on_oauth_start).",
     "auth.link_exists": {
       "label": "Google account already had a michi account",
