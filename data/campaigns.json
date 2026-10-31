@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-30T15:07:46.021Z",
+  "collectedAt": "2026-10-31T15:07:47.158Z",
   "windows": [
     "all",
     1,
@@ -208,45 +208,45 @@
   "capture": {
     "tcgscan": {
       "app": "tcgscan",
-      "sessions": 1590,
-      "with_landing": 1421,
+      "sessions": 1606,
+      "with_landing": 1435,
       "with_code": 4,
-      "with_device": 1416,
+      "with_device": 1432,
       "first_session": "2026-08-05 20:37:24.627618+00",
-      "last_session": "2026-10-30 14:33:56.626409+00",
+      "last_session": "2026-10-31 09:13:58.612266+00",
       "first_landing": "2026-08-06 22:18:20.778075+00",
       "first_code": "2026-10-12 06:35:47.090437+00"
     },
     "michi-maker": {
       "app": "michi",
-      "sessions": 6519,
-      "with_landing": 6011,
-      "with_code": 835,
-      "with_device": 6004,
+      "sessions": 7135,
+      "with_landing": 6593,
+      "with_code": 1316,
+      "with_device": 6620,
       "first_session": "2026-08-05 17:56:45.400525+00",
-      "last_session": "2026-10-30 15:07:31.953406+00",
+      "last_session": "2026-10-31 15:07:29.668195+00",
       "first_landing": "2026-08-06 04:23:49.041089+00",
       "first_code": "2026-08-14 06:47:40.618104+00"
     },
     "doggle": {
       "app": "doggle",
-      "sessions": 1253,
-      "with_landing": 1190,
+      "sessions": 1284,
+      "with_landing": 1218,
       "with_code": 5,
-      "with_device": 1253,
+      "with_device": 1284,
       "first_session": "2026-08-14 06:30:45.05467+00",
-      "last_session": "2026-10-30 14:58:17.520921+00",
+      "last_session": "2026-10-31 14:44:53.038644+00",
       "first_landing": "2026-08-14 06:53:00.533601+00",
       "first_code": "2026-08-14 06:53:00.533601+00"
     },
     "pickleague": {
       "app": "pickleague",
-      "sessions": 320,
-      "with_landing": 296,
+      "sessions": 339,
+      "with_landing": 314,
       "with_code": 0,
-      "with_device": 320,
+      "with_device": 339,
       "first_session": "2026-08-14 22:29:16.277305+00",
-      "last_session": "2026-10-30 14:58:32.235642+00",
+      "last_session": "2026-10-31 08:35:13.563928+00",
       "first_landing": "2026-08-14 22:29:16.277305+00",
       "first_code": null
     }
@@ -260,37 +260,19 @@
       "byWindow": {
         "1": {
           "totals": {
-            "arrivals": 572,
-            "campaigns": 4,
-            "people": 541,
-            "stayed": 538,
-            "signedUp": 0,
-            "returned": 19,
+            "arrivals": 439,
+            "campaigns": 3,
+            "people": 415,
+            "stayed": 413,
+            "signedUp": 1,
+            "returned": 8,
             "alreadyMembers": 0,
-            "submittedSignups": 3,
-            "signupsWithCode": 3,
-            "excludedArrivals": 5,
-            "verificationArrivals": 3
+            "submittedSignups": 1,
+            "signupsWithCode": 1,
+            "excludedArrivals": 42,
+            "verificationArrivals": 0
           },
           "campaigns": [
-            {
-              "code": "rd_lidi_image",
-              "label": "Reddit ad - Lidi image",
-              "registryId": "michi-rd-lidi-image",
-              "piece": "reddit paid ad",
-              "printed": null,
-              "registered": true,
-              "source": "reddit",
-              "medium": "paid_social",
-              "arrivals": 226,
-              "people": 210,
-              "stayed": 207,
-              "signedUp": 0,
-              "returned": 12,
-              "signupsWithCode": 3,
-              "firstSeen": "2026-10-29 15:33:08.916726+00",
-              "lastSeen": "2026-10-30 14:43:51.198753+00"
-            },
             {
               "code": "rd_rainbow_image",
               "label": "Reddit ad - Rainbow image",
@@ -300,14 +282,32 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 191,
-              "people": 185,
-              "stayed": 185,
+              "arrivals": 298,
+              "people": 283,
+              "stayed": 282,
+              "signedUp": 1,
+              "returned": 5,
+              "signupsWithCode": 1,
+              "firstSeen": "2026-10-30 15:30:21.300463+00",
+              "lastSeen": "2026-10-31 14:59:50.939589+00"
+            },
+            {
+              "code": "rd_lidi_image",
+              "label": "Reddit ad - Lidi image",
+              "registryId": "michi-rd-lidi-image",
+              "piece": "reddit paid ad",
+              "printed": null,
+              "registered": true,
+              "source": "reddit",
+              "medium": "paid_social",
+              "arrivals": 117,
+              "people": 112,
+              "stayed": 110,
               "signedUp": 0,
-              "returned": 4,
+              "returned": 2,
               "signupsWithCode": 0,
-              "firstSeen": "2026-10-29 15:07:51.020181+00",
-              "lastSeen": "2026-10-30 14:58:25.492629+00"
+              "firstSeen": "2026-10-30 15:59:49.60096+00",
+              "lastSeen": "2026-10-31 15:06:21.432964+00"
             },
             {
               "code": "rd_coverflow_4x5",
@@ -318,69 +318,33 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 153,
-              "people": 144,
-              "stayed": 144,
+              "arrivals": 24,
+              "people": 23,
+              "stayed": 23,
               "signedUp": 0,
-              "returned": 3,
+              "returned": 1,
               "signupsWithCode": 0,
-              "firstSeen": "2026-10-29 15:33:53.10155+00",
-              "lastSeen": "2026-10-30 11:57:02.594218+00"
-            },
-            {
-              "code": "test",
-              "label": null,
-              "registryId": null,
-              "piece": null,
-              "printed": null,
-              "registered": false,
-              "source": "reddit",
-              "medium": "cpc",
-              "arrivals": 2,
-              "people": 2,
-              "stayed": 2,
-              "signedUp": 0,
-              "returned": 0,
-              "signupsWithCode": 0,
-              "firstSeen": "2026-10-30 03:07:11.962497+00",
-              "lastSeen": "2026-10-30 03:12:55.880964+00"
+              "firstSeen": "2026-10-30 16:41:08.393887+00",
+              "lastSeen": "2026-10-31 14:38:03.236171+00"
             }
           ],
           "daily": null
         },
         "7": {
           "totals": {
-            "arrivals": 629,
+            "arrivals": 1068,
             "campaigns": 5,
-            "people": 597,
-            "stayed": 593,
-            "signedUp": 0,
-            "returned": 23,
+            "people": 1011,
+            "stayed": 1005,
+            "signedUp": 1,
+            "returned": 33,
             "alreadyMembers": 0,
-            "submittedSignups": 3,
-            "signupsWithCode": 3,
-            "excludedArrivals": 7,
+            "submittedSignups": 4,
+            "signupsWithCode": 4,
+            "excludedArrivals": 49,
             "verificationArrivals": 3
           },
           "campaigns": [
-            {
-              "code": "rd_lidi_image",
-              "label": "Reddit ad - Lidi image",
-              "registryId": "michi-rd-lidi-image",
-              "piece": "reddit paid ad",
-              "printed": null,
-              "registered": true,
-              "source": "reddit",
-              "medium": "paid_social",
-              "arrivals": 249,
-              "people": 233,
-              "stayed": 230,
-              "signedUp": 0,
-              "returned": 14,
-              "signupsWithCode": 3,
-              "firstSeen": "2026-10-29 13:11:28.826821+00",
-              "lastSeen": "2026-10-30 14:43:51.198753+00"
-            },
             {
               "code": "rd_rainbow_image",
               "label": "Reddit ad - Rainbow image",
@@ -390,14 +354,32 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 213,
-              "people": 206,
-              "stayed": 205,
-              "signedUp": 0,
-              "returned": 6,
-              "signupsWithCode": 0,
+              "arrivals": 511,
+              "people": 489,
+              "stayed": 487,
+              "signedUp": 1,
+              "returned": 11,
+              "signupsWithCode": 1,
               "firstSeen": "2026-10-29 13:14:25.239308+00",
-              "lastSeen": "2026-10-30 14:58:25.492629+00"
+              "lastSeen": "2026-10-31 14:59:50.939589+00"
+            },
+            {
+              "code": "rd_lidi_image",
+              "label": "Reddit ad - Lidi image",
+              "registryId": "michi-rd-lidi-image",
+              "piece": "reddit paid ad",
+              "printed": null,
+              "registered": true,
+              "source": "reddit",
+              "medium": "paid_social",
+              "arrivals": 366,
+              "people": 345,
+              "stayed": 340,
+              "signedUp": 0,
+              "returned": 18,
+              "signupsWithCode": 3,
+              "firstSeen": "2026-10-29 13:11:28.826821+00",
+              "lastSeen": "2026-10-31 15:06:21.432964+00"
             },
             {
               "code": "rd_coverflow_4x5",
@@ -408,14 +390,14 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 161,
-              "people": 152,
-              "stayed": 152,
+              "arrivals": 185,
+              "people": 175,
+              "stayed": 175,
               "signedUp": 0,
-              "returned": 3,
+              "returned": 4,
               "signupsWithCode": 0,
               "firstSeen": "2026-10-29 13:11:45.301596+00",
-              "lastSeen": "2026-10-30 11:57:02.594218+00"
+              "lastSeen": "2026-10-31 14:38:03.236171+00"
             },
             {
               "code": "ig_coverflow_loop",
@@ -455,10 +437,6 @@
             }
           ],
           "daily": [
-            {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-25",
               "arrivals": 0
@@ -481,43 +459,29 @@
             },
             {
               "day": "2026-10-30",
-              "arrivals": 177
+              "arrivals": 477
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 139
             }
           ]
         },
         "14": {
           "totals": {
-            "arrivals": 629,
+            "arrivals": 1068,
             "campaigns": 5,
-            "people": 597,
-            "stayed": 593,
-            "signedUp": 0,
-            "returned": 23,
+            "people": 1011,
+            "stayed": 1005,
+            "signedUp": 1,
+            "returned": 33,
             "alreadyMembers": 0,
-            "submittedSignups": 3,
-            "signupsWithCode": 3,
-            "excludedArrivals": 7,
+            "submittedSignups": 4,
+            "signupsWithCode": 4,
+            "excludedArrivals": 49,
             "verificationArrivals": 3
           },
           "campaigns": [
-            {
-              "code": "rd_lidi_image",
-              "label": "Reddit ad - Lidi image",
-              "registryId": "michi-rd-lidi-image",
-              "piece": "reddit paid ad",
-              "printed": null,
-              "registered": true,
-              "source": "reddit",
-              "medium": "paid_social",
-              "arrivals": 249,
-              "people": 233,
-              "stayed": 230,
-              "signedUp": 0,
-              "returned": 14,
-              "signupsWithCode": 3,
-              "firstSeen": "2026-10-29 13:11:28.826821+00",
-              "lastSeen": "2026-10-30 14:43:51.198753+00"
-            },
             {
               "code": "rd_rainbow_image",
               "label": "Reddit ad - Rainbow image",
@@ -527,14 +491,32 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 213,
-              "people": 206,
-              "stayed": 205,
-              "signedUp": 0,
-              "returned": 6,
-              "signupsWithCode": 0,
+              "arrivals": 511,
+              "people": 489,
+              "stayed": 487,
+              "signedUp": 1,
+              "returned": 11,
+              "signupsWithCode": 1,
               "firstSeen": "2026-10-29 13:14:25.239308+00",
-              "lastSeen": "2026-10-30 14:58:25.492629+00"
+              "lastSeen": "2026-10-31 14:59:50.939589+00"
+            },
+            {
+              "code": "rd_lidi_image",
+              "label": "Reddit ad - Lidi image",
+              "registryId": "michi-rd-lidi-image",
+              "piece": "reddit paid ad",
+              "printed": null,
+              "registered": true,
+              "source": "reddit",
+              "medium": "paid_social",
+              "arrivals": 366,
+              "people": 345,
+              "stayed": 340,
+              "signedUp": 0,
+              "returned": 18,
+              "signupsWithCode": 3,
+              "firstSeen": "2026-10-29 13:11:28.826821+00",
+              "lastSeen": "2026-10-31 15:06:21.432964+00"
             },
             {
               "code": "rd_coverflow_4x5",
@@ -545,14 +527,14 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 161,
-              "people": 152,
-              "stayed": 152,
+              "arrivals": 185,
+              "people": 175,
+              "stayed": 175,
               "signedUp": 0,
-              "returned": 3,
+              "returned": 4,
               "signupsWithCode": 0,
               "firstSeen": "2026-10-29 13:11:45.301596+00",
-              "lastSeen": "2026-10-30 11:57:02.594218+00"
+              "lastSeen": "2026-10-31 14:38:03.236171+00"
             },
             {
               "code": "ig_coverflow_loop",
@@ -592,10 +574,6 @@
             }
           ],
           "daily": [
-            {
-              "day": "2026-10-17",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-18",
               "arrivals": 0
@@ -646,43 +624,29 @@
             },
             {
               "day": "2026-10-30",
-              "arrivals": 177
+              "arrivals": 477
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 139
             }
           ]
         },
         "30": {
           "totals": {
-            "arrivals": 629,
+            "arrivals": 1068,
             "campaigns": 5,
-            "people": 597,
-            "stayed": 593,
-            "signedUp": 0,
-            "returned": 23,
+            "people": 1011,
+            "stayed": 1005,
+            "signedUp": 1,
+            "returned": 33,
             "alreadyMembers": 0,
-            "submittedSignups": 3,
-            "signupsWithCode": 3,
-            "excludedArrivals": 7,
+            "submittedSignups": 4,
+            "signupsWithCode": 4,
+            "excludedArrivals": 49,
             "verificationArrivals": 3
           },
           "campaigns": [
-            {
-              "code": "rd_lidi_image",
-              "label": "Reddit ad - Lidi image",
-              "registryId": "michi-rd-lidi-image",
-              "piece": "reddit paid ad",
-              "printed": null,
-              "registered": true,
-              "source": "reddit",
-              "medium": "paid_social",
-              "arrivals": 249,
-              "people": 233,
-              "stayed": 230,
-              "signedUp": 0,
-              "returned": 14,
-              "signupsWithCode": 3,
-              "firstSeen": "2026-10-29 13:11:28.826821+00",
-              "lastSeen": "2026-10-30 14:43:51.198753+00"
-            },
             {
               "code": "rd_rainbow_image",
               "label": "Reddit ad - Rainbow image",
@@ -692,14 +656,32 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 213,
-              "people": 206,
-              "stayed": 205,
-              "signedUp": 0,
-              "returned": 6,
-              "signupsWithCode": 0,
+              "arrivals": 511,
+              "people": 489,
+              "stayed": 487,
+              "signedUp": 1,
+              "returned": 11,
+              "signupsWithCode": 1,
               "firstSeen": "2026-10-29 13:14:25.239308+00",
-              "lastSeen": "2026-10-30 14:58:25.492629+00"
+              "lastSeen": "2026-10-31 14:59:50.939589+00"
+            },
+            {
+              "code": "rd_lidi_image",
+              "label": "Reddit ad - Lidi image",
+              "registryId": "michi-rd-lidi-image",
+              "piece": "reddit paid ad",
+              "printed": null,
+              "registered": true,
+              "source": "reddit",
+              "medium": "paid_social",
+              "arrivals": 366,
+              "people": 345,
+              "stayed": 340,
+              "signedUp": 0,
+              "returned": 18,
+              "signupsWithCode": 3,
+              "firstSeen": "2026-10-29 13:11:28.826821+00",
+              "lastSeen": "2026-10-31 15:06:21.432964+00"
             },
             {
               "code": "rd_coverflow_4x5",
@@ -710,14 +692,14 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 161,
-              "people": 152,
-              "stayed": 152,
+              "arrivals": 185,
+              "people": 175,
+              "stayed": 175,
               "signedUp": 0,
-              "returned": 3,
+              "returned": 4,
               "signupsWithCode": 0,
               "firstSeen": "2026-10-29 13:11:45.301596+00",
-              "lastSeen": "2026-10-30 11:57:02.594218+00"
+              "lastSeen": "2026-10-31 14:38:03.236171+00"
             },
             {
               "code": "ig_coverflow_loop",
@@ -757,10 +739,6 @@
             }
           ],
           "daily": [
-            {
-              "day": "2026-10-01",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-02",
               "arrivals": 0
@@ -875,43 +853,29 @@
             },
             {
               "day": "2026-10-30",
-              "arrivals": 177
+              "arrivals": 477
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 139
             }
           ]
         },
         "all": {
           "totals": {
-            "arrivals": 629,
+            "arrivals": 1068,
             "campaigns": 5,
-            "people": 597,
-            "stayed": 593,
-            "signedUp": 0,
-            "returned": 23,
+            "people": 1011,
+            "stayed": 1005,
+            "signedUp": 1,
+            "returned": 33,
             "alreadyMembers": 0,
-            "submittedSignups": 3,
-            "signupsWithCode": 3,
-            "excludedArrivals": 8,
+            "submittedSignups": 4,
+            "signupsWithCode": 4,
+            "excludedArrivals": 50,
             "verificationArrivals": 3
           },
           "campaigns": [
-            {
-              "code": "rd_lidi_image",
-              "label": "Reddit ad - Lidi image",
-              "registryId": "michi-rd-lidi-image",
-              "piece": "reddit paid ad",
-              "printed": null,
-              "registered": true,
-              "source": "reddit",
-              "medium": "paid_social",
-              "arrivals": 249,
-              "people": 233,
-              "stayed": 230,
-              "signedUp": 0,
-              "returned": 14,
-              "signupsWithCode": 3,
-              "firstSeen": "2026-10-29 13:11:28.826821+00",
-              "lastSeen": "2026-10-30 14:43:51.198753+00"
-            },
             {
               "code": "rd_rainbow_image",
               "label": "Reddit ad - Rainbow image",
@@ -921,14 +885,32 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 213,
-              "people": 206,
-              "stayed": 205,
-              "signedUp": 0,
-              "returned": 6,
-              "signupsWithCode": 0,
+              "arrivals": 511,
+              "people": 489,
+              "stayed": 487,
+              "signedUp": 1,
+              "returned": 11,
+              "signupsWithCode": 1,
               "firstSeen": "2026-10-29 13:14:25.239308+00",
-              "lastSeen": "2026-10-30 14:58:25.492629+00"
+              "lastSeen": "2026-10-31 14:59:50.939589+00"
+            },
+            {
+              "code": "rd_lidi_image",
+              "label": "Reddit ad - Lidi image",
+              "registryId": "michi-rd-lidi-image",
+              "piece": "reddit paid ad",
+              "printed": null,
+              "registered": true,
+              "source": "reddit",
+              "medium": "paid_social",
+              "arrivals": 366,
+              "people": 345,
+              "stayed": 340,
+              "signedUp": 0,
+              "returned": 18,
+              "signupsWithCode": 3,
+              "firstSeen": "2026-10-29 13:11:28.826821+00",
+              "lastSeen": "2026-10-31 15:06:21.432964+00"
             },
             {
               "code": "rd_coverflow_4x5",
@@ -939,14 +921,14 @@
               "registered": true,
               "source": "reddit",
               "medium": "paid_social",
-              "arrivals": 161,
-              "people": 152,
-              "stayed": 152,
+              "arrivals": 185,
+              "people": 175,
+              "stayed": 175,
               "signedUp": 0,
-              "returned": 3,
+              "returned": 4,
               "signupsWithCode": 0,
               "firstSeen": "2026-10-29 13:11:45.301596+00",
-              "lastSeen": "2026-10-30 11:57:02.594218+00"
+              "lastSeen": "2026-10-31 14:38:03.236171+00"
             },
             {
               "code": "ig_coverflow_loop",
@@ -987,10 +969,6 @@
           ],
           "daily": [
             {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
-            {
               "day": "2026-10-25",
               "arrivals": 0
             },
@@ -1012,7 +990,11 @@
             },
             {
               "day": "2026-10-30",
-              "arrivals": 177
+              "arrivals": 477
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 139
             }
           ]
         }
@@ -1026,25 +1008,25 @@
           "lastSeen": "2026-10-29 07:55:04.691452+00"
         },
         "rd_lidi_image": {
-          "arrivals": 249,
-          "people": 233,
+          "arrivals": 366,
+          "people": 345,
           "signedUp": 0,
           "firstSeen": "2026-10-29 13:11:28.826821+00",
-          "lastSeen": "2026-10-30 14:43:51.198753+00"
+          "lastSeen": "2026-10-31 15:06:21.432964+00"
         },
         "rd_coverflow_4x5": {
-          "arrivals": 161,
-          "people": 152,
+          "arrivals": 185,
+          "people": 175,
           "signedUp": 0,
           "firstSeen": "2026-10-29 13:11:45.301596+00",
-          "lastSeen": "2026-10-30 11:57:02.594218+00"
+          "lastSeen": "2026-10-31 14:38:03.236171+00"
         },
         "rd_rainbow_image": {
-          "arrivals": 213,
-          "people": 206,
-          "signedUp": 0,
+          "arrivals": 511,
+          "people": 489,
+          "signedUp": 1,
           "firstSeen": "2026-10-29 13:14:25.239308+00",
-          "lastSeen": "2026-10-30 14:58:25.492629+00"
+          "lastSeen": "2026-10-31 14:59:50.939589+00"
         },
         "test": {
           "arrivals": 2,
@@ -1093,10 +1075,6 @@
           "campaigns": [],
           "daily": [
             {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
-            {
               "day": "2026-10-25",
               "arrivals": 0
             },
@@ -1119,6 +1097,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -1138,10 +1120,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-17",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-18",
               "arrivals": 0
@@ -1193,6 +1171,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -1212,10 +1194,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-01",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-02",
               "arrivals": 0
@@ -1331,6 +1309,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -1350,10 +1332,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-25",
               "arrivals": 0
@@ -1376,6 +1354,10 @@
             },
             {
               "day": "2026-10-30",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
               "arrivals": 0
             }
           ]
@@ -1421,10 +1403,6 @@
           "campaigns": [],
           "daily": [
             {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
-            {
               "day": "2026-10-25",
               "arrivals": 0
             },
@@ -1447,6 +1425,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -1466,10 +1448,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-17",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-18",
               "arrivals": 0
@@ -1521,6 +1499,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -1540,10 +1522,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-01",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-02",
               "arrivals": 0
@@ -1658,6 +1636,10 @@
             },
             {
               "day": "2026-10-30",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
               "arrivals": 0
             }
           ]
@@ -1924,6 +1906,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         }
@@ -1976,10 +1962,6 @@
           "campaigns": [],
           "daily": [
             {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
-            {
               "day": "2026-10-25",
               "arrivals": 0
             },
@@ -2002,6 +1984,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -2021,10 +2007,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-17",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-18",
               "arrivals": 0
@@ -2076,6 +2058,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -2095,10 +2081,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-01",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-02",
               "arrivals": 0
@@ -2214,6 +2196,10 @@
             {
               "day": "2026-10-30",
               "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
+              "arrivals": 0
             }
           ]
         },
@@ -2233,10 +2219,6 @@
           },
           "campaigns": [],
           "daily": [
-            {
-              "day": "2026-10-24",
-              "arrivals": 0
-            },
             {
               "day": "2026-10-25",
               "arrivals": 0
@@ -2259,6 +2241,10 @@
             },
             {
               "day": "2026-10-30",
+              "arrivals": 0
+            },
+            {
+              "day": "2026-10-31",
               "arrivals": 0
             }
           ]

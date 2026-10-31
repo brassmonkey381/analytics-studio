@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-30T15:08:32.711Z",
+  "collectedAt": "2026-10-31T15:08:35.071Z",
   "windows": [
     1,
     7,
@@ -7,21 +7,33 @@
     90
   ],
   "activeDays": 14,
-  "geoCollectedAt": "2026-10-30T15:08:26.223Z",
+  "geoCollectedAt": "2026-10-31T15:08:28.660Z",
   "apps": {
     "doggle": {
       "unit": "places",
       "days": 90,
       "totals": {
-        "accounts": 26,
+        "accounts": 25,
         "excluded": 9,
         "guests": 0,
         "deletedOrNoProfile": 0,
-        "real": 17,
-        "signedOutDevices": 483
+        "real": 16,
+        "signedOutDevices": 496
       },
       "windows": {
         "1": {
+          "real": 0,
+          "active": 0,
+          "located": 0,
+          "foreign": 0,
+          "noLocation": 0,
+          "activeLocated": 0,
+          "bySource": {},
+          "byPlatform": {},
+          "byState": [],
+          "cities": []
+        },
+        "7": {
           "real": 1,
           "active": 1,
           "located": 0,
@@ -37,52 +49,9 @@
           "byState": [],
           "cities": []
         },
-        "7": {
-          "real": 2,
-          "active": 2,
-          "located": 1,
-          "foreign": 0,
-          "noLocation": 1,
-          "activeLocated": 1,
-          "bySource": {
-            "none": 1,
-            "home": 1
-          },
-          "byPlatform": {
-            "ios": 2
-          },
-          "byState": [
-            {
-              "state": "WI",
-              "users": 1
-            }
-          ],
-          "cities": [
-            {
-              "city": "Butler",
-              "state": "WI",
-              "users": 1,
-              "active": 1,
-              "sources": {
-                "home": 1
-              },
-              "lat": 43.105,
-              "lng": -88.071,
-              "coverage": {
-                "known": true,
-                "statePlaces": 11389,
-                "stateCovered": true,
-                "county": "Waukesha",
-                "fips": "55133",
-                "countyPlaces": 261
-              },
-              "alert": null
-            }
-          ]
-        },
         "30": {
           "real": 8,
-          "active": 5,
+          "active": 4,
           "located": 2,
           "foreign": 0,
           "noLocation": 6,
@@ -146,18 +115,18 @@
           ]
         },
         "90": {
-          "real": 17,
-          "active": 5,
+          "real": 16,
+          "active": 4,
           "located": 5,
           "foreign": 0,
-          "noLocation": 12,
+          "noLocation": 11,
           "activeLocated": 2,
           "bySource": {
-            "none": 12,
+            "none": 11,
             "home": 5
           },
           "byPlatform": {
-            "none": 6,
+            "none": 5,
             "ios": 9,
             "web": 2
           },
