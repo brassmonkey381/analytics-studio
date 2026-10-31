@@ -155,11 +155,13 @@
       "cohortFromActivity": true,
       "newUsers": null,
       "reportNote": "Shares one auth pool with TCGScan, which has only 10 real accounts total — the rest of auth.users is anonymous guest sessions, one per guest visit. DAU and new users count signed-in accounts only; guest sessions are shown separately and are closer to device-visits than people. Activity is write-based (binder edits, slices, likes, prints), so browsing leaves no trace.",
+      "_binderFilterDoc": "The binders source skips the 33 re-homed guest binders' migration stamp. On 2026-10-29 22:34-22:36 PT a one-off SQL migration (michi session; see memory michi-orphaned-guest-signups) moved 33 orphaned guest binders onto 32 accounts and set updated_at on each. Without this filter those 32 accounts read as active on 2026-10-29 (the digest showed 38 DAU against 5 sign-ups; only 2 of the 32 opened the app that day). The window is five minutes around the stamp and cap_exempt marks exactly those binders, so a real edit to a re-homed binder at any other time still counts. Verified 2026-10-30 against analytics_events.",
       "activitySources": [
         {
           "table": "binders",
           "userCol": "owner_id",
-          "tsCol": "updated_at"
+          "tsCol": "updated_at",
+          "filter": "not (coalesce(cap_exempt, false) and updated_at between '2026-10-30T05:30:00Z' and '2026-10-30T05:40:00Z')"
         },
         {
           "table": "binder_pages",
