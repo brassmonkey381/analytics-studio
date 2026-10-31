@@ -343,10 +343,12 @@ for (const e of events) {
       s.ring = true;
       break;
     case "walkthrough.step":
-      // 'first-pocket': ring -> card -> placed. 'seeded' (michi 85697bd): complete -> filled.
-      // The first step of either is "saw the first prompt"; a Complete that filled the page is
-      // cards on the page by the person's own tap, so it counts as placed.
-      if (e.step === "ring" || e.step === "complete") s.ring = true;
+      // 'first-pocket': ring -> card -> placed. 'seeded' (michi 85697bd): complete -> filled;
+      // since michi ebf6ade the seeded walkthrough opens with 'art' (drag the picture across),
+      // then complete, then filled. The first step of either is "saw the first prompt"; a
+      // Complete that filled the page is cards on the page by the person's own tap, so it
+      // counts as placed.
+      if (e.step === "ring" || e.step === "complete" || e.step === "art") s.ring = true;
       if (e.step === "card") s.browser = true;
       if (e.step === "placed") s.placed = true;
       if (e.step === "filled") { s.filled = true; s.placed = true; }
@@ -969,7 +971,7 @@ The My Binders shelf note ("you are at your binder limit, create a free account"
 <div><h3>Seeded (3 cards on arrival)</h3>${funnelTable("sd", w, d.seededFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 <div><h3>Empty page</h3>${funnelTable("em", w, d.emptyFunnel.map((s, i) => ({ ...s, label: STEPS[i][1] })))}</div>
 </div>
-<p class="note">Seeded arrivals: <strong>${d.seeded}</strong> of ${d.sessions}${Object.keys(d.themes).length ? ` (${Object.entries(d.themes).map(([k, v]) => `${esc(k)} ${v}`).join(", ")})` : ""}. Since michi 85697bd a tagged arrival lands on a page already holding three themed cards and the walkthrough (id <code>seeded</code>) points at Complete: steps complete then filled, no card step. The three seeds are <code>card.add kind=seed</code> and never count as a placement; "Placed a card" on the seeded side is a Complete that filled the page or a card they added by hand. Before that deploy every arrival is on the empty side, so the split is only a comparison inside windows that contain both.</p>
+<p class="note">Seeded arrivals: <strong>${d.seeded}</strong> of ${d.sessions}${Object.keys(d.themes).length ? ` (${Object.entries(d.themes).map(([k, v]) => `${esc(k)} ${v}`).join(", ")})` : ""}. Since michi 85697bd a tagged arrival lands on a page already holding three themed cards and the walkthrough (id <code>seeded</code>) points at Complete: steps complete then filled, no card step; since michi ebf6ade the page also holds a picture in pocket 4 and the walkthrough opens with an <code>art</code> step (drag the picture across), which counts as the first prompt here. The three seeds are <code>card.add kind=seed</code> and never count as a placement; "Placed a card" on the seeded side is a Complete that filled the page or a card they added by hand. Before that deploy every arrival is on the empty side, so the split is only a comparison inside windows that contain both.</p>
 
 <h2>Per day</h2>
 ${dailyChart(w, d.daily)}
