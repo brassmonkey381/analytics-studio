@@ -1,14 +1,14 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-02T18:12:33.621Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (52 sessions in the lookback), plus 3 test-link sessions.
+Collected 2026-11-02T18:14:09.101Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (52 sessions in the lookback), plus 3 test-link sessions.
 
 ## Last 7 days
 
 | step | sessions | of arrivals |
 |---|---:|---:|
-| Arrived from Reddit | 2427 |  |
-| Reached the binder editor | 1914 | 79% |
-| Saw the first prompt (pocket ring, or Complete on a seeded page) | 1878 | 77% |
+| Arrived from Reddit | 2429 |  |
+| Reached the binder editor | 1916 | 79% |
+| Saw the first prompt (pocket ring, or Complete on a seeded page) | 1880 | 77% |
 | Opened the card browser | 93 | 4% |
 | Placed a card (own tap, or a Fill/Complete that placed) | 56 | 2% |
 | Took a guest taste (Find similar, Fill page) | 26 | 1% |
@@ -18,7 +18,7 @@ Collected 2026-11-02T18:12:33.621Z. Days are PST. Population: michi-maker sessio
 | Became an account | 7 | 0% |
 | Made a binder public | 3 | 0% |
 
-Phone 1882, desktop 142, unknown 403. Bounced 162. Median stay 12 s. Came back a later day 40. Accounts by hop 4, stitched by time 3.
+Phone 1884, desktop 142, unknown 403. Bounced 162. Median stay 12 s. Came back a later day 40. Accounts by hop 4, stitched by time 3.
 
 Spend $113.42 over 3 ledger rows: per arrival $0.05, per first card $2.03, per account $16.20.
 
@@ -26,8 +26,8 @@ Spend $113.42 over 3 ledger rows: per arrival $0.05, per first card $2.03, per a
 
 | campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Campaign 1 (Traffic, clicks) | $91.61 | 542 | 2146 | 1667 | 36 | 3 | 0.1% | $30.54 |
-| Campaign 2 (Sales, Sign up) | $21.81 | - | 281 | 247 | 20 | 4 | 1.4% | $5.45 |
+| Campaign 1 (Traffic, clicks) | $91.61 | 542 | 2147 | 1668 | 36 | 3 | 0.1% | $30.54 |
+| Campaign 2 (Sales, Sign up) | $21.81 | - | 282 | 248 | 20 | 4 | 1.4% | $5.45 |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
@@ -35,7 +35,7 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 
 | day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026-11-02 | 259 | 246 | 213 | 6 | 2 | 1 | 3 | 0 | 0 | 12 s | - |
+| 2026-11-02 | 261 | 248 | 215 | 6 | 2 | 1 | 3 | 0 | 0 | 12 s | - |
 | 2026-11-01 | 633 | 608 | 573 | 14 | 9 | 3 | 12 | 2 | 15 | 12 s | - |
 | 2026-10-31 | 527 | 466 | 484 | 13 | 5 | 1 | 7 | 1 | 8 | 12 s | - |
 | 2026-10-30 | 521 | 480 | 456 | 14 | 10 | 2 | 10 | 1 | 12 | 13 s | $62.44 |
@@ -59,13 +59,13 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 | a1a025f | 2026-10-30T20:44:52.639Z | 41 | 38 | 3 | 3 | 1 | 4 | 1 | 1 | 1 |
 | 2041d8d | 2026-10-30T22:20:58.994Z | 16 | 14 | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | 37ab913 | 2026-10-30T22:44:55.281Z | 134 | 121 | 3 | 2 | 1 | 5 | 0 | 0 | 6 |
-| 888e119 | 2026-10-31T05:58:17.603Z | 1430 | 1280 | 33 | 16 | 5 | 22 | 3 | 3 | 23 |
+| 888e119 | 2026-10-31T05:58:17.603Z | 1432 | 1282 | 33 | 16 | 5 | 22 | 3 | 3 | 23 |
 
 ## Per creative (30 days)
 
 | code | label | arrivals | editor | placed | accounts | returned | spend |
 |---|---|---:|---:|---:|---:|---:|---:|
-| rd_rainbow_image | Reddit ad - Rainbow image | 1607 | 1379 | 35 | 3 | 25 | - |
+| rd_rainbow_image | Reddit ad - Rainbow image | 1609 | 1381 | 35 | 3 | 25 | - |
 | rd_lidi_image | Reddit ad - Lidi image | 564 | 397 | 14 | 3 | 14 | - |
 | rd_coverflow_4x5 | Reddit ad - Coverflow video (feed) | 254 | 136 | 5 | 1 | 1 | - |
 | (no code) | not in registry | 2 | 2 | 2 | 0 | 0 | - |
