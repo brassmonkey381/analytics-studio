@@ -1,6 +1,6 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-02T22:55:06.102Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (52 sessions in the lookback), plus 3 test-link sessions.
+Collected 2026-11-02T22:59:44.014Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (52 sessions in the lookback), plus 3 test-link sessions.
 
 ## Last 7 days
 
@@ -20,7 +20,7 @@ Collected 2026-11-02T22:55:06.102Z. Days are PST. Population: michi-maker sessio
 
 Phone 1909, desktop 162, unknown 403. Bounced 165. Median stay 12 s. Came back a later day 40. Accounts by hop 5, stitched by time 3.
 
-Spend $329.97 over 10 ledger rows: per arrival $0.13, per first card $5.50, per account $41.25.
+Spend $338.79 over 10 ledger rows: per arrival $0.14, per first card $5.65, per account $42.35.
 
 ## Campaign scoreboard (7 days)
 
@@ -28,7 +28,7 @@ Spend $329.97 over 10 ledger rows: per arrival $0.13, per first card $5.50, per 
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Campaign 1 (Traffic, clicks) | $221.15 | 2065 | 2158 | 1678 | 36 | 3 | 0.1% | $73.72 |
 | Campaign 2 (Sales, Sign up) | $103.66 | 294 | 296 | 260 | 21 | 4 | 1.4% | $25.91 |
-| Campaign 3 (Desktop, Sign up) | $5.16 | 23 | 20 | 18 | 3 | 1 | 5.0% | $5.16 |
+| Campaign 3 (Desktop, Sign up) | $13.98 | 23 | 20 | 18 | 3 | 1 | 5.0% | $13.98 |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
@@ -36,7 +36,7 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 
 | day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026-11-02 | 306 | 273 | 255 | 10 | 5 | 2 | 6 | 1 | 0 | 12 s | $49.91 |
+| 2026-11-02 | 306 | 273 | 255 | 10 | 5 | 2 | 6 | 1 | 0 | 12 s | $58.73 |
 | 2026-11-01 | 633 | 608 | 573 | 14 | 9 | 3 | 12 | 2 | 15 | 12 s | $96.39 |
 | 2026-10-31 | 527 | 466 | 484 | 13 | 5 | 1 | 7 | 1 | 8 | 12 s | $70.25 |
 | 2026-10-30 | 521 | 480 | 456 | 14 | 10 | 2 | 10 | 1 | 12 | 13 s | $62.44 |
