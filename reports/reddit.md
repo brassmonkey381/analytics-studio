@@ -1,6 +1,6 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-02T19:14:06.385Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (52 sessions in the lookback), plus 3 test-link sessions.
+Collected 2026-11-02T19:16:08.814Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (52 sessions in the lookback), plus 3 test-link sessions.
 
 ## Last 7 days
 

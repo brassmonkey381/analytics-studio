@@ -8,7 +8,14 @@
     "spendLedger": "../marketing-studio/assets/qr/spend.yaml",
     "verificationPrefixes": [
       "test_"
-    ]
+    ],
+    "_redditAdGroupsDoc": "Reddit ad group ids as they arrive in utm_content ({{ADGROUP_ID}} macro) with the name the owner gave them, so the Reddit lane's audience table reads Feed / Conversation instead of a 19-digit number. Ids are Reddit's, not people. Campaign 2 (Sales, 2026-10-30): two groups seen in the stream, images and coverflow. Campaign 3 (desktop, 2026-11-02, campaign id 2626589547100883230): one group per placement. Add a line per new ad group; an id missing here shows raw.",
+    "redditAdGroups": {
+      "2624415186179138648": "C2 images (Rainbow, Volcano)",
+      "2624415186180096960": "C2 coverflow",
+      "2626589547102138": "C3 desktop, Conversation placement ($50/day)",
+      "2626589547104294002": "C3 desktop, Feed placement ($10/day)"
+    }
   },
   "_appsDoc": "Maps the `app` value the clients write to the studio's own app ids (config/apps.json), so exclusions and the DAU lane line up.",
   "apps": [

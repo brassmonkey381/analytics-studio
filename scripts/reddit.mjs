@@ -916,10 +916,12 @@ const blocks = WINDOWS.map((w) => {
         .join("")
     : `<tr><td colspan="14" class="empty">No arrivals.</td></tr>`;
 
+  const AD_GROUPS = CFG.campaigns?.redditAdGroups ?? {};
+  const dimLabel = (v) => (AD_GROUPS[v] ? `${esc(AD_GROUPS[v])}<div class="sub"><code>${esc(v)}</code></div>` : esc(v));
   const dimTable = (title, rows, key, hint) =>
     rows.length
       ? `<h3>${esc(title)}</h3><table class="tbl"><thead><tr><th>${esc(title)}</th><th class="num">Arrivals</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Accounts</th></tr></thead><tbody>${rows
-          .map((r) => `<tr ${hov(key, "{scope}", r.value, "arrived")}><td>${esc(r.value)}</td><td class="num">${r.sessions}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num">${r.accounts}</td></tr>`)
+          .map((r) => `<tr ${hov(key, "{scope}", r.value, "arrived")}><td>${dimLabel(r.value)}</td><td class="num">${r.sessions}</td><td class="num">${r.editor}</td><td class="num">${r.placed}</td><td class="num">${r.accounts}</td></tr>`)
           .join("")}</tbody></table>`
       : `<h3>${esc(title)}</h3><p class="note">${esc(hint)}</p>`;
 
@@ -987,7 +989,7 @@ ${dayRows ? `<table class="tbl"><thead><tr><th>Day (${esc(out.dayTz)})</th><th c
 <h2>Per creative</h2>
 <table class="tbl"><thead><tr><th>Code</th><th class="num">Arrivals</th><th class="num">Phone</th><th class="num">Editor</th><th class="num">Placed</th><th class="num">Taste</th><th class="num">Fill</th><th class="num">Wall</th><th class="num">Tap</th><th class="num">Accounts</th><th class="num">Public</th><th class="num">Returned</th><th class="num">Median stay</th><th class="num">Spend</th></tr></thead><tbody>${codeRows}</tbody></table>
 <div class="cols">
-<div>${dimTable("Audience (utm_content)", d.audiences, "content", "No link carried utm_content yet. Put the subreddit in utm_content on each ad link and this table fills in.")}</div>
+<div>${dimTable("Ad group (utm_content)", d.audiences, "content", "No link carried utm_content yet. The paid links carry Reddit's ad group id there; config/events.json redditAdGroups names them.")}</div>
 <div>${dimTable("Ad (utm_term)", d.ads, "term", "No link carried utm_term yet. Put the ad name in utm_term and the creative and the audience separate.")}</div>
 </div>
 
