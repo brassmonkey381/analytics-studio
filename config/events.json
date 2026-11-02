@@ -186,6 +186,14 @@
       ],
       "milestone": true
     },
+    "account.deleted": {
+      "label": "Account deleted",
+      "stage": "retention",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_accountDeletedDoc": "account.deleted (no props; michi-maker, built 2026-11-02, live with the owner's next ship-to-production): sent from the account sheet right before the delete-account edge function runs, so it is the LAST row that uid ever writes. After it the uid is gone from auth.users and profiles (the function cascades), so the row's user_id joins to nothing; count it by user_id on analytics_events alone. It is a churn signal with a definition, unlike last_sign_in_at (see memory active-means-activity-not-signin). It is not a Reddit conversion and the pixel ignores it. QA: the deletion lab made eight qa-rig-free-* accounts on 2026-11-02 19:27-19:42 UTC; all are caught by the %qa% exclusion patterns (verified 9 of 9 excluded the same day); one deleted itself through the control, seven await the owner's purge script.",
     "auth.oauth_start": {
       "label": "Started Google sign-in",
       "stage": "acquisition",
