@@ -142,7 +142,7 @@ st as (
   where app = 'michi' and name = 'session.start' and ts >= ${since}
 )
 select s.id, s.user_id, s.started_at, s.last_seen_at, s.landing_route, s.device_id,
-       st.props->>'code' as p_code, st.props->>'utm_medium' as p_medium, st.props->>'utm_content' as p_content,
+       st.props->>'code' as p_code, st.props->>'utm_medium' as p_medium, st.props->>'utm_content' as p_content, st.props->>'utm_campaign' as p_campaign,
        st.props->>'utm_term' as p_term, st.props->>'referrer' as p_referrer,
        (st.props->>'viewport_w')::int as viewport_w, st.props->>'from_session' as from_session,
        coalesce((st.props->>'is_guest')::boolean, s.is_guest) as started_as_guest,
@@ -295,7 +295,10 @@ for (const s of sessions) {
     // 2026-10-30 20:00 UTC) carry utm_content={{ADGROUP_ID}}, so a paid arrival with
     // utm_content is Campaign 2 (sales) and one without is Campaign 1 (traffic). If a
     // Traffic ad ever gets utm_content, this rule needs a different key.
-    campaign: (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic",
+    // Campaign 3 (2026-11-02 11:30 PT, desktop only, two ad groups by placement) carries its own
+    // utm_campaign; it also has utm_content, so test the campaign name first.
+    campaign: (s.p_campaign ?? PARAM(s.landing_route, "utm_campaign")) === "michi_desktop_2026_11" ? "desktop"
+      : (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic",
     viewportW: s.viewport_w ?? null,
     fromSession: s.from_session ?? null,
     guest: !!s.started_as_guest,
@@ -614,7 +617,7 @@ for (const w of WINDOWS) {
   // Campaign scoreboard: the two Reddit campaigns side by side, the view Ads Manager cannot
   // give (its Sign Up column only counts what the pixel saw since it went live, with Reddit's
   // attribution; this one counts accounts the site saw, by the session's campaign).
-  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)" };
+  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)", desktop: "Campaign 3 (Desktop, Sign up)" };
   const campRow = (camp, ss, rows, day) => {
     const f = funnelOver(ss);
     const key = day ? `campday|${w}|${camp}|${day}` : `camp|${w}|${camp}`;
@@ -642,7 +645,7 @@ for (const w of WINDOWS) {
     };
   };
   const campaigns = [];
-  for (const camp of ["traffic", "sales"]) {
+  for (const camp of ["traffic", "sales", "desktop"]) {
     const ss = list.filter((s) => s.campaign === camp);
     const rows = ledger.filter((r) => r.campaign === camp);
     if (!ss.length && !rows.length) continue;
@@ -952,7 +955,7 @@ ${costRows}
 
 <h2>Campaign scoreboard</h2>
 ${campaignTable(w, d.campaigns)}
-<p class="note">The view Ads Manager cannot give. A session is Campaign 2 when its link carried <code>utm_content</code> (only the Sales campaign's ads do, since 2026-10-30 20:00 UTC) and Campaign 1 otherwise. Spend and clicks are the ledger rows tagged <code>campaign:</code> in <code>${esc(spend.path)}</code>; arrivals and accounts are what the site saw, so they include blockers the pixel misses and exclude our own accounts. Sign-up rate is accounts over arrivals; Reddit's "Sign Up Rate" column divides pixel sign-ups by Reddit's clicks, so the two are close, not equal. A day with no ledger row shows the funnel and no cost. Campaign 2 is in Reddit's learning phase: compare rates after a few days, not on launch day.</p>
+<p class="note">The view Ads Manager cannot give. A session is Campaign 3 when its link carried utm_campaign <code>michi_desktop_2026_11</code> (desktop only, from 2026-11-02 19:30 UTC; its two ad groups are the Feed and Conversation placements, visible as the two utm_content values in the audience table), Campaign 2 when it carried <code>utm_content</code> otherwise (only the Sales campaign's ads do, since 2026-10-30 20:00 UTC), and Campaign 1 otherwise. Spend and clicks are the ledger rows tagged <code>campaign:</code> in <code>${esc(spend.path)}</code>; arrivals and accounts are what the site saw, so they include blockers the pixel misses and exclude our own accounts. Sign-up rate is accounts over arrivals; Reddit's "Sign Up Rate" column divides pixel sign-ups by Reddit's clicks, so the two are close, not equal. A day with no ledger row shows the funnel and no cost. Campaign 2 is in Reddit's learning phase: compare rates after a few days, not on launch day.</p>
 
 <h2>The funnel</h2>
 ${funnelTable("f", w, f)}
