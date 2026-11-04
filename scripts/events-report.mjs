@@ -27,6 +27,18 @@ if (!existsSync(DATA)) {
   process.exit(1);
 }
 const store = JSON.parse(readFileSync(DATA, "utf8"));
+
+// The events lane keeps the NEWEST rows when it hits its row cap (data/events.json ->
+// truncation), so a window that reaches back past oldestEventKept is a floor at its far end
+// and must say so next to its numbers. Nothing to say when the cap was not hit.
+function truncNote(kind) {
+  const t = store.truncation;
+  if (!t || !(t.events || t.sessions)) return "";
+  const oldest = t.oldestEventKept ?? t.oldestSessionKept;
+  const apps = (t.projects ?? []).filter((x) => x.events || x.sessions).flatMap((x) => x.apps).join(", ");
+  const txt = `Row cap: the lane fetches at most ${t.rowCap} rows per project and hit it for ${apps}. Rows older than ${oldest} were dropped, so any window reaching back past that point is a floor there; windows inside it are exact.`;
+  return kind === "html" ? `<p class="meta" style="color:#b45309">${esc(txt)}</p>` : txt;
+}
 const CFG = readConfig("events.json");
 const GAPS = CFG.gaps ?? {};
 
@@ -736,6 +748,7 @@ a.caveat { display: inline-block; width: 15px; height: 15px; line-height: 15px; 
 <p class="meta">Collected ${esc(store.collectedAt ?? "—")} · source <code>public.analytics_sessions</code> + <code>public.analytics_events</code> on <code>${esc(CFG.projectRef)}</code>.
 Our own, QA and automated accounts are excluded throughout; the excluded volume is stated per app so nothing is dropped silently.
 Hover any count to see who is behind it. <a href="#gaps">Known tracking gaps &rarr;</a></p>
+${truncNote("html")}
 
 ${windowBar(WINDOWS, DEFAULT_WINDOW, "scopes events and sessions by timestamp")}
 
@@ -752,6 +765,7 @@ const md = [
   `# Event analytics — last ${mdWin} days`,
   ``,
   `Collected ${store.collectedAt ?? "—"}. Own/QA/automated accounts excluded.`,
+  ...(truncNote("md") ? [truncNote("md")] : []),
   `The HTML report carries a ${WINDOWS.map(winLabel).join(" / ")} toggle and hover rosters; this file is the ${winLabel(mdWin)} view.`,
   ``,
   ...apps.flatMap(([, a]) => {
