@@ -809,6 +809,14 @@ if (!dau.some((d) => d.yesterday)) {
     const detail = didByPerson.find((x) => x.app === d.app);
     if (detail) {
       parts.push(p(`<span style="color:${MUTED};">Event stream, rolling last 24h — a different window, and a different population: it sees instrumented actions, including from people the activity tables do not count.</span>`));
+      // The events lane keeps the newest rows when it hits its row cap, so this 24h table is
+      // exact whenever the kept span covers the last day. If it does not, say so here rather
+      // than print "opened it, nothing else" for people who did things (2026-11-03/04).
+      const tr = events?.truncation;
+      const cutoff24 = Date.now() - 86400_000;
+      if (tr?.events && tr.oldestEventKept && Date.parse(tr.oldestEventKept) > cutoff24) {
+        parts.push(p(`The events lane hit its ${tr.rowCap}-row cap and only has events from ${esc(tr.oldestEventKept)} onward, which is inside the last 24h. Rows below are a floor and "opened it, nothing else" may mean "the lane could not see it".`, WARN));
+      }
       parts.push(`<tr><td style="padding:2px 22px 10px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
 <tr><th style="${cellHead}">Account</th><th style="${cellHead}">Did (last 24h)</th><th style="${cellHead}">Pages</th></tr>
 ${detail.people

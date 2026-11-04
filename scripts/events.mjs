@@ -27,6 +27,14 @@ const JOURNEYS_FILE = join(ROOT, "data", "journeys.json");
 loadEnv();
 
 const WINDOW_DAYS = CFG.windowDays ?? 30;
+// NEWEST rows first. The cap used to cut the newest rows (ascending order, limit): on
+// 2026-11-03 and 11-04, with Reddit traffic pushing michi past 60k events in 30 days, the
+// last two and a half days fell off, the 24h window had sessions but no events, and the
+// digest said every account "opened it, nothing else". Descending order makes the cut fall
+// on the OLDEST days instead, so 24h and 7d stay exact and only the far end of 30d is a
+// floor. The rows are reversed after the fetch so everything downstream still sees time
+// order, and the truncation is recorded in data/events.json (truncation) for the report
+// and the digest to state.
 const ROW_CAP = 50_000;
 
 // Apps live on more than one Supabase project now: michi/tcgscan share CFG.projectRef, while
@@ -85,7 +93,7 @@ from public.analytics_sessions s
 left join auth.users u on u.id = s.user_id
 left join public.profiles pr on pr.id = s.user_id
 where s.started_at >= now() - interval '${WINDOW_DAYS} days'
-order by s.started_at
+order by s.started_at desc
 limit ${ROW_CAP}`;
 }
 
@@ -99,7 +107,7 @@ from public.analytics_events e
 where e.ts >= now() - interval '${WINDOW_DAYS} days'
   -- deploy.live is an ops marker written by michi's promote-to-production.ps1 with no session and no user; it cuts before/after reads and must never count as behaviour.
   and e.name <> 'deploy.live'
-order by e.ts
+order by e.ts desc
 limit ${ROW_CAP}`;
 }
 
@@ -333,6 +341,7 @@ for (const [ref, apps] of PROJECT_GROUPS) for (const a of apps) refOfKey.set(a.k
 const readable = (kind, key) => !unavailable.has(`${kind}|${refOfKey.get(key)}`);
 const sessionRows = [];
 const eventRows = [];
+const capHits = [];
 const truth = {};
 for (const kind of Object.keys(CFG.truth ?? {})) truth[kind] = [];
 const skippedApps = new Set();
@@ -342,8 +351,13 @@ for (const [ref, apps] of PROJECT_GROUPS) {
       runSql(ref, sessionsSqlFor(apps)),
       runSql(ref, eventsSqlFor(apps)),
     ]);
-    sessionRows.push(...s);
-    eventRows.push(...e);
+    // Fetched newest-first (see ROW_CAP); restore time order for everything downstream.
+    sessionRows.push(...s.reverse());
+    eventRows.push(...e.reverse());
+    // The cap applies per project query, so the cut is per project too; after the reverse
+    // the first row is the oldest kept.
+    capHits.push({ project: ref, apps: apps.map((a) => a.id), sessions: s.length >= ROW_CAP, events: e.length >= ROW_CAP,
+      oldestSessionKept: s[0]?.started_at ?? null, oldestEventKept: e[0]?.ts ?? null });
   } catch (err) {
     // A project whose spine migration has not landed yet must not kill the whole
     // lane — but it must be LOUD, because a skipped app renders as absent, and
@@ -441,8 +455,22 @@ for (const s of sessionRows) {
   }
 }
 
-if (sessionRows.length >= ROW_CAP || eventRows.length >= ROW_CAP) {
-  console.warn(`WARNING: hit the ${ROW_CAP}-row cap — the window is truncated and every count below is a floor.`);
+// The cap cuts the OLDEST rows (newest-first fetch), so the windows that fit inside the kept
+// span are exact and the wider ones are floors from oldestKept onwards. Recorded in the
+// output so a report or the digest can say which, instead of a warning only the log sees.
+const hit = capHits.filter((h) => h.sessions || h.events);
+const latest = (xs) => (xs.length ? xs.reduce((m, x) => (x > m ? x : m)) : null);
+const truncation = {
+  rowCap: ROW_CAP,
+  sessions: hit.some((h) => h.sessions),
+  events: hit.some((h) => h.events),
+  // The newest "oldest kept" across the truncated projects: everything before it is a floor.
+  oldestSessionKept: latest(hit.filter((h) => h.sessions).map((h) => h.oldestSessionKept)),
+  oldestEventKept: latest(hit.filter((h) => h.events).map((h) => h.oldestEventKept)),
+  projects: capHits,
+};
+if (truncation.sessions || truncation.events) {
+  console.warn(`WARNING: hit the ${ROW_CAP}-row cap on ${hit.map((h) => h.apps.join("/")).join(", ")} - the oldest rows were dropped; windows reaching back past ${truncation.oldestEventKept ?? truncation.oldestSessionKept} are floors.`);
 }
 
 const collectedAt = new Date().toISOString();
@@ -451,7 +479,7 @@ const collectedAt = new Date().toISOString();
 // one about what happened in the last minute.
 const WINDOWS = CFG.windows ?? [1, 7, 14, 30];
 const NOW = Date.now();
-const out = { collectedAt, windowDays: WINDOW_DAYS, windows: WINDOWS, apps: {} };
+const out = { collectedAt, windowDays: WINDOW_DAYS, windows: WINDOWS, truncation, apps: {} };
 const journeys = { collectedAt, windowDays: WINDOW_DAYS, windows: WINDOWS, apps: {} };
 
 // One computation, run once per window. Returns the aggregates (safe to commit)
@@ -1376,6 +1404,7 @@ function buildFeedback(appKey) {
 }
 
 store.collectedAt = out.collectedAt;
+store.truncation = out.truncation;
 store.windowDays = out.windowDays;
 store.windows = out.windows;
 store.apps = out.apps;
