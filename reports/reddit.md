@@ -1,34 +1,34 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-05T09:12:59.196Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (56 sessions in the lookback), plus 3 test-link sessions.
+Collected 2026-11-05T15:07:59.356Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (82 sessions in the lookback), plus 3 test-link sessions.
 
 ## Last 7 days
 
 | step | sessions | of arrivals |
 |---|---:|---:|
-| Arrived from Reddit | 2874 |  |
-| Reached the binder editor | 2295 | 80% |
-| Saw the first prompt (pocket ring, or Complete on a seeded page) | 2246 | 78% |
-| Opened the card browser | 136 | 5% |
-| Placed a card (own tap, or a Fill/Complete that placed) | 94 | 3% |
-| Took a guest taste (Find similar, Fill page) | 45 | 2% |
-| Opened Fill page | 12 | 0% |
-| Met the create-account wall | 58 | 2% |
+| Arrived from Reddit | 2865 |  |
+| Reached the binder editor | 2330 | 81% |
+| Saw the first prompt (pocket ring, or Complete on a seeded page) | 2284 | 80% |
+| Opened the card browser | 153 | 5% |
+| Placed a card (own tap, or a Fill/Complete that placed) | 110 | 4% |
+| Took a guest taste (Find similar, Fill page) | 61 | 2% |
+| Opened Fill page | 14 | 0% |
+| Met the create-account wall | 76 | 3% |
 | Tapped Create account | 12 | 0% |
 | Became an account | 12 | 0% |
 | Made a binder public | 7 | 0% |
 
-Phone 2063, desktop 407, unknown 404. Bounced 200. Median stay 11 s. Came back a later day 72. Accounts by hop 9, stitched by time 3.
+Phone 2088, desktop 427, unknown 350. Bounced 201. Median stay 11 s. Came back a later day 71. Accounts by hop 9, stitched by time 3.
 
-Spend $494.05 over 14 ledger rows: per arrival $0.17, per first card $5.26, per account $41.17.
+Spend $443.07 over 13 ledger rows: per arrival $0.15, per first card $4.03, per account $36.92.
 
 ## Campaign scoreboard (7 days)
 
 | campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Campaign 1 (Traffic, clicks) | $223.16 | 2065 | 2158 | 1678 | 36 | 3 | 0.1% | $74.39 |
-| Campaign 2 (Sales, Sign up) | $144.61 | 294 | 488 | 417 | 33 | 5 | 1.0% | $28.92 |
-| Campaign 3 (Desktop, Sign up) | $126.28 | - | 228 | 200 | 25 | 4 | 1.8% | $31.57 |
+| Campaign 1 (Traffic, clicks) | $172.18 | 1523 | 2119 | 1688 | 51 | 3 | 0.1% | $57.39 |
+| Campaign 2 (Sales, Sign up) | $144.61 | 294 | 507 | 432 | 34 | 5 | 1.0% | $28.92 |
+| Campaign 3 (Desktop, Sign up) | $126.28 | - | 239 | 210 | 25 | 4 | 1.7% | $31.57 |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
@@ -36,7 +36,7 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 
 | day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026-11-05 | 3 | 1 | 3 | 2 | 2 | 0 | 2 | 0 | 0 | 1 s | - |
+| 2026-11-05 | 48 | 26 | 43 | 18 | 18 | 2 | 20 | 0 | 0 | 6 s | - |
 | 2026-11-04 | 164 | 87 | 136 | 11 | 9 | 1 | 10 | 3 | 1 | 8 s | $39.03 |
 | 2026-11-03 | 174 | 53 | 149 | 20 | 5 | 2 | 8 | 1 | 10 | 12 s | $65.08 |
 | 2026-11-02 | 365 | 286 | 306 | 11 | 5 | 2 | 8 | 1 | 14 | 10 s | $106.35 |
@@ -75,16 +75,20 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 | a2feb08 | 2026-11-04T08:17:57.442Z | 3 | 3 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 3a6b22e | 2026-11-04T08:45:56.596Z | 161 | 133 | 10 | 9 | 1 | 10 | 4 | 3 | 1 |
 | 05a87b9 | 2026-11-05T08:37:09.812Z | 3 | 3 | 2 | 2 | 0 | 2 | 0 | 0 | 0 |
-| af9c9be | 2026-11-05T09:10:41.755Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| af9c9be | 2026-11-05T09:10:41.755Z | 8 | 8 | 4 | 4 | 1 | 5 | 0 | 0 | 0 |
+| ed58fa1 | 2026-11-05T11:05:20.577Z | 15 | 14 | 11 | 12 | 1 | 11 | 0 | 0 | 0 |
+| 150a126 | 2026-11-05T12:02:30.794Z | 22 | 18 | 1 | 0 | 0 | 2 | 0 | 0 | 0 |
 
 ## Per creative (30 days)
 
 | code | label | arrivals | editor | placed | accounts | returned | spend |
 |---|---|---:|---:|---:|---:|---:|---:|
-| rd_rainbow_image | Reddit ad - Rainbow image | 1957 | 1679 | 64 | 7 | 54 | - |
-| rd_lidi_image | Reddit ad - Lidi image | 661 | 478 | 23 | 4 | 17 | - |
+| rd_rainbow_image | Reddit ad - Rainbow image | 1983 | 1701 | 67 | 7 | 54 | - |
+| rd_lidi_image | Reddit ad - Lidi image | 668 | 484 | 24 | 4 | 17 | - |
 | rd_coverflow_4x5 | Reddit ad - Coverflow video (feed) | 254 | 136 | 5 | 1 | 1 | - |
+| rd_lidi_video | Reddit ad - Lidi video | 11 | 11 | 11 | 0 | 0 | - |
 | (no code) | not in registry | 2 | 2 | 2 | 0 | 0 | - |
+| rd_rainbow_video | not in registry | 1 | 1 | 1 | 0 | 0 | - |
 
 > Fill page and the wall are recorded since michi 6d01a53 (2026-10-29 evening); the hop stitch since 7bc1d40 (2026-10-29 22:50 PT). Earlier zeros on those steps are blindness. Deploy markers since 2026-10-30 04:14 UTC.
 

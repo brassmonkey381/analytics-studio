@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-04T15:08:38.784Z",
+  "collectedAt": "2026-11-05T15:08:49.909Z",
   "windows": [
     1,
     7,
@@ -7,7 +7,7 @@
     90
   ],
   "activeDays": 14,
-  "geoCollectedAt": "2026-11-04T15:08:31.219Z",
+  "geoCollectedAt": "2026-11-05T15:08:42.070Z",
   "apps": {
     "doggle": {
       "unit": "places",
@@ -18,7 +18,7 @@
         "guests": 0,
         "deletedOrNoProfile": 0,
         "real": 13,
-        "signedOutDevices": 551
+        "signedOutDevices": 598
       },
       "windows": {
         "1": {
@@ -51,11 +51,11 @@
         },
         "30": {
           "real": 6,
-          "active": 4,
+          "active": 3,
           "located": 2,
           "foreign": 0,
           "noLocation": 4,
-          "activeLocated": 2,
+          "activeLocated": 1,
           "bySource": {
             "none": 4,
             "home": 2
@@ -95,7 +95,7 @@
               "city": "Suamico",
               "state": "WI",
               "users": 1,
-              "active": 1,
+              "active": 0,
               "sources": {
                 "home": 1
               },
@@ -115,11 +115,11 @@
         },
         "90": {
           "real": 13,
-          "active": 4,
+          "active": 3,
           "located": 5,
           "foreign": 0,
           "noLocation": 8,
-          "activeLocated": 2,
+          "activeLocated": 1,
           "bySource": {
             "none": 8,
             "home": 5
@@ -169,26 +169,6 @@
               "alert": null
             },
             {
-              "city": "Suamico",
-              "state": "WI",
-              "users": 1,
-              "active": 1,
-              "sources": {
-                "home": 1
-              },
-              "lat": 44.632,
-              "lng": -88.039,
-              "coverage": {
-                "known": true,
-                "statePlaces": 11389,
-                "stateCovered": true,
-                "county": "Brown",
-                "fips": "55009",
-                "countyPlaces": 181
-              },
-              "alert": null
-            },
-            {
               "city": "Novato",
               "state": "CA",
               "users": 1,
@@ -200,7 +180,7 @@
               "lng": -122.571,
               "coverage": {
                 "known": true,
-                "statePlaces": 16490,
+                "statePlaces": 16487,
                 "stateCovered": true,
                 "county": "Marin",
                 "fips": "06041",
@@ -247,6 +227,26 @@
                 "countyPlaces": 88
               },
               "alert": null
+            },
+            {
+              "city": "Suamico",
+              "state": "WI",
+              "users": 1,
+              "active": 0,
+              "sources": {
+                "home": 1
+              },
+              "lat": 44.632,
+              "lng": -88.039,
+              "coverage": {
+                "known": true,
+                "statePlaces": 11389,
+                "stateCovered": true,
+                "county": "Brown",
+                "fips": "55009",
+                "countyPlaces": 181
+              },
+              "alert": null
             }
           ]
         }
@@ -256,8 +256,8 @@
       "unit": "venues",
       "days": 90,
       "totals": {
-        "accounts": 40,
-        "excluded": 40,
+        "accounts": 32,
+        "excluded": 32,
         "guests": 0,
         "deletedOrNoProfile": 0,
         "real": 0,
