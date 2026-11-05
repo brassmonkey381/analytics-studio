@@ -52,7 +52,9 @@
       "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"]
     },
     "michi-maker": {
-      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"]
+      "emailPatterns": ["%@michi-maker.com", "%@tcgscan.com"],
+      "_userSqlDoc": "Michi QA walks (michi session, 2026-11-05): every scripted Playwright walk against production or the dev server arrives with utm_source=reddit&utm_medium=qa&utm_campaign=<round> (utm_source must stay reddit for the seeded landing to fire). Each walk is a fresh anonymous guest, so no email or id can list it; the session.start it writes carries utm_medium=qa and that marks the uid. Before this marker (the 2026-11-05 11:05 to 12:02 UTC walks) QA guests are indistinguishable from traffic and are noted in config/events.json instead.",
+      "userSql": ["u.id in (select e.user_id from public.analytics_events e where e.name = 'session.start' and e.props->>'utm_medium' = 'qa' and e.user_id is not null)"]
     }
   }
 }
