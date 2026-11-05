@@ -409,7 +409,7 @@ function guestPanel(w, appId) {
       }</p>`
     : "";
 
-  const actions = g.actions.filter((a) => a.name !== "session.start");
+  const actions = g.actions.filter((a) => a.name !== "session.start" && a.name !== "page.leave");
   const actionRows = actions.length
     ? actions
         .map(
@@ -891,7 +891,7 @@ const md = [
           ``,
         );
       }
-      const acts = g.actions.filter((a) => a.name !== "session.start");
+      const acts = g.actions.filter((a) => a.name !== "session.start" && a.name !== "page.leave");
       if (acts.length) {
         lines.push(`| Guest action | People | Times |`, `| --- | ---: | ---: |`);
         for (const a of acts) lines.push(`| ${a.label} (\`${a.name}\`) | ${a.people} | ${a.fires} |`);

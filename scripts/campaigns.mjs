@@ -378,7 +378,7 @@ for (const s of arrivals) {
   const evs = sessionEvents.get(s.id) ?? [];
   // Landing itself is session.start + one page.view. Anything beyond that second event
   // is the visitor going somewhere, which is the honest floor for "did not just bounce".
-  s.beyondLanding = evs.filter((e) => e.name !== "session.start").length > 1;
+  s.beyondLanding = evs.filter((e) => e.name !== "session.start" && e.name !== "page.leave").length > 1;
   s.arrivedAnonymous = !s.user_id || s.is_guest === true || s.anon === true;
   const mine = sessionsByPerson.get(s.person) ?? [];
   const claimed = mine.some((o) => o.upgraded_at) || !!s.upgraded_at;

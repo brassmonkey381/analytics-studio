@@ -300,7 +300,7 @@ for (const id of APPS) {
   };
   for (const [ev, entry] of Object.entries(r.events ?? {})) {
     if (!labels.has(ev)) continue;
-    if (ev === "session.start" || ev === "page.view") continue; // the visit itself, not a doing
+    if (ev === "session.start" || ev === "page.view" || ev === "page.leave") continue; // the visit itself, not a doing
     const label = labels.get(ev) ?? ev;
     for (const nm of names(entry)) {
       const which = whichFor(ev, nm).map((v) => READABLE[ev]?.[v] ?? v);

@@ -336,7 +336,7 @@ const excludedSessions = sessions.filter((s) => s.excluded).length;
 for (const e of events) {
   const s = bySession.get(e.session_id);
   if (!s) continue;
-  s.lastEvent = e.name;
+  if (e.name !== "page.leave") s.lastEvent = e.name; // leaving is not a doing; keep the last real action
   switch (e.name) {
     case "page.view":
       s.views++;
@@ -351,8 +351,11 @@ for (const e of events) {
       // then complete, then filled. The first step of either is "saw the first prompt"; a
       // Complete that filled the page is cards on the page by the person's own tap, so it
       // counts as placed.
+      // Since michi af9c9be (2026-11-05 16:10 UTC) 'seeded' is complete -> filled -> search and
+      // art is gone; 'search' rings an empty pocket with the card search open, the same moment
+      // 'card' is in first-pocket.
       if (e.step === "ring" || e.step === "complete" || e.step === "art") s.ring = true;
-      if (e.step === "card") s.browser = true;
+      if (e.step === "card" || e.step === "search") s.browser = true;
       if (e.step === "placed") s.placed = true;
       if (e.step === "filled") { s.filled = true; s.placed = true; }
       break;

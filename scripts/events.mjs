@@ -136,6 +136,10 @@ order by r.ts`;
 // ---------- helpers ----------
 
 const TAX = CFG.taxonomy ?? {};
+// The visit itself, not a doing: a session holding only these did nothing. page.leave (michi
+// 2026-11-05) fires for every page a person leaves, so without this every bounce would read as
+// an action the day it landed.
+const VISIT_EVENTS = new Set(["session.start", "page.leave"]);
 const ROUTES = CFG.routes ?? {};
 const pricingRoutes = new Set(
   Object.entries(ROUTES).filter(([, v]) => v.intent === "pricing").map(([k]) => k),
@@ -988,7 +992,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   const platforms = {};
   for (const s of sessions) platforms[s.platform ?? "unknown"] = (platforms[s.platform ?? "unknown"] ?? 0) + 1;
 
-  const bounced = [...bySession.values()].filter((b) => b.events.filter((e) => e.name !== "session.start").length === 0).length;
+  const bounced = [...bySession.values()].filter((b) => b.events.filter((e) => !VISIT_EVENTS.has(e.name)).length === 0).length;
 
   const realIds = [...byUser.values()].filter((u) => !u.anon).map((u) => u.id);
   const guestIds = [...byUser.values()].filter((u) => u.anon).map((u) => u.id);
@@ -1005,7 +1009,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   rosters.tiles.sessions = roster(sessions.map((s) => s.user_id), identity);
   rosters.tiles.events = roster(events.map((e) => e.user_id), identity);
   rosters.tiles.bounced = roster(
-    [...bySession.values()].filter((b) => b.events.filter((e) => e.name !== "session.start").length === 0).map((b) => b.session.user_id),
+    [...bySession.values()].filter((b) => b.events.filter((e) => !VISIT_EVENTS.has(e.name)).length === 0).map((b) => b.session.user_id),
     identity,
   );
 
@@ -1019,7 +1023,7 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
   const depthOf = (u) => {
     if ([...u.names].some((n) => MAKE.has(n))) return "made";
     if (u.views >= 3) return "explored";
-    if ([...u.names].some((n) => n !== "session.start")) return "looked";
+    if ([...u.names].some((n) => !VISIT_EVENTS.has(n))) return "looked";
     return "openOnly";
   };
   const byDepth = { openOnly: [], looked: [], explored: [], made: [] };
