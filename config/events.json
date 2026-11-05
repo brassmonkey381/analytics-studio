@@ -623,6 +623,35 @@
       ]
     },
     "_pairingDoc": "binder.rebuild_from_tcgscan and tcgscan.pairing_click are the CROSS-APP seam, and they are michi-only for a reason that is not asymmetry: both fire in michi about tcgscan. binder.rebuild_from_tcgscan { pages, placed, unplaced } is the payoff of the pairing - a scanned collection becoming a real binder - and `unplaced` is the honest half: cards that came across and did not fit anywhere. tcgscan.pairing_click { surface } is the pitch being followed OUT of michi, so it has no landing event on the other side; TCGScan's own session.start is the nearest thing and it cannot be joined (a browser hop, no shared session id). Read the click as intent, never as an arrival - and see gaps.share_attribution for the same shape of problem.",
+    "wizard.shown": {
+      "label": "Opened the new-binder wizard",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wizard.kind": {
+      "label": "Picked a binder kind in the wizard",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wizard.preview": {
+      "label": "Saw the wizard's card preview",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wizard.create": {
+      "label": "Pressed Create in the wizard",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_wizardDoc": "wizard.shown { wizard: 'new-binder', width } / .kind { wizard, kind: pokemon|set|artist|three } / .preview { wizard, kind, cards } / .create { wizard, kind, cards, pages, capped, ok } - michi, SPECCED 2026-11-05, NOT YET DEPLOYED (michi will send the live time; a zero means cannot see until then). The wizard is /new-binder, reached by phone guests who press Start building on the landing page; Reddit paid arrivals keep the seeded page and never see it, so wizard rows and campaign codes do not mix. capped=true means the kind held more cards than the tier's page cap; ok=false means the store refused (a guest who already has a binder), so create with ok=false is an attempt, not a binder. After ok=true the editor opens with binder.add as usual. Kind 'three' opens the editor with ?seeded=1 and runs the SEEDED walkthrough, so walkthrough.* rows with walkthrough='seeded' and no campaign code are wizard three-card binders, not Reddit: split seeded by whether the session has a utm_source before pooling. Same deploy, no event changes: a phone bottom tool bar whose buttons fire only the existing autofill/arrange events.",
     "walkthrough.shown": {
       "label": "Was shown the binder walkthrough",
       "stage": "activation",

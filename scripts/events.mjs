@@ -906,6 +906,8 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
     "walkthrough.step": "step",
     "walkthrough.done": "via",
     "walkthrough.celebration": "action",
+    "wizard.kind": "kind",
+    "wizard.create": "kind",
     "prompt.shown": "prompt",
     "prompt.answered": "response",
     "puzzle.choice": "choice",
