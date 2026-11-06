@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-05T15:08:12.821Z",
+  "collectedAt": "2026-11-06T15:08:16.690Z",
   "windows": [
     "all",
     1,
@@ -13,7 +13,7 @@
       "currency": "points",
       "balances": {
         "accounts": 13,
-        "outstanding": 2399,
+        "outstanding": 2454,
         "excludedAccounts": 47,
         "distribution": {
           "buckets": [
@@ -58,33 +58,33 @@
       },
       "flows": {
         "1": {
-          "earned": 0,
+          "earned": 55,
           "spent": 0,
-          "rows": 0,
-          "earners": 0
+          "rows": 6,
+          "earners": 2
         },
         "7": {
-          "earned": 215,
+          "earned": 147,
           "spent": 0,
-          "rows": 13,
+          "rows": 11,
           "earners": 2
         },
         "14": {
-          "earned": 339,
+          "earned": 394,
           "spent": 0,
-          "rows": 21,
+          "rows": 27,
           "earners": 5
         },
         "30": {
-          "earned": 606,
+          "earned": 661,
           "spent": 0,
-          "rows": 37,
+          "rows": 43,
           "earners": 5
         },
         "all": {
-          "earned": 2399,
+          "earned": 2454,
           "spent": 0,
-          "rows": 115,
+          "rows": 121,
           "earners": 13
         }
       },
@@ -97,13 +97,13 @@
         "byWindow": {
           "1": [
             0,
-            0,
+            2,
             0
           ],
           "7": [
             0,
-            1,
-            1
+            2,
+            0
           ],
           "14": [
             1,
@@ -123,18 +123,37 @@
         }
       },
       "byReason": {
-        "1": [],
-        "7": [
+        "1": [
           {
             "category": "Login bonus",
-            "points": 135,
-            "rows": 6,
+            "points": 30,
+            "rows": 2,
             "users": 2
           },
           {
-            "category": "Onboarding",
-            "points": 60,
-            "rows": 3,
+            "category": "Vibe bonus",
+            "points": 10,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 1",
+            "points": 10,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 5,
+            "rows": 1,
+            "users": 1
+          }
+        ],
+        "7": [
+          {
+            "category": "Login bonus",
+            "points": 117,
+            "rows": 6,
             "users": 2
           },
           {
@@ -144,14 +163,14 @@
             "users": 1
           },
           {
-            "category": "Joined a group",
-            "points": 5,
-            "rows": 1,
-            "users": 1
+            "category": "Vibe bonus",
+            "points": 10,
+            "rows": 2,
+            "users": 2
           },
           {
-            "category": "Vibe bonus",
-            "points": 5,
+            "category": "Park Pass tier 1",
+            "points": 10,
             "rows": 1,
             "users": 1
           }
@@ -159,8 +178,8 @@
         "14": [
           {
             "category": "Login bonus",
-            "points": 219,
-            "rows": 11,
+            "points": 249,
+            "rows": 13,
             "users": 4
           },
           {
@@ -171,15 +190,21 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 15,
-            "rows": 3,
+            "points": 20,
+            "rows": 4,
             "users": 1
           },
           {
             "category": "Vibe bonus",
+            "points": 20,
+            "rows": 4,
+            "users": 3
+          },
+          {
+            "category": "Park Pass tier 1",
             "points": 10,
-            "rows": 2,
-            "users": 2
+            "rows": 1,
+            "users": 1
           },
           {
             "category": "Joined a group",
@@ -191,8 +216,8 @@
         "30": [
           {
             "category": "Login bonus",
-            "points": 366,
-            "rows": 19,
+            "points": 396,
+            "rows": 21,
             "users": 5
           },
           {
@@ -203,15 +228,21 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 30,
-            "rows": 6,
+            "points": 35,
+            "rows": 7,
             "users": 1
           },
           {
             "category": "Vibe bonus",
-            "points": 15,
-            "rows": 3,
+            "points": 25,
+            "rows": 5,
             "users": 3
+          },
+          {
+            "category": "Park Pass tier 1",
+            "points": 10,
+            "rows": 1,
+            "users": 1
           },
           {
             "category": "Joined a group",
@@ -223,8 +254,8 @@
         "all": [
           {
             "category": "Login bonus",
-            "points": 1302,
-            "rows": 64,
+            "points": 1332,
+            "rows": 66,
             "users": 13
           },
           {
@@ -247,19 +278,25 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 100,
-            "rows": 20,
+            "points": 105,
+            "rows": 21,
             "users": 1
           },
           {
             "category": "Vibe bonus",
-            "points": 20,
-            "rows": 4,
+            "points": 30,
+            "rows": 6,
             "users": 3
           },
           {
             "category": "Completed a walk",
             "points": 12,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Park Pass tier 1",
+            "points": 10,
             "rows": 1,
             "users": 1
           },
@@ -271,7 +308,7 @@
           }
         ]
       },
-      "excludedLedgerRows": 1066
+      "excludedLedgerRows": 1075
     },
     "pickleague": {
       "currency": "pickles",
@@ -394,7 +431,7 @@
           ]
         }
       },
-      "excludedFlowRows": 812
+      "excludedFlowRows": 813
     },
     "caps": {
       "binders": {
@@ -409,13 +446,13 @@
         "counts": [
           0,
           0,
-          126,
+          131,
           0,
-          2625
+          2745
         ],
-        "users": 2751,
+        "users": 2876,
         "uncapped": 0,
-        "atCap": 2625
+        "atCap": 2745
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -427,15 +464,15 @@
           "at / over cap"
         ],
         "counts": [
-          2487,
-          76,
-          43,
-          6,
-          62
+          2662,
+          83,
+          28,
+          8,
+          15
         ],
-        "users": 2674,
+        "users": 2796,
         "uncapped": 0,
-        "atCap": 62
+        "atCap": 15
       },
       "artUploads": {
         "app": "michi",
@@ -447,15 +484,15 @@
           "at / over cap"
         ],
         "counts": [
-          78,
-          44,
-          37,
-          30,
-          34
+          85,
+          45,
+          38,
+          31,
+          35
         ],
-        "users": 223,
+        "users": 234,
         "uncapped": 0,
-        "atCap": 34
+        "atCap": 35
       },
       "includedPrintsPerMonth": {
         "app": "michi",
@@ -511,11 +548,11 @@
           0,
           0,
           0,
-          71
+          76
         ],
-        "users": 71,
+        "users": 76,
         "uncapped": 0,
-        "atCap": 71
+        "atCap": 76
       },
       "cardsPerCollection": {
         "app": "tcgscan",
@@ -527,21 +564,21 @@
           "at / over cap"
         ],
         "counts": [
-          24,
+          27,
           4,
           3,
           0,
           4
         ],
-        "users": 35,
+        "users": 38,
         "uncapped": 0,
         "atCap": 4
       },
       "_accounts": {
-        "total": 7827,
-        "guests": 7536,
-        "excluded": 2789,
-        "excludedUsageRows": 577
+        "total": 8077,
+        "guests": 7779,
+        "excluded": 2827,
+        "excludedUsageRows": 595
       }
     }
   }
