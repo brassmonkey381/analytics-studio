@@ -297,8 +297,11 @@ for (const s of sessions) {
     // Traffic ad ever gets utm_content, this rule needs a different key.
     // Campaign 3 (2026-11-02 11:30 PT, desktop only, two ad groups by placement) carries its own
     // utm_campaign; it also has utm_content, so test the campaign name first.
-    campaign: (s.p_campaign ?? PARAM(s.landing_route, "utm_campaign")) === "michi_desktop_2026_11" ? "desktop"
-      : (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic",
+    // The wizard arm (2026-11-07, a phone-only ad group inside Campaign 2) carries
+    // utm_campaign=michi_wizard_2026_11 and lands on /new-binder once michi routes it there;
+    // it is reported as its own campaign so seeded and wizard phone arrivals never pool.
+    campaign: ((c) => c === "michi_desktop_2026_11" ? "desktop" : c === "michi_wizard_2026_11" ? "wizard"
+      : (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic")(s.p_campaign ?? PARAM(s.landing_route, "utm_campaign")),
     viewportW: s.viewport_w ?? null,
     fromSession: s.from_session ?? null,
     guest: !!s.started_as_guest,
@@ -621,7 +624,7 @@ for (const w of WINDOWS) {
   // Campaign scoreboard: the two Reddit campaigns side by side, the view Ads Manager cannot
   // give (its Sign Up column only counts what the pixel saw since it went live, with Reddit's
   // attribution; this one counts accounts the site saw, by the session's campaign).
-  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)", desktop: "Campaign 3 (Desktop, Sign up)" };
+  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)", desktop: "Campaign 3 (Desktop, Sign up)", wizard: "Wizard arm (phone, Sign up, in Campaign 2)" };
   const campRow = (camp, ss, rows, day) => {
     const f = funnelOver(ss);
     const key = day ? `campday|${w}|${camp}|${day}` : `camp|${w}|${camp}`;
@@ -649,7 +652,7 @@ for (const w of WINDOWS) {
     };
   };
   const campaigns = [];
-  for (const camp of ["traffic", "sales", "desktop"]) {
+  for (const camp of ["traffic", "sales", "desktop", "wizard"]) {
     const ss = list.filter((s) => s.campaign === camp);
     const rows = ledger.filter((r) => r.campaign === camp);
     if (!ss.length && !rows.length) continue;
@@ -961,7 +964,7 @@ ${costRows}
 
 <h2>Campaign scoreboard</h2>
 ${campaignTable(w, d.campaigns)}
-<p class="note">The view Ads Manager cannot give. A session is Campaign 3 when its link carried utm_campaign <code>michi_desktop_2026_11</code> (desktop only, from 2026-11-02 19:30 UTC; its two ad groups are the Feed and Conversation placements, visible as the two utm_content values in the audience table), Campaign 2 when it carried <code>utm_content</code> otherwise (only the Sales campaign's ads do, since 2026-10-30 20:00 UTC), and Campaign 1 otherwise. Spend and clicks are the ledger rows tagged <code>campaign:</code> in <code>${esc(spend.path)}</code>; arrivals and accounts are what the site saw, so they include blockers the pixel misses and exclude our own accounts. Sign-up rate is accounts over arrivals; Reddit's "Sign Up Rate" column divides pixel sign-ups by Reddit's clicks, so the two are close, not equal. A day with no ledger row shows the funnel and no cost. Campaign 2 is in Reddit's learning phase: compare rates after a few days, not on launch day.</p>
+<p class="note">The view Ads Manager cannot give. A session is Campaign 3 when its link carried utm_campaign <code>michi_desktop_2026_11</code> (desktop only, from 2026-11-02 19:30 UTC; its two ad groups are the Feed and Conversation placements, visible as the two utm_content values in the audience table), Campaign 2 when it carried <code>utm_content</code> otherwise (only the Sales campaign's ads do, since 2026-10-30 20:00 UTC), and Campaign 1 otherwise. The wizard arm is utm_campaign <code>michi_wizard_2026_11</code> (from 2026-11-07, a phone-only ad group inside Campaign 2 whose link lands on the new-binder wizard instead of the seeded binder, pending michi's routing deploy; until that deploy its arrivals saw the seeded binder like Campaign 2). Spend and clicks are the ledger rows tagged <code>campaign:</code> in <code>${esc(spend.path)}</code>; arrivals and accounts are what the site saw, so they include blockers the pixel misses and exclude our own accounts. Sign-up rate is accounts over arrivals; Reddit's "Sign Up Rate" column divides pixel sign-ups by Reddit's clicks, so the two are close, not equal. A day with no ledger row shows the funnel and no cost. Campaign 2 is in Reddit's learning phase: compare rates after a few days, not on launch day.</p>
 
 <h2>The funnel</h2>
 ${funnelTable("f", w, f)}
@@ -1100,7 +1103,7 @@ if (a7.cost.spend) {
 md.push(`## Campaign scoreboard (7 days)`, ``);
 md.push(`| campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |`, `|---|---:|---:|---:|---:|---:|---:|---:|---:|`);
 for (const c of a7.campaigns) md.push(`| ${c.label} | ${c.spend == null ? "-" : `$${c.spend.toFixed(2)}`} | ${c.clicks ?? "-"} | ${c.sessions} | ${c.editor} | ${c.placed} | ${c.accounts} | ${c.signupRate == null ? "-" : `${(c.signupRate * 100).toFixed(1)}%`} | ${c.perAccount == null ? "-" : `$${c.perAccount.toFixed(2)}`} |`);
-md.push(``, `Campaign 2 is every paid session whose link carried utm_content (only its ads do); arrivals and accounts are the site's count, spend and clicks the ledger's.`, ``);
+md.push(``, `Campaign 2 is every paid session whose link carried utm_content (only its ads do) and no other campaign name; the wizard arm is utm_campaign michi_wizard_2026_11 (phone ad group in Campaign 2, lands on the wizard once michi routes it); arrivals and accounts are the site's count, spend and clicks the ledger's.`, ``);
 md.push(`## Per day (30 days)`, ``);
 md.push(`| day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |`, `|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|`);
 for (const r of [...aa.daily].reverse()) md.push(`| ${r.day} | ${r.sessions} | ${r.phone} | ${r.editor} | ${r.placed} | ${r.taste} | ${r.fill} | ${r.wall} | ${r.accounts} | ${r.returned} | ${secs(r.medianSecs)} | ${r.spend == null ? "-" : `$${r.spend.toFixed(2)}`} |`);
