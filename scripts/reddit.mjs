@@ -353,7 +353,8 @@ for (const e of events) {
       // counts as placed.
       // Since michi af9c9be (2026-11-05 09:10 UTC) 'seeded' is complete -> filled -> search and
       // art is gone; 'search' rings an empty pocket with the card search open, the same moment
-      // 'card' is in first-pocket.
+      // 'card' is in first-pocket. Since michi bbe68a1 (2026-11-07 02:45 UTC) 'search' and the
+      // placed ending no longer occur: seeded ends at 'filled' with the celebration card.
       if (e.step === "ring" || e.step === "complete" || e.step === "art") s.ring = true;
       if (e.step === "card" || e.step === "search") s.browser = true;
       if (e.step === "placed") s.placed = true;
