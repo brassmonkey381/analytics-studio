@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-06T15:08:02.748Z",
+  "collectedAt": "2026-11-07T15:08:02.639Z",
   "dayTz": "PST",
   "source": "reddit",
   "lookbackDays": 30,
@@ -15,8 +15,8 @@
   "spend": {
     "found": true,
     "path": "../marketing-studio/assets/qr/spend.yaml",
-    "rows": 16,
-    "declared": 16
+    "rows": 18,
+    "declared": 18
   },
   "deploys": [
     {
@@ -138,6 +138,18 @@
     {
       "ts": "2026-11-06 11:27:16.518294+00",
       "short": "1ae9af0"
+    },
+    {
+      "ts": "2026-11-07 02:45:48.992636+00",
+      "short": "bbe68a1"
+    },
+    {
+      "ts": "2026-11-07 08:21:07.29788+00",
+      "short": "aef09ff"
+    },
+    {
+      "ts": "2026-11-07 10:40:12.29356+00",
+      "short": "56e3760"
     }
   ],
   "changes": [
@@ -170,91 +182,97 @@
       "short": "budget-5-each",
       "kind": "change",
       "note": "Both live campaigns set to USD 5/day by Brian 2026-11-05 afternoon (Campaign 2 from about USD 15, Campaign 3 from USD 30). Reason: the mobile guest-to-sign-up experience is not where Brian wants it; ads go back up to about USD 50/day only once it is. Constraint: a USD 500 Reddit ad credit must be spent by 2026-11-20. Morning read 2026-11-05 00:00 to 11:50 PT - C2 phone 36 arrivals, 0 Complete, 0 accounts; C3 desktop 27 arrivals, 5 Complete, 1 account."
+    },
+    {
+      "ts": "2026-11-07T08:21:07.000Z",
+      "short": "wizard-arm",
+      "kind": "change",
+      "note": "Brian created utm_campaign michi_wizard_2026_11, a phone-only ad group inside Campaign 2 (Sign Up objective) whose link is to land on the new-binder wizard instead of the seeded binder. A/B read seeded vs wizard on the same phone audience. Ledger rows for it carry campaign: wizard. Stamp is the michi aef09ff production deploy.live, when the route went live; arrivals before it saw the seeded binder."
     }
   ],
   "verificationSessions": 3,
   "byWindow": {
     "1": {
-      "sessions": 63,
-      "phone": 31,
-      "desktop": 32,
+      "sessions": 176,
+      "phone": 125,
+      "desktop": 51,
       "unknownDevice": 0,
-      "bounced": 10,
-      "medianSecs": 4.075,
-      "p90Secs": 300.424,
-      "returned": 3,
-      "dismissed": 15,
+      "bounced": 17,
+      "medianSecs": 10.885000000000002,
+      "p90Secs": 293.394,
+      "returned": 4,
+      "dismissed": 47,
       "shelfNotes": 0,
-      "tasted": 5,
+      "tasted": 8,
       "tasteByFeature": {
-        "fillPage": 5,
-        "findSimilar": 3,
-        "binderCovers": 1
+        "fillPage": 4,
+        "findSimilar": 5,
+        "advancedSearch": 1
       },
-      "fillRuns": 5,
-      "fillPlaced": 5,
+      "fillRuns": 4,
+      "fillPlaced": 4,
       "capGates": 3,
       "proOffers": 0,
       "funnel": [
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 63
+          "sessions": 176
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 49
+          "sessions": 142
         },
         {
           "id": "ring",
           "label": "Saw the first prompt (pocket ring, or Complete on a seeded page)",
-          "sessions": 51
+          "sessions": 133
         },
         {
           "id": "browser",
           "label": "Opened the card browser",
-          "sessions": 8
+          "sessions": 16
         },
         {
           "id": "placed",
           "label": "Placed a card (own tap, or a Fill/Complete that placed)",
-          "sessions": 6
+          "sessions": 12
         },
         {
           "id": "taste",
           "label": "Took a guest taste (Find similar, Fill page)",
-          "sessions": 5
+          "sessions": 8
         },
         {
           "id": "fill",
           "label": "Opened Fill page",
-          "sessions": 3
+          "sessions": 2
         },
         {
           "id": "wall",
           "label": "Met the create-account wall",
-          "sessions": 6
+          "sessions": 7
         },
         {
           "id": "tap",
           "label": "Tapped Create account",
-          "sessions": 1
+          "sessions": 5
         },
         {
           "id": "account",
           "label": "Became an account",
-          "sessions": 1
+          "sessions": 4
         },
         {
           "id": "public",
           "label": "Made a binder public",
-          "sessions": 0
+          "sessions": 1
         }
       ],
       "stitch": {
         "hop": 0,
-        "same_uid": 1,
+        "same_uid": 4,
         "time": 0
       },
       "cost": {
@@ -267,18 +285,18 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 42,
-          "phone": 19,
-          "editor": 33,
-          "placed": 3,
-          "taste": 2,
-          "fill": 2,
-          "wall": 3,
-          "tap": 0,
-          "accounts": 0,
-          "public": 0,
-          "returned": 2,
-          "medianSecs": 8.333,
+          "sessions": 97,
+          "phone": 61,
+          "editor": 84,
+          "placed": 7,
+          "taste": 5,
+          "fill": 1,
+          "wall": 4,
+          "tap": 2,
+          "accounts": 2,
+          "public": 1,
+          "returned": 1,
+          "medianSecs": 6.706,
           "spend": null,
           "clicks": null
         },
@@ -287,105 +305,35 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 19,
-          "phone": 10,
-          "editor": 14,
-          "placed": 1,
-          "taste": 1,
-          "fill": 0,
-          "wall": 1,
-          "tap": 1,
-          "accounts": 1,
-          "public": 0,
-          "returned": 1,
-          "medianSecs": 0.849,
-          "spend": null,
-          "clicks": null
-        },
-        {
-          "code": "rd_lidi_video",
-          "label": "Reddit ad - Lidi video",
-          "registered": true,
-          "medium": "test",
-          "sessions": 2,
-          "phone": 2,
-          "editor": 2,
-          "placed": 2,
-          "taste": 2,
+          "sessions": 79,
+          "phone": 64,
+          "editor": 58,
+          "placed": 5,
+          "taste": 3,
           "fill": 1,
-          "wall": 2,
-          "tap": 0,
-          "accounts": 0,
+          "wall": 3,
+          "tap": 3,
+          "accounts": 2,
           "public": 0,
-          "returned": 0,
-          "medianSecs": 175.65800000000002,
+          "returned": 3,
+          "medianSecs": 14.361,
           "spend": null,
           "clicks": null
         }
       ],
       "campaigns": [
         {
-          "campaign": "traffic",
-          "label": "Campaign 1 (Traffic, clicks)",
-          "day": null,
-          "spend": null,
-          "clicks": null,
-          "sessions": 3,
-          "phone": 3,
-          "editor": 3,
-          "placed": 2,
-          "accounts": 0,
-          "signupRate": 0,
-          "perArrival": null,
-          "perAccount": null,
-          "ledgerRows": 0,
-          "days": [
-            {
-              "campaign": "traffic",
-              "label": "Campaign 1 (Traffic, clicks)",
-              "day": "2026-11-05",
-              "spend": null,
-              "clicks": null,
-              "sessions": 2,
-              "phone": 2,
-              "editor": 2,
-              "placed": 2,
-              "accounts": 0,
-              "signupRate": 0,
-              "perArrival": null,
-              "perAccount": null,
-              "ledgerRows": 0
-            },
-            {
-              "campaign": "traffic",
-              "label": "Campaign 1 (Traffic, clicks)",
-              "day": "2026-11-06",
-              "spend": null,
-              "clicks": null,
-              "sessions": 1,
-              "phone": 1,
-              "editor": 1,
-              "placed": 0,
-              "accounts": 0,
-              "signupRate": 0,
-              "perArrival": null,
-              "perAccount": null,
-              "ledgerRows": 0
-            }
-          ]
-        },
-        {
           "campaign": "sales",
           "label": "Campaign 2 (Sales, Sign up)",
           "day": null,
           "spend": null,
           "clicks": null,
-          "sessions": 33,
-          "phone": 28,
-          "editor": 23,
-          "placed": 1,
-          "accounts": 0,
-          "signupRate": 0,
+          "sessions": 133,
+          "phone": 112,
+          "editor": 111,
+          "placed": 9,
+          "accounts": 2,
+          "signupRate": 0.015037593984962405,
           "perArrival": null,
           "perAccount": null,
           "ledgerRows": 0,
@@ -393,15 +341,15 @@
             {
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
-              "day": "2026-11-05",
+              "day": "2026-11-06",
               "spend": null,
               "clicks": null,
-              "sessions": 32,
-              "phone": 27,
-              "editor": 22,
-              "placed": 1,
-              "accounts": 0,
-              "signupRate": 0,
+              "sessions": 118,
+              "phone": 101,
+              "editor": 97,
+              "placed": 8,
+              "accounts": 2,
+              "signupRate": 0.01694915254237288,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -409,13 +357,13 @@
             {
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
-              "day": "2026-11-06",
+              "day": "2026-11-07",
               "spend": null,
               "clicks": null,
-              "sessions": 1,
-              "phone": 1,
-              "editor": 1,
-              "placed": 0,
+              "sessions": 15,
+              "phone": 11,
+              "editor": 14,
+              "placed": 1,
               "accounts": 0,
               "signupRate": 0,
               "perArrival": null,
@@ -430,12 +378,12 @@
           "day": null,
           "spend": null,
           "clicks": null,
-          "sessions": 27,
-          "phone": 0,
-          "editor": 23,
+          "sessions": 31,
+          "phone": 2,
+          "editor": 27,
           "placed": 3,
-          "accounts": 1,
-          "signupRate": 0.037037037037037035,
+          "accounts": 0,
+          "signupRate": 0,
           "perArrival": null,
           "perAccount": null,
           "ledgerRows": 0,
@@ -443,15 +391,15 @@
             {
               "campaign": "desktop",
               "label": "Campaign 3 (Desktop, Sign up)",
-              "day": "2026-11-05",
+              "day": "2026-11-06",
               "spend": null,
               "clicks": null,
-              "sessions": 26,
+              "sessions": 23,
               "phone": 0,
-              "editor": 22,
-              "placed": 3,
-              "accounts": 1,
-              "signupRate": 0.038461538461538464,
+              "editor": 20,
+              "placed": 2,
+              "accounts": 0,
+              "signupRate": 0,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -459,15 +407,49 @@
             {
               "campaign": "desktop",
               "label": "Campaign 3 (Desktop, Sign up)",
-              "day": "2026-11-06",
+              "day": "2026-11-07",
               "spend": null,
               "clicks": null,
-              "sessions": 1,
-              "phone": 0,
-              "editor": 1,
-              "placed": 0,
+              "sessions": 8,
+              "phone": 2,
+              "editor": 7,
+              "placed": 1,
               "accounts": 0,
               "signupRate": 0,
+              "perArrival": null,
+              "perAccount": null,
+              "ledgerRows": 0
+            }
+          ]
+        },
+        {
+          "campaign": "wizard",
+          "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+          "day": null,
+          "spend": null,
+          "clicks": null,
+          "sessions": 12,
+          "phone": 11,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2,
+          "signupRate": 0.16666666666666666,
+          "perArrival": null,
+          "perAccount": null,
+          "ledgerRows": 0,
+          "days": [
+            {
+              "campaign": "wizard",
+              "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 12,
+              "phone": 11,
+              "editor": 4,
+              "placed": 0,
+              "accounts": 2,
+              "signupRate": 0.16666666666666666,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -478,62 +460,76 @@
       "audiences": [
         {
           "value": "2624415186179138648",
-          "sessions": 33,
-          "editor": 23,
-          "placed": 1,
-          "accounts": 0
+          "sessions": 133,
+          "editor": 111,
+          "placed": 9,
+          "accounts": 2
         },
         {
           "value": "2626589547104294002",
-          "sessions": 27,
-          "editor": 23,
+          "sessions": 30,
+          "editor": 26,
           "placed": 3,
-          "accounts": 1
+          "accounts": 0
+        },
+        {
+          "value": "2629873973863486111",
+          "sessions": 12,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2
+        },
+        {
+          "value": "2626589547102138645",
+          "sessions": 1,
+          "editor": 1,
+          "placed": 0,
+          "accounts": 0
         }
       ],
       "ads": [
         {
           "value": "Rainbow",
-          "sessions": 41,
-          "editor": 32,
-          "placed": 3,
-          "accounts": 0
+          "sessions": 97,
+          "editor": 84,
+          "placed": 7,
+          "accounts": 2
         },
         {
           "value": "Volcano",
-          "sessions": 19,
-          "editor": 14,
-          "placed": 1,
-          "accounts": 1
+          "sessions": 79,
+          "editor": 58,
+          "placed": 5,
+          "accounts": 2
         }
       ],
       "daily": [
         {
-          "day": "2026-11-05",
-          "sessions": 60,
-          "phone": 29,
-          "editor": 46,
-          "placed": 6,
-          "taste": 5,
-          "fill": 3,
-          "wall": 6,
-          "accounts": 1,
-          "returned": 3,
-          "medianSecs": 3.0035,
-          "spend": 22.009999999999998
+          "day": "2026-11-06",
+          "sessions": 141,
+          "phone": 101,
+          "editor": 117,
+          "placed": 10,
+          "taste": 6,
+          "fill": 2,
+          "wall": 5,
+          "accounts": 2,
+          "returned": 4,
+          "medianSecs": 11.063,
+          "spend": 30
         },
         {
-          "day": "2026-11-06",
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
-          "placed": 0,
-          "taste": 0,
+          "day": "2026-11-07",
+          "sessions": 35,
+          "phone": 24,
+          "editor": 25,
+          "placed": 2,
+          "taste": 2,
           "fill": 0,
-          "wall": 0,
-          "accounts": 0,
+          "wall": 2,
+          "accounts": 2,
           "returned": 0,
-          "medianSecs": 24.031,
+          "medianSecs": 7.913,
           "spend": null
         }
       ],
@@ -542,41 +538,41 @@
           "id": "before",
           "kind": "before",
           "from": null,
-          "to": "2026-11-05T20:00:00.000Z",
-          "sessions": 42,
-          "phone": 20,
-          "editor": 33,
-          "placed": 2,
-          "taste": 2,
-          "fill": 1,
-          "wall": 3,
-          "tap": 1,
-          "accounts": 1,
-          "returned": 3,
-          "medianSecs": 2.9589999999999996
-        },
-        {
-          "id": "budget-5-each",
-          "kind": "change",
-          "from": "2026-11-05T20:00:00.000Z",
-          "to": "2026-11-05T23:28:43.158Z",
-          "sessions": 16,
-          "phone": 7,
-          "editor": 12,
-          "placed": 4,
-          "taste": 3,
+          "to": "2026-11-07T02:45:48.992Z",
+          "sessions": 111,
+          "phone": 79,
+          "editor": 92,
+          "placed": 8,
+          "taste": 5,
           "fill": 2,
-          "wall": 3,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 0,
-          "medianSecs": 3.007
+          "wall": 4,
+          "tap": 3,
+          "accounts": 1,
+          "returned": 4,
+          "medianSecs": 11.063
         },
         {
-          "id": "1b0993c",
+          "id": "bbe68a1",
           "kind": "deploy",
-          "from": "2026-11-05T23:28:43.158Z",
-          "to": "2026-11-06T01:13:35.223Z",
+          "from": "2026-11-07T02:45:48.992Z",
+          "to": "2026-11-07T08:21:07.000Z",
+          "sessions": 30,
+          "phone": 22,
+          "editor": 25,
+          "placed": 2,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 1,
+          "returned": 0,
+          "medianSecs": 9.8265
+        },
+        {
+          "id": "wizard-arm",
+          "kind": "change",
+          "from": "2026-11-07T08:21:07.000Z",
+          "to": "2026-11-07T08:21:07.297Z",
           "sessions": 0,
           "phone": 0,
           "editor": 0,
@@ -590,254 +586,152 @@
           "medianSecs": null
         },
         {
-          "id": "b8beee8",
+          "id": "aef09ff",
           "kind": "deploy",
-          "from": "2026-11-06T01:13:35.223Z",
-          "to": "2026-11-06T10:05:06.223Z",
-          "sessions": 2,
-          "phone": 2,
-          "editor": 1,
-          "placed": 0,
-          "taste": 0,
+          "from": "2026-11-07T08:21:07.297Z",
+          "to": "2026-11-07T10:40:12.293Z",
+          "sessions": 13,
+          "phone": 10,
+          "editor": 12,
+          "placed": 1,
+          "taste": 1,
           "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
+          "wall": 1,
+          "tap": 2,
+          "accounts": 2,
           "returned": 0,
-          "medianSecs": 4.6275
+          "medianSecs": 22.309
         },
         {
-          "id": "ff714e2",
+          "id": "56e3760",
           "kind": "deploy",
-          "from": "2026-11-06T10:05:06.223Z",
-          "to": "2026-11-06T10:41:01.215Z",
-          "sessions": 0,
-          "phone": 0,
-          "editor": 0,
-          "placed": 0,
-          "taste": 0,
-          "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 0,
-          "medianSecs": null
-        },
-        {
-          "id": "9198f39",
-          "kind": "deploy",
-          "from": "2026-11-06T10:41:01.215Z",
-          "to": "2026-11-06T10:45:58.053Z",
-          "sessions": 0,
-          "phone": 0,
-          "editor": 0,
-          "placed": 0,
-          "taste": 0,
-          "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 0,
-          "medianSecs": null
-        },
-        {
-          "id": "9198f39",
-          "kind": "deploy",
-          "from": "2026-11-06T10:45:58.053Z",
-          "to": "2026-11-06T11:27:16.518Z",
-          "sessions": 0,
-          "phone": 0,
-          "editor": 0,
-          "placed": 0,
-          "taste": 0,
-          "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 0,
-          "medianSecs": null
-        },
-        {
-          "id": "1ae9af0",
-          "kind": "deploy",
-          "from": "2026-11-06T11:27:16.518Z",
+          "from": "2026-11-07T10:40:12.293Z",
           "to": null,
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
-          "placed": 0,
-          "taste": 0,
+          "sessions": 22,
+          "phone": 14,
+          "editor": 13,
+          "placed": 1,
+          "taste": 1,
           "fill": 0,
-          "wall": 0,
+          "wall": 1,
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 24.031
+          "medianSecs": 6.412000000000001
         }
       ],
       "search": {
-        "sessionsSearching": 5,
-        "searches": 9,
+        "sessionsSearching": 6,
+        "searches": 11,
         "noResults": 0,
         "sessionsWithNoResults": 0,
         "kinds": [
           {
             "kind": "color",
-            "n": 4
+            "n": 8
           },
           {
             "kind": "similar",
-            "n": 3
+            "n": 2
           },
           {
             "kind": "viewSetById",
-            "n": 2
+            "n": 1
           }
         ]
       },
       "stalls": [
         {
-          "event": "binder.add",
-          "n": 12
-        },
-        {
-          "event": "session.start",
-          "n": 11
-        },
-        {
-          "event": "walkthrough.step",
-          "n": 9
+          "event": "page.view",
+          "n": 49
         },
         {
           "event": "walkthrough.done",
-          "n": 8
+          "n": 26
         },
         {
-          "event": "page.view",
-          "n": 7
+          "event": "session.start",
+          "n": 25
+        },
+        {
+          "event": "binder.add",
+          "n": 19
         },
         {
           "event": "walkthrough.shown",
-          "n": 5
+          "n": 17
         },
         {
           "event": "card.add",
-          "n": 3
+          "n": 7
         },
         {
-          "event": "arrange_open",
-          "n": 1
+          "event": "walkthrough.step",
+          "n": 7
+        },
+        {
+          "event": "pocket.move",
+          "n": 5
         }
       ],
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 31
+          "sessions": 125
         },
         {
           "id": "editor",
-          "sessions": 24
+          "sessions": 97
         },
         {
           "id": "ring",
-          "sessions": 26
+          "sessions": 90
         },
         {
           "id": "browser",
-          "sessions": 3
+          "sessions": 10
         },
         {
           "id": "placed",
-          "sessions": 3
+          "sessions": 7
         },
         {
           "id": "taste",
-          "sessions": 3
-        },
-        {
-          "id": "fill",
-          "sessions": 2
-        },
-        {
-          "id": "wall",
           "sessions": 4
         },
         {
-          "id": "tap",
+          "id": "fill",
           "sessions": 0
+        },
+        {
+          "id": "wall",
+          "sessions": 5
+        },
+        {
+          "id": "tap",
+          "sessions": 4
         },
         {
           "id": "account",
-          "sessions": 0
+          "sessions": 4
         },
         {
           "id": "public",
-          "sessions": 0
+          "sessions": 1
         }
       ],
       "desktopFunnel": [
         {
           "id": "arrived",
-          "sessions": 32
+          "sessions": 51
         },
         {
           "id": "editor",
-          "sessions": 25
+          "sessions": 45
         },
         {
           "id": "ring",
-          "sessions": 25
-        },
-        {
-          "id": "browser",
-          "sessions": 5
-        },
-        {
-          "id": "placed",
-          "sessions": 3
-        },
-        {
-          "id": "taste",
-          "sessions": 2
-        },
-        {
-          "id": "fill",
-          "sessions": 1
-        },
-        {
-          "id": "wall",
-          "sessions": 2
-        },
-        {
-          "id": "tap",
-          "sessions": 1
-        },
-        {
-          "id": "account",
-          "sessions": 1
-        },
-        {
-          "id": "public",
-          "sessions": 0
-        }
-      ],
-      "seeded": 48,
-      "themes": {
-        "autumn": 31,
-        "volcano": 17
-      },
-      "seededFunnel": [
-        {
-          "id": "arrived",
-          "sessions": 48
-        },
-        {
-          "id": "editor",
-          "sessions": 47
-        },
-        {
-          "id": "ring",
-          "sessions": 48
+          "sessions": 43
         },
         {
           "id": "browser",
@@ -857,7 +751,7 @@
         },
         {
           "id": "wall",
-          "sessions": 5
+          "sessions": 2
         },
         {
           "id": "tap",
@@ -865,41 +759,92 @@
         },
         {
           "id": "account",
-          "sessions": 1
+          "sessions": 0
         },
         {
           "id": "public",
           "sessions": 0
+        }
+      ],
+      "seeded": 132,
+      "themes": {
+        "autumn": 81,
+        "volcano": 51
+      },
+      "seededFunnel": [
+        {
+          "id": "arrived",
+          "sessions": 132
+        },
+        {
+          "id": "editor",
+          "sessions": 132
+        },
+        {
+          "id": "ring",
+          "sessions": 132
+        },
+        {
+          "id": "browser",
+          "sessions": 10
+        },
+        {
+          "id": "placed",
+          "sessions": 10
+        },
+        {
+          "id": "taste",
+          "sessions": 6
+        },
+        {
+          "id": "fill",
+          "sessions": 2
+        },
+        {
+          "id": "wall",
+          "sessions": 6
+        },
+        {
+          "id": "tap",
+          "sessions": 2
+        },
+        {
+          "id": "account",
+          "sessions": 2
+        },
+        {
+          "id": "public",
+          "sessions": 1
         }
       ],
       "emptyFunnel": [
         {
           "id": "arrived",
-          "sessions": 15
+          "sessions": 44
         },
         {
           "id": "editor",
-          "sessions": 2
+          "sessions": 10
         },
         {
           "id": "ring",
-          "sessions": 3
+          "sessions": 1
         },
         {
           "id": "browser",
-          "sessions": 2
+          "sessions": 6
         },
         {
           "id": "placed",
-          "sessions": 1
+          "sessions": 2
         },
         {
           "id": "taste",
-          "sessions": 1
+          "sessions": 2
         },
         {
           "id": "fill",
-          "sessions": 1
+          "sessions": 0
         },
         {
           "id": "wall",
@@ -907,91 +852,91 @@
         },
         {
           "id": "tap",
-          "sessions": 0
+          "sessions": 3
         },
         {
           "id": "account",
-          "sessions": 0
+          "sessions": 2
         },
         {
           "id": "public",
           "sessions": 0
         }
       ],
-      "excludedSessions": 39
+      "excludedSessions": 5
     },
     "7": {
-      "sessions": 2292,
-      "phone": 1842,
-      "desktop": 449,
+      "sessions": 2006,
+      "phone": 1550,
+      "desktop": 455,
       "unknownDevice": 1,
-      "bounced": 146,
-      "medianSecs": 11.447,
-      "p90Secs": 81.009,
-      "returned": 74,
-      "dismissed": 201,
+      "bounced": 145,
+      "medianSecs": 10.755500000000001,
+      "p90Secs": 98.8,
+      "returned": 73,
+      "dismissed": 211,
       "shelfNotes": 0,
-      "tasted": 62,
+      "tasted": 64,
       "tasteByFeature": {
-        "findSimilar": 23,
-        "fillPage": 50,
+        "fillPage": 49,
+        "findSimilar": 26,
         "binderCovers": 3,
-        "advancedSearch": 1
+        "advancedSearch": 2
       },
-      "fillRuns": 50,
-      "fillPlaced": 50,
-      "capGates": 39,
+      "fillRuns": 49,
+      "fillPlaced": 49,
+      "capGates": 37,
       "proOffers": 0,
       "funnel": [
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 2292
+          "sessions": 2006
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 2029
+          "sessions": 1745
         },
         {
           "id": "ring",
           "label": "Saw the first prompt (pocket ring, or Complete on a seeded page)",
-          "sessions": 1992
+          "sessions": 1703
         },
         {
           "id": "browser",
           "label": "Opened the card browser",
-          "sessions": 119
+          "sessions": 114
         },
         {
           "id": "placed",
           "label": "Placed a card (own tap, or a Fill/Complete that placed)",
-          "sessions": 104
+          "sessions": 102
         },
         {
           "id": "taste",
           "label": "Took a guest taste (Find similar, Fill page)",
-          "sessions": 62
+          "sessions": 64
         },
         {
           "id": "fill",
           "label": "Opened Fill page",
-          "sessions": 17
+          "sessions": 16
         },
         {
           "id": "wall",
           "label": "Met the create-account wall",
-          "sessions": 82
+          "sessions": 77
         },
         {
           "id": "tap",
           "label": "Tapped Create account",
-          "sessions": 12
+          "sessions": 16
         },
         {
           "id": "account",
           "label": "Became an account",
-          "sessions": 10
+          "sessions": 13
         },
         {
           "id": "public",
@@ -1001,19 +946,19 @@
       ],
       "stitch": {
         "hop": 0,
-        "same_uid": 10,
+        "same_uid": 13,
         "time": 0
       },
       "cost": {
-        "spend": 389.4,
-        "clicks": 1081,
-        "impressions": 51571,
+        "spend": 336.09999999999997,
+        "clicks": 656,
+        "impressions": 45264,
         "ledgerRows": 13,
-        "perArrival": 0.16989528795811518,
-        "perEditor": 0.19191720059142434,
-        "perPlaced": 3.744230769230769,
-        "perAccount": 38.94,
-        "perReturn": 5.262162162162162
+        "perArrival": 0.16754735792622133,
+        "perEditor": 0.1926074498567335,
+        "perPlaced": 3.295098039215686,
+        "perAccount": 25.853846153846153,
+        "perReturn": 4.604109589041095
       },
       "perCode": [
         {
@@ -1021,18 +966,18 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 1800,
-          "phone": 1489,
-          "editor": 1599,
+          "sessions": 1586,
+          "phone": 1261,
+          "editor": 1394,
           "placed": 65,
           "taste": 35,
-          "fill": 12,
-          "wall": 47,
-          "tap": 7,
-          "accounts": 7,
+          "fill": 11,
+          "wall": 45,
+          "tap": 8,
+          "accounts": 8,
           "public": 5,
-          "returned": 60,
-          "medianSecs": 11.641,
+          "returned": 58,
+          "medianSecs": 10.99,
           "spend": null,
           "clicks": null
         },
@@ -1041,18 +986,18 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 410,
-          "phone": 297,
-          "editor": 356,
-          "placed": 20,
-          "taste": 12,
-          "fill": 2,
-          "wall": 17,
-          "tap": 5,
-          "accounts": 3,
+          "sessions": 367,
+          "phone": 249,
+          "editor": 302,
+          "placed": 21,
+          "taste": 15,
+          "fill": 3,
+          "wall": 18,
+          "tap": 8,
+          "accounts": 5,
           "public": 2,
-          "returned": 14,
-          "medianSecs": 9.8295,
+          "returned": 15,
+          "medianSecs": 9.282,
           "spend": null,
           "clicks": null
         },
@@ -1061,18 +1006,18 @@
           "label": "Reddit ad - Coverflow video (feed)",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 68,
-          "phone": 46,
-          "editor": 60,
-          "placed": 5,
-          "taste": 1,
-          "fill": 1,
-          "wall": 4,
+          "sessions": 39,
+          "phone": 30,
+          "editor": 35,
+          "placed": 2,
+          "taste": 0,
+          "fill": 0,
+          "wall": 0,
           "tap": 0,
           "accounts": 0,
           "public": 0,
           "returned": 0,
-          "medianSecs": 12.6465,
+          "medianSecs": 12.718,
           "spend": null,
           "clicks": null
         },
@@ -1122,49 +1067,33 @@
           "campaign": "traffic",
           "label": "Campaign 1 (Traffic, clicks)",
           "day": null,
-          "spend": 123.72999999999999,
-          "clicks": 1081,
-          "sessions": 1486,
-          "phone": 1442,
-          "editor": 1341,
-          "placed": 40,
+          "spend": 72.02,
+          "clicks": 656,
+          "sessions": 1070,
+          "phone": 1038,
+          "editor": 954,
+          "placed": 32,
           "accounts": 0,
           "signupRate": 0,
-          "perArrival": 0.08326379542395693,
+          "perArrival": 0.06730841121495326,
           "perAccount": null,
-          "ledgerRows": 3,
+          "ledgerRows": 2,
           "days": [
             {
               "campaign": "traffic",
               "label": "Campaign 1 (Traffic, clicks)",
-              "day": "2026-10-30",
+              "day": "2026-10-31",
               "spend": null,
               "clicks": null,
-              "sessions": 282,
-              "phone": 274,
-              "editor": 258,
-              "placed": 6,
+              "sessions": 332,
+              "phone": 319,
+              "editor": 300,
+              "placed": 4,
               "accounts": 0,
               "signupRate": 0,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
-            },
-            {
-              "campaign": "traffic",
-              "label": "Campaign 1 (Traffic, clicks)",
-              "day": "2026-10-31",
-              "spend": 51.71,
-              "clicks": 425,
-              "sessions": 466,
-              "phone": 449,
-              "editor": 429,
-              "placed": 6,
-              "accounts": 0,
-              "signupRate": 0,
-              "perArrival": 0.1109656652360515,
-              "perAccount": null,
-              "ledgerRows": 1
             },
             {
               "campaign": "traffic",
@@ -1236,49 +1165,33 @@
           "campaign": "sales",
           "label": "Campaign 2 (Sales, Sign up)",
           "day": null,
-          "spend": 129.37,
+          "spend": 121.78,
           "clicks": null,
-          "sessions": 540,
-          "phone": 398,
-          "editor": 455,
-          "placed": 35,
-          "accounts": 5,
-          "signupRate": 0.009259259259259259,
-          "perArrival": 0.23957407407407408,
-          "perAccount": 25.874000000000002,
+          "sessions": 627,
+          "phone": 497,
+          "editor": 527,
+          "placed": 38,
+          "accounts": 6,
+          "signupRate": 0.009569377990430622,
+          "perArrival": 0.19422647527910686,
+          "perAccount": 20.296666666666667,
           "ledgerRows": 6,
           "days": [
             {
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
-              "day": "2026-10-30",
+              "day": "2026-10-31",
               "spend": null,
               "clicks": null,
-              "sessions": 36,
-              "phone": 11,
-              "editor": 31,
-              "placed": 4,
+              "sessions": 51,
+              "phone": 15,
+              "editor": 47,
+              "placed": 5,
               "accounts": 1,
-              "signupRate": 0.027777777777777776,
+              "signupRate": 0.0196078431372549,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
-            },
-            {
-              "campaign": "sales",
-              "label": "Campaign 2 (Sales, Sign up)",
-              "day": "2026-10-31",
-              "spend": 31.59,
-              "clicks": null,
-              "sessions": 61,
-              "phone": 17,
-              "editor": 55,
-              "placed": 7,
-              "accounts": 1,
-              "signupRate": 0.01639344262295082,
-              "perArrival": 0.5178688524590164,
-              "perAccount": 31.59,
-              "ledgerRows": 1
             },
             {
               "campaign": "sales",
@@ -1364,12 +1277,28 @@
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
               "day": "2026-11-06",
+              "spend": 24,
+              "clicks": null,
+              "sessions": 119,
+              "phone": 102,
+              "editor": 98,
+              "placed": 8,
+              "accounts": 2,
+              "signupRate": 0.01680672268907563,
+              "perArrival": 0.20168067226890757,
+              "perAccount": 12,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "sales",
+              "label": "Campaign 2 (Sales, Sign up)",
+              "day": "2026-11-07",
               "spend": null,
               "clicks": null,
-              "sessions": 1,
-              "phone": 1,
-              "editor": 1,
-              "placed": 0,
+              "sessions": 15,
+              "phone": 11,
+              "editor": 14,
+              "placed": 1,
               "accounts": 0,
               "signupRate": 0,
               "perArrival": null,
@@ -1382,17 +1311,17 @@
           "campaign": "desktop",
           "label": "Campaign 3 (Desktop, Sign up)",
           "day": null,
-          "spend": 136.29999999999998,
+          "spend": 142.29999999999998,
           "clicks": null,
-          "sessions": 266,
-          "phone": 2,
-          "editor": 233,
-          "placed": 29,
+          "sessions": 297,
+          "phone": 4,
+          "editor": 260,
+          "placed": 32,
           "accounts": 5,
-          "signupRate": 0.018796992481203006,
-          "perArrival": 0.512406015037594,
-          "perAccount": 27.259999999999998,
-          "ledgerRows": 4,
+          "signupRate": 0.016835016835016835,
+          "perArrival": 0.47912457912457906,
+          "perAccount": 28.459999999999997,
+          "ledgerRows": 5,
           "days": [
             {
               "campaign": "desktop",
@@ -1462,14 +1391,64 @@
               "campaign": "desktop",
               "label": "Campaign 3 (Desktop, Sign up)",
               "day": "2026-11-06",
-              "spend": null,
+              "spend": 6,
               "clicks": null,
-              "sessions": 1,
+              "sessions": 24,
               "phone": 0,
-              "editor": 1,
-              "placed": 0,
+              "editor": 21,
+              "placed": 2,
               "accounts": 0,
               "signupRate": 0,
+              "perArrival": 0.25,
+              "perAccount": null,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "desktop",
+              "label": "Campaign 3 (Desktop, Sign up)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 8,
+              "phone": 2,
+              "editor": 7,
+              "placed": 1,
+              "accounts": 0,
+              "signupRate": 0,
+              "perArrival": null,
+              "perAccount": null,
+              "ledgerRows": 0
+            }
+          ]
+        },
+        {
+          "campaign": "wizard",
+          "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+          "day": null,
+          "spend": null,
+          "clicks": null,
+          "sessions": 12,
+          "phone": 11,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2,
+          "signupRate": 0.16666666666666666,
+          "perArrival": null,
+          "perAccount": null,
+          "ledgerRows": 0,
+          "days": [
+            {
+              "campaign": "wizard",
+              "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 12,
+              "phone": 11,
+              "editor": 4,
+              "placed": 0,
+              "accounts": 2,
+              "signupRate": 0.16666666666666666,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -1480,31 +1459,38 @@
       "audiences": [
         {
           "value": "2624415186179138648",
-          "sessions": 501,
-          "editor": 420,
-          "placed": 31,
-          "accounts": 5
+          "sessions": 607,
+          "editor": 508,
+          "placed": 36,
+          "accounts": 6
         },
         {
           "value": "2626589547104294002",
-          "sessions": 218,
-          "editor": 191,
-          "placed": 25,
+          "sessions": 248,
+          "editor": 217,
+          "placed": 28,
           "accounts": 5
         },
         {
           "value": "2626589547102138645",
-          "sessions": 44,
-          "editor": 38,
+          "sessions": 45,
+          "editor": 39,
           "placed": 1,
           "accounts": 0
         },
         {
           "value": "2624415186180096960",
-          "sessions": 38,
-          "editor": 35,
-          "placed": 4,
+          "sessions": 19,
+          "editor": 19,
+          "placed": 2,
           "accounts": 0
+        },
+        {
+          "value": "2629873973863486111",
+          "sessions": 12,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2
         },
         {
           "value": "{{ADGROUP_ID}}",
@@ -1524,23 +1510,23 @@
       "ads": [
         {
           "value": "Rainbow",
-          "sessions": 605,
-          "editor": 518,
-          "placed": 46,
-          "accounts": 7
+          "sessions": 682,
+          "editor": 585,
+          "placed": 50,
+          "accounts": 8
         },
         {
           "value": "Volcano",
-          "sessions": 160,
-          "editor": 133,
-          "placed": 13,
-          "accounts": 3
+          "sessions": 232,
+          "editor": 185,
+          "placed": 17,
+          "accounts": 5
         },
         {
           "value": "coverflow",
-          "sessions": 38,
-          "editor": 35,
-          "placed": 4,
+          "sessions": 19,
+          "editor": 19,
+          "placed": 2,
           "accounts": 0
         },
         {
@@ -1553,31 +1539,17 @@
       ],
       "daily": [
         {
-          "day": "2026-10-30",
-          "sessions": 318,
-          "phone": 285,
-          "editor": 289,
-          "placed": 10,
-          "taste": 5,
-          "fill": 2,
-          "wall": 10,
-          "accounts": 1,
-          "returned": 14,
-          "medianSecs": 13.576,
-          "spend": 77.7
-        },
-        {
           "day": "2026-10-31",
-          "sessions": 527,
-          "phone": 466,
-          "editor": 484,
-          "placed": 13,
-          "taste": 5,
-          "fill": 1,
-          "wall": 7,
+          "sessions": 383,
+          "phone": 334,
+          "editor": 347,
+          "placed": 9,
+          "taste": 4,
+          "fill": 0,
+          "wall": 5,
           "accounts": 1,
-          "returned": 13,
-          "medianSecs": 11.852,
+          "returned": 12,
+          "medianSecs": 11.625,
           "spend": 83.3
         },
         {
@@ -1590,7 +1562,7 @@
           "fill": 3,
           "wall": 12,
           "accounts": 2,
-          "returned": 17,
+          "returned": 19,
           "medianSecs": 11.873,
           "spend": 79.78999999999999
         },
@@ -1604,7 +1576,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 14,
+          "returned": 17,
           "medianSecs": 9.572,
           "spend": 101.44
         },
@@ -1618,7 +1590,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 10,
+          "returned": 12,
           "medianSecs": 11.541,
           "spend": 56.75
         },
@@ -1632,7 +1604,7 @@
           "fill": 1,
           "wall": 10,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.202,
           "spend": 46.11
         },
@@ -1646,22 +1618,36 @@
           "fill": 6,
           "wall": 27,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 4.2305,
           "spend": 22.009999999999998
         },
         {
           "day": "2026-11-06",
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
-          "placed": 0,
-          "taste": 0,
+          "sessions": 144,
+          "phone": 103,
+          "editor": 120,
+          "placed": 10,
+          "taste": 6,
+          "fill": 2,
+          "wall": 5,
+          "accounts": 2,
+          "returned": 4,
+          "medianSecs": 11.207,
+          "spend": 30
+        },
+        {
+          "day": "2026-11-07",
+          "sessions": 35,
+          "phone": 24,
+          "editor": 25,
+          "placed": 2,
+          "taste": 2,
           "fill": 0,
-          "wall": 0,
-          "accounts": 0,
+          "wall": 2,
+          "accounts": 2,
           "returned": 0,
-          "medianSecs": 24.031,
+          "medianSecs": 7.913,
           "spend": null
         }
       ],
@@ -1670,120 +1656,18 @@
           "id": "before",
           "kind": "before",
           "from": null,
-          "to": "2026-10-30T19:44:05.212Z",
-          "sessions": 111,
-          "phone": 109,
-          "editor": 101,
-          "placed": 3,
-          "taste": 0,
-          "fill": 0,
-          "wall": 1,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 3,
-          "medianSecs": 13.493
-        },
-        {
-          "id": "1576e85",
-          "kind": "deploy",
-          "from": "2026-10-30T19:44:05.212Z",
-          "to": "2026-10-30T20:00:00.000Z",
-          "sessions": 0,
-          "phone": 0,
-          "editor": 0,
-          "placed": 0,
-          "taste": 0,
-          "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 0,
-          "medianSecs": null
-        },
-        {
-          "id": "sales-campaign",
-          "kind": "change",
-          "from": "2026-10-30T20:00:00.000Z",
-          "to": "2026-10-30T20:44:52.639Z",
-          "sessions": 5,
-          "phone": 4,
-          "editor": 5,
-          "placed": 0,
-          "taste": 0,
-          "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 0,
-          "medianSecs": 2.871
-        },
-        {
-          "id": "a1a025f",
-          "kind": "deploy",
-          "from": "2026-10-30T20:44:52.639Z",
-          "to": "2026-10-30T22:20:58.994Z",
-          "sessions": 41,
-          "phone": 29,
-          "editor": 38,
-          "placed": 3,
-          "taste": 3,
-          "fill": 1,
-          "wall": 4,
-          "tap": 1,
-          "accounts": 1,
-          "returned": 3,
-          "medianSecs": 10.663
-        },
-        {
-          "id": "2041d8d",
-          "kind": "deploy",
-          "from": "2026-10-30T22:20:58.994Z",
-          "to": "2026-10-30T22:44:55.281Z",
-          "sessions": 16,
-          "phone": 14,
-          "editor": 14,
-          "placed": 1,
-          "taste": 0,
-          "fill": 0,
-          "wall": 0,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 1,
-          "medianSecs": 15.0455
-        },
-        {
-          "id": "37ab913",
-          "kind": "deploy",
-          "from": "2026-10-30T22:44:55.281Z",
-          "to": "2026-10-31T05:58:17.603Z",
-          "sessions": 134,
-          "phone": 122,
-          "editor": 121,
-          "placed": 3,
-          "taste": 2,
-          "fill": 1,
-          "wall": 5,
-          "tap": 0,
-          "accounts": 0,
-          "returned": 7,
-          "medianSecs": 14.625
-        },
-        {
-          "id": "888e119",
-          "kind": "deploy",
-          "from": "2026-10-31T05:58:17.603Z",
           "to": "2026-11-02T19:30:00.000Z",
-          "sessions": 1444,
-          "phone": 1341,
-          "editor": 1293,
-          "placed": 33,
-          "taste": 16,
-          "fill": 5,
-          "wall": 22,
+          "sessions": 1289,
+          "phone": 1202,
+          "editor": 1146,
+          "placed": 29,
+          "taste": 15,
+          "fill": 4,
+          "wall": 20,
           "tap": 3,
           "accounts": 3,
-          "returned": 35,
-          "medianSecs": 11.941500000000001
+          "returned": 38,
+          "medianSecs": 11.944
         },
         {
           "id": "desktop-campaign",
@@ -1799,7 +1683,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 1,
-          "returned": 2,
+          "returned": 3,
           "medianSecs": 8.0245
         },
         {
@@ -1833,7 +1717,7 @@
           "wall": 7,
           "tap": 1,
           "accounts": 1,
-          "returned": 16,
+          "returned": 17,
           "medianSecs": 8.66
         },
         {
@@ -1850,7 +1734,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 0,
-          "returned": 0,
+          "returned": 1,
           "medianSecs": 8.5795
         },
         {
@@ -1952,7 +1836,7 @@
           "wall": 10,
           "tap": 4,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.137
         },
         {
@@ -2020,7 +1904,7 @@
           "wall": 5,
           "tap": 1,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 5.4275
         },
         {
@@ -2129,10 +2013,44 @@
           "id": "1ae9af0",
           "kind": "deploy",
           "from": "2026-11-06T11:27:16.518Z",
-          "to": null,
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
+          "to": "2026-11-07T02:45:48.992Z",
+          "sessions": 114,
+          "phone": 81,
+          "editor": 95,
+          "placed": 8,
+          "taste": 5,
+          "fill": 2,
+          "wall": 4,
+          "tap": 3,
+          "accounts": 1,
+          "returned": 4,
+          "medianSecs": 11.207
+        },
+        {
+          "id": "bbe68a1",
+          "kind": "deploy",
+          "from": "2026-11-07T02:45:48.992Z",
+          "to": "2026-11-07T08:21:07.000Z",
+          "sessions": 30,
+          "phone": 22,
+          "editor": 25,
+          "placed": 2,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 1,
+          "returned": 0,
+          "medianSecs": 9.8265
+        },
+        {
+          "id": "wizard-arm",
+          "kind": "change",
+          "from": "2026-11-07T08:21:07.000Z",
+          "to": "2026-11-07T08:21:07.297Z",
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -2140,198 +2058,133 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 24.031
+          "medianSecs": null
+        },
+        {
+          "id": "aef09ff",
+          "kind": "deploy",
+          "from": "2026-11-07T08:21:07.297Z",
+          "to": "2026-11-07T10:40:12.293Z",
+          "sessions": 13,
+          "phone": 10,
+          "editor": 12,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 2,
+          "accounts": 2,
+          "returned": 0,
+          "medianSecs": 22.309
+        },
+        {
+          "id": "56e3760",
+          "kind": "deploy",
+          "from": "2026-11-07T10:40:12.293Z",
+          "to": null,
+          "sessions": 22,
+          "phone": 14,
+          "editor": 13,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 6.412000000000001
         }
       ],
       "search": {
-        "sessionsSearching": 33,
-        "searches": 47,
+        "sessionsSearching": 34,
+        "searches": 51,
         "noResults": 0,
         "sessionsWithNoResults": 0,
         "kinds": [
           {
-            "kind": "similar",
-            "n": 19
+            "kind": "color",
+            "n": 23
           },
           {
-            "kind": "color",
-            "n": 17
+            "kind": "similar",
+            "n": 18
           },
           {
             "kind": "viewSetById",
-            "n": 11
+            "n": 10
           }
         ]
       },
       "stalls": [
         {
           "event": "page.view",
-          "n": 625
+          "n": 530
         },
         {
           "event": "walkthrough.step",
-          "n": 369
+          "n": 296
         },
         {
           "event": "walkthrough.shown",
-          "n": 308
-        },
-        {
-          "event": "binder.add",
-          "n": 256
+          "n": 251
         },
         {
           "event": "card.add",
-          "n": 248
+          "n": 219
         },
         {
           "event": "session.start",
-          "n": 225
+          "n": 218
+        },
+        {
+          "event": "binder.add",
+          "n": 216
         },
         {
           "event": "walkthrough.done",
-          "n": 76
+          "n": 87
         },
         {
           "event": "pocket.move",
-          "n": 43
+          "n": 46
         }
       ],
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 1842
+          "sessions": 1550
         },
         {
           "id": "editor",
-          "sessions": 1643
+          "sessions": 1352
         },
         {
           "id": "ring",
-          "sessions": 1612
+          "sessions": 1319
         },
         {
           "id": "browser",
-          "sessions": 61
+          "sessions": 56
         },
         {
           "id": "placed",
-          "sessions": 52
+          "sessions": 51
         },
         {
           "id": "taste",
-          "sessions": 31
+          "sessions": 32
         },
         {
           "id": "fill",
-          "sessions": 7
+          "sessions": 5
         },
         {
           "id": "wall",
-          "sessions": 37
-        },
-        {
-          "id": "tap",
-          "sessions": 4
-        },
-        {
-          "id": "account",
-          "sessions": 4
-        },
-        {
-          "id": "public",
-          "sessions": 4
-        }
-      ],
-      "desktopFunnel": [
-        {
-          "id": "arrived",
-          "sessions": 449
-        },
-        {
-          "id": "editor",
-          "sessions": 385
-        },
-        {
-          "id": "ring",
-          "sessions": 379
-        },
-        {
-          "id": "browser",
-          "sessions": 58
-        },
-        {
-          "id": "placed",
-          "sessions": 52
-        },
-        {
-          "id": "taste",
-          "sessions": 31
-        },
-        {
-          "id": "fill",
-          "sessions": 10
-        },
-        {
-          "id": "wall",
-          "sessions": 45
+          "sessions": 38
         },
         {
           "id": "tap",
           "sessions": 8
-        },
-        {
-          "id": "account",
-          "sessions": 6
-        },
-        {
-          "id": "public",
-          "sessions": 3
-        }
-      ],
-      "seeded": 1888,
-      "themes": {
-        "autumn": 1502,
-        "volcano": 330,
-        "pikachu": 13,
-        "grails": 43
-      },
-      "seededFunnel": [
-        {
-          "id": "arrived",
-          "sessions": 1888
-        },
-        {
-          "id": "editor",
-          "sessions": 1874
-        },
-        {
-          "id": "ring",
-          "sessions": 1881
-        },
-        {
-          "id": "browser",
-          "sessions": 95
-        },
-        {
-          "id": "placed",
-          "sessions": 95
-        },
-        {
-          "id": "taste",
-          "sessions": 59
-        },
-        {
-          "id": "fill",
-          "sessions": 15
-        },
-        {
-          "id": "wall",
-          "sessions": 68
-        },
-        {
-          "id": "tap",
-          "sessions": 10
         },
         {
           "id": "account",
@@ -2342,30 +2195,128 @@
           "sessions": 5
         }
       ],
-      "emptyFunnel": [
+      "desktopFunnel": [
         {
           "id": "arrived",
-          "sessions": 404
+          "sessions": 455
         },
         {
           "id": "editor",
-          "sessions": 155
+          "sessions": 392
         },
         {
           "id": "ring",
-          "sessions": 111
+          "sessions": 383
         },
         {
           "id": "browser",
-          "sessions": 24
+          "sessions": 58
         },
         {
           "id": "placed",
-          "sessions": 9
+          "sessions": 51
         },
         {
           "id": "taste",
-          "sessions": 3
+          "sessions": 32
+        },
+        {
+          "id": "fill",
+          "sessions": 11
+        },
+        {
+          "id": "wall",
+          "sessions": 39
+        },
+        {
+          "id": "tap",
+          "sessions": 8
+        },
+        {
+          "id": "account",
+          "sessions": 5
+        },
+        {
+          "id": "public",
+          "sessions": 2
+        }
+      ],
+      "seeded": 1697,
+      "themes": {
+        "autumn": 1356,
+        "volcano": 307,
+        "grails": 34
+      },
+      "seededFunnel": [
+        {
+          "id": "arrived",
+          "sessions": 1697
+        },
+        {
+          "id": "editor",
+          "sessions": 1685
+        },
+        {
+          "id": "ring",
+          "sessions": 1691
+        },
+        {
+          "id": "browser",
+          "sessions": 95
+        },
+        {
+          "id": "placed",
+          "sessions": 94
+        },
+        {
+          "id": "taste",
+          "sessions": 59
+        },
+        {
+          "id": "fill",
+          "sessions": 14
+        },
+        {
+          "id": "wall",
+          "sessions": 63
+        },
+        {
+          "id": "tap",
+          "sessions": 11
+        },
+        {
+          "id": "account",
+          "sessions": 9
+        },
+        {
+          "id": "public",
+          "sessions": 5
+        }
+      ],
+      "emptyFunnel": [
+        {
+          "id": "arrived",
+          "sessions": 309
+        },
+        {
+          "id": "editor",
+          "sessions": 60
+        },
+        {
+          "id": "ring",
+          "sessions": 12
+        },
+        {
+          "id": "browser",
+          "sessions": 19
+        },
+        {
+          "id": "placed",
+          "sessions": 8
+        },
+        {
+          "id": "taste",
+          "sessions": 5
         },
         {
           "id": "fill",
@@ -2377,113 +2328,113 @@
         },
         {
           "id": "tap",
-          "sessions": 2
+          "sessions": 5
         },
         {
           "id": "account",
-          "sessions": 2
+          "sessions": 4
         },
         {
           "id": "public",
           "sessions": 2
         }
       ],
-      "excludedSessions": 112
+      "excludedSessions": 74
     },
     "14": {
-      "sessions": 2982,
-      "phone": 2119,
-      "desktop": 459,
+      "sessions": 3158,
+      "phone": 2244,
+      "desktop": 510,
       "unknownDevice": 404,
-      "bounced": 212,
-      "medianSecs": 11.251000000000001,
-      "p90Secs": 82.444,
-      "returned": 81,
-      "dismissed": 220,
+      "bounced": 229,
+      "medianSecs": 11.232,
+      "p90Secs": 90.961,
+      "returned": 95,
+      "dismissed": 267,
       "shelfNotes": 57,
-      "tasted": 67,
+      "tasted": 75,
       "tasteByFeature": {
-        "findSimilar": 28,
-        "fillPage": 50,
+        "findSimilar": 33,
+        "fillPage": 54,
         "binderCovers": 3,
-        "advancedSearch": 1
+        "advancedSearch": 2
       },
-      "fillRuns": 50,
-      "fillPlaced": 50,
-      "capGates": 43,
+      "fillRuns": 54,
+      "fillPlaced": 54,
+      "capGates": 46,
       "proOffers": 0,
       "funnel": [
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 2982
+          "sessions": 3158
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 2384
+          "sessions": 2526
         },
         {
           "id": "ring",
           "label": "Saw the first prompt (pocket ring, or Complete on a seeded page)",
-          "sessions": 2335
+          "sessions": 2468
         },
         {
           "id": "browser",
           "label": "Opened the card browser",
-          "sessions": 162
+          "sessions": 178
         },
         {
           "id": "placed",
           "label": "Placed a card (own tap, or a Fill/Complete that placed)",
-          "sessions": 117
+          "sessions": 129
         },
         {
           "id": "taste",
           "label": "Took a guest taste (Find similar, Fill page)",
-          "sessions": 67
+          "sessions": 75
         },
         {
           "id": "fill",
           "label": "Opened Fill page",
-          "sessions": 18
+          "sessions": 20
         },
         {
           "id": "wall",
           "label": "Met the create-account wall",
-          "sessions": 83
+          "sessions": 90
         },
         {
           "id": "tap",
           "label": "Tapped Create account",
-          "sessions": 13
+          "sessions": 18
         },
         {
           "id": "account",
           "label": "Became an account",
-          "sessions": 13
+          "sessions": 17
         },
         {
           "id": "public",
           "label": "Made a binder public",
-          "sessions": 7
+          "sessions": 8
         }
       ],
       "stitch": {
         "hop": 0,
-        "same_uid": 10,
+        "same_uid": 14,
         "time": 3
       },
       "cost": {
-        "spend": 518.08,
+        "spend": 548.08,
         "clicks": 2101,
         "impressions": 133752,
-        "ledgerRows": 16,
-        "perArrival": 0.1737357478202549,
-        "perEditor": 0.21731543624161076,
-        "perPlaced": 4.4280341880341885,
-        "perAccount": 39.8523076923077,
-        "perReturn": 6.39604938271605
+        "ledgerRows": 18,
+        "perArrival": 0.17355288157061433,
+        "perEditor": 0.2169754552652415,
+        "perPlaced": 4.248682170542636,
+        "perAccount": 32.24,
+        "perReturn": 5.769263157894737
       },
       "perCode": [
         {
@@ -2491,18 +2442,18 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 2025,
-          "phone": 1586,
-          "editor": 1734,
-          "placed": 70,
-          "taste": 37,
-          "fill": 12,
-          "wall": 47,
-          "tap": 7,
-          "accounts": 7,
-          "public": 5,
-          "returned": 61,
-          "medianSecs": 11.98,
+          "sessions": 2122,
+          "phone": 1647,
+          "editor": 1818,
+          "placed": 77,
+          "taste": 42,
+          "fill": 13,
+          "wall": 51,
+          "tap": 9,
+          "accounts": 9,
+          "public": 6,
+          "returned": 70,
+          "medianSecs": 11.8625,
           "spend": null,
           "clicks": null
         },
@@ -2511,18 +2462,18 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 687,
-          "phone": 420,
-          "editor": 498,
-          "placed": 26,
-          "taste": 14,
-          "fill": 3,
-          "wall": 18,
-          "tap": 6,
-          "accounts": 5,
+          "sessions": 766,
+          "phone": 484,
+          "editor": 556,
+          "placed": 31,
+          "taste": 17,
+          "fill": 4,
+          "wall": 21,
+          "tap": 9,
+          "accounts": 7,
           "public": 2,
-          "returned": 19,
-          "medianSecs": 9.906,
+          "returned": 24,
+          "medianSecs": 10.314,
           "spend": null,
           "clicks": null
         },
@@ -2742,17 +2693,17 @@
           "campaign": "sales",
           "label": "Campaign 2 (Sales, Sign up)",
           "day": null,
-          "spend": 158.62,
+          "spend": 182.62,
           "clicks": 36,
-          "sessions": 540,
-          "phone": 398,
-          "editor": 455,
-          "placed": 35,
-          "accounts": 5,
-          "signupRate": 0.009259259259259259,
-          "perArrival": 0.29374074074074075,
-          "perAccount": 31.724,
-          "ledgerRows": 7,
+          "sessions": 673,
+          "phone": 510,
+          "editor": 566,
+          "placed": 44,
+          "accounts": 7,
+          "signupRate": 0.010401188707280832,
+          "perArrival": 0.2713521545319465,
+          "perAccount": 26.08857142857143,
+          "ledgerRows": 8,
           "days": [
             {
               "campaign": "sales",
@@ -2870,12 +2821,28 @@
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
               "day": "2026-11-06",
+              "spend": 24,
+              "clicks": null,
+              "sessions": 119,
+              "phone": 102,
+              "editor": 98,
+              "placed": 8,
+              "accounts": 2,
+              "signupRate": 0.01680672268907563,
+              "perArrival": 0.20168067226890757,
+              "perAccount": 12,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "sales",
+              "label": "Campaign 2 (Sales, Sign up)",
+              "day": "2026-11-07",
               "spend": null,
               "clicks": null,
-              "sessions": 1,
-              "phone": 1,
-              "editor": 1,
-              "placed": 0,
+              "sessions": 15,
+              "phone": 11,
+              "editor": 14,
+              "placed": 1,
               "accounts": 0,
               "signupRate": 0,
               "perArrival": null,
@@ -2888,17 +2855,17 @@
           "campaign": "desktop",
           "label": "Campaign 3 (Desktop, Sign up)",
           "day": null,
-          "spend": 136.29999999999998,
+          "spend": 142.29999999999998,
           "clicks": null,
-          "sessions": 266,
-          "phone": 2,
-          "editor": 233,
-          "placed": 29,
+          "sessions": 297,
+          "phone": 4,
+          "editor": 260,
+          "placed": 32,
           "accounts": 5,
-          "signupRate": 0.018796992481203006,
-          "perArrival": 0.512406015037594,
-          "perAccount": 27.259999999999998,
-          "ledgerRows": 4,
+          "signupRate": 0.016835016835016835,
+          "perArrival": 0.47912457912457906,
+          "perAccount": 28.459999999999997,
+          "ledgerRows": 5,
           "days": [
             {
               "campaign": "desktop",
@@ -2968,14 +2935,64 @@
               "campaign": "desktop",
               "label": "Campaign 3 (Desktop, Sign up)",
               "day": "2026-11-06",
-              "spend": null,
+              "spend": 6,
               "clicks": null,
-              "sessions": 1,
+              "sessions": 24,
               "phone": 0,
-              "editor": 1,
-              "placed": 0,
+              "editor": 21,
+              "placed": 2,
               "accounts": 0,
               "signupRate": 0,
+              "perArrival": 0.25,
+              "perAccount": null,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "desktop",
+              "label": "Campaign 3 (Desktop, Sign up)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 8,
+              "phone": 2,
+              "editor": 7,
+              "placed": 1,
+              "accounts": 0,
+              "signupRate": 0,
+              "perArrival": null,
+              "perAccount": null,
+              "ledgerRows": 0
+            }
+          ]
+        },
+        {
+          "campaign": "wizard",
+          "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+          "day": null,
+          "spend": null,
+          "clicks": null,
+          "sessions": 12,
+          "phone": 11,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2,
+          "signupRate": 0.16666666666666666,
+          "perArrival": null,
+          "perAccount": null,
+          "ledgerRows": 0,
+          "days": [
+            {
+              "campaign": "wizard",
+              "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 12,
+              "phone": 11,
+              "editor": 4,
+              "placed": 0,
+              "accounts": 2,
+              "signupRate": 0.16666666666666666,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -2986,22 +3003,22 @@
       "audiences": [
         {
           "value": "2624415186179138648",
-          "sessions": 501,
-          "editor": 420,
-          "placed": 31,
-          "accounts": 5
+          "sessions": 634,
+          "editor": 531,
+          "placed": 40,
+          "accounts": 7
         },
         {
           "value": "2626589547104294002",
-          "sessions": 218,
-          "editor": 191,
-          "placed": 25,
+          "sessions": 248,
+          "editor": 217,
+          "placed": 28,
           "accounts": 5
         },
         {
           "value": "2626589547102138645",
-          "sessions": 44,
-          "editor": 38,
+          "sessions": 45,
+          "editor": 39,
           "placed": 1,
           "accounts": 0
         },
@@ -3011,6 +3028,13 @@
           "editor": 35,
           "placed": 4,
           "accounts": 0
+        },
+        {
+          "value": "2629873973863486111",
+          "sessions": 12,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2
         },
         {
           "value": "{{ADGROUP_ID}}",
@@ -3030,17 +3054,17 @@
       "ads": [
         {
           "value": "Rainbow",
-          "sessions": 605,
-          "editor": 518,
-          "placed": 46,
-          "accounts": 7
+          "sessions": 702,
+          "editor": 602,
+          "placed": 53,
+          "accounts": 9
         },
         {
           "value": "Volcano",
-          "sessions": 160,
-          "editor": 133,
-          "placed": 13,
-          "accounts": 3
+          "sessions": 239,
+          "editor": 191,
+          "placed": 18,
+          "accounts": 5
         },
         {
           "value": "coverflow",
@@ -3110,7 +3134,7 @@
           "fill": 3,
           "wall": 12,
           "accounts": 2,
-          "returned": 17,
+          "returned": 19,
           "medianSecs": 11.873,
           "spend": 79.78999999999999
         },
@@ -3124,7 +3148,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 14,
+          "returned": 17,
           "medianSecs": 9.572,
           "spend": 101.44
         },
@@ -3138,7 +3162,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 10,
+          "returned": 12,
           "medianSecs": 11.541,
           "spend": 56.75
         },
@@ -3152,7 +3176,7 @@
           "fill": 1,
           "wall": 10,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.202,
           "spend": 46.11
         },
@@ -3166,22 +3190,36 @@
           "fill": 6,
           "wall": 27,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 4.2305,
           "spend": 22.009999999999998
         },
         {
           "day": "2026-11-06",
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
-          "placed": 0,
-          "taste": 0,
+          "sessions": 144,
+          "phone": 103,
+          "editor": 120,
+          "placed": 10,
+          "taste": 6,
+          "fill": 2,
+          "wall": 5,
+          "accounts": 2,
+          "returned": 4,
+          "medianSecs": 11.207,
+          "spend": 30
+        },
+        {
+          "day": "2026-11-07",
+          "sessions": 35,
+          "phone": 24,
+          "editor": 25,
+          "placed": 2,
+          "taste": 2,
           "fill": 0,
-          "wall": 0,
-          "accounts": 0,
+          "wall": 2,
+          "accounts": 2,
           "returned": 0,
-          "medianSecs": 24.031,
+          "medianSecs": 7.913,
           "spend": null
         }
       ],
@@ -3438,7 +3476,7 @@
           "wall": 22,
           "tap": 3,
           "accounts": 3,
-          "returned": 35,
+          "returned": 39,
           "medianSecs": 11.941500000000001
         },
         {
@@ -3455,7 +3493,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 1,
-          "returned": 2,
+          "returned": 3,
           "medianSecs": 8.0245
         },
         {
@@ -3489,7 +3527,7 @@
           "wall": 7,
           "tap": 1,
           "accounts": 1,
-          "returned": 16,
+          "returned": 17,
           "medianSecs": 8.66
         },
         {
@@ -3506,7 +3544,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 0,
-          "returned": 0,
+          "returned": 1,
           "medianSecs": 8.5795
         },
         {
@@ -3608,7 +3646,7 @@
           "wall": 10,
           "tap": 4,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.137
         },
         {
@@ -3676,7 +3714,7 @@
           "wall": 5,
           "tap": 1,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 5.4275
         },
         {
@@ -3785,10 +3823,44 @@
           "id": "1ae9af0",
           "kind": "deploy",
           "from": "2026-11-06T11:27:16.518Z",
-          "to": null,
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
+          "to": "2026-11-07T02:45:48.992Z",
+          "sessions": 114,
+          "phone": 81,
+          "editor": 95,
+          "placed": 8,
+          "taste": 5,
+          "fill": 2,
+          "wall": 4,
+          "tap": 3,
+          "accounts": 1,
+          "returned": 4,
+          "medianSecs": 11.207
+        },
+        {
+          "id": "bbe68a1",
+          "kind": "deploy",
+          "from": "2026-11-07T02:45:48.992Z",
+          "to": "2026-11-07T08:21:07.000Z",
+          "sessions": 30,
+          "phone": 22,
+          "editor": 25,
+          "placed": 2,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 1,
+          "returned": 0,
+          "medianSecs": 9.8265
+        },
+        {
+          "id": "wizard-arm",
+          "kind": "change",
+          "from": "2026-11-07T08:21:07.000Z",
+          "to": "2026-11-07T08:21:07.297Z",
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -3796,79 +3868,159 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 24.031
+          "medianSecs": null
+        },
+        {
+          "id": "aef09ff",
+          "kind": "deploy",
+          "from": "2026-11-07T08:21:07.297Z",
+          "to": "2026-11-07T10:40:12.293Z",
+          "sessions": 13,
+          "phone": 10,
+          "editor": 12,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 2,
+          "accounts": 2,
+          "returned": 0,
+          "medianSecs": 22.309
+        },
+        {
+          "id": "56e3760",
+          "kind": "deploy",
+          "from": "2026-11-07T10:40:12.293Z",
+          "to": null,
+          "sessions": 22,
+          "phone": 14,
+          "editor": 13,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 6.412000000000001
         }
       ],
       "search": {
-        "sessionsSearching": 36,
-        "searches": 51,
+        "sessionsSearching": 42,
+        "searches": 62,
         "noResults": 0,
         "sessionsWithNoResults": 0,
         "kinds": [
           {
             "kind": "color",
-            "n": 21
+            "n": 29
           },
           {
             "kind": "similar",
-            "n": 19
+            "n": 21
           },
           {
             "kind": "viewSetById",
-            "n": 11
+            "n": 12
           }
         ]
       },
       "stalls": [
         {
           "event": "page.view",
-          "n": 757
+          "n": 807
         },
         {
           "event": "session.start",
-          "n": 548
+          "n": 573
         },
         {
           "event": "walkthrough.step",
-          "n": 468
+          "n": 474
         },
         {
           "event": "walkthrough.shown",
-          "n": 354
+          "n": 371
         },
         {
           "event": "binder.add",
-          "n": 305
+          "n": 324
         },
         {
           "event": "card.add",
-          "n": 248
+          "n": 255
         },
         {
           "event": "walkthrough.done",
-          "n": 87
+          "n": 113
         },
         {
           "event": "pocket.move",
-          "n": 43
+          "n": 48
         }
       ],
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 2119
+          "sessions": 2244
         },
         {
           "id": "editor",
-          "sessions": 1858
+          "sessions": 1955
         },
         {
           "id": "ring",
-          "sessions": 1828
+          "sessions": 1918
         },
         {
           "id": "browser",
-          "sessions": 85
+          "sessions": 95
+        },
+        {
+          "id": "placed",
+          "sessions": 64
+        },
+        {
+          "id": "taste",
+          "sessions": 40
+        },
+        {
+          "id": "fill",
+          "sessions": 8
+        },
+        {
+          "id": "wall",
+          "sessions": 43
+        },
+        {
+          "id": "tap",
+          "sessions": 9
+        },
+        {
+          "id": "account",
+          "sessions": 8
+        },
+        {
+          "id": "public",
+          "sessions": 5
+        }
+      ],
+      "desktopFunnel": [
+        {
+          "id": "arrived",
+          "sessions": 510
+        },
+        {
+          "id": "editor",
+          "sessions": 439
+        },
+        {
+          "id": "ring",
+          "sessions": 431
+        },
+        {
+          "id": "browser",
+          "sessions": 65
         },
         {
           "id": "placed",
@@ -3876,65 +4028,19 @@
         },
         {
           "id": "taste",
-          "sessions": 36
+          "sessions": 35
         },
         {
           "id": "fill",
-          "sessions": 8
+          "sessions": 12
         },
         {
           "id": "wall",
-          "sessions": 38
+          "sessions": 47
         },
         {
           "id": "tap",
-          "sessions": 5
-        },
-        {
-          "id": "account",
-          "sessions": 4
-        },
-        {
-          "id": "public",
-          "sessions": 4
-        }
-      ],
-      "desktopFunnel": [
-        {
-          "id": "arrived",
-          "sessions": 459
-        },
-        {
-          "id": "editor",
-          "sessions": 394
-        },
-        {
-          "id": "ring",
-          "sessions": 388
-        },
-        {
-          "id": "browser",
-          "sessions": 59
-        },
-        {
-          "id": "placed",
-          "sessions": 52
-        },
-        {
-          "id": "taste",
-          "sessions": 31
-        },
-        {
-          "id": "fill",
-          "sessions": 10
-        },
-        {
-          "id": "wall",
-          "sessions": 45
-        },
-        {
-          "id": "tap",
-          "sessions": 8
+          "sessions": 9
         },
         {
           "id": "account",
@@ -3945,83 +4051,83 @@
           "sessions": 3
         }
       ],
-      "seeded": 1888,
+      "seeded": 2020,
       "themes": {
-        "autumn": 1502,
-        "volcano": 330,
+        "autumn": 1583,
+        "volcano": 381,
         "pikachu": 13,
         "grails": 43
       },
       "seededFunnel": [
         {
           "id": "arrived",
-          "sessions": 1888
+          "sessions": 2020
         },
         {
           "id": "editor",
-          "sessions": 1874
+          "sessions": 2006
         },
         {
           "id": "ring",
-          "sessions": 1881
+          "sessions": 2013
         },
         {
           "id": "browser",
-          "sessions": 95
+          "sessions": 105
         },
         {
           "id": "placed",
-          "sessions": 95
+          "sessions": 105
         },
         {
           "id": "taste",
-          "sessions": 59
+          "sessions": 65
         },
         {
           "id": "fill",
-          "sessions": 15
+          "sessions": 17
         },
         {
           "id": "wall",
-          "sessions": 68
+          "sessions": 74
         },
         {
           "id": "tap",
-          "sessions": 10
+          "sessions": 12
         },
         {
           "id": "account",
-          "sessions": 8
+          "sessions": 10
         },
         {
           "id": "public",
-          "sessions": 5
+          "sessions": 6
         }
       ],
       "emptyFunnel": [
         {
           "id": "arrived",
-          "sessions": 1094
+          "sessions": 1138
         },
         {
           "id": "editor",
-          "sessions": 510
+          "sessions": 520
         },
         {
           "id": "ring",
-          "sessions": 454
+          "sessions": 455
         },
         {
           "id": "browser",
-          "sessions": 67
+          "sessions": 73
         },
         {
           "id": "placed",
-          "sessions": 22
+          "sessions": 24
         },
         {
           "id": "taste",
-          "sessions": 8
+          "sessions": 10
         },
         {
           "id": "fill",
@@ -4029,117 +4135,117 @@
         },
         {
           "id": "wall",
-          "sessions": 15
+          "sessions": 16
         },
         {
           "id": "tap",
-          "sessions": 3
+          "sessions": 6
         },
         {
           "id": "account",
-          "sessions": 5
+          "sessions": 7
         },
         {
           "id": "public",
           "sessions": 2
         }
       ],
-      "excludedSessions": 121
+      "excludedSessions": 126
     },
     "30": {
-      "sessions": 2982,
-      "phone": 2119,
-      "desktop": 459,
+      "sessions": 3158,
+      "phone": 2244,
+      "desktop": 510,
       "unknownDevice": 404,
-      "bounced": 212,
-      "medianSecs": 11.251000000000001,
-      "p90Secs": 82.444,
-      "returned": 81,
-      "dismissed": 220,
+      "bounced": 229,
+      "medianSecs": 11.232,
+      "p90Secs": 90.961,
+      "returned": 95,
+      "dismissed": 267,
       "shelfNotes": 57,
-      "tasted": 67,
+      "tasted": 75,
       "tasteByFeature": {
-        "findSimilar": 28,
-        "fillPage": 50,
+        "findSimilar": 33,
+        "fillPage": 54,
         "binderCovers": 3,
-        "advancedSearch": 1
+        "advancedSearch": 2
       },
-      "fillRuns": 50,
-      "fillPlaced": 50,
-      "capGates": 43,
+      "fillRuns": 54,
+      "fillPlaced": 54,
+      "capGates": 46,
       "proOffers": 0,
       "funnel": [
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 2982
+          "sessions": 3158
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 2384
+          "sessions": 2526
         },
         {
           "id": "ring",
           "label": "Saw the first prompt (pocket ring, or Complete on a seeded page)",
-          "sessions": 2335
+          "sessions": 2468
         },
         {
           "id": "browser",
           "label": "Opened the card browser",
-          "sessions": 162
+          "sessions": 178
         },
         {
           "id": "placed",
           "label": "Placed a card (own tap, or a Fill/Complete that placed)",
-          "sessions": 117
+          "sessions": 129
         },
         {
           "id": "taste",
           "label": "Took a guest taste (Find similar, Fill page)",
-          "sessions": 67
+          "sessions": 75
         },
         {
           "id": "fill",
           "label": "Opened Fill page",
-          "sessions": 18
+          "sessions": 20
         },
         {
           "id": "wall",
           "label": "Met the create-account wall",
-          "sessions": 83
+          "sessions": 90
         },
         {
           "id": "tap",
           "label": "Tapped Create account",
-          "sessions": 13
+          "sessions": 18
         },
         {
           "id": "account",
           "label": "Became an account",
-          "sessions": 13
+          "sessions": 17
         },
         {
           "id": "public",
           "label": "Made a binder public",
-          "sessions": 7
+          "sessions": 8
         }
       ],
       "stitch": {
         "hop": 0,
-        "same_uid": 10,
+        "same_uid": 14,
         "time": 3
       },
       "cost": {
-        "spend": 518.08,
+        "spend": 548.08,
         "clicks": 2101,
         "impressions": 133752,
-        "ledgerRows": 16,
-        "perArrival": 0.1737357478202549,
-        "perEditor": 0.21731543624161076,
-        "perPlaced": 4.4280341880341885,
-        "perAccount": 39.8523076923077,
-        "perReturn": 6.39604938271605
+        "ledgerRows": 18,
+        "perArrival": 0.17355288157061433,
+        "perEditor": 0.2169754552652415,
+        "perPlaced": 4.248682170542636,
+        "perAccount": 32.24,
+        "perReturn": 5.769263157894737
       },
       "perCode": [
         {
@@ -4147,18 +4253,18 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 2025,
-          "phone": 1586,
-          "editor": 1734,
-          "placed": 70,
-          "taste": 37,
-          "fill": 12,
-          "wall": 47,
-          "tap": 7,
-          "accounts": 7,
-          "public": 5,
-          "returned": 61,
-          "medianSecs": 11.98,
+          "sessions": 2122,
+          "phone": 1647,
+          "editor": 1818,
+          "placed": 77,
+          "taste": 42,
+          "fill": 13,
+          "wall": 51,
+          "tap": 9,
+          "accounts": 9,
+          "public": 6,
+          "returned": 70,
+          "medianSecs": 11.8625,
           "spend": null,
           "clicks": null
         },
@@ -4167,18 +4273,18 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 687,
-          "phone": 420,
-          "editor": 498,
-          "placed": 26,
-          "taste": 14,
-          "fill": 3,
-          "wall": 18,
-          "tap": 6,
-          "accounts": 5,
+          "sessions": 766,
+          "phone": 484,
+          "editor": 556,
+          "placed": 31,
+          "taste": 17,
+          "fill": 4,
+          "wall": 21,
+          "tap": 9,
+          "accounts": 7,
           "public": 2,
-          "returned": 19,
-          "medianSecs": 9.906,
+          "returned": 24,
+          "medianSecs": 10.314,
           "spend": null,
           "clicks": null
         },
@@ -4398,17 +4504,17 @@
           "campaign": "sales",
           "label": "Campaign 2 (Sales, Sign up)",
           "day": null,
-          "spend": 158.62,
+          "spend": 182.62,
           "clicks": 36,
-          "sessions": 540,
-          "phone": 398,
-          "editor": 455,
-          "placed": 35,
-          "accounts": 5,
-          "signupRate": 0.009259259259259259,
-          "perArrival": 0.29374074074074075,
-          "perAccount": 31.724,
-          "ledgerRows": 7,
+          "sessions": 673,
+          "phone": 510,
+          "editor": 566,
+          "placed": 44,
+          "accounts": 7,
+          "signupRate": 0.010401188707280832,
+          "perArrival": 0.2713521545319465,
+          "perAccount": 26.08857142857143,
+          "ledgerRows": 8,
           "days": [
             {
               "campaign": "sales",
@@ -4526,12 +4632,28 @@
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
               "day": "2026-11-06",
+              "spend": 24,
+              "clicks": null,
+              "sessions": 119,
+              "phone": 102,
+              "editor": 98,
+              "placed": 8,
+              "accounts": 2,
+              "signupRate": 0.01680672268907563,
+              "perArrival": 0.20168067226890757,
+              "perAccount": 12,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "sales",
+              "label": "Campaign 2 (Sales, Sign up)",
+              "day": "2026-11-07",
               "spend": null,
               "clicks": null,
-              "sessions": 1,
-              "phone": 1,
-              "editor": 1,
-              "placed": 0,
+              "sessions": 15,
+              "phone": 11,
+              "editor": 14,
+              "placed": 1,
               "accounts": 0,
               "signupRate": 0,
               "perArrival": null,
@@ -4544,17 +4666,17 @@
           "campaign": "desktop",
           "label": "Campaign 3 (Desktop, Sign up)",
           "day": null,
-          "spend": 136.29999999999998,
+          "spend": 142.29999999999998,
           "clicks": null,
-          "sessions": 266,
-          "phone": 2,
-          "editor": 233,
-          "placed": 29,
+          "sessions": 297,
+          "phone": 4,
+          "editor": 260,
+          "placed": 32,
           "accounts": 5,
-          "signupRate": 0.018796992481203006,
-          "perArrival": 0.512406015037594,
-          "perAccount": 27.259999999999998,
-          "ledgerRows": 4,
+          "signupRate": 0.016835016835016835,
+          "perArrival": 0.47912457912457906,
+          "perAccount": 28.459999999999997,
+          "ledgerRows": 5,
           "days": [
             {
               "campaign": "desktop",
@@ -4624,14 +4746,64 @@
               "campaign": "desktop",
               "label": "Campaign 3 (Desktop, Sign up)",
               "day": "2026-11-06",
-              "spend": null,
+              "spend": 6,
               "clicks": null,
-              "sessions": 1,
+              "sessions": 24,
               "phone": 0,
-              "editor": 1,
-              "placed": 0,
+              "editor": 21,
+              "placed": 2,
               "accounts": 0,
               "signupRate": 0,
+              "perArrival": 0.25,
+              "perAccount": null,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "desktop",
+              "label": "Campaign 3 (Desktop, Sign up)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 8,
+              "phone": 2,
+              "editor": 7,
+              "placed": 1,
+              "accounts": 0,
+              "signupRate": 0,
+              "perArrival": null,
+              "perAccount": null,
+              "ledgerRows": 0
+            }
+          ]
+        },
+        {
+          "campaign": "wizard",
+          "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+          "day": null,
+          "spend": null,
+          "clicks": null,
+          "sessions": 12,
+          "phone": 11,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2,
+          "signupRate": 0.16666666666666666,
+          "perArrival": null,
+          "perAccount": null,
+          "ledgerRows": 0,
+          "days": [
+            {
+              "campaign": "wizard",
+              "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 12,
+              "phone": 11,
+              "editor": 4,
+              "placed": 0,
+              "accounts": 2,
+              "signupRate": 0.16666666666666666,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -4642,22 +4814,22 @@
       "audiences": [
         {
           "value": "2624415186179138648",
-          "sessions": 501,
-          "editor": 420,
-          "placed": 31,
-          "accounts": 5
+          "sessions": 634,
+          "editor": 531,
+          "placed": 40,
+          "accounts": 7
         },
         {
           "value": "2626589547104294002",
-          "sessions": 218,
-          "editor": 191,
-          "placed": 25,
+          "sessions": 248,
+          "editor": 217,
+          "placed": 28,
           "accounts": 5
         },
         {
           "value": "2626589547102138645",
-          "sessions": 44,
-          "editor": 38,
+          "sessions": 45,
+          "editor": 39,
           "placed": 1,
           "accounts": 0
         },
@@ -4667,6 +4839,13 @@
           "editor": 35,
           "placed": 4,
           "accounts": 0
+        },
+        {
+          "value": "2629873973863486111",
+          "sessions": 12,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2
         },
         {
           "value": "{{ADGROUP_ID}}",
@@ -4686,17 +4865,17 @@
       "ads": [
         {
           "value": "Rainbow",
-          "sessions": 605,
-          "editor": 518,
-          "placed": 46,
-          "accounts": 7
+          "sessions": 702,
+          "editor": 602,
+          "placed": 53,
+          "accounts": 9
         },
         {
           "value": "Volcano",
-          "sessions": 160,
-          "editor": 133,
-          "placed": 13,
-          "accounts": 3
+          "sessions": 239,
+          "editor": 191,
+          "placed": 18,
+          "accounts": 5
         },
         {
           "value": "coverflow",
@@ -4766,7 +4945,7 @@
           "fill": 3,
           "wall": 12,
           "accounts": 2,
-          "returned": 17,
+          "returned": 19,
           "medianSecs": 11.873,
           "spend": 79.78999999999999
         },
@@ -4780,7 +4959,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 14,
+          "returned": 17,
           "medianSecs": 9.572,
           "spend": 101.44
         },
@@ -4794,7 +4973,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 10,
+          "returned": 12,
           "medianSecs": 11.541,
           "spend": 56.75
         },
@@ -4808,7 +4987,7 @@
           "fill": 1,
           "wall": 10,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.202,
           "spend": 46.11
         },
@@ -4822,22 +5001,36 @@
           "fill": 6,
           "wall": 27,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 4.2305,
           "spend": 22.009999999999998
         },
         {
           "day": "2026-11-06",
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
-          "placed": 0,
-          "taste": 0,
+          "sessions": 144,
+          "phone": 103,
+          "editor": 120,
+          "placed": 10,
+          "taste": 6,
+          "fill": 2,
+          "wall": 5,
+          "accounts": 2,
+          "returned": 4,
+          "medianSecs": 11.207,
+          "spend": 30
+        },
+        {
+          "day": "2026-11-07",
+          "sessions": 35,
+          "phone": 24,
+          "editor": 25,
+          "placed": 2,
+          "taste": 2,
           "fill": 0,
-          "wall": 0,
-          "accounts": 0,
+          "wall": 2,
+          "accounts": 2,
           "returned": 0,
-          "medianSecs": 24.031,
+          "medianSecs": 7.913,
           "spend": null
         }
       ],
@@ -5094,7 +5287,7 @@
           "wall": 22,
           "tap": 3,
           "accounts": 3,
-          "returned": 35,
+          "returned": 39,
           "medianSecs": 11.941500000000001
         },
         {
@@ -5111,7 +5304,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 1,
-          "returned": 2,
+          "returned": 3,
           "medianSecs": 8.0245
         },
         {
@@ -5145,7 +5338,7 @@
           "wall": 7,
           "tap": 1,
           "accounts": 1,
-          "returned": 16,
+          "returned": 17,
           "medianSecs": 8.66
         },
         {
@@ -5162,7 +5355,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 0,
-          "returned": 0,
+          "returned": 1,
           "medianSecs": 8.5795
         },
         {
@@ -5264,7 +5457,7 @@
           "wall": 10,
           "tap": 4,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.137
         },
         {
@@ -5332,7 +5525,7 @@
           "wall": 5,
           "tap": 1,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 5.4275
         },
         {
@@ -5441,10 +5634,44 @@
           "id": "1ae9af0",
           "kind": "deploy",
           "from": "2026-11-06T11:27:16.518Z",
-          "to": null,
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
+          "to": "2026-11-07T02:45:48.992Z",
+          "sessions": 114,
+          "phone": 81,
+          "editor": 95,
+          "placed": 8,
+          "taste": 5,
+          "fill": 2,
+          "wall": 4,
+          "tap": 3,
+          "accounts": 1,
+          "returned": 4,
+          "medianSecs": 11.207
+        },
+        {
+          "id": "bbe68a1",
+          "kind": "deploy",
+          "from": "2026-11-07T02:45:48.992Z",
+          "to": "2026-11-07T08:21:07.000Z",
+          "sessions": 30,
+          "phone": 22,
+          "editor": 25,
+          "placed": 2,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 1,
+          "returned": 0,
+          "medianSecs": 9.8265
+        },
+        {
+          "id": "wizard-arm",
+          "kind": "change",
+          "from": "2026-11-07T08:21:07.000Z",
+          "to": "2026-11-07T08:21:07.297Z",
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -5452,79 +5679,159 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 24.031
+          "medianSecs": null
+        },
+        {
+          "id": "aef09ff",
+          "kind": "deploy",
+          "from": "2026-11-07T08:21:07.297Z",
+          "to": "2026-11-07T10:40:12.293Z",
+          "sessions": 13,
+          "phone": 10,
+          "editor": 12,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 2,
+          "accounts": 2,
+          "returned": 0,
+          "medianSecs": 22.309
+        },
+        {
+          "id": "56e3760",
+          "kind": "deploy",
+          "from": "2026-11-07T10:40:12.293Z",
+          "to": null,
+          "sessions": 22,
+          "phone": 14,
+          "editor": 13,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 6.412000000000001
         }
       ],
       "search": {
-        "sessionsSearching": 36,
-        "searches": 51,
+        "sessionsSearching": 42,
+        "searches": 62,
         "noResults": 0,
         "sessionsWithNoResults": 0,
         "kinds": [
           {
             "kind": "color",
-            "n": 21
+            "n": 29
           },
           {
             "kind": "similar",
-            "n": 19
+            "n": 21
           },
           {
             "kind": "viewSetById",
-            "n": 11
+            "n": 12
           }
         ]
       },
       "stalls": [
         {
           "event": "page.view",
-          "n": 757
+          "n": 807
         },
         {
           "event": "session.start",
-          "n": 548
+          "n": 573
         },
         {
           "event": "walkthrough.step",
-          "n": 468
+          "n": 474
         },
         {
           "event": "walkthrough.shown",
-          "n": 354
+          "n": 371
         },
         {
           "event": "binder.add",
-          "n": 305
+          "n": 324
         },
         {
           "event": "card.add",
-          "n": 248
+          "n": 255
         },
         {
           "event": "walkthrough.done",
-          "n": 87
+          "n": 113
         },
         {
           "event": "pocket.move",
-          "n": 43
+          "n": 48
         }
       ],
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 2119
+          "sessions": 2244
         },
         {
           "id": "editor",
-          "sessions": 1858
+          "sessions": 1955
         },
         {
           "id": "ring",
-          "sessions": 1828
+          "sessions": 1918
         },
         {
           "id": "browser",
-          "sessions": 85
+          "sessions": 95
+        },
+        {
+          "id": "placed",
+          "sessions": 64
+        },
+        {
+          "id": "taste",
+          "sessions": 40
+        },
+        {
+          "id": "fill",
+          "sessions": 8
+        },
+        {
+          "id": "wall",
+          "sessions": 43
+        },
+        {
+          "id": "tap",
+          "sessions": 9
+        },
+        {
+          "id": "account",
+          "sessions": 8
+        },
+        {
+          "id": "public",
+          "sessions": 5
+        }
+      ],
+      "desktopFunnel": [
+        {
+          "id": "arrived",
+          "sessions": 510
+        },
+        {
+          "id": "editor",
+          "sessions": 439
+        },
+        {
+          "id": "ring",
+          "sessions": 431
+        },
+        {
+          "id": "browser",
+          "sessions": 65
         },
         {
           "id": "placed",
@@ -5532,65 +5839,19 @@
         },
         {
           "id": "taste",
-          "sessions": 36
+          "sessions": 35
         },
         {
           "id": "fill",
-          "sessions": 8
+          "sessions": 12
         },
         {
           "id": "wall",
-          "sessions": 38
+          "sessions": 47
         },
         {
           "id": "tap",
-          "sessions": 5
-        },
-        {
-          "id": "account",
-          "sessions": 4
-        },
-        {
-          "id": "public",
-          "sessions": 4
-        }
-      ],
-      "desktopFunnel": [
-        {
-          "id": "arrived",
-          "sessions": 459
-        },
-        {
-          "id": "editor",
-          "sessions": 394
-        },
-        {
-          "id": "ring",
-          "sessions": 388
-        },
-        {
-          "id": "browser",
-          "sessions": 59
-        },
-        {
-          "id": "placed",
-          "sessions": 52
-        },
-        {
-          "id": "taste",
-          "sessions": 31
-        },
-        {
-          "id": "fill",
-          "sessions": 10
-        },
-        {
-          "id": "wall",
-          "sessions": 45
-        },
-        {
-          "id": "tap",
-          "sessions": 8
+          "sessions": 9
         },
         {
           "id": "account",
@@ -5601,83 +5862,83 @@
           "sessions": 3
         }
       ],
-      "seeded": 1888,
+      "seeded": 2020,
       "themes": {
-        "autumn": 1502,
-        "volcano": 330,
+        "autumn": 1583,
+        "volcano": 381,
         "pikachu": 13,
         "grails": 43
       },
       "seededFunnel": [
         {
           "id": "arrived",
-          "sessions": 1888
+          "sessions": 2020
         },
         {
           "id": "editor",
-          "sessions": 1874
+          "sessions": 2006
         },
         {
           "id": "ring",
-          "sessions": 1881
+          "sessions": 2013
         },
         {
           "id": "browser",
-          "sessions": 95
+          "sessions": 105
         },
         {
           "id": "placed",
-          "sessions": 95
+          "sessions": 105
         },
         {
           "id": "taste",
-          "sessions": 59
+          "sessions": 65
         },
         {
           "id": "fill",
-          "sessions": 15
+          "sessions": 17
         },
         {
           "id": "wall",
-          "sessions": 68
+          "sessions": 74
         },
         {
           "id": "tap",
-          "sessions": 10
+          "sessions": 12
         },
         {
           "id": "account",
-          "sessions": 8
+          "sessions": 10
         },
         {
           "id": "public",
-          "sessions": 5
+          "sessions": 6
         }
       ],
       "emptyFunnel": [
         {
           "id": "arrived",
-          "sessions": 1094
+          "sessions": 1138
         },
         {
           "id": "editor",
-          "sessions": 510
+          "sessions": 520
         },
         {
           "id": "ring",
-          "sessions": 454
+          "sessions": 455
         },
         {
           "id": "browser",
-          "sessions": 67
+          "sessions": 73
         },
         {
           "id": "placed",
-          "sessions": 22
+          "sessions": 24
         },
         {
           "id": "taste",
-          "sessions": 8
+          "sessions": 10
         },
         {
           "id": "fill",
@@ -5685,117 +5946,117 @@
         },
         {
           "id": "wall",
-          "sessions": 15
+          "sessions": 16
         },
         {
           "id": "tap",
-          "sessions": 3
+          "sessions": 6
         },
         {
           "id": "account",
-          "sessions": 5
+          "sessions": 7
         },
         {
           "id": "public",
           "sessions": 2
         }
       ],
-      "excludedSessions": 121
+      "excludedSessions": 126
     },
     "all": {
-      "sessions": 2982,
-      "phone": 2119,
-      "desktop": 459,
+      "sessions": 3158,
+      "phone": 2244,
+      "desktop": 510,
       "unknownDevice": 404,
-      "bounced": 212,
-      "medianSecs": 11.251000000000001,
-      "p90Secs": 82.444,
-      "returned": 81,
-      "dismissed": 220,
+      "bounced": 229,
+      "medianSecs": 11.232,
+      "p90Secs": 90.961,
+      "returned": 95,
+      "dismissed": 267,
       "shelfNotes": 57,
-      "tasted": 67,
+      "tasted": 75,
       "tasteByFeature": {
-        "findSimilar": 28,
-        "fillPage": 50,
+        "findSimilar": 33,
+        "fillPage": 54,
         "binderCovers": 3,
-        "advancedSearch": 1
+        "advancedSearch": 2
       },
-      "fillRuns": 50,
-      "fillPlaced": 50,
-      "capGates": 43,
+      "fillRuns": 54,
+      "fillPlaced": 54,
+      "capGates": 46,
       "proOffers": 0,
       "funnel": [
         {
           "id": "arrived",
           "label": "Arrived from Reddit",
-          "sessions": 2982
+          "sessions": 3158
         },
         {
           "id": "editor",
           "label": "Reached the binder editor",
-          "sessions": 2384
+          "sessions": 2526
         },
         {
           "id": "ring",
           "label": "Saw the first prompt (pocket ring, or Complete on a seeded page)",
-          "sessions": 2335
+          "sessions": 2468
         },
         {
           "id": "browser",
           "label": "Opened the card browser",
-          "sessions": 162
+          "sessions": 178
         },
         {
           "id": "placed",
           "label": "Placed a card (own tap, or a Fill/Complete that placed)",
-          "sessions": 117
+          "sessions": 129
         },
         {
           "id": "taste",
           "label": "Took a guest taste (Find similar, Fill page)",
-          "sessions": 67
+          "sessions": 75
         },
         {
           "id": "fill",
           "label": "Opened Fill page",
-          "sessions": 18
+          "sessions": 20
         },
         {
           "id": "wall",
           "label": "Met the create-account wall",
-          "sessions": 83
+          "sessions": 90
         },
         {
           "id": "tap",
           "label": "Tapped Create account",
-          "sessions": 13
+          "sessions": 18
         },
         {
           "id": "account",
           "label": "Became an account",
-          "sessions": 13
+          "sessions": 17
         },
         {
           "id": "public",
           "label": "Made a binder public",
-          "sessions": 7
+          "sessions": 8
         }
       ],
       "stitch": {
         "hop": 0,
-        "same_uid": 10,
+        "same_uid": 14,
         "time": 3
       },
       "cost": {
-        "spend": 518.08,
+        "spend": 548.08,
         "clicks": 2101,
         "impressions": 133752,
-        "ledgerRows": 16,
-        "perArrival": 0.1737357478202549,
-        "perEditor": 0.21731543624161076,
-        "perPlaced": 4.4280341880341885,
-        "perAccount": 39.8523076923077,
-        "perReturn": 6.39604938271605
+        "ledgerRows": 18,
+        "perArrival": 0.17355288157061433,
+        "perEditor": 0.2169754552652415,
+        "perPlaced": 4.248682170542636,
+        "perAccount": 32.24,
+        "perReturn": 5.769263157894737
       },
       "perCode": [
         {
@@ -5803,18 +6064,18 @@
           "label": "Reddit ad - Rainbow image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 2025,
-          "phone": 1586,
-          "editor": 1734,
-          "placed": 70,
-          "taste": 37,
-          "fill": 12,
-          "wall": 47,
-          "tap": 7,
-          "accounts": 7,
-          "public": 5,
-          "returned": 61,
-          "medianSecs": 11.98,
+          "sessions": 2122,
+          "phone": 1647,
+          "editor": 1818,
+          "placed": 77,
+          "taste": 42,
+          "fill": 13,
+          "wall": 51,
+          "tap": 9,
+          "accounts": 9,
+          "public": 6,
+          "returned": 70,
+          "medianSecs": 11.8625,
           "spend": null,
           "clicks": null
         },
@@ -5823,18 +6084,18 @@
           "label": "Reddit ad - Lidi image",
           "registered": true,
           "medium": "paid_social",
-          "sessions": 687,
-          "phone": 420,
-          "editor": 498,
-          "placed": 26,
-          "taste": 14,
-          "fill": 3,
-          "wall": 18,
-          "tap": 6,
-          "accounts": 5,
+          "sessions": 766,
+          "phone": 484,
+          "editor": 556,
+          "placed": 31,
+          "taste": 17,
+          "fill": 4,
+          "wall": 21,
+          "tap": 9,
+          "accounts": 7,
           "public": 2,
-          "returned": 19,
-          "medianSecs": 9.906,
+          "returned": 24,
+          "medianSecs": 10.314,
           "spend": null,
           "clicks": null
         },
@@ -6054,17 +6315,17 @@
           "campaign": "sales",
           "label": "Campaign 2 (Sales, Sign up)",
           "day": null,
-          "spend": 158.62,
+          "spend": 182.62,
           "clicks": 36,
-          "sessions": 540,
-          "phone": 398,
-          "editor": 455,
-          "placed": 35,
-          "accounts": 5,
-          "signupRate": 0.009259259259259259,
-          "perArrival": 0.29374074074074075,
-          "perAccount": 31.724,
-          "ledgerRows": 7,
+          "sessions": 673,
+          "phone": 510,
+          "editor": 566,
+          "placed": 44,
+          "accounts": 7,
+          "signupRate": 0.010401188707280832,
+          "perArrival": 0.2713521545319465,
+          "perAccount": 26.08857142857143,
+          "ledgerRows": 8,
           "days": [
             {
               "campaign": "sales",
@@ -6182,12 +6443,28 @@
               "campaign": "sales",
               "label": "Campaign 2 (Sales, Sign up)",
               "day": "2026-11-06",
+              "spend": 24,
+              "clicks": null,
+              "sessions": 119,
+              "phone": 102,
+              "editor": 98,
+              "placed": 8,
+              "accounts": 2,
+              "signupRate": 0.01680672268907563,
+              "perArrival": 0.20168067226890757,
+              "perAccount": 12,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "sales",
+              "label": "Campaign 2 (Sales, Sign up)",
+              "day": "2026-11-07",
               "spend": null,
               "clicks": null,
-              "sessions": 1,
-              "phone": 1,
-              "editor": 1,
-              "placed": 0,
+              "sessions": 15,
+              "phone": 11,
+              "editor": 14,
+              "placed": 1,
               "accounts": 0,
               "signupRate": 0,
               "perArrival": null,
@@ -6200,17 +6477,17 @@
           "campaign": "desktop",
           "label": "Campaign 3 (Desktop, Sign up)",
           "day": null,
-          "spend": 136.29999999999998,
+          "spend": 142.29999999999998,
           "clicks": null,
-          "sessions": 266,
-          "phone": 2,
-          "editor": 233,
-          "placed": 29,
+          "sessions": 297,
+          "phone": 4,
+          "editor": 260,
+          "placed": 32,
           "accounts": 5,
-          "signupRate": 0.018796992481203006,
-          "perArrival": 0.512406015037594,
-          "perAccount": 27.259999999999998,
-          "ledgerRows": 4,
+          "signupRate": 0.016835016835016835,
+          "perArrival": 0.47912457912457906,
+          "perAccount": 28.459999999999997,
+          "ledgerRows": 5,
           "days": [
             {
               "campaign": "desktop",
@@ -6280,14 +6557,64 @@
               "campaign": "desktop",
               "label": "Campaign 3 (Desktop, Sign up)",
               "day": "2026-11-06",
-              "spend": null,
+              "spend": 6,
               "clicks": null,
-              "sessions": 1,
+              "sessions": 24,
               "phone": 0,
-              "editor": 1,
-              "placed": 0,
+              "editor": 21,
+              "placed": 2,
               "accounts": 0,
               "signupRate": 0,
+              "perArrival": 0.25,
+              "perAccount": null,
+              "ledgerRows": 1
+            },
+            {
+              "campaign": "desktop",
+              "label": "Campaign 3 (Desktop, Sign up)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 8,
+              "phone": 2,
+              "editor": 7,
+              "placed": 1,
+              "accounts": 0,
+              "signupRate": 0,
+              "perArrival": null,
+              "perAccount": null,
+              "ledgerRows": 0
+            }
+          ]
+        },
+        {
+          "campaign": "wizard",
+          "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+          "day": null,
+          "spend": null,
+          "clicks": null,
+          "sessions": 12,
+          "phone": 11,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2,
+          "signupRate": 0.16666666666666666,
+          "perArrival": null,
+          "perAccount": null,
+          "ledgerRows": 0,
+          "days": [
+            {
+              "campaign": "wizard",
+              "label": "Wizard arm (phone, Sign up, in Campaign 2)",
+              "day": "2026-11-07",
+              "spend": null,
+              "clicks": null,
+              "sessions": 12,
+              "phone": 11,
+              "editor": 4,
+              "placed": 0,
+              "accounts": 2,
+              "signupRate": 0.16666666666666666,
               "perArrival": null,
               "perAccount": null,
               "ledgerRows": 0
@@ -6298,22 +6625,22 @@
       "audiences": [
         {
           "value": "2624415186179138648",
-          "sessions": 501,
-          "editor": 420,
-          "placed": 31,
-          "accounts": 5
+          "sessions": 634,
+          "editor": 531,
+          "placed": 40,
+          "accounts": 7
         },
         {
           "value": "2626589547104294002",
-          "sessions": 218,
-          "editor": 191,
-          "placed": 25,
+          "sessions": 248,
+          "editor": 217,
+          "placed": 28,
           "accounts": 5
         },
         {
           "value": "2626589547102138645",
-          "sessions": 44,
-          "editor": 38,
+          "sessions": 45,
+          "editor": 39,
           "placed": 1,
           "accounts": 0
         },
@@ -6323,6 +6650,13 @@
           "editor": 35,
           "placed": 4,
           "accounts": 0
+        },
+        {
+          "value": "2629873973863486111",
+          "sessions": 12,
+          "editor": 4,
+          "placed": 0,
+          "accounts": 2
         },
         {
           "value": "{{ADGROUP_ID}}",
@@ -6342,17 +6676,17 @@
       "ads": [
         {
           "value": "Rainbow",
-          "sessions": 605,
-          "editor": 518,
-          "placed": 46,
-          "accounts": 7
+          "sessions": 702,
+          "editor": 602,
+          "placed": 53,
+          "accounts": 9
         },
         {
           "value": "Volcano",
-          "sessions": 160,
-          "editor": 133,
-          "placed": 13,
-          "accounts": 3
+          "sessions": 239,
+          "editor": 191,
+          "placed": 18,
+          "accounts": 5
         },
         {
           "value": "coverflow",
@@ -6422,7 +6756,7 @@
           "fill": 3,
           "wall": 12,
           "accounts": 2,
-          "returned": 17,
+          "returned": 19,
           "medianSecs": 11.873,
           "spend": 79.78999999999999
         },
@@ -6436,7 +6770,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 14,
+          "returned": 17,
           "medianSecs": 9.572,
           "spend": 101.44
         },
@@ -6450,7 +6784,7 @@
           "fill": 2,
           "wall": 8,
           "accounts": 1,
-          "returned": 10,
+          "returned": 12,
           "medianSecs": 11.541,
           "spend": 56.75
         },
@@ -6464,7 +6798,7 @@
           "fill": 1,
           "wall": 10,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.202,
           "spend": 46.11
         },
@@ -6478,22 +6812,36 @@
           "fill": 6,
           "wall": 27,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 4.2305,
           "spend": 22.009999999999998
         },
         {
           "day": "2026-11-06",
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
-          "placed": 0,
-          "taste": 0,
+          "sessions": 144,
+          "phone": 103,
+          "editor": 120,
+          "placed": 10,
+          "taste": 6,
+          "fill": 2,
+          "wall": 5,
+          "accounts": 2,
+          "returned": 4,
+          "medianSecs": 11.207,
+          "spend": 30
+        },
+        {
+          "day": "2026-11-07",
+          "sessions": 35,
+          "phone": 24,
+          "editor": 25,
+          "placed": 2,
+          "taste": 2,
           "fill": 0,
-          "wall": 0,
-          "accounts": 0,
+          "wall": 2,
+          "accounts": 2,
           "returned": 0,
-          "medianSecs": 24.031,
+          "medianSecs": 7.913,
           "spend": null
         }
       ],
@@ -6750,7 +7098,7 @@
           "wall": 22,
           "tap": 3,
           "accounts": 3,
-          "returned": 35,
+          "returned": 39,
           "medianSecs": 11.941500000000001
         },
         {
@@ -6767,7 +7115,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 1,
-          "returned": 2,
+          "returned": 3,
           "medianSecs": 8.0245
         },
         {
@@ -6801,7 +7149,7 @@
           "wall": 7,
           "tap": 1,
           "accounts": 1,
-          "returned": 16,
+          "returned": 17,
           "medianSecs": 8.66
         },
         {
@@ -6818,7 +7166,7 @@
           "wall": 3,
           "tap": 1,
           "accounts": 0,
-          "returned": 0,
+          "returned": 1,
           "medianSecs": 8.5795
         },
         {
@@ -6920,7 +7268,7 @@
           "wall": 10,
           "tap": 4,
           "accounts": 3,
-          "returned": 3,
+          "returned": 4,
           "medianSecs": 8.137
         },
         {
@@ -6988,7 +7336,7 @@
           "wall": 5,
           "tap": 1,
           "accounts": 1,
-          "returned": 3,
+          "returned": 5,
           "medianSecs": 5.4275
         },
         {
@@ -7097,10 +7445,44 @@
           "id": "1ae9af0",
           "kind": "deploy",
           "from": "2026-11-06T11:27:16.518Z",
-          "to": null,
-          "sessions": 3,
-          "phone": 2,
-          "editor": 3,
+          "to": "2026-11-07T02:45:48.992Z",
+          "sessions": 114,
+          "phone": 81,
+          "editor": 95,
+          "placed": 8,
+          "taste": 5,
+          "fill": 2,
+          "wall": 4,
+          "tap": 3,
+          "accounts": 1,
+          "returned": 4,
+          "medianSecs": 11.207
+        },
+        {
+          "id": "bbe68a1",
+          "kind": "deploy",
+          "from": "2026-11-07T02:45:48.992Z",
+          "to": "2026-11-07T08:21:07.000Z",
+          "sessions": 30,
+          "phone": 22,
+          "editor": 25,
+          "placed": 2,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 1,
+          "returned": 0,
+          "medianSecs": 9.8265
+        },
+        {
+          "id": "wizard-arm",
+          "kind": "change",
+          "from": "2026-11-07T08:21:07.000Z",
+          "to": "2026-11-07T08:21:07.297Z",
+          "sessions": 0,
+          "phone": 0,
+          "editor": 0,
           "placed": 0,
           "taste": 0,
           "fill": 0,
@@ -7108,79 +7490,159 @@
           "tap": 0,
           "accounts": 0,
           "returned": 0,
-          "medianSecs": 24.031
+          "medianSecs": null
+        },
+        {
+          "id": "aef09ff",
+          "kind": "deploy",
+          "from": "2026-11-07T08:21:07.297Z",
+          "to": "2026-11-07T10:40:12.293Z",
+          "sessions": 13,
+          "phone": 10,
+          "editor": 12,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 2,
+          "accounts": 2,
+          "returned": 0,
+          "medianSecs": 22.309
+        },
+        {
+          "id": "56e3760",
+          "kind": "deploy",
+          "from": "2026-11-07T10:40:12.293Z",
+          "to": null,
+          "sessions": 22,
+          "phone": 14,
+          "editor": 13,
+          "placed": 1,
+          "taste": 1,
+          "fill": 0,
+          "wall": 1,
+          "tap": 0,
+          "accounts": 0,
+          "returned": 0,
+          "medianSecs": 6.412000000000001
         }
       ],
       "search": {
-        "sessionsSearching": 36,
-        "searches": 51,
+        "sessionsSearching": 42,
+        "searches": 62,
         "noResults": 0,
         "sessionsWithNoResults": 0,
         "kinds": [
           {
             "kind": "color",
-            "n": 21
+            "n": 29
           },
           {
             "kind": "similar",
-            "n": 19
+            "n": 21
           },
           {
             "kind": "viewSetById",
-            "n": 11
+            "n": 12
           }
         ]
       },
       "stalls": [
         {
           "event": "page.view",
-          "n": 757
+          "n": 807
         },
         {
           "event": "session.start",
-          "n": 548
+          "n": 573
         },
         {
           "event": "walkthrough.step",
-          "n": 468
+          "n": 474
         },
         {
           "event": "walkthrough.shown",
-          "n": 354
+          "n": 371
         },
         {
           "event": "binder.add",
-          "n": 305
+          "n": 324
         },
         {
           "event": "card.add",
-          "n": 248
+          "n": 255
         },
         {
           "event": "walkthrough.done",
-          "n": 87
+          "n": 113
         },
         {
           "event": "pocket.move",
-          "n": 43
+          "n": 48
         }
       ],
       "phoneFunnel": [
         {
           "id": "arrived",
-          "sessions": 2119
+          "sessions": 2244
         },
         {
           "id": "editor",
-          "sessions": 1858
+          "sessions": 1955
         },
         {
           "id": "ring",
-          "sessions": 1828
+          "sessions": 1918
         },
         {
           "id": "browser",
-          "sessions": 85
+          "sessions": 95
+        },
+        {
+          "id": "placed",
+          "sessions": 64
+        },
+        {
+          "id": "taste",
+          "sessions": 40
+        },
+        {
+          "id": "fill",
+          "sessions": 8
+        },
+        {
+          "id": "wall",
+          "sessions": 43
+        },
+        {
+          "id": "tap",
+          "sessions": 9
+        },
+        {
+          "id": "account",
+          "sessions": 8
+        },
+        {
+          "id": "public",
+          "sessions": 5
+        }
+      ],
+      "desktopFunnel": [
+        {
+          "id": "arrived",
+          "sessions": 510
+        },
+        {
+          "id": "editor",
+          "sessions": 439
+        },
+        {
+          "id": "ring",
+          "sessions": 431
+        },
+        {
+          "id": "browser",
+          "sessions": 65
         },
         {
           "id": "placed",
@@ -7188,65 +7650,19 @@
         },
         {
           "id": "taste",
-          "sessions": 36
+          "sessions": 35
         },
         {
           "id": "fill",
-          "sessions": 8
+          "sessions": 12
         },
         {
           "id": "wall",
-          "sessions": 38
+          "sessions": 47
         },
         {
           "id": "tap",
-          "sessions": 5
-        },
-        {
-          "id": "account",
-          "sessions": 4
-        },
-        {
-          "id": "public",
-          "sessions": 4
-        }
-      ],
-      "desktopFunnel": [
-        {
-          "id": "arrived",
-          "sessions": 459
-        },
-        {
-          "id": "editor",
-          "sessions": 394
-        },
-        {
-          "id": "ring",
-          "sessions": 388
-        },
-        {
-          "id": "browser",
-          "sessions": 59
-        },
-        {
-          "id": "placed",
-          "sessions": 52
-        },
-        {
-          "id": "taste",
-          "sessions": 31
-        },
-        {
-          "id": "fill",
-          "sessions": 10
-        },
-        {
-          "id": "wall",
-          "sessions": 45
-        },
-        {
-          "id": "tap",
-          "sessions": 8
+          "sessions": 9
         },
         {
           "id": "account",
@@ -7257,83 +7673,83 @@
           "sessions": 3
         }
       ],
-      "seeded": 1888,
+      "seeded": 2020,
       "themes": {
-        "autumn": 1502,
-        "volcano": 330,
+        "autumn": 1583,
+        "volcano": 381,
         "pikachu": 13,
         "grails": 43
       },
       "seededFunnel": [
         {
           "id": "arrived",
-          "sessions": 1888
+          "sessions": 2020
         },
         {
           "id": "editor",
-          "sessions": 1874
+          "sessions": 2006
         },
         {
           "id": "ring",
-          "sessions": 1881
+          "sessions": 2013
         },
         {
           "id": "browser",
-          "sessions": 95
+          "sessions": 105
         },
         {
           "id": "placed",
-          "sessions": 95
+          "sessions": 105
         },
         {
           "id": "taste",
-          "sessions": 59
+          "sessions": 65
         },
         {
           "id": "fill",
-          "sessions": 15
+          "sessions": 17
         },
         {
           "id": "wall",
-          "sessions": 68
+          "sessions": 74
         },
         {
           "id": "tap",
-          "sessions": 10
+          "sessions": 12
         },
         {
           "id": "account",
-          "sessions": 8
+          "sessions": 10
         },
         {
           "id": "public",
-          "sessions": 5
+          "sessions": 6
         }
       ],
       "emptyFunnel": [
         {
           "id": "arrived",
-          "sessions": 1094
+          "sessions": 1138
         },
         {
           "id": "editor",
-          "sessions": 510
+          "sessions": 520
         },
         {
           "id": "ring",
-          "sessions": 454
+          "sessions": 455
         },
         {
           "id": "browser",
-          "sessions": 67
+          "sessions": 73
         },
         {
           "id": "placed",
-          "sessions": 22
+          "sessions": 24
         },
         {
           "id": "taste",
-          "sessions": 8
+          "sessions": 10
         },
         {
           "id": "fill",
@@ -7341,22 +7757,22 @@
         },
         {
           "id": "wall",
-          "sessions": 15
+          "sessions": 16
         },
         {
           "id": "tap",
-          "sessions": 3
+          "sessions": 6
         },
         {
           "id": "account",
-          "sessions": 5
+          "sessions": 7
         },
         {
           "id": "public",
           "sessions": 2
         }
       ],
-      "excludedSessions": 121
+      "excludedSessions": 126
     }
   }
 }

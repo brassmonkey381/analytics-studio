@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-06T15:08:16.690Z",
+  "collectedAt": "2026-11-07T15:08:15.807Z",
   "windows": [
     "all",
     1,
@@ -13,7 +13,7 @@
       "currency": "points",
       "balances": {
         "accounts": 13,
-        "outstanding": 2454,
+        "outstanding": 13073,
         "excludedAccounts": 47,
         "distribution": {
           "buckets": [
@@ -26,65 +26,65 @@
             "1": [
               0,
               8,
-              4,
-              1
+              3,
+              2
             ],
             "7": [
               0,
               8,
-              4,
-              1
+              3,
+              2
             ],
             "14": [
               0,
               8,
-              4,
-              1
+              3,
+              2
             ],
             "30": [
               0,
               8,
-              4,
-              1
+              3,
+              2
             ],
             "all": [
               0,
               8,
-              4,
-              1
+              3,
+              2
             ]
           }
         }
       },
       "flows": {
         "1": {
-          "earned": 55,
+          "earned": 10619,
           "spent": 0,
-          "rows": 6,
+          "rows": 42,
           "earners": 2
         },
         "7": {
-          "earned": 147,
+          "earned": 10742,
           "spent": 0,
-          "rows": 11,
+          "rows": 52,
           "earners": 2
         },
         "14": {
-          "earned": 394,
+          "earned": 10968,
           "spent": 0,
-          "rows": 27,
-          "earners": 5
+          "rows": 67,
+          "earners": 4
         },
         "30": {
-          "earned": 661,
+          "earned": 11280,
           "spent": 0,
-          "rows": 43,
+          "rows": 85,
           "earners": 5
         },
         "all": {
-          "earned": 2454,
+          "earned": 13073,
           "spent": 0,
-          "rows": 121,
+          "rows": 163,
           "earners": 13
         }
       },
@@ -92,49 +92,169 @@
         "buckets": [
           "1–9",
           "10–99",
-          "100+"
+          "100–999",
+          "1,000+"
         ],
         "byWindow": {
           "1": [
             0,
-            2,
-            0
+            0,
+            0,
+            2
           ],
           "7": [
             0,
-            2,
-            0
+            0,
+            0,
+            2
           ],
           "14": [
             1,
-            2,
+            1,
+            0,
             2
           ],
           "30": [
             0,
             2,
-            3
+            1,
+            2
           ],
           "all": [
             0,
             8,
-            5
+            3,
+            2
           ]
         }
       },
       "byReason": {
         "1": [
           {
-            "category": "Login bonus",
+            "category": "Thank you for helping test Doggle",
+            "points": 10000,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 16",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 17",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 18",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 19",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 21",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 22",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 6",
             "points": 30,
             "rows": 2,
             "users": 2
           },
           {
-            "category": "Vibe bonus",
-            "points": 10,
+            "category": "Park Pass tier 7",
+            "points": 30,
             "rows": 2,
             "users": 2
+          },
+          {
+            "category": "Park Pass tier 8",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 9",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 11",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 12",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 13",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 14",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Login bonus",
+            "points": 24,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Park Pass tier 2",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 3",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 4",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 23",
+            "points": 20,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Home visit",
+            "points": 15,
+            "rows": 1,
+            "users": 1
           },
           {
             "category": "Park Pass tier 1",
@@ -144,12 +264,18 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 5,
-            "rows": 1,
+            "points": 10,
+            "rows": 2,
             "users": 1
           }
         ],
         "7": [
+          {
+            "category": "Thank you for helping test Doggle",
+            "points": 10000,
+            "rows": 2,
+            "users": 2
+          },
           {
             "category": "Login bonus",
             "points": 117,
@@ -157,9 +283,129 @@
             "users": 2
           },
           {
-            "category": "Checked in at a dog place",
-            "points": 10,
+            "category": "Park Pass tier 16",
+            "points": 40,
             "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 17",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 18",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 19",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 21",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 22",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 6",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 7",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 8",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 9",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 11",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 12",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 13",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 14",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Checked in at a dog place",
+            "points": 20,
+            "rows": 4,
+            "users": 1
+          },
+          {
+            "category": "Park Pass tier 2",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 3",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 4",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 23",
+            "points": 20,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Park Pass tier 1",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Home visit",
+            "points": 15,
+            "rows": 1,
             "users": 1
           },
           {
@@ -167,32 +413,146 @@
             "points": 10,
             "rows": 2,
             "users": 2
-          },
-          {
-            "category": "Park Pass tier 1",
-            "points": 10,
-            "rows": 1,
-            "users": 1
           }
         ],
         "14": [
           {
-            "category": "Login bonus",
-            "points": 249,
-            "rows": 13,
-            "users": 4
+            "category": "Thank you for helping test Doggle",
+            "points": 10000,
+            "rows": 2,
+            "users": 2
           },
           {
-            "category": "Onboarding",
-            "points": 90,
-            "rows": 4,
+            "category": "Login bonus",
+            "points": 258,
+            "rows": 13,
             "users": 3
           },
           {
+            "category": "Onboarding",
+            "points": 60,
+            "rows": 3,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 16",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 17",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 18",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 19",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 21",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 22",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
             "category": "Checked in at a dog place",
-            "points": 20,
-            "rows": 4,
+            "points": 30,
+            "rows": 6,
             "users": 1
+          },
+          {
+            "category": "Park Pass tier 6",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 7",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 8",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 9",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 11",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 12",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 13",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 14",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 2",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 3",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 4",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 23",
+            "points": 20,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Park Pass tier 1",
+            "points": 20,
+            "rows": 2,
+            "users": 2
           },
           {
             "category": "Vibe bonus",
@@ -201,8 +561,8 @@
             "users": 3
           },
           {
-            "category": "Park Pass tier 1",
-            "points": 10,
+            "category": "Home visit",
+            "points": 15,
             "rows": 1,
             "users": 1
           },
@@ -215,9 +575,15 @@
         ],
         "30": [
           {
+            "category": "Thank you for helping test Doggle",
+            "points": 10000,
+            "rows": 2,
+            "users": 2
+          },
+          {
             "category": "Login bonus",
-            "points": 396,
-            "rows": 21,
+            "points": 420,
+            "rows": 22,
             "users": 5
           },
           {
@@ -228,9 +594,93 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 35,
-            "rows": 7,
+            "points": 45,
+            "rows": 9,
             "users": 1
+          },
+          {
+            "category": "Park Pass tier 16",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 17",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 18",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 19",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 21",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 22",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 6",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 7",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 8",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 9",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 11",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 12",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 13",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 14",
+            "points": 30,
+            "rows": 2,
+            "users": 2
           },
           {
             "category": "Vibe bonus",
@@ -239,8 +689,38 @@
             "users": 3
           },
           {
+            "category": "Park Pass tier 2",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 3",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 4",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 23",
+            "points": 20,
+            "rows": 1,
+            "users": 1
+          },
+          {
             "category": "Park Pass tier 1",
-            "points": 10,
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Home visit",
+            "points": 15,
             "rows": 1,
             "users": 1
           },
@@ -253,9 +733,15 @@
         ],
         "all": [
           {
+            "category": "Thank you for helping test Doggle",
+            "points": 10000,
+            "rows": 2,
+            "users": 2
+          },
+          {
             "category": "Login bonus",
-            "points": 1332,
-            "rows": 66,
+            "points": 1356,
+            "rows": 67,
             "users": 13
           },
           {
@@ -278,9 +764,45 @@
           },
           {
             "category": "Checked in at a dog place",
-            "points": 105,
-            "rows": 21,
+            "points": 115,
+            "rows": 23,
             "users": 1
+          },
+          {
+            "category": "Park Pass tier 16",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 17",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 18",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 19",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 21",
+            "points": 40,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 22",
+            "points": 40,
+            "rows": 2,
+            "users": 2
           },
           {
             "category": "Vibe bonus",
@@ -289,14 +811,92 @@
             "users": 3
           },
           {
-            "category": "Completed a walk",
-            "points": 12,
+            "category": "Park Pass tier 6",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 7",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 8",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 9",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 11",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 12",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 13",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 14",
+            "points": 30,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 2",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 3",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 4",
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Park Pass tier 23",
+            "points": 20,
             "rows": 1,
             "users": 1
           },
           {
             "category": "Park Pass tier 1",
-            "points": 10,
+            "points": 20,
+            "rows": 2,
+            "users": 2
+          },
+          {
+            "category": "Home visit",
+            "points": 15,
+            "rows": 1,
+            "users": 1
+          },
+          {
+            "category": "Completed a walk",
+            "points": 12,
             "rows": 1,
             "users": 1
           },
@@ -308,7 +908,7 @@
           }
         ]
       },
-      "excludedLedgerRows": 1075
+      "excludedLedgerRows": 1077
     },
     "pickleague": {
       "currency": "pickles",
@@ -431,7 +1031,7 @@
           ]
         }
       },
-      "excludedFlowRows": 813
+      "excludedFlowRows": 814
     },
     "caps": {
       "binders": {
@@ -446,13 +1046,13 @@
         "counts": [
           0,
           0,
-          131,
+          135,
           0,
-          2745
+          2883
         ],
-        "users": 2876,
+        "users": 3018,
         "uncapped": 0,
-        "atCap": 2745
+        "atCap": 2883
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -464,15 +1064,15 @@
           "at / over cap"
         ],
         "counts": [
-          2662,
-          83,
-          28,
+          2787,
+          87,
+          30,
           8,
-          15
+          17
         ],
-        "users": 2796,
+        "users": 2929,
         "uncapped": 0,
-        "atCap": 15
+        "atCap": 17
       },
       "artUploads": {
         "app": "michi",
@@ -484,15 +1084,15 @@
           "at / over cap"
         ],
         "counts": [
-          85,
-          45,
-          38,
-          31,
-          35
+          100,
+          46,
+          39,
+          30,
+          36
         ],
-        "users": 234,
+        "users": 251,
         "uncapped": 0,
-        "atCap": 35
+        "atCap": 36
       },
       "includedPrintsPerMonth": {
         "app": "michi",
@@ -548,11 +1148,11 @@
           0,
           0,
           0,
-          76
+          86
         ],
-        "users": 76,
+        "users": 86,
         "uncapped": 0,
-        "atCap": 76
+        "atCap": 86
       },
       "cardsPerCollection": {
         "app": "tcgscan",
@@ -564,21 +1164,21 @@
           "at / over cap"
         ],
         "counts": [
-          27,
+          29,
           4,
           3,
           0,
           4
         ],
-        "users": 38,
+        "users": 40,
         "uncapped": 0,
         "atCap": 4
       },
       "_accounts": {
-        "total": 8077,
-        "guests": 7779,
-        "excluded": 2827,
-        "excludedUsageRows": 595
+        "total": 8321,
+        "guests": 8014,
+        "excluded": 2843,
+        "excludedUsageRows": 596
       }
     }
   }
