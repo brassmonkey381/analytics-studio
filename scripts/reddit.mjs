@@ -300,6 +300,7 @@ for (const s of sessions) {
     // The wizard arm (2026-11-07, a phone-only ad group inside Campaign 2) carries
     // utm_campaign=michi_wizard_2026_11 and lands on /new-binder once michi routes it there;
     // it is reported as its own campaign so seeded and wizard phone arrivals never pool.
+    // Michi: landing.skip fires with to=/new-binder on this path (seeded: to=/my-binders?open=seeded).
     campaign: ((c) => c === "michi_desktop_2026_11" ? "desktop" : c === "michi_wizard_2026_11" ? "wizard"
       : (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic")(s.p_campaign ?? PARAM(s.landing_route, "utm_campaign")),
     viewportW: s.viewport_w ?? null,
