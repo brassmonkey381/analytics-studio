@@ -277,8 +277,11 @@ const bySession = new Map();
 for (const s of sessions) {
   if (s.excluded) continue;
   const code = s.p_code ?? (String(s.landing_route ?? "").match(CODE_RE)?.[1] ?? null);
-  if (isVerification(code)) {
-    verificationSessions++; // Brian's own test links (test_*): counted here, never in the funnel
+  const medium0 = s.p_medium ?? PARAM(s.landing_route, "utm_medium");
+  // Brian's own test links (test_*) and michi's test-rig mediums (utm_medium=test|qa): counted
+  // here, never in the funnel.
+  if (isVerification(code) || medium0 === "test" || medium0 === "qa") {
+    verificationSessions++;
     continue;
   }
   bySession.set(s.id, {
@@ -301,7 +304,10 @@ for (const s of sessions) {
     // utm_campaign=michi_wizard_2026_11 and lands on /new-binder once michi routes it there;
     // it is reported as its own campaign so seeded and wizard phone arrivals never pool.
     // Michi: landing.skip fires with to=/new-binder on this path (seeded: to=/my-binders?open=seeded).
-    campaign: ((c) => c === "michi_desktop_2026_11" ? "desktop" : c === "michi_wizard_2026_11" ? "wizard"
+    // ORGANIC: any medium other than paid_social (organic posts, e.g. MKT-018 utm_medium=organic_social,
+    // or the sidebar link) is not an ad click and never pools into a paid campaign row. A session
+    // with no medium at all keeps the paid rule, as the earliest ad links carried none.
+    campaign: medium0 && medium0 !== "paid_social" ? "organic" : ((c) => c === "michi_desktop_2026_11" ? "desktop" : c === "michi_wizard_2026_11" ? "wizard"
       : (s.p_content ?? PARAM(s.landing_route, "utm_content")) ? "sales" : "traffic")(s.p_campaign ?? PARAM(s.landing_route, "utm_campaign")),
     viewportW: s.viewport_w ?? null,
     fromSession: s.from_session ?? null,
@@ -625,7 +631,7 @@ for (const w of WINDOWS) {
   // Campaign scoreboard: the two Reddit campaigns side by side, the view Ads Manager cannot
   // give (its Sign Up column only counts what the pixel saw since it went live, with Reddit's
   // attribution; this one counts accounts the site saw, by the session's campaign).
-  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)", desktop: "Campaign 3 (Desktop, Sign up)", wizard: "Wizard arm (phone, Sign up, in Campaign 2)" };
+  const CAMPAIGN_LABEL = { traffic: "Campaign 1 (Traffic, clicks)", sales: "Campaign 2 (Sales, Sign up)", desktop: "Campaign 3 (Desktop, Sign up)", wizard: "Wizard arm (phone, Sign up, in Campaign 2)", organic: "Organic Reddit (not an ad: utm_medium other than paid_social)" };
   const campRow = (camp, ss, rows, day) => {
     const f = funnelOver(ss);
     const key = day ? `campday|${w}|${camp}|${day}` : `camp|${w}|${camp}`;
@@ -653,7 +659,7 @@ for (const w of WINDOWS) {
     };
   };
   const campaigns = [];
-  for (const camp of ["traffic", "sales", "desktop", "wizard"]) {
+  for (const camp of ["traffic", "sales", "desktop", "wizard", "organic"]) {
     const ss = list.filter((s) => s.campaign === camp);
     const rows = ledger.filter((r) => r.campaign === camp);
     if (!ss.length && !rows.length) continue;
@@ -957,7 +963,7 @@ const blocks = WINDOWS.map((w) => {
 
   return `<div data-w="${w}"${w === DEFAULT_WINDOW ? "" : " hidden"}>
 <div class="tiles">${tiles}</div>
-<p class="note">Excluded from everything above: <strong>${d.excludedSessions}</strong> Reddit-tagged session${d.excludedSessions === 1 ? "" : "s"} from our own or QA accounts, and ${verificationSessions} test-link session${verificationSessions === 1 ? "" : "s"} (codes starting ${esc(VERIFY_PREFIXES.join(", "))}) across the lookback.
+<p class="note">Excluded from everything above: <strong>${d.excludedSessions}</strong> Reddit-tagged session${d.excludedSessions === 1 ? "" : "s"} from our own or QA accounts, and ${verificationSessions} test-link session${verificationSessions === 1 ? "" : "s"} (codes starting ${esc(VERIFY_PREFIXES.join(", "))}, or utm_medium test or qa) across the lookback.
 Device is read from <code>viewport_w</code> on <code>session.start</code> (michi 6d01a53, live 2026-10-29 evening); sessions before that carry no width and count as unknown. Phone means narrower than ${PHONE_MAX_W}px.</p>
 
 <h2>Cost per step</h2>
@@ -1088,7 +1094,7 @@ const md = [];
 const a7 = out.byWindow[7];
 const aa = out.byWindow[ALL_WINDOW];
 md.push(`# Reddit launch - what happens after the click`, ``);
-md.push(`Collected ${collectedAt}. Days are ${out.dayTz}. Population: michi-maker sessions tagged utm_source=reddit, last ${LOOKBACK_DAYS} days. Our own and QA accounts excluded (${aa.excludedSessions} sessions in the lookback), plus ${verificationSessions} test-link sessions.`, ``);
+md.push(`Collected ${collectedAt}. Days are ${out.dayTz}. Population: michi-maker sessions tagged utm_source=reddit, last ${LOOKBACK_DAYS} days. Our own and QA accounts excluded (${aa.excludedSessions} sessions in the lookback), plus ${verificationSessions} test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.`, ``);
 md.push(`## Last 7 days`, ``);
 md.push(`| step | sessions | of arrivals |`, `|---|---:|---:|`);
 for (let i = 0; i < a7.funnel.length; i++) {
