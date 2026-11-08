@@ -52,6 +52,7 @@ guests and 4 free accounts; 3 cap-gate sessions made an account.
 ## Limits
 
 - **Not yet visible:** michi 56e3760 (phone editor dock and tool bar, 2026-11-07 10:40 UTC) has no rows here yet.
+- **Speed batch after this read:** michi e31dad1 (MIC-018, faster first paint, smaller pictures) went live 2026-11-07 23:49:46 UTC. Drop-off point 1, the under-3-second bounce, is the number it should move; re-read it against this report from that stamp on.
 - **Thin read on the current walkthrough:** 128 sessions since 2026-11-05.
 - **Bounce reason unknown:** the stream cannot see why a visitor leaves in under 3 s. Slow load, the
   wrong ad audience and accidental taps all look the same here.
