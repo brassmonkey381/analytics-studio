@@ -503,6 +503,7 @@
       "planned": true,
       "milestone": true
     },
+    "_doggleReleaseDoc": "DOGGLE RELEASE STAMPS (Doggle writes no deploy.live row, so they live here). DOG-024 redesign, with DOG-026, DOG-029 and DOG-030: PageShell everywhere; new Home, Pet Home, Discover, Events, Profile, first run, Walk, dog page and Settings. WEB live on www.doggle.club 2026-11-08 08:22:30 UTC (Vercel production deploy of main 3f129bd, main moved from d820e74). PHONES (iOS build 43) NOT YET: a production OTA follows on the owner saying ota, and doggle-fe sends its own stamp. First run went from 10 steps to required-then-optional steps, so split every first-run before/after at the web stamp for web sessions and at the OTA stamp for phone sessions, never one stamp for both.",
     "push.permission_requested": {
       "label": "Asked for push permission",
       "stage": "engagement",
