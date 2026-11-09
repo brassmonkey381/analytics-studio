@@ -396,7 +396,8 @@
       ]
     },
     "card.picture": {
-      "label": "Shared a card picture from the browser",
+      "label": "Shared a card picture",
+      "_doc": "MIC-032 (michi 2b7c48a, production 2026-11-09 22:14:50 UTC, kit tcgscan-browse 0.9.84): Share picture now sits in the card sheet on Browse, the editor Add to pocket picker and the /new-binder wizard. card.picture gains surface = browse | picker | wizard. Before the stamp every row is Browse and has no surface prop; picker and wizard rows exist only after it, so a rise in card.picture after the stamp is new surfaces, not more sharing per surface. Compare like with like by surface=browse (or no surface before the stamp).",
       "stage": "engagement",
       "apps": [
         "michi"
