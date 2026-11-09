@@ -635,6 +635,7 @@
     },
     "demo.theme_search": {
       "label": "Tried the theme search demo",
+      "_doc": "SPECCED, NOT SHIPPED (MIC-017, michi branch style-2, heads-up 2026-11-09): Browse and the editor Add-to-pocket picker replace the rotating Theme: <word> button with a Theme dice that rolls random theme queries. On those surfaces theme will hold the whole rolled query (e.g. theme:night theme:city, theme:water -theme:sky, theme:\"forest\") instead of one word, and a new prop kind = single | pair | minus | exact. The new-binder wizard keeps the old button: one word, no kind. Fire rule unchanged, one event per press; a press may re-roll up to 3 times when a combination finds nothing, only the shown roll is tracked. Until the deploy stamp lands, rows without kind are the old button; after it, group by kind, not by theme text. Name and surface (browser) unchanged.",
       "stage": "activation",
       "apps": [
         "michi"
