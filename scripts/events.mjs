@@ -909,7 +909,6 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
     "wizard.kind": "kind",
     "wizard.create": "kind",
     "wizard.cap_ask": "chosen",
-    "similar_words.toggled": "on",
     "similar_words.searched": "game",
     "auth.callback_failed": "stage",
     "page.picture": "via",
