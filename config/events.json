@@ -301,6 +301,7 @@
       ]
     },
     "card.add": {
+      "_doc": "MIC-031 (michi c781364, production 2026-11-09 10:48:11 UTC, kits tcgscan-browse 0.9.82 / tcgscan-ui 0.13.5): before this stamp the editor Add to pocket card grid stopped drawing after 12 rows on web, so picker adds were capped by the UI; a rise in card.add from the editor picker after the stamp is likely this fix, not demand. No event changes.",
       "label": "Added cards",
       "stage": "engagement",
       "apps": [
