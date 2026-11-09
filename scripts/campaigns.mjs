@@ -37,6 +37,8 @@ const DATA_FILE = join(ROOT, "data", "campaigns.json");
 // One row per (app, code, utm_source, utm_campaign, utm_content), all time, counts only:
 // what marketing-studio's Campaign Studio page shows as Results (MKT-023). Same population and
 // definitions as the tables in campaigns.md, so the page and this report cannot disagree.
+// CONTRACT with marketing-studio (MKT-023): the shape { collectedAt, scope, columns, rows } and the
+// column names are read by the Campaign Studio page. Message marketing-studio BEFORE changing either.
 const RESULTS_FILE = join(ROOT, "data", "campaign-results.json");
 const ROSTER_FILE = join(ROOT, "data", "campaigns-roster.json");
 const HTML_FILE = join(ROOT, "reports", "campaigns.html");
