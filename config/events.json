@@ -958,6 +958,7 @@
       ]
     },
     "binder.public": {
+      "_doc": "MIC-025 (michi 4770bb1, production 2026-11-09 08:50:20 UTC): a public binder whose owner has a private profile now reads HIDDEN in the share sheet and visibility chip, and Quick look asks a private-profile owner in a dialog to turn Public profile on. No event changes: that flip goes through the existing profile update (profiles.is_public, same path as the Settings switch), so count it from the table, not the stream. Before the stamp a binder.public on a private profile was not actually visible to others. QA used utm_medium=qa, campaign prodcheck025, excluded.",
       "label": "Made a binder public or private",
       "stage": "engagement",
       "apps": [
