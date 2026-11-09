@@ -283,6 +283,21 @@
       ],
       "milestone": true
     },
+    "similar_words.toggled": {
+      "label": "Flipped the Similar words switch on theme search",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "similar_words.searched": {
+      "label": "Ran a theme search widened by Similar words",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "_similarWordsDoc": "MIC-024, michi branch mic-024 at 2a99d26, SPECCED, NOT SHIPPED (ships after TCGScan-Data migration 88 and the owner's try; deploy.live stamp to follow). Before that stamp a zero means cannot see, not nobody. similar_words.toggled { on, game, surface }: a real flip of the switch only, never on load or restore. similar_words.searched { game, surface, words_expanded, members, groups, hits }: once per theme query that ran with the switch on and widened at least one word, first page only (paging, facet counts and re-renders do not fire it). words_expanded = typed words that widened; members = total words sent across those unions; groups = fixed group labels joined with |, at most 3, never the person's typed text; hits = the first page query's total results, so a widened query with hits 0 is the failure case. surface follows card.search kind=color, NOT demo.theme_search: binder_editor when the browser is the editor's or wizard's card picker, home on /browse; demo.theme_search from the same component always says browser, so join the two by session and time, not by surface. Named similar_words.* (not similar.*) because card.search kind=similar already means similar CARDS. First QA rows from a local build on 2026-11-09 carry utm_medium=qa and are excluded.",
     "card.search": {
       "label": "Searched cards",
       "stage": "engagement",
