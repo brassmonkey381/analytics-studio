@@ -34,6 +34,10 @@ import { ALL_WINDOW, STANDARD_WINDOWS, windowBar, windowLabel, windowScript } fr
 const CFG = readConfig("events.json");
 const CAMP = CFG.campaigns ?? {};
 const DATA_FILE = join(ROOT, "data", "campaigns.json");
+// One row per (app, code, utm_source, utm_campaign, utm_content), all time, counts only:
+// what marketing-studio's Campaign Studio page shows as Results (MKT-023). Same population and
+// definitions as the tables in campaigns.md, so the page and this report cannot disagree.
+const RESULTS_FILE = join(ROOT, "data", "campaign-results.json");
 const ROSTER_FILE = join(ROOT, "data", "campaigns-roster.json");
 const HTML_FILE = join(ROOT, "reports", "campaigns.html");
 const MD_FILE = join(ROOT, "reports", "campaigns.md");
@@ -246,7 +250,7 @@ for (const [ref, apps] of PROJECT_GROUPS) {
 // have, so "came back" is answerable, and every event inside the arriving session, so
 // "went past the landing page" is. Both are scoped to the arrival set rather than
 // pulling the whole stream.
-const sessionEvents = new Map(); // session id -> [{name, ts}]
+const sessionEvents = new Map(); // session id -> went further (second page view or a deliberate action)
 const laterSessions = []; // {app, user_id, device_id, started_at, upgraded_at, anon}
 if (arrivals.length) {
   for (const [ref, apps] of PROJECT_GROUPS) {
@@ -258,7 +262,25 @@ if (arrivals.length) {
     const devs = [...new Set(mine.map((s) => s.device_id).filter(Boolean))];
     const who = [uids.length ? `s.user_id = any(${uuidList(uids)})` : null, devs.length ? `to_jsonb(s)->>'device_id' = any(${textList(devs)})` : null].filter(Boolean);
     const [evs, sess] = await Promise.all([
-      runSql(ref, `select e.session_id, e.name, e.ts from public.analytics_events e where e.session_id = any(${uuidList(sids)}) order by e.ts limit ${ROW_CAP}`),
+      // One row per session, counted in SQL. This used to fetch every event (limit ROW_CAP,
+      // oldest first): past 20,000 events the newest sessions got none, so "went further"
+      // read zero for every recent campaign (found 2026-11-09, MKT-023).
+      // "Went further" = a second page view, or one thing the visitor did. The app's own
+      // load events do not count: michi fires landing.skip, a seeded binder.add, the
+      // walkthrough and three seed card.adds by itself for every Reddit arrival, which read
+      // as 98% "went further" once the cap above was fixed.
+      // A second page.view does not count on michi either: the Reddit skip navigates /, then
+      // /my-binders, then /binder/<id> by itself. On michi only a deliberate action counts.
+      runSql(ref, `select e.session_id,
+        (count(*) filter (where e.name = 'page.view' and e.app <> 'michi') > 1
+         or count(*) filter (where e.name not in ('session.start', 'page.view', 'page.leave', 'landing.skip', 'walkthrough.step', 'walkthrough.celebration', 'deploy.live', 'binder.add')
+           and e.name not like '%shown'
+           and not (e.name = 'card.add' and e.props->>'kind' = 'seed')) > 0
+         -- binder.add counts only when the visitor made it: the Reddit skip (landing.skip) creates
+         -- the first binder by itself, with or without the seeded flag. *.shown is something the
+         -- app displayed (a wall, the walkthrough, the wizard), not something the visitor did.
+         or (count(*) filter (where e.name = 'binder.add') > 0 and not bool_or(e.name = 'landing.skip'))) as further
+        from public.analytics_events e where e.session_id = any(${uuidList(sids)}) group by 1`),
       who.length
         ? runSql(
             ref,
@@ -269,10 +291,8 @@ if (arrivals.length) {
           )
         : Promise.resolve([]),
     ]);
-    for (const e of evs) {
-      if (!sessionEvents.has(e.session_id)) sessionEvents.set(e.session_id, []);
-      sessionEvents.get(e.session_id).push(e);
-    }
+    for (const e of evs) sessionEvents.set(e.session_id, e.further === true);
+    if (sess.length >= ROW_CAP) console.warn(`WARNING: later-session fetch hit ROW_CAP (${ROW_CAP}) for ${ref} - came back may undercount.`);
     laterSessions.push(...sess);
   }
 }
@@ -341,7 +361,7 @@ function campaignOf(route) {
     ignoredCodes += 1; // an OAuth callback code, not a campaign - counted, never listed
     return null;
   }
-  return { code, source: p.get("utm_source"), medium: p.get("utm_medium"), path: route.slice(0, q) || "/" };
+  return { code, source: p.get("utm_source"), medium: p.get("utm_medium"), utmCampaign: p.get("utm_campaign"), content: p.get("utm_content"), hasCode: p.has("code"), path: route.slice(0, q) || "/" };
 }
 
 // Every later session a person has, for "came back" and for the identity they may have
@@ -375,10 +395,9 @@ for (const s of arrivals) {
   s.campaign = campaignOf(s.landing_route);
   s.verification = s.campaign ? isVerification(s.campaign.code) : false;
   s.appId = APP_BY_KEY.get(s.app)?.id ?? s.app;
-  const evs = sessionEvents.get(s.id) ?? [];
-  // Landing itself is session.start + one page.view. Anything beyond that second event
-  // is the visitor going somewhere, which is the honest floor for "did not just bounce".
-  s.beyondLanding = evs.filter((e) => e.name !== "session.start" && e.name !== "page.leave").length > 1;
+  // Landing itself is session.start + one page.view plus whatever the app fires on load.
+  // A second page or one deliberate action is the honest floor for "did not just bounce".
+  s.beyondLanding = sessionEvents.get(s.id) === true;
   s.arrivedAnonymous = !s.user_id || s.is_guest === true || s.anon === true;
   const mine = sessionsByPerson.get(s.person) ?? [];
   const claimed = mine.some((o) => o.upgraded_at) || !!s.upgraded_at;
@@ -565,8 +584,35 @@ for (const app of appList) {
   out.apps[app.id] = { name: app.name, key: app.key, byWindow, allTimeByCode };
 }
 
+// Campaign Studio results (MKT-023): all time, one row per placement key.
+const resultRows = new Map();
+for (const s of arrivals) {
+  if (!s.campaign || s.excluded || s.verification) continue;
+  const c = s.campaign;
+  const k = [s.appId, c.hasCode ? c.code : null, c.source, c.utmCampaign, c.content];
+  const key = JSON.stringify(k);
+  const b = resultRows.get(key) ?? { app: k[0], code: k[1], utm_source: k[2], utm_campaign: k[3], utm_content: k[4], arrivals: 0, people: new Set(), further: new Set(), members: new Set(), back: new Set(), first_seen: s.started_at, last_seen: s.started_at };
+  b.arrivals++;
+  b.people.add(s.person);
+  if (s.beyondLanding) b.further.add(s.person);
+  if (s.gainedIdentity) b.members.add(s.person);
+  if (s.returned) b.back.add(s.person);
+  if (s.started_at < b.first_seen) b.first_seen = s.started_at;
+  if (s.started_at > b.last_seen) b.last_seen = s.started_at;
+  resultRows.set(key, b);
+}
+const results = {
+  collectedAt,
+  scope: "All time. Excludes our own and QA accounts, verification codes (" + VERIFY_PREFIXES.join(", ") + "), and OAuth callback UUIDs; a person counts once per row. went_further = did more than land; members = arrived anonymous and gained an identity (ground truth, not the submitted sign-up); came_back = had a later session. utm_* are what the landing URL carried; code is null when the link had none.",
+  columns: ["app", "code", "utm_source", "utm_campaign", "utm_content", "arrivals", "people", "went_further", "members", "came_back", "first_seen", "last_seen"],
+  rows: [...resultRows.values()]
+    .map((b) => ({ app: b.app, code: b.code, utm_source: b.utm_source, utm_campaign: b.utm_campaign, utm_content: b.utm_content, arrivals: b.arrivals, people: b.people.size, went_further: b.further.size, members: b.members.size, came_back: b.back.size, first_seen: b.first_seen, last_seen: b.last_seen }))
+    .sort((a, b) => b.arrivals - a.arrivals || String(a.code).localeCompare(String(b.code))),
+};
+
 mkdirSync(dirname(DATA_FILE), { recursive: true });
 writeFileSync(DATA_FILE, JSON.stringify(out, null, 2));
+writeFileSync(RESULTS_FILE, JSON.stringify(results, null, 2));
 writeFileSync(ROSTER_FILE, JSON.stringify(rosters, null, 2));
 
 // ---------- report ----------
@@ -946,7 +992,7 @@ ${gapCards}
 
 <p class="note">Definitions, so no number here is ambiguous. <strong>Arrival</strong>: one session whose first
 page view carried a campaign code — a person who scans twice is two arrivals and one person.
-<strong>Went further</strong>: that session recorded more than the landing view, so it did not bounce.
+<strong>Went further</strong>: that session did something, beyond what the app fires by itself on load. Doggle and Pickleague: a second page view or any action. Michi: an action only, since its Reddit landing opens three pages and a seeded binder by itself.
 <strong>Became a member</strong>: somebody who arrived without an account and now has a real identity, read from
 ground truth (the auth user is no longer anonymous, or the signed-out session was claimed) rather than from the
 signup event, which fires before an email is confirmed. <strong>Came back</strong>: a later session by the same

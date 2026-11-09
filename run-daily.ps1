@@ -95,7 +95,7 @@ function Write-Log([string]$msg) { $msg | Out-File $log -Append -Encoding utf8 }
 if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
   Push-Location $root
   try {
-    git add -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/reddit.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "data/newuser-geo.json" "data/wishlist.json" "reports/events.md" "reports/campaigns.md" "reports/reddit.md" 2>&1 | Out-Null
+    git add -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/campaign-results.json" "data/reddit.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "data/newuser-geo.json" "data/wishlist.json" "reports/events.md" "reports/campaigns.md" "reports/reddit.md" 2>&1 | Out-Null
     $staged = @(git diff --cached --name-only)
 
     if ($staged.Count -eq 0) {
@@ -113,7 +113,7 @@ if ($AutoCommit -and (Test-Path (Join-Path $root ".git"))) {
       $hits = @($diff -split "`n" | Select-String -Pattern $pattern)
 
       if ($hits.Count -gt 0) {
-        git reset -q -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/reddit.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "data/newuser-geo.json" "data/wishlist.json" "reports/events.md" "reports/campaigns.md" "reports/reddit.md" 2>&1 | Out-Null
+        git reset -q -- "data/metrics.json" "data/events.json" "data/campaigns.json" "data/campaign-results.json" "data/reddit.json" "data/plans.json" "data/shares.json" "data/usage.json" "data/economy.json" "data/geo.json" "data/enrich.json" "data/newuser-geo.json" "data/wishlist.json" "reports/events.md" "reports/campaigns.md" "reports/reddit.md" 2>&1 | Out-Null
         Write-Log "auto-commit: ABORTED - staged diff matched $($hits.Count) sensitive pattern(s); nothing committed."
         foreach ($h in $hits | Select-Object -First 5) {
           $line = $h.Line.Trim()
