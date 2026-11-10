@@ -1060,7 +1060,7 @@
     },
     "pocket.tray": {
       "label": "Used the tray",
-      "_doc": "MIC-017 (michi 60a68a5, run a96304 from 2026-11-10 07:12:51 UTC): pocket.tray may now carry dir=fill with n = cards dealt into the editor hand. It fires only in dev mode for now, and dev rows carry dev=true, so excluded_users drops them; a dir=fill row WITHOUT dev=true means the hand shipped to everyone and needs its own stamp.",
+      "_doc": "MIC-017 SPECCED, NOT SHIPPED (michi commit 698ccc3, after 60a68a5 which has no event changes; stamp pending): pocket.tray will carry dir=fill with n = cards dealt into the editor hand. It fires only in dev mode for now, and dev rows carry dev=true, so excluded_users drops them; a dir=fill row WITHOUT dev=true means the hand shipped to everyone and needs its own stamp.",
       "stage": "engagement",
       "apps": [
         "michi"
