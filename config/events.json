@@ -396,6 +396,22 @@
         "michi"
       ]
     },
+    "names.ideas": {
+      "label": "Asked for name ideas",
+      "_doc": "MIC-034 DEV-ONLY: written SERVER-SIDE by the name-ideas edge function (deployed 89cac3, 2026-11-10 21:02:34 UTC), one row per answered sparkle press. props { subject (page or binder uuid), kind: page|binder, field: title|description, guest, model, dev }. user_id is always the caller (account or guest), never null; props.dev is copied from the request, so the dev exclusion still applies. The function counts these rows for its daily caps (10 per account, 3 per guest, 5 per subject), so a row is also a cap unit. Refused presses write no row: see names.ideas_limit. Production counts start only when Michi stamps a non-dev ship.",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "names.ideas_limit": {
+      "label": "Hit the name ideas limit",
+      "_doc": "MIC-034 DEV-ONLY from michi ec68d92, 2026-11-10 22:22:51 UTC (queue cb13b9): client track() event when name-ideas refuses a press for a cap. props { which: account|subject, kind: page|binder, field: title|description, dev }. Pair with names.ideas: rows / (rows + limits) is how often a press got an answer.",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
     "card.picture": {
       "label": "Shared a card picture",
       "_doc": "MIC-032 (michi 2b7c48a, production 2026-11-09 22:14:50 UTC, kit tcgscan-browse 0.9.84): Share picture now sits in the card sheet on Browse, the editor Add to pocket picker and the /new-binder wizard. card.picture gains surface = browse | picker | wizard. Before the stamp every row is Browse and has no surface prop; picker and wizard rows exist only after it, so a rise in card.picture after the stamp is new surfaces, not more sharing per surface. Compare like with like by surface=browse (or no surface before the stamp).",
