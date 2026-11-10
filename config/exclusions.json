@@ -45,7 +45,9 @@
       "_note": "unclaimed.pickleague.club = auto-generated placeholder rows for imported roster players who never signed up (the 2026-07-29 bulk import); pickleague.test = QA accounts.",
       "emailPatterns": ["%@unclaimed.pickleague.club", "%@pickleague.test", "%@pickleague.club"],
       "_userSqlDoc": "Pickleague's own flags (added 2026-10-24): profiles.is_test_account is admin-set (the hide-test-accounts switch's list of QA, review and demo accounts); profiles.is_unclaimed marks the imported placeholder rows. On 2026-10-24 every flagged account was already caught by a pattern above; the flag is here so the app's own list stays authoritative when a QA account is made with an ordinary address.",
-      "userSql": ["exists (select 1 from public.profiles p where p.id = u.id and (p.is_test_account or p.is_unclaimed))"]
+      "userSql": ["exists (select 1 from public.profiles p where p.id = u.id and (p.is_test_account or p.is_unclaimed))"],
+      "_economyUserIdsDoc": "ECONOMY LANE ONLY (owner decision 2026-11-10, ANA-012): accounts left out of the Pickleague economy numbers but NOT out of DAU or any other lane. 614e6a17 held 8,808,270 of 8,825,292 pickles (99.8%) on 2026-11-09; created and last signed in 2026-05-27, ordinary consumer email, not flagged is_test_account. Brian chose exclusion over a grant-path investigation; if a Pickleague work order later finds the overpaying path, revisit. scripts/economy.mjs states this exclusion on the page.",
+      "economyUserIds": ["614e6a17-00dd-408a-a1a1-c9a83178bfac"]
     },
     "tcgscan": {
       "_note": "official@michi-maker.com is our own company account. Owner personal accounts are in global.emailExact, not repeated here.",

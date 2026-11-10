@@ -381,6 +381,12 @@ const dogReasonMax = Math.max(1, ...WINDOWS.flatMap((w) => dogReasons[w].map((r)
 
 // ---------- Pickleague ----------
 
+// Economy-only exclusions (config/exclusions.json byApp.pickleague.economyUserIds, owner decision
+// 2026-11-10, ANA-012): left out of these numbers only, stated on the page, never dropped silently.
+const PICK_ECON_EXCL = new Set(readConfig("exclusions.json").byApp?.pickleague?.economyUserIds ?? []);
+const pickEconOut = pickBalances.filter((r) => PICK_ECON_EXCL.has(r.uid) && !r.excluded);
+const pickEconOutPickles = pickEconOut.reduce((a, r) => a + (r.balance ?? 0), 0);
+for (const arr of [pickBalances, pickFlows, pickGrantEvents]) for (const r of arr) if (PICK_ECON_EXCL.has(r.uid)) r.excluded = true;
 const pickBalReal = pickBalances.filter((r) => !r.excluded);
 const pickBalExcluded = pickBalances.length - pickBalReal.length;
 const pickFlowReal = pickFlows.filter((r) => !r.excluded);
@@ -797,6 +803,7 @@ const picklePanel = `<div class="apppanel" data-app-panel="p" data-app-scope="pi
 ${fmt(pickBalRows.length)} account${pickBalRows.length === 1 ? "" : "s"} hold <strong>${fmt(pickBalSum)}</strong> pickles;
 ${fmt(pickBalReal.length - pickBalRows.length)} more hold nothing and are not plotted.
 ${pickBalExcluded ? `${fmt(pickBalExcluded)} accounts are excluded — almost all of them the ${fmt(pickBalances.filter((r) => r.is_unclaimed).length)} unclaimed placeholder rows from the 2026-07-29 roster import, which are not people.` : ""}</p>
+${pickEconOut.length ? `<p class="note"><strong>Also left out of this tab only:</strong> ${fmt(pickEconOut.length)} account holding ${fmt(pickEconOutPickles)} pickles (owner decision 2026-11-10, ANA-012; it held 99.8% of all pickles and flattened every number here). It still counts in DAU and every other report.</p>` : ""}
 ${pickTop && pickTopShare > 50
     ? `<p class="note warnbox"><strong>One account holds ${pickTopShare.toFixed(1)}% of every pickle in circulation</strong>
 (${fmt(pickTop.value)} of ${fmt(pickBalSum)}). It is not caught by any exclusion rule — it signs in with an ordinary
