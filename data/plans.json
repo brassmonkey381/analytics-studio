@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-09T15:08:10.792Z",
+  "collectedAt": "2026-11-10T15:08:08.738Z",
   "windows": [
     "all",
     1,
@@ -15,7 +15,7 @@
         "1": {
           "tiers": {
             "free": {
-              "real": 12,
+              "real": 3,
               "excluded": 0,
               "bySource": {}
             },
@@ -36,8 +36,8 @@
             }
           },
           "guests": {
-            "real": 186,
-            "excluded": 281
+            "real": 196,
+            "excluded": 111
           },
           "paying": 0,
           "onTrial": 0
@@ -45,7 +45,42 @@
         "7": {
           "tiers": {
             "free": {
-              "real": 55,
+              "real": 53,
+              "excluded": 4,
+              "bySource": {}
+            },
+            "trial": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            },
+            "pro": {
+              "real": 2,
+              "excluded": 0,
+              "bySource": {
+                "stripe": {
+                  "real": 2,
+                  "excluded": 0
+                }
+              }
+            },
+            "vip": {
+              "real": 0,
+              "excluded": 0,
+              "bySource": {}
+            }
+          },
+          "guests": {
+            "real": 1382,
+            "excluded": 759
+          },
+          "paying": 2,
+          "onTrial": 0
+        },
+        "14": {
+          "tiers": {
+            "free": {
+              "real": 85,
               "excluded": 13,
               "bySource": {}
             },
@@ -71,51 +106,16 @@
             }
           },
           "guests": {
-            "real": 1506,
-            "excluded": 706
+            "real": 4233,
+            "excluded": 1115
           },
           "paying": 3,
-          "onTrial": 0
-        },
-        "14": {
-          "tiers": {
-            "free": {
-              "real": 87,
-              "excluded": 13,
-              "bySource": {}
-            },
-            "trial": {
-              "real": 0,
-              "excluded": 0,
-              "bySource": {}
-            },
-            "pro": {
-              "real": 5,
-              "excluded": 0,
-              "bySource": {
-                "stripe": {
-                  "real": 5,
-                  "excluded": 0
-                }
-              }
-            },
-            "vip": {
-              "real": 0,
-              "excluded": 0,
-              "bySource": {}
-            }
-          },
-          "guests": {
-            "real": 4074,
-            "excluded": 1032
-          },
-          "paying": 5,
           "onTrial": 0
         },
         "30": {
           "tiers": {
             "free": {
-              "real": 115,
+              "real": 119,
               "excluded": 14,
               "bySource": {}
             },
@@ -125,11 +125,11 @@
               "bySource": {}
             },
             "pro": {
-              "real": 8,
+              "real": 7,
               "excluded": 0,
               "bySource": {
                 "stripe": {
-                  "real": 8,
+                  "real": 7,
                   "excluded": 0
                 }
               }
@@ -141,16 +141,16 @@
             }
           },
           "guests": {
-            "real": 4408,
-            "excluded": 1318
+            "real": 4591,
+            "excluded": 1417
           },
-          "paying": 8,
+          "paying": 7,
           "onTrial": 0
         },
         "all": {
           "tiers": {
             "free": {
-              "real": 257,
+              "real": 262,
               "excluded": 59,
               "bySource": {}
             },
@@ -160,7 +160,7 @@
               "bySource": {}
             },
             "pro": {
-              "real": 10,
+              "real": 9,
               "excluded": 1,
               "bySource": {
                 "contest-first-annual": {
@@ -172,7 +172,7 @@
                   "excluded": 1
                 },
                 "stripe": {
-                  "real": 8,
+                  "real": 7,
                   "excluded": 0
                 }
               }
@@ -193,10 +193,10 @@
             }
           },
           "guests": {
-            "real": 5562,
-            "excluded": 3288
+            "real": 5757,
+            "excluded": 3399
           },
-          "paying": 8,
+          "paying": 7,
           "onTrial": 0
         }
       }
@@ -207,7 +207,7 @@
         "1": {
           "tiers": {
             "free": {
-              "real": 12,
+              "real": 3,
               "excluded": 0,
               "bySource": {}
             },
@@ -228,8 +228,8 @@
             }
           },
           "guests": {
-            "real": 186,
-            "excluded": 281
+            "real": 196,
+            "excluded": 111
           },
           "paying": 0,
           "onTrial": 0
@@ -237,8 +237,8 @@
         "7": {
           "tiers": {
             "free": {
-              "real": 58,
-              "excluded": 13,
+              "real": 55,
+              "excluded": 4,
               "bySource": {}
             },
             "trial": {
@@ -258,8 +258,8 @@
             }
           },
           "guests": {
-            "real": 1506,
-            "excluded": 706
+            "real": 1382,
+            "excluded": 759
           },
           "paying": 0,
           "onTrial": 0
@@ -267,7 +267,7 @@
         "14": {
           "tiers": {
             "free": {
-              "real": 92,
+              "real": 88,
               "excluded": 13,
               "bySource": {}
             },
@@ -288,8 +288,8 @@
             }
           },
           "guests": {
-            "real": 4074,
-            "excluded": 1032
+            "real": 4233,
+            "excluded": 1115
           },
           "paying": 0,
           "onTrial": 0
@@ -297,7 +297,7 @@
         "30": {
           "tiers": {
             "free": {
-              "real": 123,
+              "real": 126,
               "excluded": 14,
               "bySource": {}
             },
@@ -318,8 +318,8 @@
             }
           },
           "guests": {
-            "real": 4408,
-            "excluded": 1318
+            "real": 4591,
+            "excluded": 1417
           },
           "paying": 0,
           "onTrial": 0
@@ -327,7 +327,7 @@
         "all": {
           "tiers": {
             "free": {
-              "real": 267,
+              "real": 271,
               "excluded": 59,
               "bySource": {}
             },
@@ -358,8 +358,8 @@
             }
           },
           "guests": {
-            "real": 5562,
-            "excluded": 3288
+            "real": 5757,
+            "excluded": 3399
           },
           "paying": 0,
           "onTrial": 0
