@@ -704,6 +704,7 @@
     },
     "walkthrough.step": {
       "label": "Reached a walkthrough step",
+      "_doc": "COPY CHANGE (MIC-017, michi 08982f6, 2026-11-10 09:48:57 UTC, run 02d2bb, ALL users): every walkthrough step body is shorter, including the seeded ad-arrival steps (Complete, account ask, page-2 search), the editor hints and the first-page-done sheet. Step order, triggers, event names and props are unchanged, so walkthrough.step / walkthrough.done completion and drop-off before vs after this stamp compare the copy change, not a funnel change. Dev-only pieces in the same deploy (phone hand on page, swipe page nav) are excluded.",
       "stage": "activation",
       "apps": [
         "michi"
