@@ -122,6 +122,7 @@
     },
     "autofill.run": {
       "label": "Fill page composed",
+      "_doc": "SPECCED, NOT SHIPPED (MIC-004, michi main 3eceee7, queue 20eab1, stamp pending): the Complete sheet Same theme fill (method=theme) becomes free for every account. After the stamp, free accounts picking Same theme spend no fillPage sample (no taste event), their autofill.run method=theme rows carry taste=false (before: true), and Same theme shows no PRO lock, so wall hits from it stop. Like the whole page (method=similar) is unchanged. Compare taste usage and walls across the stamp with method=theme split out.",
       "stage": "activation",
       "apps": [
         "michi"
@@ -638,7 +639,7 @@
     },
     "demo.theme_search": {
       "label": "Tried the theme search demo",
-      "_doc": "SPECCED, NOT SHIPPED (MIC-017, michi branch style-2, heads-up 2026-11-09): Browse and the editor Add-to-pocket picker replace the rotating Theme: <word> button with a Theme dice that rolls random theme queries. On those surfaces theme will hold the whole rolled query (e.g. theme:night theme:city, theme:water -theme:sky, theme:\"forest\") instead of one word, and a new prop kind = single | pair | minus | exact. The new-binder wizard keeps the old button: one word, no kind. Fire rule unchanged, one event per press; a press may re-roll up to 3 times when a combination finds nothing, only the shown roll is tracked. Until the deploy stamp lands, rows without kind are the old button; after it, group by kind, not by theme text. Name and surface (browser) unchanged.",
+      "_doc": "SPECCED, NOT SHIPPED (MIC-017, michi branch style-2, heads-up 2026-11-09): Browse and the editor Add-to-pocket picker replace the rotating Theme: <word> button with a Theme dice that rolls random theme queries. On those surfaces theme will hold the whole rolled query (e.g. theme:night theme:city, theme:water -theme:sky, theme:\"forest\") instead of one word, and a new prop kind = single | pair | minus | exact. The new-binder wizard keeps the old button: one word, no kind. Fire rule unchanged, one event per press; a press may re-roll up to 3 times when a combination finds nothing, only the shown roll is tracked. Until the deploy stamp lands, rows without kind are the old button; after it, group by kind, not by theme text. Name and surface (browser) unchanged. CHEATSHEET (MIC-017, michi 2aa4630, 2026-11-10 10:20:04 UTC, run d70982): tracking unchanged (a line tap calls the same tryIt; theme:forest fires runThemeDemo(cheatsheet, forest)), but the cheatsheet went from 13 recipes to 22 tappable lines, so a rise in surface=cheatsheet after the stamp is more lines to tap, not a tracking change. The new Color Search line only opens /browse and fires nothing.",
       "stage": "activation",
       "apps": [
         "michi"
