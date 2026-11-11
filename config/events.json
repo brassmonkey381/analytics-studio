@@ -701,6 +701,22 @@
         "michi"
       ]
     },
+    "wizard.reveal": {
+      "label": "Saw the new binder's first page",
+      "_doc": "MIC-017 DEV-ONLY behind the 'firstrun-a' flag from michi 06f6773, 2026-11-11 19:24:22 UTC (queue 378edb): wizard.reveal { wizard: 'new-binder', kind: pokemon|set|artist|..., pages } when the new binder's page-one reveal opens. Pair with wizard.reveal_continue.",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
+    "wizard.reveal_continue": {
+      "label": "Pressed Keep building after the reveal",
+      "_doc": "MIC-017 DEV-ONLY behind 'firstrun-a' from michi 06f6773, 2026-11-11 19:24:22 UTC: wizard.reveal_continue { wizard: 'new-binder', pages_seen } on Keep building. Reveal without continue is someone who left at the reveal.",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
     "wizard.shown": {
       "label": "Opened the new-binder wizard",
       "stage": "activation",
