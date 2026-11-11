@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-10T15:08:20.056Z",
+  "collectedAt": "2026-11-11T15:08:23.131Z",
   "windows": [
     "all",
     1,
@@ -58,10 +58,10 @@
       },
       "flows": {
         "1": {
-          "earned": 51,
+          "earned": 0,
           "spent": 0,
-          "rows": 1,
-          "earners": 1
+          "rows": 0,
+          "earners": 0
         },
         "7": {
           "earned": 10835,
@@ -70,9 +70,9 @@
           "earners": 2
         },
         "14": {
-          "earned": 11104,
+          "earned": 11089,
           "spent": 0,
-          "rows": 71,
+          "rows": 70,
           "earners": 3
         },
         "30": {
@@ -98,7 +98,7 @@
         "byWindow": {
           "1": [
             0,
-            1,
+            0,
             0,
             0
           ],
@@ -129,14 +129,7 @@
         }
       },
       "byReason": {
-        "1": [
-          {
-            "category": "Login bonus",
-            "points": 51,
-            "rows": 1,
-            "users": 1
-          }
-        ],
+        "1": [],
         "7": [
           {
             "category": "Thank you for helping test Doggle",
@@ -298,8 +291,8 @@
           },
           {
             "category": "Login bonus",
-            "points": 369,
-            "rows": 15,
+            "points": 354,
+            "rows": 14,
             "users": 3
           },
           {
@@ -800,14 +793,14 @@
           }
         ]
       },
-      "excludedLedgerRows": 1102
+      "excludedLedgerRows": 1123
     },
     "pickleague": {
       "currency": "pickles",
       "balances": {
         "accounts": 10,
         "outstanding": 17022,
-        "excludedAccounts": 514,
+        "excludedAccounts": 515,
         "topShare": 24.8,
         "distribution": {
           "buckets": [
@@ -905,7 +898,7 @@
           ]
         }
       },
-      "excludedFlowRows": 821
+      "excludedFlowRows": 824
     },
     "caps": {
       "binders": {
@@ -920,13 +913,13 @@
         "counts": [
           0,
           0,
-          149,
+          152,
           0,
-          3276
+          3366
         ],
-        "users": 3425,
+        "users": 3518,
         "uncapped": 0,
-        "atCap": 3276
+        "atCap": 3366
       },
       "pagesPerBinder": {
         "app": "michi",
@@ -938,15 +931,15 @@
           "at / over cap"
         ],
         "counts": [
-          3148,
-          95,
-          36,
+          3234,
+          94,
+          40,
           10,
-          29
+          31
         ],
-        "users": 3318,
+        "users": 3409,
         "uncapped": 0,
-        "atCap": 29
+        "atCap": 31
       },
       "artUploads": {
         "app": "michi",
@@ -958,15 +951,15 @@
           "at / over cap"
         ],
         "counts": [
-          142,
+          145,
           50,
           43,
           30,
-          37
+          38
         ],
-        "users": 302,
+        "users": 306,
         "uncapped": 0,
-        "atCap": 37
+        "atCap": 38
       },
       "includedPrintsPerMonth": {
         "app": "michi",
@@ -1022,11 +1015,11 @@
           0,
           0,
           0,
-          110
+          115
         ],
-        "users": 110,
+        "users": 115,
         "uncapped": 0,
-        "atCap": 110
+        "atCap": 115
       },
       "cardsPerCollection": {
         "app": "tcgscan",
@@ -1038,21 +1031,21 @@
           "at / over cap"
         ],
         "counts": [
-          39,
+          41,
           5,
-          3,
+          4,
           0,
           4
         ],
-        "users": 51,
+        "users": 54,
         "uncapped": 0,
         "atCap": 4
       },
       "_accounts": {
-        "total": 9489,
-        "guests": 9156,
-        "excluded": 3189,
-        "excludedUsageRows": 840
+        "total": 9941,
+        "guests": 9604,
+        "excluded": 3501,
+        "excludedUsageRows": 1032
       }
     }
   }
