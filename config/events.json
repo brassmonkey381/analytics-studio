@@ -496,6 +496,22 @@
       ],
       "failure": true
     },
+    "share.format": {
+      "label": "Picked a share format",
+      "_doc": "MIC-017 DEV-ONLY from michi 7124ad9, 2026-11-11 00:10:23 UTC: share.format { format: story|square|page } when a picture share picks its frame.",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
+    "share.qr": {
+      "label": "Shared a QR code",
+      "_doc": "MIC-017 DEV-ONLY from michi 7124ad9, 2026-11-11 00:10:23 UTC: share.qr { action: card } when a QR card is made for sharing.",
+      "stage": "engagement",
+      "apps": [
+        "michi"
+      ]
+    },
     "share.link_created": {
       "label": "Made a binder shareable",
       "stage": "engagement",
@@ -676,6 +692,14 @@
       ]
     },
     "_pairingDoc": "binder.rebuild_from_tcgscan and tcgscan.pairing_click are the CROSS-APP seam, and they are michi-only for a reason that is not asymmetry: both fire in michi about tcgscan. binder.rebuild_from_tcgscan { pages, placed, unplaced } is the payoff of the pairing - a scanned collection becoming a real binder - and `unplaced` is the honest half: cards that came across and did not fit anywhere. tcgscan.pairing_click { surface } is the pitch being followed OUT of michi, so it has no landing event on the other side; TCGScan's own session.start is the nearest thing and it cannot be joined (a browser hop, no shared session id). Read the click as intent, never as an arrival - and see gaps.share_attribution for the same shape of problem.",
+    "wizard.chat": {
+      "label": "Chat wizard step",
+      "_doc": "MIC-017 DEV-ONLY from michi 7124ad9, 2026-11-11 00:10:23 UTC: wizard.chat { step: who|look } as a person moves through the chat-style new-binder wizard; it ends in wizard.create with wizard:'chat'.",
+      "stage": "activation",
+      "apps": [
+        "michi"
+      ]
+    },
     "wizard.shown": {
       "label": "Opened the new-binder wizard",
       "stage": "activation",
@@ -706,6 +730,7 @@
     },
     "wizard.create": {
       "label": "Pressed Create in the wizard",
+      "_doc": "MIC-017 DEV-ONLY from michi 7124ad9, 2026-11-11 00:10:23 UTC (queue f21136): a chat-style wizard also sends wizard.create, with wizard:'chat' and the same props as the step wizard. Split by props.wizard before comparing wizards; the step wizard keeps its existing value.",
       "stage": "activation",
       "apps": [
         "michi"
