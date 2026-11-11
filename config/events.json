@@ -1089,6 +1089,7 @@
     },
     "pocket.clear": {
       "label": "Cleared pockets",
+      "_doc": "MIC-017 DEV-ONLY from michi f58deb1, 2026-11-11 05:34:28 UTC (queue ceebbf): dropping a hand card on the editor trash can also sends pocket.clear from='tray'; a page card dropped there sends the usual pocket removal. From this stamp, from='tray' rows mix tray clears with trash drops.",
       "stage": "engagement",
       "apps": [
         "michi"
