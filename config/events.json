@@ -1855,7 +1855,7 @@
       "severity": "medium",
       "status": "fixed",
       "title": "Desktop editor pocket-menu actions were unclickable (Replace, Fill page, Similar, More)",
-      "detail": "Reported by Michi-Maker 2026-11-12 (MIC-017): a regression from michi a6444a5 (2026-11-10) made desktop pocket-menu buttons fall through to the card. Fixed by 8009edd, live in production promote 3281a85 at 2026-11-12 04:33:47 UTC (queue b6e397). START STAMP PENDING: a6444a5 is not itself a promote, so the first production promote that contained it is still to be confirmed by Michi.",
+      "detail": "Reported by Michi-Maker 2026-11-12 (MIC-017): a regression from michi a6444a5 made desktop pocket-menu buttons fall through to the card. WINDOW: from production promote e683833 (deploy.live 2026-11-11 08:02:10 UTC; the earlier promote daae6a9 did not contain it) until 3281a85 (fix 8009edd, deploy.live 2026-11-12 04:33:47 UTC, queue b6e397), about 20.5 hours. NOT dev-flagged: every desktop (wide, non-phone) editor user, guests included. Phones use the Pocket sheet and were unaffected. Michi confirmed the fix on production with real mouse clicks at 1280 px.",
       "direction": "a zero or a dip in desktop autofill.open, complete_open and other menu-started actions inside the window means 'could not', not 'did not want to'. Do not read it as demand; compare desktop vs phone, and exclude the window from before/after comparisons of the editor tools.",
       "fix": "Fixed by 8009edd (production 3281a85, 2026-11-12 04:33:47 UTC). No event changes."
     },
