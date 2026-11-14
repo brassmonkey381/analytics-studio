@@ -1,35 +1,35 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-13T15:08:07.355Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (476 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
+Collected 2026-11-14T15:08:10.318Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (476 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
 
 ## Last 7 days
 
 | step | sessions | of arrivals |
 |---|---:|---:|
-| Arrived from Reddit | 862 |  |
-| Reached the binder editor | 667 | 77% |
-| Saw the first prompt (pocket ring, or Complete on a seeded page) | 639 | 74% |
-| Opened the card browser | 92 | 11% |
-| Placed a card (own tap, or a Fill/Complete that placed) | 74 | 9% |
-| Took a guest taste (Find similar, Fill page) | 39 | 5% |
-| Opened Fill page | 9 | 1% |
-| Met the create-account wall | 38 | 4% |
-| Tapped Create account | 21 | 2% |
-| Became an account | 18 | 2% |
-| Made a binder public | 11 | 1% |
+| Arrived from Reddit | 758 |  |
+| Reached the binder editor | 587 | 77% |
+| Saw the first prompt (pocket ring, or Complete on a seeded page) | 568 | 75% |
+| Opened the card browser | 81 | 11% |
+| Placed a card (own tap, or a Fill/Complete that placed) | 65 | 9% |
+| Took a guest taste (Find similar, Fill page) | 33 | 4% |
+| Opened Fill page | 8 | 1% |
+| Met the create-account wall | 32 | 4% |
+| Tapped Create account | 17 | 2% |
+| Became an account | 15 | 2% |
+| Made a binder public | 10 | 1% |
 
-Phone 254, desktop 608, unknown 0. Bounced 73. Median stay 7 s. Came back a later day 34. Accounts by hop 18, stitched by time 0.
+Phone 130, desktop 628, unknown 0. Bounced 63. Median stay 6 s. Came back a later day 30. Accounts by hop 15, stitched by time 0.
 
-Spend $161.12 over 6 ledger rows: per arrival $0.19, per first card $2.18, per account $8.95.
+Spend $75.31 over 3 ledger rows: per arrival $0.10, per first card $1.16, per account $5.02.
 
 ## Campaign scoreboard (7 days)
 
 | campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Campaign 1 (Traffic, clicks) | - | - | 3 | 2 | 0 | 0 | 0.0% | - |
-| Campaign 2 (Sales, Sign up) | $45.83 | 31 | 215 | 181 | 13 | 2 | 0.9% | $22.92 |
-| Campaign 3 (Desktop, Sign up) | $66.11 | 92 | 547 | 478 | 61 | 14 | 2.6% | $4.72 |
-| Wizard arm (phone, Sign up, in Campaign 2) | $49.18 | 42 | 97 | 6 | 0 | 2 | 2.1% | $24.59 |
+| Campaign 2 (Sales, Sign up) | $6.56 | 31 | 82 | 70 | 4 | 0 | 0.0% | - |
+| Campaign 3 (Desktop, Sign up) | $50.54 | 92 | 588 | 513 | 61 | 15 | 2.6% | $3.37 |
+| Wizard arm (phone, Sign up, in Campaign 2) | $18.21 | 42 | 85 | 2 | 0 | 0 | 0.0% | - |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do) and no other campaign name; the wizard arm is utm_campaign michi_wizard_2026_11 (phone ad group in Campaign 2, lands on the wizard once michi routes it); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
@@ -37,13 +37,14 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 
 | day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026-11-13 | 21 | 0 | 18 | 2 | 1 | 1 | 1 | 0 | 0 | 14 s | - |
-| 2026-11-12 | 69 | 1 | 57 | 8 | 4 | 0 | 6 | 0 | 1 | 10 s | - |
+| 2026-11-14 | 21 | 0 | 18 | 0 | 0 | 0 | 0 | 0 | 0 | 5 s | - |
+| 2026-11-13 | 72 | 1 | 62 | 5 | 3 | 2 | 2 | 1 | 0 | 5 s | - |
+| 2026-11-12 | 69 | 1 | 57 | 8 | 4 | 0 | 6 | 0 | 2 | 10 s | - |
 | 2026-11-11 | 60 | 2 | 54 | 9 | 4 | 0 | 4 | 3 | 1 | 9 s | - |
 | 2026-11-10 | 122 | 2 | 106 | 7 | 5 | 2 | 5 | 1 | 3 | 6 s | - |
 | 2026-11-09 | 106 | 5 | 94 | 12 | 7 | 2 | 8 | 1 | 3 | 6 s | - |
-| 2026-11-08 | 169 | 47 | 112 | 19 | 9 | 2 | 6 | 7 | 6 | 7 s | $75.31 |
-| 2026-11-07 | 174 | 96 | 109 | 7 | 3 | 0 | 3 | 4 | 10 | 6 s | $85.81 |
+| 2026-11-08 | 169 | 47 | 112 | 19 | 9 | 2 | 6 | 7 | 9 | 7 s | $75.31 |
+| 2026-11-07 | 174 | 96 | 109 | 7 | 3 | 0 | 3 | 4 | 12 | 6 s | $85.81 |
 | 2026-11-06 | 144 | 103 | 120 | 10 | 6 | 2 | 5 | 2 | 10 | 11 s | $30.57 |
 | 2026-11-05 | 91 | 45 | 72 | 8 | 7 | 3 | 10 | 1 | 8 | 5 s | $28.66 |
 | 2026-11-04 | 164 | 87 | 136 | 11 | 9 | 1 | 10 | 3 | 9 | 8 s | $46.11 |
@@ -97,11 +98,11 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 | bbe68a1 | 2026-11-07T02:45:48.992Z | 30 | 25 | 2 | 1 | 0 | 1 | 0 | 1 | 2 |
 | wizard-arm | 2026-11-07T08:21:07.000Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | aef09ff | 2026-11-07T08:21:07.297Z | 13 | 12 | 1 | 1 | 0 | 1 | 2 | 2 | 0 |
-| 56e3760 | 2026-11-07T10:40:12.293Z | 114 | 61 | 4 | 1 | 0 | 1 | 2 | 2 | 9 |
+| 56e3760 | 2026-11-07T10:40:12.293Z | 114 | 61 | 4 | 1 | 0 | 1 | 2 | 2 | 11 |
 | e31dad1 | 2026-11-07T23:49:46.471Z | 32 | 25 | 2 | 1 | 0 | 1 | 0 | 0 | 1 |
 | 44ff380 | 2026-11-08T03:50:39.199Z | 9 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 7a5192c | 2026-11-08T05:03:18.798Z | 6 | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| budgets-50-desktop-25-c2 | 2026-11-08T08:00:00.000Z | 168 | 112 | 19 | 9 | 2 | 6 | 8 | 7 | 6 |
+| budgets-50-desktop-25-c2 | 2026-11-08T08:00:00.000Z | 168 | 112 | 19 | 9 | 2 | 6 | 8 | 7 | 9 |
 | be7403c | 2026-11-09T03:26:48.846Z | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 52c2f3b | 2026-11-09T05:50:45.672Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 01a3d35 | 2026-11-09T07:40:35.237Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -139,14 +140,14 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 | ea7ca76 | 2026-11-11T20:17:39.516Z | 13 | 12 | 2 | 0 | 0 | 0 | 1 | 1 | 0 |
 | 2b4588d | 2026-11-11T22:44:29.710Z | 35 | 33 | 5 | 2 | 0 | 2 | 2 | 2 | 1 |
 | 3281a85 | 2026-11-12T04:33:47.410Z | 44 | 38 | 5 | 3 | 0 | 3 | 0 | 0 | 0 |
-| bea6157 | 2026-11-12T18:41:23.957Z | 57 | 46 | 7 | 4 | 1 | 6 | 1 | 0 | 1 |
+| bea6157 | 2026-11-12T18:41:23.957Z | 129 | 108 | 10 | 6 | 2 | 7 | 2 | 1 | 2 |
 
 ## Per creative (30 days)
 
 | code | label | arrivals | editor | placed | accounts | returned | spend |
 |---|---|---:|---:|---:|---:|---:|---:|
-| rd_rainbow_image | Reddit ad - Rainbow image | 2597 | 2203 | 114 | 18 | 109 | - |
-| rd_lidi_image | Reddit ad - Lidi image | 974 | 693 | 53 | 12 | 38 | - |
+| rd_rainbow_image | Reddit ad - Rainbow image | 2669 | 2265 | 117 | 19 | 113 | - |
+| rd_lidi_image | Reddit ad - Lidi image | 974 | 693 | 53 | 12 | 40 | - |
 | rd_coverflow_4x5 | Reddit ad - Coverflow video (feed) | 254 | 136 | 5 | 1 | 2 | - |
 | (no code) | not in registry | 2 | 2 | 2 | 0 | 0 | - |
 

@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-11-13T15:08:04.501Z. All-time unless a window is named.
+Collected 2026-11-14T15:08:07.191Z. All-time unless a window is named.
 
-**3632 campaign arrivals** across 4 apps.
+**3695 campaign arrivals** across 4 apps.
 
 > 203 `?code=` arrival(s) ignored: OAuth sign-in callback codes (UUIDs), not campaigns. michi stopped recording them on 2026-10-29; these are older rows.
 
@@ -10,8 +10,8 @@ Collected 2026-11-13T15:08:04.501Z. All-time unless a window is named.
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Reddit ad - Rainbow image | `rd_rainbow_image` | 2455 | 2238 | 455 | 23 | 192 |
-| Reddit ad - Lidi image | `rd_lidi_image` | 904 | 829 | 160 | 11 | 87 |
+| Reddit ad - Rainbow image | `rd_rainbow_image` | 2518 | 2300 | 474 | 24 | 197 |
+| Reddit ad - Lidi image | `rd_lidi_image` | 904 | 829 | 160 | 11 | 88 |
 | Reddit ad - Coverflow video (feed) | `rd_coverflow_4x5` | 220 | 207 | 14 | 0 | 9 |
 | Reddit ad - Lidi video | `rd_lidi_video` | 14 | 14 | 13 | 0 | 0 |
 | Instagram link in bio - Coverflow loop | `ig_coverflow_loop` | 10 | 10 | 1 | 0 | 1 |
@@ -41,7 +41,7 @@ Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (539 of 573 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (560 of 595 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -62,7 +62,7 @@ No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from
 | Reddit ad - Coverflow video (desktop) | michi-maker | `rd_coverflow_16x9` | reddit paid ad | 0 | 0 |
 | Reddit ad - Lidi video | michi-maker | `rd_lidi_video` | reddit paid ad | 14 | 0 |
 | Reddit ad - Lidi image | michi-maker | `rd_lidi_image` | reddit paid ad | 904 | 11 |
-| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 2455 | 23 |
+| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 2518 | 24 |
 | Reddit ad - Max (one link for the campaign) | michi-maker | `rd_max` | reddit paid ad | 0 | 0 |
 | r/michimaker post - Coverflow loop | michi-maker | `rd_sub_coverflow_loop` | reddit organic post | 0 | 0 |
 | Reddit organic post - Coverflow loop | michi-maker | `rd_coverflow_loop` | reddit organic post | 0 | 0 |
@@ -75,8 +75,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 12583 | 11639 | 4191 | 12068 | a code was recorded 2026-08-13 |
-| TCGScan | 1802 | 1604 | 5 | 1628 | a code was recorded 2026-10-11 |
-| Doggle | 2027 | 1929 | 5 | 2027 | a code was recorded 2026-08-13 |
-| Pickleague | 573 | 539 | 0 | 573 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 12737 | 11776 | 4254 | 12222 | a code was recorded 2026-08-13 |
+| TCGScan | 1805 | 1607 | 5 | 1631 | a code was recorded 2026-10-11 |
+| Doggle | 2037 | 1938 | 5 | 2037 | a code was recorded 2026-08-13 |
+| Pickleague | 595 | 560 | 0 | 595 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
