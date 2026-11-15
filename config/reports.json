@@ -153,6 +153,23 @@
       "scripts": [
         "scripts/geo.mjs"
       ]
+    },
+    {
+      "id": "sources",
+      "title": "AI and search traffic",
+      "group": "Growth",
+      "apps": [
+        "michi-maker",
+        "tcgscan",
+        "doggle",
+        "pickleague"
+      ],
+      "blurb": "Visits sent by AI assistants (ChatGPT, Perplexity, Claude, Gemini, Copilot) and search engines, per site. AI is a floor; search is Michi only.",
+      "file": "reports/sources.html",
+      "data": "data/sources.json",
+      "scripts": [
+        "scripts/sources.mjs"
+      ]
     }
   ]
 }

@@ -1,0 +1,74 @@
+{
+  "_doc": "ANA-015 (MKT-034 action 7). THE fixed test prompts: 10 per product, re-asked monthly so readings compare. Never edit a prompt's text once it has a reading; retire it (\"retired\": \"YYYY-MM-DD\") and add a new id instead. How to take a reading: reports/ai-prompts.md. Readings: data/ai-prompt-readings.json.",
+  "frozen": "2026-11-15",
+  "products": [
+    {
+      "id": "michi-maker",
+      "name": "Michi Maker",
+      "domain": "michi-maker.com",
+      "prompts": [
+        { "id": "M1", "kind": "category", "text": "What is the michi method for Pokemon binders?" },
+        { "id": "M2", "kind": "category", "text": "Best free tool to plan a Pokemon card binder layout" },
+        { "id": "M3", "kind": "task", "text": "How do I make a michi binder page online?" },
+        { "id": "M4", "kind": "category", "text": "Pokemon binder planner app that shows a 9-pocket page layout" },
+        { "id": "M5", "kind": "long-tail", "text": "Where can I find Gengar michi binder page ideas?" },
+        { "id": "M6", "kind": "task", "text": "Tool to arrange Pokemon cards by artwork across binder pages" },
+        { "id": "M7", "kind": "comparison", "text": "Best Pokemon binder planner apps compared" },
+        { "id": "M8", "kind": "brand", "text": "What is michi-maker.com?" },
+        { "id": "M9", "kind": "comparison", "text": "Free alternative to Canva for designing Pokemon binder pages" },
+        { "id": "M10", "kind": "task", "text": "How do I plan a master set binder for a Pokemon set?" }
+      ]
+    },
+    {
+      "id": "tcgscan",
+      "name": "BiBo",
+      "domain": "biboscan.com",
+      "prompts": [
+        { "id": "B1", "kind": "category", "text": "Best app to scan Pokemon cards and get prices" },
+        { "id": "B2", "kind": "long-tail", "text": "Japanese Pokemon card scanner app with English names" },
+        { "id": "B3", "kind": "category", "text": "App to scan a trading card and track collection value" },
+        { "id": "B4", "kind": "brand", "text": "What is the BiBo card scanner app?" },
+        { "id": "B5", "kind": "brand", "text": "What is biboscan.com?" },
+        { "id": "B6", "kind": "task", "text": "How can I scan my card collection with my phone camera for free?" },
+        { "id": "B7", "kind": "long-tail", "text": "Card scanner app that works for Japanese Pokemon sets" },
+        { "id": "B8", "kind": "comparison", "text": "Best TCG card scanner app 2026" },
+        { "id": "B9", "kind": "task", "text": "How do I find the market price of a trading card from a photo?" },
+        { "id": "B10", "kind": "comparison", "text": "Alternatives to Collectr for scanning cards" }
+      ]
+    },
+    {
+      "id": "doggle",
+      "name": "Doggle",
+      "domain": "doggle.club",
+      "prompts": [
+        { "id": "D1", "kind": "category", "text": "App to see which dogs are at the dog park right now" },
+        { "id": "D2", "kind": "category", "text": "Best app to find dog playdates near me" },
+        { "id": "D3", "kind": "task", "text": "How can I meet other dog owners in my neighborhood?" },
+        { "id": "D4", "kind": "brand", "text": "What is the Doggle dog app?" },
+        { "id": "D5", "kind": "brand", "text": "What is doggle.club?" },
+        { "id": "D6", "kind": "category", "text": "Dog park check-in app" },
+        { "id": "D7", "kind": "local", "text": "Dog-friendly parks near Alameda, CA" },
+        { "id": "D8", "kind": "task", "text": "App to schedule group dog walks" },
+        { "id": "D9", "kind": "comparison", "text": "Best dog social apps 2026" },
+        { "id": "D10", "kind": "long-tail", "text": "Is there an app that tells me when my dog's friends are at the park?" }
+      ]
+    },
+    {
+      "id": "pickleague",
+      "name": "PickLeague",
+      "domain": "pickleague.club",
+      "prompts": [
+        { "id": "P1", "kind": "category", "text": "Best app to run a pickleball ladder league" },
+        { "id": "P2", "kind": "task", "text": "How do I organize a pickleball league with friends?" },
+        { "id": "P3", "kind": "category", "text": "Free pickleball league app" },
+        { "id": "P4", "kind": "brand", "text": "What is the PickLeague app?" },
+        { "id": "P5", "kind": "brand", "text": "What is pickleague.club?" },
+        { "id": "P6", "kind": "long-tail", "text": "Pickleball rating system for casual players" },
+        { "id": "P7", "kind": "brand", "text": "What is PLUPR in pickleball?" },
+        { "id": "P8", "kind": "task", "text": "App to schedule pickleball games and track scores" },
+        { "id": "P9", "kind": "comparison", "text": "Pickleball apps compared 2026" },
+        { "id": "P10", "kind": "task", "text": "How to find pickleball players at my level near me" }
+      ]
+    }
+  ]
+}

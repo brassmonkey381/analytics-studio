@@ -1,0 +1,823 @@
+{
+  "_doc": "ANA-015 readings of config/ai-prompts.json. One entry per date per assistant. mentioned = product named; linked = its domain linked; rank = position in a list answer or result list; others = first 3 alternatives named. Never rewrite an old entry.",
+  "readings": [
+    {
+      "date": "2026-11-15",
+      "assistant": "claude-no-web",
+      "by": "analytics-studio session",
+      "how": "claude-opus-5-5 answering from model knowledge only (cutoff June 2026), no browsing. Competitors not recorded.",
+      "summary": "0 of 40 prompts name the product; the model has no knowledge of any of the four.",
+      "results": [
+        {
+          "id": "M1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "M10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "B10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "D10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        },
+        {
+          "id": "P10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": null
+        }
+      ]
+    },
+    {
+      "date": "2026-11-15",
+      "assistant": "web-search",
+      "by": "analytics-studio session",
+      "how": "Claude Code WebSearch tool, standard mode, US, prompt text as the query. found = the product domain appears anywhere in the returned results. A proxy for search-grounded answers, not an assistant answer.",
+      "summary": "0 of 40 prompts return the product domain, brand prompts included (M8 What is michi-maker.com? returned no michi-maker.com URL).",
+      "results": [
+        {
+          "id": "M1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "pokebeach.com",
+            "chatgate.ai",
+            "thornberrymedia.com"
+          ]
+        },
+        {
+          "id": "M2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "hunted.space",
+            "chatgate.ai",
+            "cardrake.com"
+          ]
+        },
+        {
+          "id": "M3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "elitefourum.com",
+            "avery.com",
+            "101planners.com"
+          ]
+        },
+        {
+          "id": "M4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "chatgate.ai",
+            "binder-builders.pages.dev",
+            "apps.apple.com"
+          ]
+        },
+        {
+          "id": "M5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "shop.asmodee.ca",
+            "elitefourum.com",
+            "etsy.com"
+          ]
+        },
+        {
+          "id": "M6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "elitefourum.com",
+            "thenotsopunctualadult.blogspot.com",
+            "binder-builders.pages.dev"
+          ]
+        },
+        {
+          "id": "M7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "lilachbullock.com",
+            "pokescope.app",
+            "mydextcg.com"
+          ]
+        },
+        {
+          "id": "M8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "thebridge.jp",
+            "github.com",
+            "komoot.com"
+          ]
+        },
+        {
+          "id": "M9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "elitefourum.com",
+            "chatgate.ai",
+            "studyinternational.com"
+          ]
+        },
+        {
+          "id": "M10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "thecardshopfinder.com",
+            "bleedingcool.com",
+            "binder-builders.pages.dev"
+          ]
+        },
+        {
+          "id": "B1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "splitmetrics.com",
+            "hunted.space"
+          ]
+        },
+        {
+          "id": "B2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "producthunt.com",
+            "wboc.com",
+            "scanpokemon.com"
+          ]
+        },
+        {
+          "id": "B3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "play.google.com",
+            "mwm.ai"
+          ]
+        },
+        {
+          "id": "B4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "devpost.com",
+            "snapaddy.com",
+            "zapier.com"
+          ]
+        },
+        {
+          "id": "B5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "app.scientist.com",
+            "trustburn.com",
+            "canon.whisper.security"
+          ]
+        },
+        {
+          "id": "B6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "sortswift.com",
+            "play.google.com",
+            "apps.apple.com"
+          ]
+        },
+        {
+          "id": "B7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "producthunt.com",
+            "mwm.ai",
+            "apps.apple.com"
+          ]
+        },
+        {
+          "id": "B8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "tcglens.pages.dev",
+            "trackalacker.com",
+            "eyevotcg.com"
+          ]
+        },
+        {
+          "id": "B9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "ximilar.com",
+            "pregradecards.com",
+            "cardpulse.club"
+          ]
+        },
+        {
+          "id": "B10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "tcgindex.io",
+            "tcgstacked.com",
+            "scanpokemon.com"
+          ]
+        },
+        {
+          "id": "D1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "pawsnearme-site.pages.dev",
+            "blog.tryfi.com"
+          ]
+        },
+        {
+          "id": "D2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "sniffspot.com",
+            "play.google.com"
+          ]
+        },
+        {
+          "id": "D3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "dnainfo.com",
+            "prideandgroom.com",
+            "pridebites.com"
+          ]
+        },
+        {
+          "id": "D4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "vocal.media",
+            "brandonpowers.myportfolio.com"
+          ]
+        },
+        {
+          "id": "D5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "myanimelist.net",
+            "hunted.space",
+            "brandonpowers.myportfolio.com"
+          ]
+        },
+        {
+          "id": "D6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "thelaker.ca",
+            "support.fitracking.com"
+          ]
+        },
+        {
+          "id": "D7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "sniffspot.com",
+            "dogtrekker.com",
+            "atly.com"
+          ]
+        },
+        {
+          "id": "D8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "goodbarber.com",
+            "schedulingkit.com",
+            "zoomies-1dp.pages.dev"
+          ]
+        },
+        {
+          "id": "D9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "newsweek.com",
+            "dogster.com",
+            "articles.hepper.com"
+          ]
+        },
+        {
+          "id": "D10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "region.com.au",
+            "apps.apple.com",
+            "blog.tryfi.com"
+          ]
+        },
+        {
+          "id": "P1",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "pickleheads.com",
+            "topdoglive.com",
+            "quke-marketing.pages.dev"
+          ]
+        },
+        {
+          "id": "P2",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "signupgenius.com",
+            "playpickleball.com",
+            "thepickler.com"
+          ]
+        },
+        {
+          "id": "P3",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "apps.apple.com",
+            "producthunt.com",
+            "benchapp.com"
+          ]
+        },
+        {
+          "id": "P4",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "gust.com",
+            "apps.apple.com",
+            "p.codekk.com"
+          ]
+        },
+        {
+          "id": "P5",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "loveland.thepicklr.com",
+            "pickleball.com",
+            "apps.apple.com"
+          ]
+        },
+        {
+          "id": "P6",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "chicorec.gov",
+            "chicorec.specialdistrict.org",
+            "jaxpickleballstore.squarespace.com"
+          ]
+        },
+        {
+          "id": "P7",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "usapickleball.org",
+            "pickleball.com",
+            "chicorec.gov"
+          ]
+        },
+        {
+          "id": "P8",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "play.google.com",
+            "mwm.ai",
+            "apps.apple.com"
+          ]
+        },
+        {
+          "id": "P9",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "bounce.game",
+            "coachpickle-436d7.web.app",
+            "similarweb.com"
+          ]
+        },
+        {
+          "id": "P10",
+          "mentioned": false,
+          "linked": false,
+          "url": null,
+          "rank": null,
+          "others": [
+            "thedinkpickleball.com",
+            "pickleball.com",
+            "maincourt.com"
+          ]
+        }
+      ]
+    }
+  ]
+}
