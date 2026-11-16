@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { isoDate, dayOf, REPORT_TZ, tzLabel } from "./lib/studio.mjs";
+import { isoDate, dayOf, REPORT_TZ, tzLabel, dataEvents } from "./lib/studio.mjs";
 import {
   HOVER_MAX_NAMES,
   ROSTER_STORE_CAP,
@@ -66,6 +66,8 @@ const apps = CONFIG.apps
       lastCollected: entry.lastCollected,
       lastError: entry.lastError,
       note: a.reportNote || "",
+      // Dated data changes (config/data-events.json): stated on the tile and marked on the table row.
+      events: dataEvents(a.id),
     };
   });
 
@@ -308,6 +310,7 @@ function tiles(win) {
   <div class="tile-head"><span class="key s${a.slot}"></span><span class="label">${esc(a.name)}</span></div>
   ${body}
   ${a.note ? `<div class="note">${esc(a.note)}</div>` : ""}
+  ${a.events.map((e) => `<div class="note"><strong>${esc(e.date)}: ${esc(e.label)}.</strong> ${esc(e.note)}</div>`).join("")}
   ${err}
 </div>`;
     })
@@ -332,7 +335,7 @@ function table() {
       const cells = plotted
         .map(
           (a) =>
-            `<td data-app-scope="${a.id}">${fmt(a.dau[i])}</td><td class="muted" data-app-scope="${a.id}">${fmt(a.dauGuest[i])}</td><td data-app-scope="${a.id}">${fmt(a.newDaily[i])}</td>`,
+            `<td data-app-scope="${a.id}">${fmt(a.dau[i])}</td><td class="muted" data-app-scope="${a.id}">${fmt(a.dauGuest[i])}${a.events.filter((e) => e.date === d).map((e) => ` <span class="evmark" title="${esc(e.label)}: guest counts before this day exclude the removed bots">&#9650; ${esc(e.label)}</span>`).join("")}</td><td data-app-scope="${a.id}">${fmt(a.newDaily[i])}</td>`,
         )
         .join("");
       // End of that day, so a row is in the window whenever any of it is.
@@ -457,6 +460,7 @@ h2 { font-size: 16px; margin: 34px 0 4px; }
 .delta { font-size: 12px; width: 100%; text-align: right; }
 .delta.up { color: var(--up); } .delta.down { color: var(--down); }
 .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+.evmark { color: var(--ink-2); font-size: 11px; white-space: nowrap; }
 .err { color: var(--down); font-size: 12px; margin-top: 8px; }
 .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 6px 0 8px; color: var(--ink-2); font-size: 13px; }
 .legend-item { display: inline-flex; align-items: center; gap: 6px; }
@@ -684,6 +688,7 @@ const md = [
     }),
   ``,
   ...apps.filter((a) => a.note).map((a) => `- ${a.name}: ${a.note}`),
+  ...apps.flatMap((a) => a.events.map((e) => `- ${a.name}, ${e.date} (${e.label}): ${e.note}`)),
 ].join("\n");
 writeFileSync(join(ROOT, "reports", "latest.md"), md + "\n");
 

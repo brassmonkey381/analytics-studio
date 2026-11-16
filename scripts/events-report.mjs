@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { ROOT, readConfig, dayOf } from "./lib/studio.mjs";
+import { ROOT, readConfig, dayOf, dataEvents } from "./lib/studio.mjs";
 import { hoverAttr, hoverLayer } from "./lib/hover.mjs";
 import { STANDARD_WINDOWS, windowBar, windowLabel, windowScript } from "./lib/windows.mjs";
 
@@ -582,6 +582,7 @@ ${routeTable(w, id)}
   return `<section data-app-scope="${esc(id)}">
 <h2>${esc(a.name)}</h2>
 ${plats ? `<p class="note">Platforms over ${winLabel(DEFAULT_WINDOW)}: ${plats}.</p>` : ""}
+${dataEvents(id).map((e) => `<p class="note"><strong>${esc(e.date)}: ${esc(e.label)}.</strong> ${esc(e.note)}</p>`).join("")}
 ${blocks}
 
 <h3>Instrumentation coverage</h3>

@@ -1,0 +1,12 @@
+{
+  "_doc": "Dated changes to the underlying data (deletions, imports, backfills) that move past numbers. Not product events. Every report that charts an affected app by day marks the date and states the note inline, via dataEvents() in scripts/lib/studio.mjs. App ids are the config/apps.json ids.",
+  "events": [
+    {
+      "id": "TRI-005",
+      "date": "2026-11-16",
+      "apps": ["michi-maker"],
+      "label": "bot guests removed",
+      "note": "Bot-guest cleanup (TRI-005, approved 2026-11-16): 2,356 anonymous guest accounts that only ever ran as HeadlessChrome, all created before 2026-11-16 00:00 UTC, are deleted with their 1,930 sessions, 7,557 events and 326 private binders. Guest, visit and event counts for days before 2026-11-16 drop when recomputed (Nov 10 by about 195 guests). That drop is bots leaving the data, not a real loss; treat earlier stored totals, and any day older than the 30-day recompute window, as bot-inflated. Signed-in accounts are not affected."
+    }
+  ]
+}

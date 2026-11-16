@@ -21,7 +21,7 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { ROOT, loadEnv, runSql, exclusionCte, readConfig } from "./lib/studio.mjs";
+import { ROOT, loadEnv, runSql, exclusionCte, readConfig, dataEvents } from "./lib/studio.mjs";
 import { hoverAttr, hoverLayer, roster, userLabel } from "./lib/hover.mjs";
 import { STANDARD_WINDOWS, ALL_WINDOW, windowBar, windowScript, windowLabel } from "./lib/windows.mjs";
 
@@ -233,6 +233,7 @@ const blocks = WINDOWS.map((w) => {
 <table class="tbl"><thead><tr><th>Site</th><th class="num">Visits</th><th class="num">From AI assistants</th><th class="num">From search engines</th></tr></thead>
 <tbody>${rows}</tbody></table>
 <p class="note">Excluded and not counted above: ${excl}.</p>
+${out.sites.flatMap((s) => dataEvents(s.id).map((e) => `<p class="note" data-app-scope="${s.id}"><strong>${esc(s.name)}, ${esc(e.date)}: ${esc(e.label)}.</strong> ${esc(e.note)}</p>`)).join("")}
 
 <h2>Which assistant</h2>
 <table class="tbl"><thead><tr><th>Site</th>${ASSISTANTS.map((a) => `<th class="num">${esc(a.label)}</th>`).join("")}<th class="num">via utm / referrer</th></tr></thead>

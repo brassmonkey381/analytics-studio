@@ -25,7 +25,20 @@ export function readConfig(name) {
   return JSON.parse(readFileSync(join(ROOT, "config", name), "utf8"));
 }
 
-export const sqlStr = (s) => `'${String(s).replace(/'/g, "''")}'`;
+/**
+ * Dated changes to the underlying data (config/data-events.json) for one app id,
+ * oldest first. Reports mark each date on day-axis charts and print the note inline,
+ * so a drop caused by a cleanup is never read as a real loss.
+ */
+export function dataEvents(appId) {
+  const path = join(ROOT, "config", "data-events.json");
+  if (!existsSync(path)) return [];
+  return JSON.parse(readFileSync(path, "utf8")).events
+    .filter((e) => !appId || e.apps.includes(appId))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export const sqlStr =(s) => `'${String(s).replace(/'/g, "''")}'`;
 
 // ---------- Days ----------
 //
