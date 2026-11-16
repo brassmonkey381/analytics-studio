@@ -4,9 +4,20 @@
     {
       "id": "TRI-005",
       "date": "2026-11-16",
-      "apps": ["michi-maker"],
+      "apps": [
+        "michi-maker"
+      ],
       "label": "bot guests removed",
-      "note": "Bot-guest cleanup (TRI-005, approved 2026-11-16): 2,356 anonymous guest accounts that only ever ran as HeadlessChrome, all created before 2026-11-16 00:00 UTC, are deleted with their 1,930 sessions, 7,557 events and 326 private binders. Guest, visit and event counts for days before 2026-11-16 drop when recomputed (Nov 10 by about 195 guests). That drop is bots leaving the data, not a real loss; treat earlier stored totals, and any day older than the 30-day recompute window, as bot-inflated. Signed-in accounts are not affected."
+      "note": "Bot-guest cleanup (TRI-005, ran 2026-11-16 18:30 UTC): 2,356 anonymous guest accounts that only ever ran as HeadlessChrome, all created before 2026-11-16 00:00 UTC, were deleted with their 1,930 sessions, 7,557 events and 326 private binders. Guest, visit and event counts for days before 2026-11-16 drop when recomputed (Nov 10 by about 195 guests). That drop is bots leaving the data, not a real loss; treat earlier stored totals, and any day older than the 30-day recompute window, as bot-inflated. Signed-in accounts are not affected."
+    },
+    {
+      "id": "TRI-005-tcgscan",
+      "date": "2026-11-16",
+      "apps": [
+        "tcgscan"
+      ],
+      "label": "headless sessions removed",
+      "note": "The Michi bot-guest cleanup (TRI-005, ran 2026-11-16 18:30 UTC) deleted 1,930 sessions and 7,557 events on the shared project, all from accounts that only ever ran as HeadlessChrome. The split between Michi and BiBo was not recorded, so some past BiBo web visits may drop. Any that did were headless test runs, not real users: one ordinary session kept an account out of the cleanup. BiBo accounts are not affected."
     }
   ]
 }
