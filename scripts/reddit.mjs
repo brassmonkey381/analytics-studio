@@ -240,6 +240,12 @@ const [sessions, events, stitches, returns, publics, deploys] = await Promise.al
   runSql(PROJECT, publicSql),
   runSql(PROJECT, deploysSql),
 ]);
+// Deploys made without promote-to-production.ps1 write no deploy.live row; their stamps live in
+// config/deploy-stamps.json and join the markers here. A row for the same commit wins.
+for (const st of existsSync(join(ROOT, "config", "deploy-stamps.json")) ? readConfig("deploy-stamps.json").michi ?? [] : []) {
+  if (!deploys.some((d) => d.short === st.short)) deploys.push({ ts: st.ts, short: st.short, commit: null });
+}
+deploys.sort((a, b) => parseTs(a.ts) - parseTs(b.ts));
 
 const collectedAt = new Date().toISOString();
 const NOW = Date.now();
