@@ -241,9 +241,12 @@ const [sessions, events, stitches, returns, publics, deploys] = await Promise.al
   runSql(PROJECT, deploysSql),
 ]);
 // Deploys made without promote-to-production.ps1 write no deploy.live row; their stamps live in
-// config/deploy-stamps.json and join the markers here. A row for the same commit wins.
+// config/deploy-stamps.json and join the markers here. Where a row and a stamp name the same
+// commit, the EARLIER time is kept: a row written late (a backfill) must not move the cut.
 for (const st of existsSync(join(ROOT, "config", "deploy-stamps.json")) ? readConfig("deploy-stamps.json").michi ?? [] : []) {
-  if (!deploys.some((d) => d.short === st.short)) deploys.push({ ts: st.ts, short: st.short, commit: null });
+  const row = deploys.find((d) => d.short === st.short);
+  if (!row) deploys.push({ ts: st.ts, short: st.short, commit: null });
+  else if (parseTs(st.ts) < parseTs(row.ts)) row.ts = st.ts;
 }
 deploys.sort((a, b) => parseTs(a.ts) - parseTs(b.ts));
 
