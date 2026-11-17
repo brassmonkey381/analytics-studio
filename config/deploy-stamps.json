@@ -1,6 +1,15 @@
 {
   "_doc": "Michi production deploys that wrote no deploy.live row (deployed without promote-to-production.ps1). reddit.mjs merges these with the deploy.live rows, so the per-deploy funnel still splits on them. ts is the go-live time from michi's deploy stamp. A stamp whose commit also has a deploy.live row is ignored.",
   "michi": [
-    { "ts": "2026-11-17T09:59:00Z", "short": "0898a0d", "source": "MIC-045 stamp from Michi-Maker (deploy-web.ps1, no marker row)" }
+    {
+      "ts": "2026-11-17T09:59:00Z",
+      "short": "0898a0d",
+      "source": "MIC-045 stamp from Michi-Maker (deploy-web.ps1, no marker row)"
+    },
+    {
+      "ts": "2026-11-17T10:37:00Z",
+      "short": "d5bcc78",
+      "source": "Michi-Maker stamp: redesign go-live (MIC-017 + MIC-045 for everyone, MIC-039 fixes, tcgscan-browse 0.9.102); record-deploy.mjs row not found on check"
+    }
   ]
 }
