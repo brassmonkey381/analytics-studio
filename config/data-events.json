@@ -18,6 +18,15 @@
       ],
       "label": "headless sessions removed",
       "note": "The Michi bot-guest cleanup (TRI-005, ran 2026-11-16 18:30 UTC) deleted 1,930 sessions and 7,557 events on the shared project, all from accounts that only ever ran as HeadlessChrome. The split between Michi and BiBo was not recorded, so some past BiBo web visits may drop. Any that did were headless test runs, not real users: one ordinary session kept an account out of the cleanup. BiBo accounts are not affected."
+    },
+    {
+      "id": "MKT-040",
+      "date": "2026-11-18",
+      "apps": [
+        "michi-maker"
+      ],
+      "label": "landing moved outside the app",
+      "note": "From michi ba871c8 (2026-11-18 05:42 UTC) first-time web visitors arriving at / are redirected to a static page, /landing-v2, which records nothing. A visitor who reads it and leaves no longer creates a session, so Michi visits, guest sessions and arrivals at / drop from this date on. That drop is a measurement gap, not fewer people. Visits that reach the app are unaffected, and landing.cta now fires on arrival from the landing."
     }
   ]
 }
