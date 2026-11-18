@@ -25,8 +25,8 @@
       "apps": [
         "michi-maker"
       ],
-      "label": "landing moved outside the app",
-      "note": "From michi ba871c8 (2026-11-18 05:42 UTC) first-time web visitors arriving at / are redirected to a static page, /landing-v2, which records nothing. A visitor who reads it and leaves no longer creates a session, so Michi visits, guest sessions and arrivals at / drop from this date on. That drop is a measurement gap, not fewer people. Visits that reach the app are unaffected, and landing.cta now fires on arrival from the landing."
+      "label": "landing unrecorded for 16 minutes",
+      "note": "Closed by michi 7f26efd (MIC-057): the static landing at /landing-v2 logs its views since 2026-11-18 about 05:58 UTC, shown on the AI and search traffic report. Only arrivals between 05:42 UTC (ba871c8, landing moved outside the app) and about 05:58 UTC left no row. From 05:42 on, a visitor who leaves from the landing is a landing view, not a Michi visit, so Michi visits and arrivals at / are lower than before that hour by the people who never enter the app."
     }
   ]
 }

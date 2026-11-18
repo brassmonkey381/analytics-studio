@@ -15,6 +15,12 @@
 //   production) and referrers from localhost or our own Vercel previews. All three are
 //   counted and stated, never drawn.
 //
+// Michi landing page (MIC-057): /landing-v2 is a static page outside the app and logs one
+// public.landing_views row per load (since michi 7f26efd, 2026-11-18 ~05:58 UTC). Kept: is_qa =
+// false and headless = false, and no device that ever had a session by an excluded account.
+// A view "went on to the app" when the same device_id (localStorage mm_analytics_device, shared
+// with analytics_sessions) starts a michi session within LANDING_FOLLOW_MIN after it.
+//
 // Writes data/sources.json (counts, committed), data/sources-roster.json (who and which
 // landing page, gitignored) and reports/sources.html (gitignored).
 
@@ -112,7 +118,24 @@ where s.app = '${site.key}'`;
 }
 
 const t0 = Date.now();
-const fetched = await Promise.all(SITES.map((s) => runSql(APPS[s.id].projectRef, sessionsSql(s))));
+const LANDING_SINCE = "2026-11-18T05:58:00Z";
+const LANDING_GAP = "2026-11-18 05:42 to about 05:58 UTC";
+const LANDING_FOLLOW_MIN = 60;
+const landingSql = `
+with ${exclusionCte("michi-maker")},
+ours as (select distinct device_id from public.analytics_sessions
+         where app = 'michi' and device_id is not null and user_id in (select id from excluded_users))
+select v.id, v.ts, v.device_id, v.params, v.referrer_host, v.width, v.headless, v.is_qa,
+       (v.device_id in (select device_id from ours)) as ours,
+       (select min(s.started_at) from public.analytics_sessions s
+         where s.app = 'michi' and s.device_id = v.device_id
+           and s.started_at >= v.ts and s.started_at < v.ts + interval '${LANDING_FOLLOW_MIN} minutes') as next_session
+from public.landing_views v
+where v.app = 'michi'`;
+const [fetched, landingRows] = await Promise.all([
+  Promise.all(SITES.map((s) => runSql(APPS[s.id].projectRef, sessionsSql(s)))),
+  runSql(APPS["michi-maker"].projectRef, landingSql),
+]);
 
 const out = {
   collectedAt: new Date(NOW).toISOString(),
@@ -173,6 +196,36 @@ SITES.forEach((site, i) => {
   out.sites.push(s);
 });
 
+// ---------- Michi landing page ----------
+const stub = (id) => `visitor ${String(id ?? "unknown").replace(/-/g, "").slice(0, 6)}`;
+const top = (m, n = 6) => Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, n);
+out.landing = { site: "michi-maker", page: "/landing-v2", since: LANDING_SINCE, gap: LANDING_GAP, followMinutes: LANDING_FOLLOW_MIN, byWindow: {} };
+for (const w of WINDOWS) {
+  const inw = landingRows.filter((r) => inWin(r.ts, w));
+  const kept = inw.filter((r) => !r.is_qa && !r.headless && !r.ours);
+  const went = kept.filter((r) => r.next_session);
+  const refs = {}, utms = {};
+  for (const r of kept) {
+    const h = r.referrer_host || "(none: typed, bookmark or app)";
+    refs[h] = (refs[h] ?? 0) + 1;
+    const u = r.params?.utm_source;
+    if (u) utms[u] = (utms[u] ?? 0) + 1;
+  }
+  out.landing.byWindow[w] = {
+    views: kept.length,
+    devices: new Set(kept.map((r) => r.device_id)).size,
+    wentOn: went.length,
+    excludedQa: inw.filter((r) => r.is_qa).length,
+    excludedHeadless: inw.filter((r) => !r.is_qa && r.headless).length,
+    excludedOurs: inw.filter((r) => !r.is_qa && !r.headless && r.ours).length,
+    referrers: top(refs),
+    utmSources: top(utms),
+  };
+  rosters[`landing|${w}|views`] = kept.map((r) => stub(r.device_id));
+  rosters[`landing|${w}|went`] = went.map((r) => stub(r.device_id));
+  rosters[`landing|${w}|left`] = kept.filter((r) => !r.next_session).map((r) => stub(r.device_id));
+}
+
 // Rosters: one entry per hover key, names deduped by the shared helper.
 const rosterOut = {};
 for (const [k, names] of Object.entries(rosters)) rosterOut[k] = roster(names, (x) => x);
@@ -186,6 +239,27 @@ writeFileSync(ROSTER_FILE, JSON.stringify({ collectedAt: out.collectedAt, roster
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const num = (n, unseen = "not recorded") => (n == null ? `<span class="unseen">${unseen}</span>` : n === 0 ? `<span class="zero">0</span>` : String(n));
 const pct = (a, b) => (b ? `${((a / b) * 100).toFixed(a / b < 0.01 ? 2 : 1)}%` : "");
+
+function landingBlock(w) {
+  const L = out.landing, d = L.byWindow[w];
+  const list = (pairs) => (pairs.length ? pairs.map(([k, n]) => `${esc(k)} ${n}`).join(", ") : `<span class="zero">none</span>`);
+  return `<section data-app-scope="${L.site}">
+<h2>Michi Maker landing page <code>${esc(L.page)}</code></h2>
+<table class="tbl"><thead><tr><th class="num">Views</th><th class="num">Devices</th><th class="num">Went on to the app</th><th class="num">Left from the landing</th></tr></thead>
+<tbody><tr>
+  <td class="num" ${hoverAttr("landing", w, "views")} tabindex="0">${num(d.views)}</td>
+  <td class="num">${num(d.devices)}</td>
+  <td class="num" ${hoverAttr("landing", w, "went")} tabindex="0">${num(d.wentOn)}<div class="sub">${pct(d.wentOn, d.views)}</div></td>
+  <td class="num" ${hoverAttr("landing", w, "left")} tabindex="0">${num(d.views - d.wentOn)}<div class="sub">${pct(d.views - d.wentOn, d.views)}</div></td>
+</tr></tbody></table>
+<p class="note">Referring site: ${list(d.referrers)}. utm_source: ${list(d.utmSources)}.</p>
+<p class="note">Excluded and not counted above: ${d.excludedQa} QA, ${d.excludedHeadless} headless browser, ${d.excludedOurs} from a device our own accounts use.</p>
+<p class="note">A view is one load of the static landing (<code>public.landing_views</code>), recorded since ${esc(L.since.slice(0, 16).replace("T", " "))} UTC (michi 7f26efd).
+Arrivals from ${esc(L.gap)} left no row, and before that the landing was inside the app. "Went on to the app" means the same device started a Michi session
+within ${L.followMinutes} minutes; which button they pressed is <code>landing.cta</code> in the events report. Visits counted at the top of this page are app sessions, so a
+landing view that went on is also one visit there; one that left is not.</p>
+</section>`;
+}
 
 const blocks = WINDOWS.map((w) => {
   const rows = out.sites
@@ -247,6 +321,8 @@ are left out of this table because a search visit there cannot be seen, not beca
 
 <h2>Where AI-referred visitors land</h2>
 ${landRows ? `<table class="tbl"><thead><tr><th>Site</th><th>Landing page and visits</th></tr></thead><tbody>${landRows}</tbody></table>` : `<p class="empty">No AI-referred visits in this window.</p>`}
+
+${landingBlock(w)}
 </div>`;
 }).join("\n");
 
@@ -309,6 +385,7 @@ for (const s of out.sites) {
   const a = s.byWindow[ALL_WINDOW];
   console.log(`  ${s.name.padEnd(11)} 30d: ${d.visits} visits, AI ${d.ai}, search ${d.search ?? "not recorded"}  |  all: ${a.visits} visits, AI ${a.ai}, search ${a.search ?? "not recorded"}`);
 }
+{ const d = out.landing.byWindow[DEFAULT_WINDOW]; console.log(`  Michi landing 30d: ${d.views} views, ${d.wentOn} went on (excluded: ${d.excludedQa} QA, ${d.excludedHeadless} headless, ${d.excludedOurs} ours)`); }
 console.log(`Wrote ${DATA_FILE}`);
 console.log(`Wrote ${ROSTER_FILE} (gitignored - names visitors and landing pages)`);
 console.log(`Wrote ${HTML_FILE} (gitignored)`);
