@@ -1,29 +1,29 @@
 # Event analytics — last 30 days
 
-Collected 2026-11-17T15:07:52.023Z. Own/QA/automated accounts excluded.
-Row cap: the lane fetches at most 50000 rows per project and hit it for michi-maker, tcgscan. Rows older than 2026-11-05 16:21:20.789785+00 were dropped, so any window reaching back past that point is a floor there; windows inside it are exact.
+Collected 2026-11-18T15:07:59.844Z. Own/QA/automated accounts excluded.
+Row cap: the lane fetches at most 50000 rows per project and hit it for michi-maker, tcgscan. Rows older than 2026-11-05 22:49:17.813+00 were dropped, so any window reaching back past that point is a floor there; windows inside it are exact.
 The HTML report carries a 24h / 7d / 14d / 30d toggle and hover rosters; this file is the 30d view.
 
 ## Michi-Maker
 
-6519 sessions · 41710 events · 172 accounts + 4941 guests · median session 11s
-Excluded: 1279 sessions, 7004 events (our own, QA and automated accounts).
+6564 sessions · 41446 events · 175 accounts + 4972 guests · median session 11s
+Excluded: 1325 sessions, 7216 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 86 | 2821 | 74 |
-| 7d | 963 | 20022 | 809 |
-| 14d | 2824 | 41710 | 2178 |
-| 30d | 6519 | 41710 | 5113 |
+| 24h | 70 | 2257 | 62 |
+| 7d | 864 | 19527 | 719 |
+| 14d | 2615 | 41446 | 2017 |
+| 30d | 6564 | 41446 | 5147 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **4941** of 5113 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **4972** of 5147 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
-- **172** Signed-in account (100% of top)
-- **108** Did anything past the open (62.8% of top)
+- **175** Signed-in account (100% of top)
+- **110** Did anything past the open (62.9% of top)
 - **0** Was shown the PRO offer (0% of top)
 - **0** Started a PRO trial (0% of top)
 
@@ -40,17 +40,17 @@ _When a plan limit actually stops someone, does the trial offer sitting there co
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **1655** Opened the app (32.4% of top)
-- **1619** Viewed a page (31.7% of top)
-- **16** Tried a demo (0.3% of top)
-- **15** Made something real (0.3% of top)
+- **1641** Opened the app (31.9% of top)
+- **1610** Viewed a page (31.3% of top)
+- **15** Tried a demo (0.3% of top)
+- **14** Made something real (0.3% of top)
 
 ### Guest to account
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **5072** Started as a guest (100% of top)
-- **1613** Did anything at all (31.8% of top)
+- **5105** Started as a guest (100% of top)
+- **1604** Did anything at all (31.4% of top)
 - **72** Submitted the upgrade (1.4% of top) — see gap `upgrade_unconfirmed`
 - **72** Completed it (ground truth) (1.4% of top)
 
@@ -58,7 +58,7 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 | Campaign | People | Sessions | Converted on a visit | Signups carrying the code |
 | --- | ---: | ---: | ---: | ---: |
-| `rd_rainbow_image` (reddit · paid_social) | 2421 | 2645 | 29 | 15 |
+| `rd_rainbow_image` (reddit · paid_social) | 2421 | 2646 | 29 | 15 |
 | `rd_lidi_image` (reddit · paid_social) | 829 | 904 | 14 | 6 |
 | `rd_coverflow_4x5` (reddit · paid_social) | 207 | 220 | 0 | 0 |
 | `rd_lidi_video` (reddit · test) | 14 | 14 | 0 | 0 |
@@ -66,9 +66,9 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 | `sk_3c_a1_p1_four` (threads · organic_social) | 8 | 8 | 0 | 0 |
 | `sk_dr_a1_p1_four` (threads · organic_social) | 7 | 7 | 0 | 0 |
 | `sk_3c_g_story` (instagram · organic_social) | 4 | 4 | 0 | 0 |
+| `ig_bio` (instagram · organic_social) | 3 | 3 | 0 | 0 |
 | `test_reddit_skip` (reddit · paid_social) | 2 | 2 | 0 | 0 |
 | `test` (reddit · cpc) | 2 | 2 | 0 | 0 |
-| `ig_bio` (instagram · organic_social) | 2 | 2 | 0 | 0 |
 | `sk_3c_a1_p1_story` (instagram · organic_social) | 2 | 2 | 0 | 0 |
 | `test_reddit_new` (reddit · paid_social) | 1 | 1 | 0 | 0 |
 | `rd_rainbow_video` (reddit · test) | 1 | 1 | 0 | 0 |
@@ -83,123 +83,124 @@ _Do anonymous guests ever convert into real accounts, and does the upgrade actua
 
 | Wall | Where | Shown | People | Guests | How | Offer | Backed out |
 | --- | --- | ---: | ---: | ---: | --- | --- | --- |
-| `themeSearch` | binder_editor | 101 | 45 | 31 | dialog 39, toast 62 | upgrade 38, signin 1, toast 62<br>_trial rendered on 0 of 101_ | not_now 15, close 19 |
-| `findSimilar` | binder_editor | 49 | 22 | 15 | dialog 11, toast 38 | upgrade 11, toast 38<br>_trial rendered on 0 of 49_ | not_now 5, close 5 |
-| `artUploads` | binder_editor | 38 | 15 | 6 | dialog 12, toast 26 | upgrade 11, signin 1, toast 26<br>_trial rendered on 0 of 38_ | not_now 8, close 3 |
-| `binders` | my_binders | 33 | 27 | 24 | dialog 6, toast 27 | upgrade 6, toast 27<br>_trial rendered on 0 of 33_ | not_now 2, close 2 |
+| `themeSearch` | binder_editor | 102 | 46 | 31 | dialog 40, toast 62 | upgrade 39, signin 1, toast 62<br>_trial rendered on 0 of 102_ | not_now 16, close 19 |
+| `findSimilar` | binder_editor | 41 | 18 | 12 | dialog 10, toast 31 | upgrade 10, toast 31<br>_trial rendered on 0 of 41_ | not_now 4, close 5 |
+| `artUploads` | binder_editor | 35 | 15 | 6 | dialog 10, toast 25 | upgrade 10, toast 25<br>_trial rendered on 0 of 35_ | not_now 6, close 3 |
+| `binders` | my_binders | 34 | 28 | 25 | dialog 6, toast 28 | upgrade 6, toast 28<br>_trial rendered on 0 of 34_ | not_now 2, close 2 |
 | `themeSearch` | browse | 7 | 7 | 5 | dialog 2, toast 5 | upgrade 2, toast 5<br>_trial rendered on 0 of 7_ | close 2 |
 | `findSimilar` | browse | 4 | 3 | 2 | dialog 1, toast 3 | upgrade 1, toast 3<br>_trial rendered on 0 of 4_ | close 1 |
 | `binders` | browse | 2 | 2 | 2 | toast 2 | toast 2<br>_trial rendered on 0 of 2_ | _none recorded_ |
 | `binders` | build_wizard | 1 | 1 | 1 | inline 1 | signin 1<br>_trial rendered on 0 of 1_ | _none recorded_ |
 | `pagesPerBinder` | home | 1 | 1 | 1 | toast 1 | toast 1<br>_trial rendered on 0 of 1_ | _none recorded_ |
+| `pagesPerBinder` | binder_editor | 1 | 1 | 0 | dialog 1 | upgrade 1<br>_trial rendered on 0 of 1_ | close 1 |
 
 A row is one wall — the `limit_key` and the surface it was met on. **Shown** counts impressions of the block, not people sitting at a cap: an account can be at 16 of 16 for weeks and emit nothing. The **Offer** column is two things: what the wall said it was about to draw, then what the stream saw render (a `pro.offer_shown` in the same session on the same `surface`, within a minute). Where they disagree, the second is the truth.
 
 | Prompt | Shown | People | What came back |
 | --- | ---: | ---: | --- |
-| The sharing attestation (`rights-attestation`) | 87 | 85 | accepted 28, dismissed 56, abandoned 1 _(+2 left with it open — tab shut before an answer)_ |
-| Their profile photo (`avatar-consent`) | 5 | 5 | accepted 1, dismissed 2, abandoned 2 |
+| The sharing attestation (`rights-attestation`) | 90 | 88 | accepted 30, dismissed 57, abandoned 1 _(+2 left with it open — tab shut before an answer)_ |
+| Their profile photo (`avatar-consent`) | 6 | 6 | accepted 1, dismissed 2, abandoned 2 _(+1 left with it open — tab shut before an answer)_ |
 
 **dismissed** is a closed dialog, **abandoned** is a screen left with it open, **left with it open** is a tab shut before either — three different silences. Two of these are a privacy correction and a legal attestation: their numbers are a record of what was asked and answered, never a rate to drive up.
 
 ### What guests did past the open
 
-5072 people opened as a guest across 6089 sessions.
+5105 people opened as a guest across 6132 sessions.
 
-| How far they got | People | of 5072 |
+| How far they got | People | of 5105 |
 | --- | ---: | ---: |
-| Opened and left | 3453 | 68.1% |
-| Looked at a page or two | 400 | 7.9% |
-| Wandered the site | 179 | 3.5% |
-| Built something | 1040 | 20.5% |
+| Opened and left | 3497 | 68.5% |
+| Looked at a page or two | 408 | 8% |
+| Wandered the site | 188 | 3.7% |
+| Built something | 1012 | 19.8% |
 
-Of the 1040 who built something, **72** created an account.
+Of the 1012 who built something, **73** created an account.
 
-**58** guests walked to a pricing page; **0** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
+**57** guests walked to a pricing page; **0** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Created a binder (`binder.add`) | 1032 | 1075 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 987 | 1093 |
-| Reached a walkthrough step (`walkthrough.step`) | 980 | 1245 |
-| Added cards (`card.add`) | 964 | 3666 |
-| Skipped the landing page (tagged arrival) (`landing.skip`) | 943 | 943 |
-| Left the walkthrough (`walkthrough.done`) | 413 | 430 |
-| Pressed a landing-page button (`landing.cta`) | 261 | 280 |
-| Opened the new-binder wizard (`wizard.shown`) | 175 | 202 |
-| Moved or swapped a pocket (`pocket.move`) | 126 | 3315 |
-| Saw a create-account wall (`signin.perk_shown`) | 112 | 201 |
-| Tried the theme search demo (`demo.theme_search`) | 106 | 568 |
-| Added a page (`page.add`) | 102 | 530 |
-| Took a free taste of a PRO feature (`taste.used`) | 102 | 156 |
-| Cleared pockets (`pocket.clear`) | 101 | 1240 |
-| Hit a plan limit (`cap.gate_shown`) | 101 | 233 |
-| Opened Complete page (`complete_open`) | 100 | 151 |
-| Started Google sign-in (`auth.oauth_start`) | 91 | 131 |
-| Searched cards (`card.search`) | 90 | 191 |
-| Picked a binder kind in the wizard (`wizard.kind`) | 85 | 108 |
-| Was shown a prompt (`prompt.shown`) | 78 | 84 |
-| Answered a prompt (`prompt.answered`) | 77 | 82 |
-| Opened Arrange (`arrange_open`) | 76 | 413 |
-| Fill page composed (`autofill.run`) | 72 | 100 |
-| Account created (`account.created`) | 72 | 83 |
-| Placed artwork (`pocket.art`) | 65 | 1053 |
-| Pressed Create in the wizard (`wizard.create`) | 57 | 60 |
-| Was offered the daily puzzle (`puzzle.offer_shown`) | 56 | 120 |
-| Ran a theme search that searched a synonym group (`similar_words.searched`) | 54 | 230 |
-| Opened the daily puzzle (`puzzle.opened`) | 46 | 59 |
-| Completed a page (`complete_pick`) | 46 | 51 |
-| Changed the pocket grid (`binder.grid`) | 44 | 75 |
-| Opened Fill page (`autofill.open`) | 37 | 92 |
-| Searched stock art (`art.search`) | 35 | 103 |
-| Undo or redo (`editor.undo`) | 33 | 183 |
-| Backed out of a limit (`cap.gate_dismissed`) | 33 | 60 |
-| Removed a page (`page.remove`) | 32 | 139 |
-| Deleted a binder (`binder.delete`) | 24 | 32 |
-| Changed the page background (`binder.background`) | 23 | 114 |
+| Created a binder (`binder.add`) | 1003 | 1047 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 957 | 1060 |
+| Reached a walkthrough step (`walkthrough.step`) | 951 | 1216 |
+| Added cards (`card.add`) | 932 | 3421 |
+| Skipped the landing page (tagged arrival) (`landing.skip`) | 907 | 907 |
+| Left the walkthrough (`walkthrough.done`) | 411 | 430 |
+| Pressed a landing-page button (`landing.cta`) | 282 | 302 |
+| Opened the new-binder wizard (`wizard.shown`) | 189 | 221 |
+| Moved or swapped a pocket (`pocket.move`) | 132 | 3242 |
+| Saw a create-account wall (`signin.perk_shown`) | 113 | 203 |
+| Added a page (`page.add`) | 109 | 493 |
+| Tried the theme search demo (`demo.theme_search`) | 106 | 575 |
+| Cleared pockets (`pocket.clear`) | 105 | 1234 |
+| Hit a plan limit (`cap.gate_shown`) | 101 | 225 |
+| Took a free taste of a PRO feature (`taste.used`) | 100 | 149 |
+| Opened Complete page (`complete_open`) | 100 | 133 |
+| Picked a binder kind in the wizard (`wizard.kind`) | 98 | 128 |
+| Started Google sign-in (`auth.oauth_start`) | 93 | 135 |
+| Searched cards (`card.search`) | 92 | 191 |
+| Opened Arrange (`arrange_open`) | 78 | 405 |
+| Was shown a prompt (`prompt.shown`) | 78 | 83 |
+| Answered a prompt (`prompt.answered`) | 77 | 81 |
+| Placed artwork (`pocket.art`) | 72 | 1089 |
+| Account created (`account.created`) | 72 | 82 |
+| Fill page composed (`autofill.run`) | 70 | 94 |
+| Pressed Create in the wizard (`wizard.create`) | 64 | 67 |
+| Ran a theme search that searched a synonym group (`similar_words.searched`) | 55 | 236 |
+| Was offered the daily puzzle (`puzzle.offer_shown`) | 54 | 115 |
+| Changed the pocket grid (`binder.grid`) | 48 | 79 |
+| Completed a page (`complete_pick`) | 46 | 47 |
+| Opened the daily puzzle (`puzzle.opened`) | 44 | 58 |
+| Searched stock art (`art.search`) | 35 | 102 |
+| Undo or redo (`editor.undo`) | 34 | 206 |
+| Opened Fill page (`autofill.open`) | 34 | 88 |
+| Backed out of a limit (`cap.gate_dismissed`) | 34 | 59 |
+| Removed a page (`page.remove`) | 31 | 122 |
+| Deleted a binder (`binder.delete`) | 25 | 32 |
+| pocket.art_edit (`pocket.art_edit`) | 24 | 134 |
+| Changed the page background (`binder.background`) | 24 | 118 |
 | Signed in (`auth.login`) | 23 | 35 |
+| Google account already had a michi account (`auth.link_exists`) | 23 | 31 |
 | Saw the card-landed celebration (`walkthrough.celebration`) | 22 | 30 |
-| Google account already had a michi account (`auth.link_exists`) | 21 | 29 |
-| pocket.art_edit (`pocket.art_edit`) | 20 | 114 |
-| Guessed at the puzzle (`puzzle.guess_submitted`) | 18 | 81 |
-| Picked a set over the page cap in the wizard (`wizard.cap_ask`) | 17 | 25 |
-| Made a binder public or private (`binder.public`) | 17 | 17 |
-| Previewed the print sheets (`print.preview`) | 12 | 29 |
-| Opened Stripe Checkout (`offer.checkout_start`) | 11 | 16 |
-| Set a pocket finish (`pocket.finish`) | 10 | 319 |
-| art.tidy (`art.tidy`) | 10 | 49 |
+| Made a binder public or private (`binder.public`) | 19 | 19 |
+| Picked a set over the page cap in the wizard (`wizard.cap_ask`) | 18 | 26 |
+| Guessed at the puzzle (`puzzle.guess_submitted`) | 15 | 71 |
+| Set a pocket finish (`pocket.finish`) | 11 | 136 |
+| Previewed the print sheets (`print.preview`) | 11 | 26 |
+| art.tidy (`art.tidy`) | 10 | 50 |
+| Split an art piece (`pocket.split`) | 10 | 44 |
+| Opened Stripe Checkout (`offer.checkout_start`) | 10 | 15 |
 | Clicked out to a store (`affiliate.click`) | 10 | 12 |
-| Changed binder styling (`binder.style`) | 9 | 36 |
-| Split an art piece (`pocket.split`) | 9 | 35 |
-| Solved the daily puzzle (`puzzle.solved`) | 9 | 11 |
-| Tapped Create account on a wall (`signin.perk_click`) | 9 | 9 |
+| Tapped Create account on a wall (`signin.perk_click`) | 10 | 10 |
 | Answered the puzzle offer (`puzzle.choice`) | 9 | 9 |
 | Opened the wishlist (`wishlist.shown`) | 9 | 9 |
+| Used the tray (`pocket.tray`) | 8 | 54 |
 | arrange_shuffle (`arrange_shuffle`) | 8 | 46 |
-| Tried tri-color search (`demo.tricolor_search`) | 8 | 11 |
+| Changed binder styling (`binder.style`) | 8 | 34 |
 | Tried the example import (`demo.csv_import`) | 7 | 15 |
 | Applied an arrangement (`arrange_pick`) | 7 | 12 |
+| Tried tri-color search (`demo.tricolor_search`) | 7 | 10 |
+| Solved the daily puzzle (`puzzle.solved`) | 7 | 9 |
 | Handed a binder page out as a picture (`page.picture`) | 7 | 9 |
-| Reordered pages (`page.reorder`) | 6 | 39 |
-| puzzle.revealed (`puzzle.revealed`) | 6 | 6 |
-| Used the tray (`pocket.tray`) | 5 | 18 |
+| Reordered pages (`page.reorder`) | 6 | 32 |
 | Styled a pocket (`pocket.style`) | 5 | 11 |
-| Started a PRO trial (`trial.start`) | 5 | 5 |
 | Shared a card picture (`card.picture`) | 5 | 5 |
+| puzzle.revealed (`puzzle.revealed`) | 5 | 5 |
+| Merged art pieces (`pocket.merge`) | 4 | 101 |
 | csv.analyzed (`csv.analyzed`) | 4 | 89 |
-| Merged art pieces (`pocket.merge`) | 4 | 71 |
 | CSV import failed (`csv.import_failed`) | 4 | 12 |
 | Saw the wizard's card preview (`wizard.preview`) | 4 | 4 |
+| Started a PRO trial (`trial.start`) | 4 | 4 |
 | Opened the feedback form (`feedback.shown`) | 4 | 4 |
-| Changed a binder cover (`binder.cover`) | 3 | 25 |
 | Sign-in return ended without an account (`auth.callback_failed`) | 3 | 7 |
-| Renamed a binder (`binder.rename`) | 3 | 3 |
+| Changed a binder cover (`binder.cover`) | 2 | 9 |
+| print.auto_download (`print.auto_download`) | 2 | 2 |
+| Downloaded print sheets (`print.download`) | 2 | 2 |
 | collector.print (`collector.print`) | 2 | 2 |
 | Shared a binder link (`share.link`) | 2 | 2 |
+| Renamed a binder (`binder.rename`) | 2 | 2 |
 | Chose the pages a share shows (`share.pages_featured`) | 1 | 3 |
 | Removed blank pages (`page.compact`) | 1 | 1 |
-| print.auto_download (`print.auto_download`) | 1 | 1 |
-| Downloaded print sheets (`print.download`) | 1 | 1 |
 | Downloaded the full-size share image (`share.hires`) | 1 | 1 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
@@ -207,140 +208,140 @@ Of the 1040 who built something, **72** created an account.
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 1392 | 2156 |
-| `/binder/:id` | 1120 | 1803 |
-| `/my-binders` | 1035 | 1464 |
-| `/welcome` | 420 | 485 |
-| `/new-binder` | 174 | 202 |
-| `/discover` | 109 | 269 |
-| `/browse` | 98 | 167 |
-| `/auth-callback` | 89 | 131 |
-| `/michi-method` | 87 | 133 |
-| `/collect` | 64 | 96 |
-| `/plans` _(pricing)_ | 58 | 94 |
-| `/learn` | 50 | 78 |
+| `/` | 1376 | 2158 |
+| `/binder/:id` | 1095 | 1790 |
+| `/my-binders` | 1002 | 1425 |
+| `/welcome` | 433 | 500 |
+| `/new-binder` | 188 | 223 |
+| `/discover` | 116 | 286 |
+| `/browse` | 97 | 165 |
+| `/auth-callback` | 90 | 131 |
+| `/michi-method` | 88 | 136 |
+| `/collect` | 62 | 92 |
+| `/plans` _(pricing)_ | 57 | 91 |
+| `/learn` | 49 | 75 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Left a page (dwell recorded) (`page.leave`) | 9959 | 1519 |
-| Viewed a page (`page.view`) | 7774 | 1630 |
-| Added cards (`card.add`) | 4015 | 973 |
-| Moved or swapped a pocket (`pocket.move`) | 3669 | 133 |
-| Session started (`session.start`) | 2137 | 1655 |
-| Cleared pockets (`pocket.clear`) | 1480 | 109 |
-| Reached a walkthrough step (`walkthrough.step`) | 1252 | 982 |
-| Placed artwork (`pocket.art`) | 1215 | 69 |
-| Was shown the binder walkthrough (`walkthrough.shown`) | 1097 | 989 |
-| Created a binder (`binder.add`) | 1081 | 1036 |
-| Skipped the landing page (tagged arrival) (`landing.skip`) | 945 | 945 |
-| Added a page (`page.add`) | 600 | 109 |
-| Tried the theme search demo (`demo.theme_search`) | 574 | 108 |
-| Opened Arrange (`arrange_open`) | 468 | 80 |
-| Left the walkthrough (`walkthrough.done`) | 431 | 414 |
-| Set a pocket finish (`pocket.finish`) | 322 | 11 |
-| Pressed a landing-page button (`landing.cta`) | 280 | 261 |
-| Hit a plan limit (`cap.gate_shown`) | 236 | 102 |
-| Ran a theme search that searched a synonym group (`similar_words.searched`) | 236 | 56 |
-| Undo or redo (`editor.undo`) | 233 | 38 |
-| Saw a create-account wall (`signin.perk_shown`) | 223 | 119 |
-| Opened the new-binder wizard (`wizard.shown`) | 203 | 176 |
-| Searched cards (`card.search`) | 200 | 93 |
-| Removed a page (`page.remove`) | 174 | 35 |
-| Took a free taste of a PRO feature (`taste.used`) | 164 | 104 |
-| Opened Complete page (`complete_open`) | 151 | 100 |
-| Was offered the daily puzzle (`puzzle.offer_shown`) | 151 | 67 |
-| Merged art pieces (`pocket.merge`) | 134 | 5 |
-| pocket.art_edit (`pocket.art_edit`) | 133 | 23 |
-| Started Google sign-in (`auth.oauth_start`) | 131 | 91 |
-| Changed the page background (`binder.background`) | 126 | 25 |
-| Picked a binder kind in the wizard (`wizard.kind`) | 108 | 85 |
-| Fill page composed (`autofill.run`) | 107 | 73 |
-| Opened Fill page (`autofill.open`) | 105 | 40 |
-| Searched stock art (`art.search`) | 104 | 36 |
-| Was shown a prompt (`prompt.shown`) | 92 | 86 |
-| Answered a prompt (`prompt.answered`) | 90 | 84 |
+| Left a page (dwell recorded) (`page.leave`) | 10107 | 1505 |
+| Viewed a page (`page.view`) | 7816 | 1621 |
+| Added cards (`card.add`) | 3787 | 941 |
+| Moved or swapped a pocket (`pocket.move`) | 3620 | 139 |
+| Session started (`session.start`) | 2129 | 1641 |
+| Cleared pockets (`pocket.clear`) | 1481 | 114 |
+| Placed artwork (`pocket.art`) | 1257 | 77 |
+| Reached a walkthrough step (`walkthrough.step`) | 1223 | 953 |
+| Was shown the binder walkthrough (`walkthrough.shown`) | 1064 | 959 |
+| Created a binder (`binder.add`) | 1055 | 1009 |
+| Skipped the landing page (tagged arrival) (`landing.skip`) | 909 | 909 |
+| Tried the theme search demo (`demo.theme_search`) | 581 | 108 |
+| Added a page (`page.add`) | 565 | 117 |
+| Opened Arrange (`arrange_open`) | 460 | 82 |
+| Left the walkthrough (`walkthrough.done`) | 431 | 412 |
+| Pressed a landing-page button (`landing.cta`) | 303 | 283 |
+| Undo or redo (`editor.undo`) | 257 | 40 |
+| Ran a theme search that searched a synonym group (`similar_words.searched`) | 242 | 57 |
+| Hit a plan limit (`cap.gate_shown`) | 228 | 102 |
+| Saw a create-account wall (`signin.perk_shown`) | 226 | 121 |
+| Opened the new-binder wizard (`wizard.shown`) | 222 | 190 |
+| Searched cards (`card.search`) | 200 | 95 |
+| Merged art pieces (`pocket.merge`) | 164 | 5 |
+| Took a free taste of a PRO feature (`taste.used`) | 157 | 102 |
+| Removed a page (`page.remove`) | 157 | 34 |
+| pocket.art_edit (`pocket.art_edit`) | 153 | 27 |
+| Was offered the daily puzzle (`puzzle.offer_shown`) | 147 | 65 |
+| Set a pocket finish (`pocket.finish`) | 139 | 12 |
+| Started Google sign-in (`auth.oauth_start`) | 135 | 93 |
+| Opened Complete page (`complete_open`) | 133 | 100 |
+| Changed the page background (`binder.background`) | 130 | 26 |
+| Picked a binder kind in the wizard (`wizard.kind`) | 128 | 98 |
+| Searched stock art (`art.search`) | 103 | 36 |
+| Opened Fill page (`autofill.open`) | 101 | 37 |
+| Fill page composed (`autofill.run`) | 101 | 71 |
+| Was shown a prompt (`prompt.shown`) | 96 | 90 |
+| Answered a prompt (`prompt.answered`) | 93 | 87 |
 | csv.analyzed (`csv.analyzed`) | 89 | 4 |
-| Guessed at the puzzle (`puzzle.guess_submitted`) | 87 | 19 |
-| Account created (`account.created`) | 84 | 73 |
-| Changed the pocket grid (`binder.grid`) | 79 | 46 |
-| art.tidy (`art.tidy`) | 65 | 11 |
-| Backed out of a limit (`cap.gate_dismissed`) | 62 | 34 |
-| Opened the daily puzzle (`puzzle.opened`) | 62 | 48 |
-| Reordered pages (`page.reorder`) | 60 | 8 |
-| Pressed Create in the wizard (`wizard.create`) | 60 | 57 |
-| Completed a page (`complete_pick`) | 51 | 46 |
-| Split an art piece (`pocket.split`) | 51 | 11 |
+| Changed the pocket grid (`binder.grid`) | 83 | 50 |
+| Account created (`account.created`) | 83 | 73 |
+| Guessed at the puzzle (`puzzle.guess_submitted`) | 80 | 17 |
+| Pressed Create in the wizard (`wizard.create`) | 67 | 64 |
+| art.tidy (`art.tidy`) | 66 | 11 |
+| Used the tray (`pocket.tray`) | 66 | 10 |
+| Opened the daily puzzle (`puzzle.opened`) | 62 | 47 |
+| Backed out of a limit (`cap.gate_dismissed`) | 61 | 35 |
+| Split an art piece (`pocket.split`) | 60 | 12 |
+| Reordered pages (`page.reorder`) | 53 | 8 |
+| Completed a page (`complete_pick`) | 47 | 46 |
 | arrange_shuffle (`arrange_shuffle`) | 46 | 8 |
-| Signed in (`auth.login`) | 41 | 27 |
-| Changed binder styling (`binder.style`) | 39 | 10 |
-| Deleted a binder (`binder.delete`) | 37 | 26 |
-| Previewed the print sheets (`print.preview`) | 31 | 14 |
+| Signed in (`auth.login`) | 42 | 28 |
+| Changed binder styling (`binder.style`) | 37 | 9 |
+| Deleted a binder (`binder.delete`) | 37 | 27 |
+| Google account already had a michi account (`auth.link_exists`) | 31 | 23 |
 | Saw the card-landed celebration (`walkthrough.celebration`) | 30 | 22 |
-| Used the tray (`pocket.tray`) | 30 | 7 |
-| Google account already had a michi account (`auth.link_exists`) | 29 | 21 |
-| Changed a binder cover (`binder.cover`) | 25 | 3 |
-| Picked a set over the page cap in the wizard (`wizard.cap_ask`) | 25 | 17 |
-| Made a binder public or private (`binder.public`) | 17 | 17 |
+| Previewed the print sheets (`print.preview`) | 29 | 14 |
+| Picked a set over the page cap in the wizard (`wizard.cap_ask`) | 26 | 18 |
+| Changed a binder cover (`binder.cover`) | 24 | 3 |
+| Made a binder public or private (`binder.public`) | 19 | 19 |
 | Tried the example import (`demo.csv_import`) | 17 | 9 |
-| Opened Stripe Checkout (`offer.checkout_start`) | 16 | 11 |
-| Solved the daily puzzle (`puzzle.solved`) | 13 | 10 |
+| Opened Stripe Checkout (`offer.checkout_start`) | 15 | 10 |
 | Styled a pocket (`pocket.style`) | 13 | 6 |
 | Clicked out to a store (`affiliate.click`) | 13 | 11 |
+| Solved the daily puzzle (`puzzle.solved`) | 12 | 9 |
 | Saw the returned-binder banner (`returned_binder.shown`) | 12 | 2 |
 | CSV import failed (`csv.import_failed`) | 12 | 4 |
 | Applied an arrangement (`arrange_pick`) | 12 | 7 |
-| Tried tri-color search (`demo.tricolor_search`) | 11 | 8 |
+| Tapped Create account on a wall (`signin.perk_click`) | 10 | 10 |
+| Tried tri-color search (`demo.tricolor_search`) | 10 | 7 |
 | Opened the wishlist (`wishlist.shown`) | 10 | 10 |
-| Tapped Create account on a wall (`signin.perk_click`) | 9 | 9 |
 | Handed a binder page out as a picture (`page.picture`) | 9 | 7 |
 | Answered the puzzle offer (`puzzle.choice`) | 9 | 9 |
 | Sign-in return ended without an account (`auth.callback_failed`) | 7 | 3 |
-| puzzle.revealed (`puzzle.revealed`) | 6 | 6 |
-| Started a PRO trial (`trial.start`) | 5 | 5 |
 | Shared a card picture (`card.picture`) | 5 | 5 |
+| puzzle.revealed (`puzzle.revealed`) | 5 | 5 |
 | Copied or moved a page to another binder (`page.send`) | 5 | 1 |
 | Saw the wizard's card preview (`wizard.preview`) | 4 | 4 |
+| Started a PRO trial (`trial.start`) | 4 | 4 |
 | Opened the feedback form (`feedback.shown`) | 4 | 4 |
-| Renamed a binder (`binder.rename`) | 3 | 3 |
 | Shared a binder link (`share.link`) | 3 | 3 |
 | Chose the pages a share shows (`share.pages_featured`) | 3 | 1 |
+| print.auto_download (`print.auto_download`) | 2 | 2 |
+| Downloaded print sheets (`print.download`) | 2 | 2 |
 | collector.print (`collector.print`) | 2 | 2 |
+| Renamed a binder (`binder.rename`) | 2 | 2 |
+| collector.binder (`collector.binder`) | 2 | 2 |
 | Removed blank pages (`page.compact`) | 1 | 1 |
-| print.auto_download (`print.auto_download`) | 1 | 1 |
-| Downloaded print sheets (`print.download`) | 1 | 1 |
 | Downloaded the full-size share image (`share.hires`) | 1 | 1 |
 | Tried the print example (`demo.print`) | 1 | 1 |
 | Imported a CSV (`csv.import`) | 1 | 1 |
-| collector.binder (`collector.binder`) | 1 | 1 |
 
-Instrumentation: 89/116 events verified firing (all traffic, all time).
+Instrumentation: 90/116 events verified firing (all traffic, all time).
 
-Never fired by anyone (unverified): `deploy.live`, `returned_binder.open`, `returned_binder.dismiss`, `demo.curation`, `compose.pages_kept`, `pro.offer_shown`, `pro.offer_declined`, `names.ideas_limit`, `trial.start_click`, `trial.start_failed`, `search.no_results`, `share.format`, `share.qr`, `tcgscan.pairing_click`, `story.build`, `feedback.submitted`, `feedback.failed`, `wishlist.vote`, `wishlist.vote_failed`, `wishlist.submitted`, `wishlist.submit_failed`, `offer.checkout_failed`, `offer_checkout_start`, `puzzle.guess_failed`, `page.duplicate`, `page.swap`, `art.link`
+Never fired by anyone (unverified): `deploy.live`, `returned_binder.open`, `returned_binder.dismiss`, `demo.curation`, `compose.pages_kept`, `pro.offer_shown`, `pro.offer_declined`, `names.ideas_limit`, `trial.start_click`, `trial.start_failed`, `search.no_results`, `share.format`, `tcgscan.pairing_click`, `story.build`, `feedback.submitted`, `feedback.failed`, `wishlist.vote`, `wishlist.vote_failed`, `wishlist.submitted`, `wishlist.submit_failed`, `offer.checkout_failed`, `offer_checkout_start`, `puzzle.guess_failed`, `page.duplicate`, `page.swap`, `art.link`
 
-Works, but not yet from a real user: `account.deleted`, `names.ideas`, `binder.rebuild_from_tcgscan`, `wizard.chat`, `wizard.reveal`, `wizard.reveal_continue`, `binder.duplicate`
+Works, but not yet from a real user: `account.deleted`, `names.ideas`, `share.qr`, `binder.rebuild_from_tcgscan`, `wizard.chat`, `wizard.reveal`, `wizard.reveal_continue`, `binder.duplicate`
 
 Registered, not yet fired: `share.link_created`, `share.link_copied`, `share.link_opened`, `binder.reshare`
 
 ## TCGScan
 
-538 sessions · 1108 events · 8 accounts + 81 guests · median session 6s
-Excluded: 147 sessions, 178 events (our own, QA and automated accounts).
+540 sessions · 1111 events · 9 accounts + 83 guests · median session 6s
+Excluded: 152 sessions, 227 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 3 | 16 | 3 |
-| 7d | 422 | 987 | 23 |
-| 14d | 457 | 1108 | 44 |
-| 30d | 538 | 1108 | 89 |
+| 24h | 7 | 35 | 6 |
+| 7d | 428 | 1020 | 27 |
+| 14d | 464 | 1111 | 49 |
+| 30d | 540 | 1111 | 92 |
 
 ### PRO trial: awareness to activation
 
 _Of the people a trial can even be offered to, how many see it, and how many start one?_
 
-> **81** of 89 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
+> **83** of 92 people in this window are guests and are not counted here. Guests are set aside, not counted as a drop-off. useTrial returns 'ineligible' with no session (use-trial.ts, the fetch effect returns early for guests), so TrialCta renders null and pro.offer_shown cannot fire for a signed-out visitor. Counting them made a structural impossibility look like a 95% leak. Their route into this population is the signup funnel above.
 
-- **8** Signed-in account (100% of top)
-- **2** Did anything past the open (25% of top)
+- **9** Signed-in account (100% of top)
+- **3** Did anything past the open (33.3% of top)
 - **0** Was shown the PRO offer (0% of top)
 - **0** Started a PRO trial (0% of top)
 
@@ -348,8 +349,8 @@ _Of the people a trial can even be offered to, how many see it, and how many sta
 
 _Do people who open the app ever do the core thing it is for?_
 
-- **39** Opened the app (43.8% of top)
-- **38** Viewed a page (42.7% of top)
+- **39** Opened the app (42.4% of top)
+- **37** Viewed a page (40.2% of top)
 - **0** Tried a demo (0% of top)
 - **0** Made something real (0% of top)
 
@@ -357,10 +358,10 @@ _Do people who open the app ever do the core thing it is for?_
 
 _Do anonymous guests ever convert into real accounts, and does the upgrade actually complete?_
 
-- **86** Started as a guest (100% of top)
-- **37** Did anything at all (43% of top)
+- **88** Started as a guest (100% of top)
+- **35** Did anything at all (39.8% of top)
 - **2** Submitted the upgrade (2.3% of top) — see gap `upgrade_unconfirmed`
-- **1** Completed it (ground truth) (1.2% of top)
+- **1** Completed it (ground truth) (1.1% of top)
 
 ### What we asked of people
 
@@ -372,86 +373,94 @@ A row is one wall — the `limit_key` and the surface it was met on. **Shown** c
 
 ### What guests did past the open
 
-86 people opened as a guest across 532 sessions.
+88 people opened as a guest across 533 sessions.
 
-| How far they got | People | of 86 |
+| How far they got | People | of 88 |
 | --- | ---: | ---: |
-| Opened and left | 49 | 57% |
-| Looked at a page or two | 17 | 19.8% |
-| Wandered the site | 19 | 22.1% |
-| Built something | 1 | 1.2% |
+| Opened and left | 53 | 60.2% |
+| Looked at a page or two | 17 | 19.3% |
+| Wandered the site | 16 | 18.2% |
+| Built something | 2 | 2.3% |
 
-Of the 1 who built something, **0** created an account.
+Of the 2 who built something, **0** created an account.
 
-**2** guests walked to a pricing page; **0** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
+**3** guests walked to a pricing page; **0** saw the PRO offer. `TrialCta` renders only when `isSignedIn && !is_anonymous`, so a guest there sees no offer by design.
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
 | Hit a plan limit (`cap.gate_shown`) | 3 | 6 |
 | Opened a card (`card.open`) | 2 | 26 |
 | Scan failed (`scan.failed`) | 2 | 4 |
-| Account created (`account.created`) | 2 | 3 |
+| Scanned a card (`scan.capture`) | 2 | 3 |
+| Account created (`account.created`) | 2 | 2 |
 | Signed in (`auth.login`) | 2 | 2 |
 | scan.riffle_pick (`scan.riffle_pick`) | 1 | 3 |
 | Searched cards (`card.search`) | 1 | 2 |
 | Backed out of a limit (`cap.gate_dismissed`) | 1 | 1 |
-| Scanned a card (`scan.capture`) | 1 | 1 |
+| Created a collection (`collection.create`) | 1 | 1 |
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `/` | 29 | 76 |
-| `/scan` | 27 | 49 |
-| `/settings` | 9 | 32 |
+| `/` | 27 | 75 |
+| `/scan` | 24 | 45 |
+| `/settings` | 9 | 28 |
 | `/collection` | 8 | 47 |
-| `/browse` | 6 | 309 |
+| `/browse` | 6 | 311 |
+| `/plans` _(pricing)_ | 3 | 11 |
+| `/planned` | 3 | 6 |
+| `/support` | 3 | 5 |
 | `/card/:n` | 2 | 43 |
-| `/plans` _(pricing)_ | 2 | 10 |
 | `/sessions` | 2 | 6 |
-| `/planned` | 2 | 4 |
-| `/auth-callback` | 2 | 3 |
-| `/support` | 2 | 3 |
+| `/auth-callback` | 2 | 2 |
 | `/sealed/:n` | 1 | 17 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 611 | 38 |
-| Session started (`session.start`) | 448 | 39 |
+| Viewed a page (`page.view`) | 609 | 37 |
+| Session started (`session.start`) | 449 | 39 |
 | Opened a card (`card.open`) | 26 | 2 |
 | Hit a plan limit (`cap.gate_shown`) | 6 | 3 |
+| Signed in (`auth.login`) | 4 | 4 |
 | Scan failed (`scan.failed`) | 4 | 2 |
-| Account created (`account.created`) | 3 | 2 |
 | scan.riffle_pick (`scan.riffle_pick`) | 3 | 1 |
-| Signed in (`auth.login`) | 3 | 3 |
+| Account created (`account.created`) | 3 | 3 |
+| Scanned a card (`scan.capture`) | 3 | 2 |
 | Searched cards (`card.search`) | 2 | 1 |
 | Backed out of a limit (`cap.gate_dismissed`) | 1 | 1 |
-| Scanned a card (`scan.capture`) | 1 | 1 |
+| Created a collection (`collection.create`) | 1 | 1 |
 
 Instrumentation: 14/29 events verified firing (all traffic, all time).
 
 Never fired by anyone (unverified): `collection.rename`, `collection.delete`, `collection.card_remove`, `trial.start`, `pro.offer_shown`, `trial.start_failed`, `affiliate.click`, `offer.checkout_failed`, `iap.purchase_start`, `iap.purchase_result`, `scan.sealed_hint`, `collection.sealed_add`, `external_marketplace_search_clicked`, `bulk_edit_applied`, `iap.restore`
 
-Works, but not yet from a real user: `card.add`, `collection.create`, `collection.card_add`, `offer.checkout_start`
+Works, but not yet from a real user: `card.add`, `collection.card_add`, `offer.checkout_start`
 
 ## Doggle
 
-781 sessions · 3334 events · 6 accounts + 741 guests · median session 1s
-Excluded: 844 sessions, 6809 events (our own, QA and automated accounts).
+1042 sessions · 4102 events · 6 accounts + 988 guests · median session 1s
+Excluded: 842 sessions, 6747 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 9 | 29 | 9 |
-| 7d | 272 | 1411 | 278 |
-| 14d | 431 | 2018 | 418 |
-| 30d | 781 | 3334 | 747 |
+| 24h | 269 | 795 | 257 |
+| 7d | 530 | 2173 | 524 |
+| 14d | 678 | 2747 | 654 |
+| 30d | 1042 | 4102 | 994 |
 
 ### Visitor to account
 
 _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
-- **744** Arrived signed out (100% of top)
-- **721** Viewed any screen (96.9% of top)
+- **991** Arrived signed out (100% of top)
+- **965** Viewed any screen (97.4% of top)
 - **1** Created an account (0.1% of top) — see gap `doggle_oauth_signup_untracked`
 - **0** Signed in on that visit (0% of top)
+
+### Print & QR campaigns
+
+| Campaign | People | Sessions | Converted on a visit | Signups carrying the code |
+| --- | ---: | ---: | ---: | ---: |
+| `PARK1` (flyer) | 8 | 8 | 0 | 0 |
 
 ### What we asked of people
 
@@ -465,18 +474,18 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 ### What guests did past the open
 
-744 people opened as a guest across 739 sessions.
+991 people opened as a guest across 1000 sessions.
 
-| How far they got | People | of 744 |
+| How far they got | People | of 991 |
 | --- | ---: | ---: |
-| Opened and left | 9 | 1.2% |
-| Looked at a page or two | 664 | 89.2% |
-| Wandered the site | 71 | 9.5% |
+| Opened and left | 12 | 1.2% |
+| Looked at a page or two | 907 | 91.5% |
+| Wandered the site | 72 | 7.3% |
 | Built something | 0 | 0% |
 
 | Guest action | People | Times |
 | --- | ---: | ---: |
-| Session revalidated (plumbing) (`session.check`) | 727 | 1031 |
+| Session revalidated (plumbing) (`session.check`) | 971 | 1288 |
 | Opened a Discover panel (`discover.tab`) | 22 | 32 |
 | Device reachable by push (`push.token_registered`) | 3 | 9 |
 | Asked for location permission (`location.permission_requested`) | 3 | 7 |
@@ -494,24 +503,24 @@ _Do signed-out visitors (QR scans included) become Doggle accounts?_
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `Landing` | 515 | 532 |
-| `Blog` | 115 | 158 |
-| `Login` | 85 | 108 |
+| `Landing` | 520 | 537 |
+| `Login` | 229 | 266 |
+| `Blog` | 123 | 166 |
 | `Home` | 63 | 92 |
-| `BlogPost` | 30 | 43 |
+| `BlogPost` | 38 | 51 |
 | `Discover` | 22 | 22 |
-| `Social` | 14 | 29 |
-| `DogProfile` | 12 | 12 |
-| `MeetupDetail` | 12 | 12 |
-| `Settings` | 11 | 21 |
-| `InviteLanding` | 11 | 12 |
-| `DogPlaceDetail` | 11 | 11 |
+| `DogProfile` | 22 | 22 |
+| `MeetupDetail` | 22 | 22 |
+| `DogPlaceDetail` | 21 | 21 |
+| `Settings` | 19 | 29 |
+| `InviteLanding` | 19 | 20 |
+| `PrivacyPolicy` | 18 | 18 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 1326 | 724 |
-| Session revalidated (plumbing) (`session.check`) | 1088 | 730 |
-| Session started (`session.start`) | 768 | 718 |
+| Viewed a page (`page.view`) | 1583 | 968 |
+| Session revalidated (plumbing) (`session.check`) | 1345 | 974 |
+| Session started (`session.start`) | 1022 | 962 |
 | Opened a Discover panel (`discover.tab`) | 46 | 24 |
 | Device reachable by push (`push.token_registered`) | 32 | 5 |
 | Asked for location permission (`location.permission_requested`) | 13 | 5 |
@@ -538,15 +547,15 @@ Works, but not yet from a real user: `auth.login`, `walk.cancel`, `checkin.out`,
 
 ## Pickleague
 
-384 sessions · 1370 events · 0 accounts + 314 guests · median session 1s
-Excluded: 207 sessions, 2573 events (our own, QA and automated accounts).
+385 sessions · 1372 events · 0 accounts + 314 guests · median session 1s
+Excluded: 207 sessions, 2593 events (our own, QA and automated accounts).
 
 | Window | Sessions | Events | People |
 | --- | ---: | ---: | ---: |
-| 24h | 7 | 19 | 7 |
-| 7d | 255 | 618 | 254 |
-| 14d | 377 | 1356 | 308 |
-| 30d | 384 | 1370 | 314 |
+| 24h | 2 | 4 | 1 |
+| 7d | 229 | 549 | 226 |
+| 14d | 260 | 629 | 258 |
+| 30d | 385 | 1372 | 314 |
 
 ### Visitor to account
 
@@ -559,7 +568,7 @@ _Do signed-out visitors (QR scans included) become Pickleague accounts?_
 
 ### What guests did past the open
 
-314 people opened as a guest across 384 sessions.
+314 people opened as a guest across 385 sessions.
 
 | How far they got | People | of 314 |
 | --- | ---: | ---: |
@@ -578,18 +587,18 @@ _Do signed-out visitors (QR scans included) become Pickleague accounts?_
 
 | Route guests reached | People | Views |
 | --- | ---: | ---: |
-| `Login` | 161 | 329 |
+| `Login` | 160 | 328 |
 | `CheckEmail` | 62 | 64 |
-| `Register` | 58 | 63 |
+| `Register` | 59 | 65 |
 | `InviteLanding` | 16 | 16 |
 | `GuestJoin` | 15 | 15 |
 | `FirstRun` | 2 | 2 |
 
 | Event | Fired | People |
 | --- | ---: | ---: |
-| Viewed a page (`page.view`) | 489 | 297 |
+| Viewed a page (`page.view`) | 490 | 297 |
 | appstore.click (`appstore.click`) | 487 | 56 |
-| Session started (`session.start`) | 383 | 295 |
+| Session started (`session.start`) | 384 | 295 |
 | Account created (`account.created`) | 4 | 3 |
 | auth.reset_requested (`auth.reset_requested`) | 4 | 4 |
 | recs.shown (`recs.shown`) | 2 | 2 |

@@ -1,24 +1,24 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-17T15:08:04.452Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (124 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
+Collected 2026-11-18T15:08:26.585Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (124 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
 
 ## Last 7 days
 
 | step | sessions | of arrivals |
 |---|---:|---:|
-| Arrived from Reddit | 444 |  |
-| Reached the binder editor | 389 | 88% |
-| Saw the first prompt (pocket ring, or Complete on a seeded page) | 388 | 87% |
-| Opened the card browser | 50 | 11% |
-| Placed a card (own tap, or a Fill/Complete that placed) | 39 | 9% |
-| Took a guest taste (Find similar, Fill page) | 20 | 5% |
-| Opened Fill page | 4 | 1% |
-| Met the create-account wall | 20 | 5% |
-| Tapped Create account | 8 | 2% |
-| Became an account | 8 | 2% |
+| Arrived from Reddit | 356 |  |
+| Reached the binder editor | 310 | 87% |
+| Saw the first prompt (pocket ring, or Complete on a seeded page) | 310 | 87% |
+| Opened the card browser | 44 | 12% |
+| Placed a card (own tap, or a Fill/Complete that placed) | 35 | 10% |
+| Took a guest taste (Find similar, Fill page) | 17 | 5% |
+| Opened Fill page | 2 | 1% |
+| Met the create-account wall | 17 | 5% |
+| Tapped Create account | 7 | 2% |
+| Became an account | 7 | 2% |
 | Made a binder public | 3 | 1% |
 
-Phone 4, desktop 440, unknown 0. Bounced 32. Median stay 6 s. Came back a later day 10. Accounts by hop 8, stitched by time 0.
+Phone 3, desktop 353, unknown 0. Bounced 25. Median stay 7 s. Came back a later day 7. Accounts by hop 7, stitched by time 0.
 
 No spend rows in the last 7 days (../marketing-studio/assets/qr/spend.yaml).
 
@@ -28,8 +28,7 @@ No spend rows in the last 7 days (../marketing-studio/assets/qr/spend.yaml).
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Campaign 1 (Traffic, clicks) | - | - | 1 | 1 | 0 | 0 | 0.0% | - |
 | Campaign 2 (Sales, Sign up) | - | - | 1 | 0 | 0 | 0 | 0.0% | - |
-| Campaign 3 (Desktop, Sign up) | - | - | 441 | 388 | 39 | 8 | 1.8% | - |
-| Wizard arm (phone, Sign up, in Campaign 2) | - | - | 1 | 0 | 0 | 0 | 0.0% | - |
+| Campaign 3 (Desktop, Sign up) | - | - | 354 | 309 | 35 | 7 | 2.0% | - |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do) and no other campaign name; the wizard arm is utm_campaign michi_wizard_2026_11 (phone ad group in Campaign 2, lands on the wizard once michi routes it); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
@@ -37,13 +36,14 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 
 | day | arrivals | phone | editor | placed | taste | fill | wall | accounts | returned | median stay | spend |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2026-11-17 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 27 s | - |
 | 2026-11-16 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 46 s | - |
 | 2026-11-15 | 77 | 0 | 68 | 7 | 3 | 0 | 2 | 1 | 0 | 6 s | - |
 | 2026-11-14 | 76 | 0 | 69 | 6 | 3 | 0 | 3 | 2 | 1 | 6 s | - |
 | 2026-11-13 | 72 | 1 | 62 | 5 | 3 | 2 | 2 | 1 | 0 | 5 s | - |
 | 2026-11-12 | 69 | 1 | 57 | 8 | 4 | 0 | 6 | 0 | 5 | 10 s | - |
 | 2026-11-11 | 60 | 2 | 54 | 9 | 4 | 0 | 4 | 3 | 1 | 9 s | - |
-| 2026-11-10 | 122 | 2 | 106 | 7 | 5 | 2 | 5 | 1 | 4 | 6 s | - |
+| 2026-11-10 | 122 | 2 | 106 | 7 | 5 | 2 | 5 | 1 | 5 | 6 s | - |
 | 2026-11-09 | 106 | 5 | 94 | 12 | 7 | 2 | 8 | 1 | 3 | 6 s | - |
 | 2026-11-08 | 169 | 47 | 112 | 19 | 9 | 2 | 6 | 7 | 9 | 7 s | $75.31 |
 | 2026-11-07 | 174 | 96 | 109 | 7 | 3 | 0 | 3 | 4 | 12 | 6 s | $85.81 |
@@ -127,7 +127,7 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 | b28021c | 2026-11-10T10:33:49.134Z | 66 | 55 | 6 | 4 | 2 | 4 | 1 | 1 | 3 |
 | 1455f79 | 2026-11-10T20:04:49.291Z | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 5e4e728 | 2026-11-10T20:19:18.377Z | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| ec68d92 | 2026-11-10T22:22:49.771Z | 36 | 33 | 1 | 1 | 0 | 1 | 0 | 0 | 0 |
+| ec68d92 | 2026-11-10T22:22:49.771Z | 36 | 33 | 1 | 1 | 0 | 1 | 0 | 0 | 1 |
 | 7124ad9 | 2026-11-11T00:10:21.812Z | 2 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | b058188 | 2026-11-11T00:24:58.125Z | 7 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 | cb73947 | 2026-11-11T01:58:35.911Z | 2 | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -146,13 +146,20 @@ Campaign 2 is every paid session whose link carried utm_content (only its ads do
 | 3b976fc | 2026-11-14T21:20:17.366Z | 102 | 89 | 9 | 4 | 0 | 3 | 1 | 2 | 1 |
 | 0898a0d | 2026-11-17T09:59:00.000Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | d5bcc78 | 2026-11-17T10:37:00.000Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 3cf425d | 2026-11-17T11:54:00.000Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3cf425d | 2026-11-17T11:54:00.000Z | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1a5e391 | 2026-11-18T02:57:54.714Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| ba871c8 | 2026-11-18T05:42:02.196Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 7f26efd | 2026-11-18T05:58:45.516Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| eba264a | 2026-11-18T07:19:32.671Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| cd8af32 | 2026-11-18T08:41:27.647Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 6fb31f2 | 2026-11-18T08:55:13.842Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 8023f42 | 2026-11-18T08:57:16.181Z | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ## Per creative (30 days)
 
 | code | label | arrivals | editor | placed | accounts | returned | spend |
 |---|---|---:|---:|---:|---:|---:|---:|
-| rd_rainbow_image | Reddit ad - Rainbow image | 2803 | 2384 | 130 | 22 | 121 | - |
+| rd_rainbow_image | Reddit ad - Rainbow image | 2804 | 2384 | 130 | 22 | 122 | - |
 | rd_lidi_image | Reddit ad - Lidi image | 974 | 693 | 53 | 12 | 40 | - |
 | rd_coverflow_4x5 | Reddit ad - Coverflow video (feed) | 254 | 136 | 5 | 1 | 2 | - |
 | (no code) | not in registry | 2 | 2 | 2 | 0 | 0 | - |
