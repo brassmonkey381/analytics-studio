@@ -1,16 +1,16 @@
 # Print & QR campaigns
 
-Collected 2026-11-18T15:08:23.309Z. All-time unless a window is named.
+Collected 2026-11-19T15:08:04.785Z. All-time unless a window is named.
 
-**3839 campaign arrivals** across 4 apps.
+**3842 campaign arrivals** across 4 apps.
 
-> 214 `?code=` arrival(s) ignored: OAuth sign-in callback codes (UUIDs), not campaigns. michi stopped recording them on 2026-10-29; these are older rows.
+> 216 `?code=` arrival(s) ignored: OAuth sign-in callback codes (UUIDs), not campaigns. michi stopped recording them on 2026-10-29; these are older rows.
 
 ## Michi-Maker
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Reddit ad - Rainbow image | `rd_rainbow_image` | 2646 | 2421 | 521 | 28 | 205 |
+| Reddit ad - Rainbow image | `rd_rainbow_image` | 2647 | 2421 | 521 | 28 | 205 |
 | Reddit ad - Lidi image | `rd_lidi_image` | 904 | 829 | 160 | 11 | 88 |
 | Reddit ad - Coverflow video (feed) | `rd_coverflow_4x5` | 220 | 207 | 14 | 0 | 9 |
 | Reddit ad - Lidi video | `rd_lidi_video` | 14 | 14 | 13 | 0 | 0 |
@@ -39,14 +39,14 @@ No campaign-tagged arrival, all time. A landing route carrying a code HAS been r
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| (unregistered) | `PARK1` | 8 | 8 | 8 | 0 | 0 |
+| (unregistered) | `PARK1` | 10 | 10 | 10 | 0 | 0 |
 | (unregistered) | `verify_launch_qr` | 4 | 4 | 4 | 0 | 0 |
 
 Excluded from the above: 0 from our own/QA accounts, 1 verification scan(s).
 
 ## Pickleague
 
-No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (761 of 810 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
+No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from our own/QA accounts, 0 verification scan(s) of our own. Landing routes are recorded (765 of 814 sessions, first on 2026-08-14) but not one has ever carried a code, so this zero cannot yet be told apart from a build that has not shipped — see qr_campaign_capture below.
 
 ## Printed codes
 
@@ -67,7 +67,7 @@ No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from
 | Reddit ad - Coverflow video (desktop) | michi-maker | `rd_coverflow_16x9` | reddit paid ad | 0 | 0 |
 | Reddit ad - Lidi video | michi-maker | `rd_lidi_video` | reddit paid ad | 14 | 0 |
 | Reddit ad - Lidi image | michi-maker | `rd_lidi_image` | reddit paid ad | 904 | 11 |
-| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 2646 | 28 |
+| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 2647 | 28 |
 | Reddit ad - Max (one link for the campaign) | michi-maker | `rd_max` | reddit paid ad | 0 | 0 |
 | r/michimaker post - Coverflow loop | michi-maker | `rd_sub_coverflow_loop` | reddit organic post | 0 | 0 |
 | Reddit organic post - Coverflow loop | michi-maker | `rd_coverflow_loop` | reddit organic post | 0 | 0 |
@@ -80,8 +80,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 11907 | 10955 | 4126 | 11418 | a code was recorded 2026-08-27 |
-| TCGScan | 1747 | 1581 | 6 | 1610 | a code was recorded 2026-10-11 |
-| Doggle | 2596 | 2480 | 23 | 2596 | a code was recorded 2026-08-13 |
-| Pickleague | 810 | 761 | 0 | 810 | routes yes, never a code — a zero cannot be told from an unshipped build |
+| Michi-Maker | 11980 | 11027 | 4127 | 11491 | a code was recorded 2026-08-27 |
+| TCGScan | 1753 | 1585 | 6 | 1616 | a code was recorded 2026-10-11 |
+| Doggle | 2663 | 2541 | 27 | 2663 | a code was recorded 2026-08-13 |
+| Pickleague | 814 | 765 | 0 | 814 | routes yes, never a code — a zero cannot be told from an unshipped build |
 

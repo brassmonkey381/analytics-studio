@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-18T15:09:22.979Z",
+  "collectedAt": "2026-11-19T15:09:00.557Z",
   "app": "michi-maker",
   "windows": [
     "1",
@@ -59,6 +59,21 @@
   ],
   "features": [
     {
+      "id": "want-list",
+      "label": "Want list and trade list",
+      "onBallot": true,
+      "votes": 3,
+      "real": 1,
+      "ours": 1,
+      "guests": 1,
+      "last": "2026-11-19 05:43:45.122704+00",
+      "windows": {
+        "1": 1,
+        "7": 1,
+        "30": 2
+      }
+    },
+    {
       "id": "scan-to-pocket",
       "label": "Scan a card into a pocket",
       "onBallot": true,
@@ -67,19 +82,6 @@
       "ours": 1,
       "guests": 0,
       "last": "2026-11-01 00:06:10.702487+00",
-      "windows": {
-        "30": 1
-      }
-    },
-    {
-      "id": "want-list",
-      "label": "Want list and trade list",
-      "onBallot": true,
-      "votes": 2,
-      "real": 1,
-      "ours": 1,
-      "guests": 0,
-      "last": "2026-11-01 00:03:19.432174+00",
       "windows": {
         "30": 1
       }
@@ -206,47 +208,47 @@
     }
   ],
   "totals": {
-    "votes": 11,
+    "votes": 12,
     "votesReal": 7,
-    "votesGuests": 0,
+    "votesGuests": 1,
     "votesOurs": 4,
     "votesOffBallot": 0,
-    "voters": 2,
+    "voters": 3,
     "votersReal": 1,
-    "votersGuests": 0,
+    "votersGuests": 1,
     "votersOurs": 1,
     "ideasWritten": 0,
     "ideasWrittenOurs": 0
   },
   "page": {
     "1": {
-      "shown": 0,
-      "shownOurs": 1,
-      "voteClicks": 0,
+      "shown": 2,
+      "shownOurs": 0,
+      "voteClicks": 1,
       "voteFailed": 0,
       "submitted": 0,
       "submitFailed": 0,
-      "votesCast": 0,
+      "votesCast": 1,
       "ideasWritten": 0
     },
     "7": {
-      "shown": 3,
-      "shownOurs": 4,
-      "voteClicks": 0,
+      "shown": 5,
+      "shownOurs": 3,
+      "voteClicks": 1,
       "voteFailed": 0,
       "submitted": 0,
       "submitFailed": 0,
-      "votesCast": 0,
+      "votesCast": 1,
       "ideasWritten": 0
     },
     "30": {
-      "shown": 17,
+      "shown": 19,
       "shownOurs": 32,
-      "voteClicks": 11,
+      "voteClicks": 12,
       "voteFailed": 0,
       "submitted": 0,
       "submitFailed": 0,
-      "votesCast": 7,
+      "votesCast": 8,
       "ideasWritten": 0
     }
   }
