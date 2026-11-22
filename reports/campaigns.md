@@ -1,6 +1,6 @@
 # Print & QR campaigns
 
-Collected 2026-11-21T15:08:05.046Z. All-time unless a window is named.
+Collected 2026-11-22T15:08:03.896Z. All-time unless a window is named.
 
 **3842 campaign arrivals** across 4 apps.
 
@@ -80,8 +80,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 12128 | 11171 | 4127 | 11639 | a code was recorded 2026-08-27 |
+| Michi-Maker | 12190 | 11228 | 4127 | 11701 | a code was recorded 2026-08-27 |
 | TCGScan | 1756 | 1588 | 6 | 1619 | a code was recorded 2026-10-11 |
-| Doggle | 2725 | 2603 | 27 | 2725 | a code was recorded 2026-08-13 |
+| Doggle | 2732 | 2610 | 27 | 2732 | a code was recorded 2026-08-13 |
 | Pickleague | 824 | 774 | 0 | 824 | routes yes, never a code — a zero cannot be told from an unshipped build |
 

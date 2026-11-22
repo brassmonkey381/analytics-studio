@@ -1,24 +1,24 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-21T15:08:07.899Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (124 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
+Collected 2026-11-22T15:08:06.701Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (124 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
 
 ## Last 7 days
 
 | step | sessions | of arrivals |
 |---|---:|---:|
-| Arrived from Reddit | 136 |  |
-| Reached the binder editor | 119 | 88% |
-| Saw the first prompt (pocket ring, or Complete on a seeded page) | 121 | 89% |
-| Opened the card browser | 18 | 13% |
-| Placed a card (own tap, or a Fill/Complete that placed) | 13 | 10% |
-| Took a guest taste (Find similar, Fill page) | 6 | 4% |
+| Arrived from Reddit | 50 |  |
+| Reached the binder editor | 41 | 82% |
+| Saw the first prompt (pocket ring, or Complete on a seeded page) | 41 | 82% |
+| Opened the card browser | 8 | 16% |
+| Placed a card (own tap, or a Fill/Complete that placed) | 6 | 12% |
+| Took a guest taste (Find similar, Fill page) | 2 | 4% |
 | Opened Fill page | 0 | 0% |
-| Met the create-account wall | 5 | 4% |
-| Tapped Create account | 2 | 1% |
-| Became an account | 3 | 2% |
-| Made a binder public | 1 | 1% |
+| Met the create-account wall | 1 | 2% |
+| Tapped Create account | 1 | 2% |
+| Became an account | 1 | 2% |
+| Made a binder public | 0 | 0% |
 
-Phone 1, desktop 135, unknown 0. Bounced 8. Median stay 7 s. Came back a later day 1. Accounts by hop 3, stitched by time 0.
+Phone 1, desktop 49, unknown 0. Bounced 4. Median stay 9 s. Came back a later day 0. Accounts by hop 1, stitched by time 0.
 
 No spend rows in the last 7 days (../marketing-studio/assets/qr/spend.yaml).
 
@@ -27,7 +27,7 @@ No spend rows in the last 7 days (../marketing-studio/assets/qr/spend.yaml).
 | campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Campaign 2 (Sales, Sign up) | - | - | 1 | 0 | 0 | 0 | 0.0% | - |
-| Campaign 3 (Desktop, Sign up) | - | - | 135 | 119 | 13 | 3 | 2.2% | - |
+| Campaign 3 (Desktop, Sign up) | - | - | 49 | 41 | 6 | 1 | 2.0% | - |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do) and no other campaign name; the wizard arm is utm_campaign michi_wizard_2026_11 (phone ad group in Campaign 2, lands on the wizard once michi routes it); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
