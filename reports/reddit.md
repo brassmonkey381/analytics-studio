@@ -1,12 +1,12 @@
 # Reddit launch - what happens after the click
 
-Collected 2026-11-23T15:08:09.482Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (124 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
+Collected 2026-11-24T15:08:07.652Z. Days are PST. Population: michi-maker sessions tagged utm_source=reddit, last 30 days. Our own and QA accounts excluded (124 sessions in the lookback), plus 40 test-link sessions (test_ codes, or utm_medium test or qa). Organic Reddit links (any utm_medium other than paid_social) are their own campaign row, never pooled into an ad.
 
 ## Last 7 days
 
 | step | sessions | of arrivals |
 |---|---:|---:|
-| Arrived from Reddit | 5 |  |
+| Arrived from Reddit | 3 |  |
 | Reached the binder editor | 0 | 0% |
 | Saw the first prompt (pocket ring, or Complete on a seeded page) | 0 | 0% |
 | Opened the card browser | 0 | 0% |
@@ -18,7 +18,7 @@ Collected 2026-11-23T15:08:09.482Z. Days are PST. Population: michi-maker sessio
 | Became an account | 0 | 0% |
 | Made a binder public | 0 | 0% |
 
-Phone 1, desktop 4, unknown 0. Bounced 1. Median stay 27 s. Came back a later day 2. Accounts by hop 0, stitched by time 0.
+Phone 1, desktop 2, unknown 0. Bounced 0. Median stay 27 s. Came back a later day 0. Accounts by hop 0, stitched by time 0.
 
 No spend rows in the last 7 days (../marketing-studio/assets/qr/spend.yaml).
 
@@ -27,7 +27,7 @@ No spend rows in the last 7 days (../marketing-studio/assets/qr/spend.yaml).
 | campaign | spend | clicks | arrivals | editor | placed | accounts | sign-up rate | per account |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Campaign 2 (Sales, Sign up) | - | - | 1 | 0 | 0 | 0 | 0.0% | - |
-| Campaign 3 (Desktop, Sign up) | - | - | 4 | 0 | 0 | 0 | 0.0% | - |
+| Campaign 3 (Desktop, Sign up) | - | - | 2 | 0 | 0 | 0 | 0.0% | - |
 
 Campaign 2 is every paid session whose link carried utm_content (only its ads do) and no other campaign name; the wizard arm is utm_campaign michi_wizard_2026_11 (phone ad group in Campaign 2, lands on the wizard once michi routes it); arrivals and accounts are the site's count, spend and clicks the ledger's.
 
