@@ -860,18 +860,24 @@
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
+        },
+        "2026-11-26": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 19,
       "guestUsers": 0,
       "excludedUsers": 47,
       "coverage": null,
-      "lastCollected": "2026-11-25T15:07:06.070Z",
+      "lastCollected": "2026-11-26T15:07:05.956Z",
       "lastSource": "sql",
       "retention": {
         "total": 19,
         "active_7": 0,
-        "active_14": 1,
+        "active_14": 0,
         "active_30": 3
       },
       "lastError": {
@@ -1739,13 +1745,19 @@
           "new_users": 0,
           "dau_guest": 0,
           "new_guest": 0
+        },
+        "2026-11-26": {
+          "dau": 0,
+          "new_users": 0,
+          "dau_guest": 0,
+          "new_guest": 0
         }
       },
       "totalUsers": 13,
       "guestUsers": 1,
       "excludedUsers": 513,
       "coverage": null,
-      "lastCollected": "2026-11-25T15:07:09.883Z",
+      "lastCollected": "2026-11-26T15:07:10.631Z",
       "lastSource": "sql",
       "retention": {
         "total": 4,
@@ -2529,7 +2541,7 @@
           "dau": 13,
           "new_users": 7,
           "dau_guest": 57,
-          "new_guest": 55
+          "new_guest": 56
         },
         "2026-11-12": {
           "dau": 6,
@@ -2568,7 +2580,7 @@
           "new_guest": 11
         },
         "2026-11-18": {
-          "dau": 9,
+          "dau": 7,
           "new_users": 3,
           "dau_guest": 10,
           "new_guest": 9
@@ -2592,10 +2604,10 @@
           "new_guest": 8
         },
         "2026-11-22": {
-          "dau": 1,
-          "new_users": 1,
-          "dau_guest": 11,
-          "new_guest": 11
+          "dau": 2,
+          "new_users": 2,
+          "dau_guest": 10,
+          "new_guest": 10
         },
         "2026-11-23": {
           "dau": 8,
@@ -2610,28 +2622,34 @@
           "new_guest": 7
         },
         "2026-11-25": {
-          "dau": 2,
+          "dau": 12,
+          "new_users": 4,
+          "dau_guest": 10,
+          "new_guest": 6
+        },
+        "2026-11-26": {
+          "dau": 5,
           "new_users": 1,
-          "dau_guest": 2,
-          "new_guest": 1
+          "dau_guest": 9,
+          "new_guest": 9
         }
       },
-      "totalUsers": 285,
-      "guestUsers": 3583,
+      "totalUsers": 290,
+      "guestUsers": 3597,
       "excludedUsers": 185,
       "coverage": {
-        "registered": 338,
-        "guest_sessions": 6737,
-        "excluded": 1731,
-        "no_activity": 42
+        "registered": 344,
+        "guest_sessions": 6769,
+        "excluded": 1744,
+        "no_activity": 43
       },
-      "lastCollected": "2026-11-25T15:07:24.688Z",
+      "lastCollected": "2026-11-26T15:07:28.478Z",
       "lastSource": "sql",
       "retention": {
-        "total": 285,
-        "active_7": 35,
-        "active_14": 81,
-        "active_30": 260
+        "total": 290,
+        "active_7": 39,
+        "active_14": 79,
+        "active_30": 264
       }
     },
     "tcgscan": {
@@ -3490,28 +3508,34 @@
           "new_guest": 1
         },
         "2026-11-25": {
+          "dau": 5,
+          "new_users": 0,
+          "dau_guest": 5,
+          "new_guest": 1
+        },
+        "2026-11-26": {
           "dau": 1,
           "new_users": 0,
-          "dau_guest": 0,
-          "new_guest": 0
+          "dau_guest": 1,
+          "new_guest": 1
         }
       },
-      "totalUsers": 88,
-      "guestUsers": 89,
+      "totalUsers": 92,
+      "guestUsers": 95,
       "excludedUsers": 56,
       "coverage": {
-        "registered": 339,
-        "guest_sessions": 7020,
-        "excluded": 1447,
-        "no_activity": 42
+        "registered": 345,
+        "guest_sessions": 7054,
+        "excluded": 1458,
+        "no_activity": 43
       },
-      "lastCollected": "2026-11-25T15:07:35.096Z",
+      "lastCollected": "2026-11-26T15:07:40.364Z",
       "lastSource": "sql",
       "retention": {
-        "total": 88,
-        "active_7": 21,
-        "active_14": 41,
-        "active_30": 75
+        "total": 92,
+        "active_7": 23,
+        "active_14": 39,
+        "active_30": 77
       },
       "lastError": {
         "at": "2026-08-04T06:19:23.607Z",
