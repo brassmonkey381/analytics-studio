@@ -1,8 +1,8 @@
 # Print & QR campaigns
 
-Collected 2026-11-26T15:08:12.827Z. All-time unless a window is named.
+Collected 2026-11-27T15:08:19.173Z. All-time unless a window is named.
 
-**3848 campaign arrivals** across 4 apps.
+**3889 campaign arrivals** across 4 apps.
 
 > 218 `?code=` arrival(s) ignored: OAuth sign-in callback codes (UUIDs), not campaigns. michi stopped recording them on 2026-10-29; these are older rows.
 
@@ -10,17 +10,18 @@ Collected 2026-11-26T15:08:12.827Z. All-time unless a window is named.
 
 | Campaign | Code | Arrivals | People | Went further | Became members | Came back |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Reddit ad - Rainbow image | `rd_rainbow_image` | 2652 | 2425 | 524 | 28 | 207 |
+| Reddit ad - Rainbow image | `rd_rainbow_image` | 2689 | 2459 | 535 | 29 | 209 |
 | Reddit ad - Lidi image | `rd_lidi_image` | 904 | 829 | 160 | 11 | 89 |
 | Reddit ad - Coverflow video (feed) | `rd_coverflow_4x5` | 220 | 207 | 14 | 0 | 9 |
 | Reddit ad - Lidi video | `rd_lidi_video` | 14 | 14 | 13 | 0 | 0 |
 | Instagram link in bio - Coverflow loop | `ig_coverflow_loop` | 10 | 10 | 1 | 0 | 1 |
 | (unregistered) | `sk_3c_a1_p1_four` | 8 | 8 | 0 | 0 | 0 |
+| (unregistered) | `ig_bio` | 7 | 7 | 3 | 0 | 1 |
 | (unregistered) | `sk_dr_a1_p1_four` | 7 | 7 | 0 | 0 | 0 |
-| (unregistered) | `ig_bio` | 4 | 4 | 0 | 0 | 1 |
 | (unregistered) | `sk_3c_g_story` | 4 | 4 | 0 | 0 | 0 |
 | (unregistered) | `sk_3c_a1_p1_story` | 2 | 2 | 0 | 0 | 0 |
 | (unregistered) | `test` | 2 | 2 | 2 | 0 | 0 |
+| (unregistered) | `holiday2026` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `rd_rainbow_video` | 1 | 1 | 1 | 0 | 0 |
 | (unregistered) | `sk_3c_group` | 1 | 1 | 0 | 0 | 0 |
 | (unregistered) | `sk_dr_a1_p1_story` | 1 | 1 | 0 | 0 | 0 |
@@ -67,7 +68,7 @@ No campaign-tagged arrival, all time. Excluded from that zero: 2 arrival(s) from
 | Reddit ad - Coverflow video (desktop) | michi-maker | `rd_coverflow_16x9` | reddit paid ad | 0 | 0 |
 | Reddit ad - Lidi video | michi-maker | `rd_lidi_video` | reddit paid ad | 14 | 0 |
 | Reddit ad - Lidi image | michi-maker | `rd_lidi_image` | reddit paid ad | 904 | 11 |
-| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 2652 | 28 |
+| Reddit ad - Rainbow image | michi-maker | `rd_rainbow_image` | reddit paid ad | 2689 | 29 |
 | Reddit ad - Max (one link for the campaign) | michi-maker | `rd_max` | reddit paid ad | 0 | 0 |
 | r/michimaker post - Coverflow loop | michi-maker | `rd_sub_coverflow_loop` | reddit organic post | 0 | 0 |
 | Reddit organic post - Coverflow loop | michi-maker | `rd_coverflow_loop` | reddit organic post | 0 | 0 |
@@ -80,8 +81,8 @@ All traffic, all time, exclusions included — capture is a property of the depl
 
 | App | Sessions | With landing route | With a code | With device id | Capture |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Michi-Maker | 12535 | 11542 | 4132 | 12046 | a code was recorded 2026-08-27 |
+| Michi-Maker | 12660 | 11660 | 4169 | 12171 | a code was recorded 2026-08-27 |
 | TCGScan | 1778 | 1610 | 8 | 1641 | a code was recorded 2026-10-11 |
-| Doggle | 2751 | 2629 | 27 | 2751 | a code was recorded 2026-08-13 |
+| Doggle | 2755 | 2633 | 27 | 2755 | a code was recorded 2026-08-13 |
 | Pickleague | 866 | 812 | 0 | 866 | routes yes, never a code — a zero cannot be told from an unshipped build |
 
