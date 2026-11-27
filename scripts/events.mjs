@@ -145,6 +145,16 @@ const pricingRoutes = new Set(
   Object.entries(ROUTES).filter(([, v]) => v.intent === "pricing").map(([k]) => k),
 );
 
+// A trial.start that began a holiday trial (MIC-073): either it says so (via 'holiday'), or it is a
+// Stripe checkout trial started inside the holiday window, when every checkout trial ends Jan 1
+// (go-live 2026-11-27; from Dec 30 they fall back to 3 days). Hoisted
+// because computeWindow runs before the HOLIDAY_TRIAL_ENDS block further down.
+function isHolidayTrialStart(e) {
+  if (e.props?.via === "holiday") return true;
+  const t = Date.parse(String(e.ts).replace(" ", "T").replace(/([+-]\d{2})$/, "$1:00"));
+  return e.props?.via === "stripe" && t >= Date.parse("2026-11-27T00:00:00Z") && t < Date.parse("2026-12-30T08:00:00Z");
+}
+
 function labelFor(name) {
   return TAX[name]?.label ?? name;
 }
@@ -631,11 +641,20 @@ function computeWindow(key, allSessionsIn, allEventsIn, days, identity) {
     const b = (byName[e.name] ??= { name: e.name, label: labelFor(e.name), stage: TAX[e.name]?.stage ?? null, count: 0, users: new Set(), known: e.name in TAX });
     b.count++;
     b.users.add(e.user_id);
+    // trial.start splits by kind of trial, in DISTINCT PEOPLE: a holiday trial (MIC-073, ends
+    // Jan 1) or a 3-day trial. The holiday checkout's own row says via 'stripe' (michi
+    // payments-webhook as of 2026-11-27), and a backfilled or newer one says via 'holiday', so one
+    // person can carry both; counting people keeps that one trial.
+    if (e.name === "trial.start") {
+      const via = isHolidayTrialStart(e) ? "holiday" : "standard";
+      ((b.byVia ??= { holiday: new Set(), standard: new Set() })[via]).add(e.user_id);
+    }
   }
   const eventsByName = Object.values(byName)
     .map((b) => {
       rosters.events[b.name] = roster(b.users, identity);
-      return { ...b, users: b.users.size };
+      const byVia = b.byVia ? { holiday: b.byVia.holiday.size, standard: [...b.byVia.standard].filter((u) => !b.byVia.holiday.has(u)).length } : undefined;
+      return { ...b, users: b.users.size, ...(byVia ? { byVia } : {}) };
     })
     .sort((a, b) => b.count - a.count);
 
@@ -1450,9 +1469,20 @@ const PAYMENT_PROVIDERS = new Set(["stripe", "apple"]);
 // subscription, so none of the term logic below applies, and it must not count as a
 // paying subscriber - it is revenue once, not a run-rate.
 const isOneOff = (r) => String(r.product ?? "").startsWith("pdf_binder:");
+// A HOLIDAY TRIAL (michi MIC-073, live 2026-11-27): Stripe checkout trials that all end on one
+// fixed instant, 2027-01-01T08:00:00Z, instead of after 3 days. A monthly one runs about 35 days,
+// longer than its own interval, so the period-floor test below read it as PAID - on 2026-11-27 the
+// one live holiday trialist was counted as a paying subscriber. Same rule as michi's own
+// MoneyPanel kindOf (michi be51e0b): source 'stripe' and expires_at within an hour of the fixed
+// end. After the Jan 1 charge the term ends Feb 1, so the row reads as paid again on its own.
+// Holiday trials write no pro_trials row, so they never appear among the free-days trials.
+const HOLIDAY_TRIAL_ENDS = ["2027-01-01T08:00:00Z"].map((t) => Date.parse(t));
+const isHolidayTrial = (r) =>
+  r.source === "stripe" && !!r.expires_at && HOLIDAY_TRIAL_ENDS.some((t) => Math.abs(Date.parse(r.expires_at) - t) < 3_600_000);
 function purchaseKind(r) {
   if (!PAYMENT_PROVIDERS.has(r.source ?? "")) return "comped";
   if (isOneOff(r)) return "oneoff";
+  if (isHolidayTrial(r) && Date.parse(r.expires_at) >= Date.now()) return "trialing";
   // A subscription whose term has already ended is not inside anything - not a
   // trial, not paying. It lapsed. (A $0 Stripe trial that was never charged.)
   if (r.expires_at && Date.parse(r.expires_at) < Date.now()) return "lapsed";
@@ -1510,6 +1540,11 @@ for (const [id, a] of Object.entries(store.apps)) {
       currency,
       count: bought.length,
       trialing: mine.filter((r) => r.kind === "trialing").length,
+      // Of those, holiday trials (fixed Jan 1 end); the rest are 3-day checkout trials.
+      holidayTrialing: mine.filter((r) => r.kind === "trialing" && isHolidayTrial(r)).length,
+      // Holiday trials ever seen in the ledger: running, or ended uncharged. A converted one
+      // renews to Feb 1 and leaves this count, so read it as "on or past a holiday trial, unpaid".
+      holidayTrials: mine.filter((r) => isHolidayTrial(r)).length,
       lapsed: mine.filter((r) => r.kind === "lapsed").length,
       // Renewal turned off but the term is still running: a paid row that will not renew, or a
       // $0 trial nobody is going to be charged for. Read from the entitlements.cancelled_at
@@ -1601,6 +1636,7 @@ for (const [id, a] of Object.entries(journeys.apps)) {
       user: userLabel(identityAll.get(r.user_id) ?? { id: r.user_id }),
       product: r.product,
       kind: purchaseKind(r),
+      holiday: isHolidayTrial(r),
       source: r.source ?? "unknown",
       interval: r.interval ?? null,
       at: r.ts,

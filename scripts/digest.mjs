@@ -604,17 +604,17 @@ function moneyGroups(id) {
     stripeTrial.delete(t.user);
     g.trial.push(
       s.cancelledAt
-        ? { who: t.user, what: `${left} · cancelled ${shortDate(s.cancelledAt)}, no charge coming`, warn: false, sort }
+        ? { who: t.user, what: `${s.holiday ? "holiday trial · " : ""}${left} · cancelled ${shortDate(s.cancelledAt)}, no charge coming`, warn: false, sort }
         // The free-days row IS the trial end; the Stripe row only knows the price.
-        : { who: t.user, what: `${left} · charges ${thenPrice(s)} on ${shortDate(t.expiresAt)}`, warn: t.daysLeft <= 1, sort },
+        : { who: t.user, what: `${s.holiday ? "holiday trial · " : ""}${left} · charges ${thenPrice(s)} on ${shortDate(t.expiresAt)}`, warn: t.daysLeft <= 1, sort },
     );
   }
   for (const s of stripeTrial.values()) {
     const sort = s.expiresAt ? Date.parse(s.expiresAt) : Infinity;
     g.trial.push(
       s.cancelledAt
-        ? { who: s.user, what: `cancelled ${shortDate(s.cancelledAt)} · ends ${shortDate(termEnd(s))}, no charge coming`, warn: false, sort }
-        : { who: s.user, what: `charges ${thenPrice(s)} on ${shortDate(termEnd(s))}`, warn: false, sort },
+        ? { who: s.user, what: `${s.holiday ? "holiday trial · " : ""}cancelled ${shortDate(s.cancelledAt)} · ends ${shortDate(termEnd(s))}, no charge coming`, warn: false, sort }
+        : { who: s.user, what: `${s.holiday ? "holiday trial · " : ""}charges ${thenPrice(s)} on ${shortDate(termEnd(s))}`, warn: false, sort },
     );
   }
   for (const r of rows) {
@@ -638,7 +638,7 @@ function moneyGroups(id) {
       // was a subscription that ran out. Say which.
       const days = (Date.parse(r.expiresAt) - Date.parse(r.at)) / 86400000;
       const floor = r.interval === "year" ? 300 : r.interval === "month" ? 20 : 0;
-      const how = floor && days < floor ? `trial ended ${end}, never charged` : `ended ${end}`;
+      const how = r.holiday || (floor && days < floor) ? `${r.holiday ? "holiday " : ""}trial ended ${end}, never charged` : `ended ${end}`;
       g.lapsed.push({ who: r.user, what: `${tierName(r.product)}${r.interval ? ` ${r.interval}ly` : ""} · ${how}`, warn: false, sort: -Date.parse(r.expiresAt) });
     }
   }
@@ -713,6 +713,7 @@ if (moneyApps.length) {
     // count is context, not a group.
     const foot = [];
     if (m?.trialUsers) foot.push(`${m.trialUsers} ever trialed`);
+    if (b?.holidayTrials) foot.push(`${b.holidayTrials} of them ${b.holidayTrials === 1 ? "a holiday trial" : "holiday trials"} (ends Jan 1)`);
     const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
     if (ex) foot.push(`${ex} rows of ours excluded`);
     if (foot.length) parts.push(p(foot.join(" · ")));
@@ -722,7 +723,10 @@ if (moneyApps.length) {
       parts.push(p("The event stream was not available in this run, so 24h interactions cannot be reported; the ledger above is unaffected.", WARN));
     } else if (m && (m.events.length || m.pricing.length)) {
       const irows = [
-        ...m.events.map((e) => [e.label ?? e.name, e.count, e.users, e.who]),
+        ...m.events.map((e) => [
+          `${e.label ?? e.name}${e.byVia ? ` (${e.byVia.holiday} holiday, ${e.byVia.standard} 3-day)` : ""}`,
+          e.count, e.users, e.who,
+        ]),
         ...m.pricing.map((r) => [`Viewed ${r.label ?? r.route}`, r.count, r.users, r.who]),
       ];
       parts.push(p(`<span style="color:${MUTED};">Last 24h, event stream — what moved toward (or away from) the ledger:</span>`));
@@ -1350,12 +1354,13 @@ for (const id of moneyApps) {
   }
   const foot = [];
   if (m?.trialUsers) foot.push(`${m.trialUsers} ever trialed`);
+  if (b?.holidayTrials) foot.push(`${b.holidayTrials} of them ${b.holidayTrials === 1 ? "a holiday trial" : "holiday trials"} (ends Jan 1)`);
   const ex = (b?.excluded ?? 0) + (tr?.excluded ?? 0);
   if (ex) foot.push(`${ex} rows of ours excluded`);
   if (foot.length) T.push(`    ${foot.join(" · ")}`);
   if (m && (m.events.length || m.pricing.length)) {
     T.push(`    last 24h, event stream:`);
-    for (const e of m.events) T.push(`      ${e.label ?? e.name} x${e.count} — ${e.who.join(", ") || `${e.users} guest(s)`}`);
+    for (const e of m.events) T.push(`      ${e.label ?? e.name}${e.byVia ? ` (${e.byVia.holiday} holiday, ${e.byVia.standard} 3-day)` : ""} x${e.count} — ${e.who.join(", ") || `${e.users} guest(s)`}`);
     for (const r of m.pricing) T.push(`      viewed ${r.label ?? r.route} x${r.count} — ${r.who.join(", ") || `${r.users} guest(s)`}`);
   } else if (events) T.push(`    no PRO/trial/plan-limit interaction in the last 24h`);
 }
